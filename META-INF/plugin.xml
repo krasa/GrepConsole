@@ -1,0 +1,61 @@
+<idea-plugin version="2">
+	<id>GrepConsole</id>
+	<name>Grep Console</name>
+	<version>0.1</version>
+
+	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
+		Krasa
+	</vendor>
+
+
+	<description><![CDATA[
+			Allows you to define a series of regular expressions which will be tested against the console output. 
+			Each expression matching a line will affect the style of the entire line. 
+			For example, error messages could be set to show up with a red background.<br>
+	 		<br>
+			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>.
+			<br>
+			<br>
+			Note: Development is far from over, many new functions will be added. Also changes 
+			in IntelliJ API will be needed to support it fully
+			because not all consoles are extensible and no extension points exist.<br>
+			It should currently work for at least Run/Debug of Java applications (not unit tests).
+			
+			
+      ]]></description>
+
+	<change-notes><![CDATA[
+        <br>0.1 (2012-11-13)
+        <br>- Initial release
+			]]>
+	</change-notes>
+
+	<idea-version since-build="100.000"/>
+
+	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+		   on how to target different products -->
+	<!-- uncomment to enable plugin in all products
+	  <depends>com.intellij.modules.lang</depends>
+	  -->
+
+	<application-components>
+		<!-- Add your application components here -->
+		<component>
+			<implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
+		</component>
+	</application-components>
+
+	<project-components>
+		<!-- Add your project components here -->
+	</project-components>
+
+	<actions>
+		<!-- Add your actions here -->
+	</actions>
+
+	<extensions defaultExtensionNs="com.intellij">
+		<consoleActionsPostProcessor implementation="krasa.grepconsole.plugin.GrepConsoleActionsPostProcessor"/>
+
+		<!-- Add your extensions here -->
+	</extensions>
+</idea-plugin>
