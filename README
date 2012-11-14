@@ -1,3 +1,5 @@
+Grep Console - IntelliJ plugin
+
 Allows you to define a series of regular expressions which will be tested against the console output. Each expression matching a line will affect the style of the entire line. For example, error messages could be set to show up with a red background. 
 
 Inspired by Grep Console plugin for Eclipse. 
