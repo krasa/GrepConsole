@@ -4,49 +4,56 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.intellij.execution.ui.ConsoleView;
-import com.rits.cloning.Cloner;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Profile;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
-public class PluginSettings extends DomainObject implements Cloneable {
+import com.intellij.execution.ui.ConsoleView;
+import com.rits.cloning.Cloner;
+
+public class PluginState extends DomainObject implements Cloneable {
 	private List<Profile> profiles;
 
-	public PluginSettings() {
+	public PluginState() {
 		if (profiles == null) {
-			createDefault();
+			profiles = createDefault();
 		}
 	}
 
-	private void createDefault() {
-		profiles = new ArrayList<Profile>();
+	public static List<Profile> createDefault() {
+		List<Profile> profiles = new ArrayList<Profile>();
 		Profile profile = new Profile();
 		profile.setDefaultProfile(true);
 		profiles.add(profile);
-		List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.RED)).grepExpression(".*ERROR"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.YELLOW)).grepExpression(
-				".*WARN"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.RED)).grepExpression(".*FATAL"));
-		profile.setGrepExpressionItems(grepExpressionItems);
+		profile.setGrepExpressionItems(createDefaultItems());
+
+		return profiles;
 	}
 
-	private GrepExpressionItem newItem() {
+	public static List<GrepExpressionItem> createDefaultItems() {
+		List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
+		grepExpressionItems.add(newItem().style(getGrepStyle(Color.RED, Color.WHITE)).grepExpression(".*FATAL"));
+		grepExpressionItems.add(newItem().style(getGrepStyle(Color.ORANGE, null)).grepExpression(".*ERROR"));
+		grepExpressionItems.add(newItem().style(getGrepStyle(Color.YELLOW, null)).grepExpression(".*WARN"));
+		return grepExpressionItems;
+	}
+
+	private static GrepExpressionItem newItem() {
 		return new GrepExpressionItem();
 	}
 
-	private GrepStyle getGrepStyle(Color color) {
-		return new GrepStyle().backgroundColor(new GrepColor(true, color));
+	private static GrepStyle getGrepStyle(Color color, Color foreground) {
+		GrepStyle grepStyle = new GrepStyle().backgroundColor(new GrepColor(true, color));
+		if (foreground != null) {
+			grepStyle = grepStyle.foregroundColor(new GrepColor(true, foreground));
+		}
+		return grepStyle;
 	}
 
 	public Profile getProfile(ConsoleView consoleView) {
-		//todo determine profile somehow
+		// todo determine profile somehow
 		return getDefaultProfile();
 	}
 
@@ -79,8 +86,12 @@ public class PluginSettings extends DomainObject implements Cloneable {
 		return result;
 	}
 
+	public void setProfiles(List<Profile> profiles) {
+		this.profiles = profiles;
+	}
+
 	@Override
-	protected PluginSettings clone()  {
+	protected PluginState clone() {
 		Cloner cloner = new Cloner();
 		cloner.nullInsteadOfClone();
 		return cloner.deepClone(this);

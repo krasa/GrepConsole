@@ -5,23 +5,22 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import krasa.grepconsole.decorators.ConsoleTextDecorator;
-import krasa.grepconsole.decorators.NextOperation;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
+import krasa.grepconsole.decorators.Operation;
 import krasa.grepconsole.service.Cache;
 
-public class GrepExpressionItem extends AbstractGrepModelElement {
+import com.intellij.execution.ui.ConsoleViewContentType;
 
+public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
-	private GrepStyle style =new GrepStyle();
+	private GrepStyle style = new GrepStyle();
 
 	private Pattern pattern;
 	private Pattern unlessPattern;
 
-	private NextOperation operationOnMatch = NextOperation.PRINT_IMMEDIATELY;
+	private Operation operationOnMatch = Operation.PRINT_IMMEDIATELY;
 
 	public GrepExpressionItem() {
 		this(null);
@@ -168,14 +167,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	}
 
 	private String getCacheIdentifier(ConsoleViewContentType contentType) {
-		return getId()+contentType.toString();
+		return getId() + contentType.toString();
 	}
 
-	public NextOperation getOperationOnMatch() {
+	public Operation getOperationOnMatch() {
 		return operationOnMatch;
 	}
 
-	public void setOperationOnMatch(NextOperation operationOnMatch) {
+	public void setOperationOnMatch(Operation operationOnMatch) {
 		this.operationOnMatch = operationOnMatch;
 	}
 }

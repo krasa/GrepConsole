@@ -1,14 +1,16 @@
 package krasa.grepconsole.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 
-import com.intellij.execution.ui.ConsoleView;
 import krasa.grepconsole.builder.GrepTextConsoleBuilderFactoryImpl;
 import krasa.grepconsole.gui.SettingsDialog;
-
-import krasa.grepconsole.service.Cache;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.service.Cache;
 import krasa.grepconsole.service.GrepConsoleService;
+
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.picocontainer.MutablePicoContainer;
 
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -24,16 +27,13 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
+@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
-		PersistentStateComponent<PluginSettings> {
+		PersistentStateComponent<PluginState> {
 
 	public static final String KEY = TextConsoleBuilderFactory.class.getName();
 	private SettingsDialog form;
-	private PluginSettings settings = new PluginSettings();
+	private PluginState settings = new PluginState();
 	private List<GrepConsoleService> runningServices = new ArrayList<GrepConsoleService>();
 
 	public GrepConsoleApplicationComponent() {
@@ -104,11 +104,11 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		form = null;
 	}
 
-	public PluginSettings getState() {
+	public PluginState getState() {
 		return settings;
 	}
 
-	public void loadState(PluginSettings state) {
+	public void loadState(PluginState state) {
 		this.settings = state;
 	}
 

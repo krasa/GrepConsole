@@ -1,9 +1,9 @@
 package krasa.grepconsole.service;
 
-import krasa.grepconsole.model.ModifiableConsoleViewContentType;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import krasa.grepconsole.model.ModifiableConsoleViewContentType;
 
 public class Cache {
 	protected static Cache instance;
@@ -15,11 +15,11 @@ public class Cache {
 		}
 		return instance;
 	}
-	
+
 	public static void reset() {
 		getInstance().setMap(new HashMap<String, ModifiableConsoleViewContentType>());
 	}
-	
+
 	public Map<String, ModifiableConsoleViewContentType> getMap() {
 		return map;
 	}
@@ -28,11 +28,11 @@ public class Cache {
 		this.map = map;
 	}
 
-	public ModifiableConsoleViewContentType get(String s) {
-		return map.get(s);
+	public ModifiableConsoleViewContentType get(String id) {
+		return map.get(id);
 	}
 
-	public void put(String s, ModifiableConsoleViewContentType result) {
-		 map.put(s,result);
+	public void put(String id, ModifiableConsoleViewContentType result) {
+		map.put(id, result);
 	}
 }

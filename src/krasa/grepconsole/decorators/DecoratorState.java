@@ -1,25 +1,26 @@
 package krasa.grepconsole.decorators;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
 import krasa.grepconsole.model.ModifiableConsoleViewContentType;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
 
 public class DecoratorState {
 
 	private String line;
 	private ConsoleViewContentType contentType;
-	private NextOperation operation = NextOperation.CONTINUE_MATCHING;
+	private Operation nextOperation = Operation.CONTINUE_MATCHING;
 
 	public DecoratorState(String line, ConsoleViewContentType contentType) {
 		this.line = line;
 		this.contentType = contentType;
 	}
 
-	public NextOperation getOperation() {
-		return operation;
+	public Operation getNextOperation() {
+		return nextOperation;
 	}
 
-	public void setOperation(NextOperation operation) {
-		this.operation = operation;
+	public void setNextOperation(Operation nextOperation) {
+		this.nextOperation = nextOperation;
 	}
 
 	public String getLine() {

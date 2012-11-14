@@ -1,6 +1,7 @@
 package krasa.grepconsole.decorators;
 
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.ModifiableConsoleViewContentType;
@@ -16,14 +17,31 @@ public class ConsoleTextDecorator {
 	}
 
 	public DecoratorState process(DecoratorState flow) {
-        if (!StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
-			Matcher matcher = grepExpressionItem.getPattern().matcher(flow.getLine());
-			if (matcher.matches()) {
+		if (!StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
+			String matchedLine = flow.getLine();
+
+			if (matches(matchedLine) && !matchesUnless(matchedLine)) {
 				ModifiableConsoleViewContentType style = grepExpressionItem.getStyle(flow.getContentType());
 				flow.setContentType(style);
-				flow.setOperation(grepExpressionItem.getOperationOnMatch());
+				flow.setNextOperation(grepExpressionItem.getOperationOnMatch());
 			}
 		}
 		return flow;
+	}
+
+	private boolean matches(String matchedLine) {
+		return grepExpressionItem.getPattern().matcher(matchedLine).matches();
+	}
+
+	private boolean matchesUnless(String matchedLine) {
+		boolean matchUnless = false;
+		Pattern unlessPattern = grepExpressionItem.getUnlessPattern();
+		if (unlessPattern != null) {
+			Matcher unlessMatcher = unlessPattern.matcher(matchedLine);
+			if (unlessMatcher.matches()) {
+				matchUnless = true;
+			}
+		}
+		return matchUnless;
 	}
 }

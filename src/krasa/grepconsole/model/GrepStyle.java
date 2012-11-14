@@ -1,28 +1,25 @@
 package krasa.grepconsole.model;
 
-import java.awt.*;
 import java.util.UUID;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.intellij.lang.annotations.JdkConstants;
 
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 
-public class GrepStyle extends DomainObject{
+public class GrepStyle extends DomainObject {
 	private String id;
 	private String name;
 
 	private GrepColor foregroundColor;
 	private GrepColor backgroundColor;
-	private GrepColor effectColor;
 
+	private GrepColor effectColor;
 	private EffectType effectType;
-	private Integer errorStripeColor;
+
 	@JdkConstants.FontStyle
-	private int fontType;
+	private boolean bold;
+	private boolean italic;
 
 	public GrepStyle() {
 		this(null);
@@ -60,20 +57,20 @@ public class GrepStyle extends DomainObject{
 		this.effectType = effectType;
 	}
 
-	public Integer getErrorStripeColor() {
-		return errorStripeColor;
+	public boolean isBold() {
+		return bold;
 	}
 
-	public void setErrorStripeColor(Integer errorStripeColor) {
-		this.errorStripeColor = errorStripeColor;
+	public void setBold(boolean bold) {
+		this.bold = bold;
 	}
 
-	public Integer getFontType() {
-		return fontType;
+	public boolean isItalic() {
+		return italic;
 	}
 
-	public void setFontType(Integer fontType) {
-		this.fontType = fontType;
+	public void setItalic(boolean italic) {
+		this.italic = italic;
 	}
 
 	public void applyTo(TextAttributes attributes) {
@@ -89,12 +86,9 @@ public class GrepStyle extends DomainObject{
 		if (effectColor != null && effectColor.isEnabled()) {
 			attributes.setEffectColor(effectColor.getColorAsAWT());
 		}
-		if (errorStripeColor != null) {
-			attributes.setErrorStripeColor(new Color(errorStripeColor));
-		}
+		int fontType = 0 + (bold ? 1 : 0) + (italic ? 2 : 0);
 		attributes.setFontType(fontType);
 	}
-
 
 	public GrepStyle id(final String id) {
 		this.id = id;
@@ -123,16 +117,6 @@ public class GrepStyle extends DomainObject{
 
 	public GrepStyle effectType(final EffectType effectType) {
 		this.effectType = effectType;
-		return this;
-	}
-
-	public GrepStyle errorStripeColor(final Color errorStripeColor) {
-		this.errorStripeColor = errorStripeColor.getRGB();
-		return this;
-	}
-
-	public GrepStyle fontType(final Integer fontType) {
-		this.fontType = fontType;
 		return this;
 	}
 

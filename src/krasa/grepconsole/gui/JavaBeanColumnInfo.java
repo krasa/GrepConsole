@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.intellij.util.ui.ColumnInfo;
 
-public class JavaBeanColumnInfo<Item, Aspect> extends ColumnInfo<Item, Aspect> {
+public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	protected String propertyName;
 
 	public JavaBeanColumnInfo(String name, String propertyName) {
@@ -15,12 +15,12 @@ public class JavaBeanColumnInfo<Item, Aspect> extends ColumnInfo<Item, Aspect> {
 
 	@Nullable
 	@Override
-	public Aspect valueOf(Item item) {
+	public Value valueOf(Item item) {
 		return getProperty(item);
 	}
 
 	@Override
-	public void setValue(Item item, Aspect value) {
+	public void setValue(Item item, Value value) {
 		setPropertyValue(item, value);
 	}
 
@@ -29,17 +29,17 @@ public class JavaBeanColumnInfo<Item, Aspect> extends ColumnInfo<Item, Aspect> {
 		return true;
 	}
 
-    protected void setPropertyValue(Item item, Aspect value) {
-        try {
-            PropertyUtils.setProperty(item, propertyName, value);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-	protected Aspect getProperty(Item item) {
+	protected void setPropertyValue(Item item, Value value) {
 		try {
-			return (Aspect) PropertyUtils.getProperty(item, propertyName);
+			PropertyUtils.setProperty(item, propertyName, value);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected Value getProperty(Item item) {
+		try {
+			return (Value) PropertyUtils.getProperty(item, propertyName);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

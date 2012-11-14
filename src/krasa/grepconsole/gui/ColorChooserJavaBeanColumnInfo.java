@@ -7,6 +7,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import krasa.grepconsole.model.GrepColor;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.ui.CheckBoxWithColorChooser;
@@ -29,25 +30,16 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 		setPropertyValue(o, value);
 	}
 
-
 	@Nullable
 	@Override
 	public TableCellRenderer getRenderer(final Item o) {
 		return new TableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-														   boolean hasFocus, int row, int column) {
+					boolean hasFocus, int row, int column) {
 				return getCheckBoxWithColorChooser((GrepColor) value);
 			}
-
-
 		};
-	}
-
-	@Nullable
-	@Override
-	public String getTooltipText() {
-		return "Left click on cell, and right click on color to choose ";
 	}
 
 	@Nullable
@@ -64,7 +56,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 
 			@Override
 			public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
-														 int column) {
+					int column) {
 				return checkBoxWithColorChooser = getCheckBoxWithColorChooser((GrepColor) value);
 			}
 		};
@@ -72,7 +64,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 
 	private CheckBoxWithColorChooser getCheckBoxWithColorChooser(GrepColor color) {
 		if (color == null) {
-			color=new GrepColor();
+			color = new GrepColor();
 		}
 		return new CheckBoxWithColorChooser(null, color.isEnabled(), color.getColorAsAWT()) {
 			@Override

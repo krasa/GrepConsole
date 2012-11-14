@@ -3,15 +3,15 @@ package krasa.grepconsole.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.intellij.execution.ui.ConsoleView;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.PluginSettings;
 import krasa.grepconsole.console.GrepConsoleView;
 import krasa.grepconsole.decorators.ConsoleTextDecorator;
 import krasa.grepconsole.decorators.DecoratorState;
 import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.text.StringTokenizer;
@@ -23,14 +23,13 @@ public class GrepConsoleService {
 	private List<ConsoleTextDecorator> consoleTextDecorators;
 	private Profile profile;
 
-
 	public GrepConsoleService(Project project, ConsoleView consoleView) {
 		this.project = project;
 		this.consoleView = consoleView;
 		// not yet implemented filters by project
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 		applicationComponent.register(this);
-		PluginSettings state = applicationComponent.getState();
+		PluginState state = applicationComponent.getState();
 		profile = state.getProfile(consoleView);
 		initDecorators();
 	}
@@ -61,16 +60,15 @@ public class GrepConsoleService {
 
 	private void processLine(String line, ConsoleViewContentType contentType, GrepConsoleView grepConsoleView) {
 		DecoratorState state = new DecoratorState(line, contentType);
-		FLOW:
-		for (ConsoleTextDecorator consoleTextDecorator : getConsoleTextDecorators()) {
+		FLOW: for (ConsoleTextDecorator consoleTextDecorator : getConsoleTextDecorators()) {
 			state = consoleTextDecorator.process(state);
-			switch (state.getOperation()) {
-				case PRINT_IMMEDIATELY:
-					break FLOW;
-				case CONTINUE_MATCHING:
-					break;
-				case EXCLUDE:
-					return;
+			switch (state.getNextOperation()) {
+			case PRINT_IMMEDIATELY:
+				break FLOW;
+			case CONTINUE_MATCHING:
+				break;
+			case EXCLUDE:
+				return;
 			}
 		}
 		grepConsoleView.printProcessedResult(state.getLine(), state.getContentType());
