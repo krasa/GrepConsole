@@ -90,6 +90,10 @@ public class PluginState extends DomainObject implements Cloneable {
 		this.profiles = profiles;
 	}
 
+	public List<Profile> getProfiles() {
+		return profiles;
+	}
+
 	@Override
 	protected PluginState clone() {
 		Cloner cloner = new Cloner();
