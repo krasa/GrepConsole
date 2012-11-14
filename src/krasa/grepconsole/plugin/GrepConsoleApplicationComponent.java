@@ -33,7 +33,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public static final String KEY = TextConsoleBuilderFactory.class.getName();
 	private SettingsDialog form;
-	private PluginState settings = new PluginState();
+	private PluginState settings;
 	private List<GrepConsoleService> runningServices = new ArrayList<GrepConsoleService>();
 
 	public GrepConsoleApplicationComponent() {
@@ -77,7 +77,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public JComponent createComponent() {
 		// if (form == null) {
-		form = new SettingsDialog(settings.clone());
+		form = new SettingsDialog(getState().clone());
 		// }
 		return form.getRootComponent();
 	}
@@ -105,6 +105,10 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public PluginState getState() {
+		if (settings == null) {
+			settings=new PluginState();
+			settings.setProfiles(PluginState.createDefault());
+		}
 		return settings;
 	}
 
