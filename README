@@ -1,1 +1,3 @@
-This file was created by IntelliJ IDEA (Leda) IU-122.746 for binding GitHub repository
+Allows you to define a series of regular expressions which will be tested against the console output. Each expression matching a line will affect the style of the entire line. For example, error messages could be set to show up with a red background. 
+
+Inspired by Grep Console plugin for Eclipse. 
