@@ -16,11 +16,6 @@ import com.rits.cloning.Cloner;
 public class PluginState extends DomainObject implements Cloneable {
 	private List<Profile> profiles;
 
-	public PluginState() {
-		if (profiles == null) {
-			profiles = createDefault();
-		}
-	}
 
 	public static List<Profile> createDefault() {
 		List<Profile> profiles = new ArrayList<Profile>();
