@@ -1,4 +1,4 @@
-package krasa.grepconsole.decorators;
+package krasa.grepconsole;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -7,20 +7,15 @@ import java.awt.*;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
-import krasa.grepconsole.model.ModifiableConsoleViewContentType;
-import krasa.grepconsole.service.Cache;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class ConsoleTextDecoratorTest {
 
 	public static final String BAR = "bar";
-	public static final ConsoleViewContentType ORIGINAL_CONTENT_TYPE = new ConsoleViewContentType(BAR,
-			new TextAttributes());
 	public static final String LINE = "[ERROR]";
 	public static final String LINE_FOO = "[ERROR] foo";
 
@@ -34,11 +29,10 @@ public class ConsoleTextDecoratorTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		ConsoleTextDecorator consoleTextDecorator = new ConsoleTextDecorator(grepExpressionItem);
-
 		DecoratorState process = consoleTextDecorator.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = consoleTextDecorator.process(new DecoratorState(LINE, ORIGINAL_CONTENT_TYPE));
+		process = consoleTextDecorator.process(new DecoratorState(LINE));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -50,7 +44,7 @@ public class ConsoleTextDecoratorTest {
 		// matched
 		DecoratorState process = consoleTextDecorator.process(getInput(LINE));
 		assertEquals(Operation.PRINT_IMMEDIATELY, process.getNextOperation());
-		assertEquals(getContentTypeFromCache(grepExpressionItem), process.getContentType());
+		assertEquals(getTextAttributesFromCache(grepExpressionItem), process.getTextAttributes());
 		assertEquals(LINE, process.getLine());
 
 	}
@@ -60,33 +54,33 @@ public class ConsoleTextDecoratorTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		ConsoleTextDecorator consoleTextDecorator = new ConsoleTextDecorator(grepExpressionItem);
-		DecoratorState process = consoleTextDecorator.process(new DecoratorState(LINE_FOO, ORIGINAL_CONTENT_TYPE));
+		DecoratorState process = consoleTextDecorator.process(new DecoratorState(LINE_FOO));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
-		assertEquals(ORIGINAL_CONTENT_TYPE, process.getContentType());
+		assertEquals(null, process.getTextAttributes());
 		assertEquals(LINE_FOO, process.getLine());
 
 	}
 
 	private GrepExpressionItem getGrepExpressionItem() {
 		return new GrepExpressionItem().style(new GrepStyle().backgroundColor(new GrepColor(true, Color.RED))).grepExpression(
-				".*ERROR").unlessGrepExpression(".*foo");
+				".*ERROR.*").unlessGrepExpression(".*foo.*");
 	}
 
-	private ModifiableConsoleViewContentType getContentTypeFromCache(GrepExpressionItem grepExpressionItem) {
+	private TextAttributes getTextAttributesFromCache(GrepExpressionItem grepExpressionItem) {
 		return Cache.getInstance().getMap().get(getCacheId(grepExpressionItem));
 	}
 
 	private String getCacheId(GrepExpressionItem grepExpressionItem) {
-		return grepExpressionItem.getId() + BAR;
+		return grepExpressionItem.getId();
 	}
 
 	private DecoratorState getInput(String line) {
-		return new DecoratorState(line, ORIGINAL_CONTENT_TYPE);
+		return new DecoratorState(line);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, DecoratorState process) {
 		assertEquals(1, Cache.getInstance().getMap().size());
-		assertEquals(process.getContentType(), getContentTypeFromCache(grepExpressionItem));
+		assertEquals(process.getTextAttributes(), getTextAttributesFromCache(grepExpressionItem));
 	}
 }

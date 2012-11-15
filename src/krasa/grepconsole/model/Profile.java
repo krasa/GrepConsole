@@ -1,15 +1,14 @@
 package krasa.grepconsole.model;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-
+import java.util.ArrayList;
 import java.util.List;
 
-public class Profile extends DomainObject{
+
+public class Profile extends DomainObject {
 	private long id;
 	private boolean defaultProfile;
-	private List<GrepExpressionItem> grepExpressionItems;
+	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
+	private boolean enabled = true;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -37,7 +36,13 @@ public class Profile extends DomainObject{
 
 	public void setGrepExpressionItems(List<GrepExpressionItem> grepExpressionItems) {
 		this.grepExpressionItems = grepExpressionItems;
-	}	
-	
-	
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(final boolean enabled) {
+		this.enabled = enabled;
+	}
 }

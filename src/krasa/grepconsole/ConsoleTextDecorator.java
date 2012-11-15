@@ -1,10 +1,9 @@
-package krasa.grepconsole.decorators;
+package krasa.grepconsole;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.ModifiableConsoleViewContentType;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -21,8 +20,7 @@ public class ConsoleTextDecorator {
 			String matchedLine = flow.getLine();
 
 			if (matches(matchedLine) && !matchesUnless(matchedLine)) {
-				ModifiableConsoleViewContentType style = grepExpressionItem.getStyle(flow.getContentType());
-				flow.setContentType(style);
+				flow.setTextAttributes(grepExpressionItem.getTextAttributes());
 				flow.setNextOperation(grepExpressionItem.getOperationOnMatch());
 			}
 		}

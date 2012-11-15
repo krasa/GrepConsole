@@ -4,11 +4,13 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import krasa.grepconsole.decorators.ConsoleTextDecorator;
-import krasa.grepconsole.decorators.Operation;
-import krasa.grepconsole.service.Cache;
+import krasa.grepconsole.Cache;
+import krasa.grepconsole.ConsoleTextDecorator;
+import krasa.grepconsole.Operation;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
+import org.apache.commons.lang.StringUtils;
+
+import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -17,8 +19,8 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private boolean caseInsensitive;
 	private GrepStyle style = new GrepStyle();
 
-	private Pattern pattern;
-	private Pattern unlessPattern;
+	private transient Pattern pattern;
+	private transient Pattern unlessPattern;
 
 	private Operation operationOnMatch = Operation.PRINT_IMMEDIATELY;
 
@@ -71,7 +73,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	}
 
 	public Pattern getUnlessPattern() {
-		if (unlessPattern == null && unlessGrepExpression != null) {
+		if (unlessPattern == null && !StringUtils.isEmpty(unlessGrepExpression)) {
 			unlessPattern = compilePattern(unlessGrepExpression);
 		}
 
@@ -88,7 +90,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		Pattern pattern;
 
 		try {
-			pattern = Pattern.compile(".*" + expression + ".*", computeFlags()); //$NON-NLS-1$ //$NON-NLS-2$
+			pattern = Pattern.compile(expression, computeFlags()); //$NON-NLS-1$ //$NON-NLS-2$
 		} catch (PatternSyntaxException ex) {
 			pattern = null;
 		}
@@ -155,26 +157,22 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		}
 	}
 
-	public ModifiableConsoleViewContentType getStyle(ConsoleViewContentType contentType) {
-		String cacheIdentifier = getCacheIdentifier(contentType);
-		ModifiableConsoleViewContentType result = Cache.getInstance().get(cacheIdentifier);
-		if (result == null) {
-			result = ModifiableConsoleViewContentType.create(cacheIdentifier, contentType);
-			style.applyTo(result.getAttributes());
-			Cache.getInstance().put(cacheIdentifier, result);
-		}
-		return result;
-	}
-
-	private String getCacheIdentifier(ConsoleViewContentType contentType) {
-		return getId() + contentType.toString();
-	}
-
 	public Operation getOperationOnMatch() {
 		return operationOnMatch;
 	}
 
 	public void setOperationOnMatch(Operation operationOnMatch) {
 		this.operationOnMatch = operationOnMatch;
+	}
+
+	public TextAttributes getTextAttributes() {
+		String cacheIdentifier = getId();
+		TextAttributes result = Cache.getInstance().get(cacheIdentifier);
+		if (result == null) {
+			result = new TextAttributes();
+			style.applyTo(result);
+			Cache.getInstance().put(cacheIdentifier, result);
+		}
+		return result;
 	}
 }

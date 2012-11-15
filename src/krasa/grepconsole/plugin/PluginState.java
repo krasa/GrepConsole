@@ -10,12 +10,12 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Profile;
 
-import com.intellij.execution.ui.ConsoleView;
 import com.rits.cloning.Cloner;
 
 public class PluginState extends DomainObject implements Cloneable {
-	private List<Profile> profiles;
 
+	private List<Profile> profiles = new ArrayList<Profile>();
+	private boolean enabled;
 
 	public static List<Profile> createDefault() {
 		List<Profile> profiles = new ArrayList<Profile>();
@@ -29,9 +29,9 @@ public class PluginState extends DomainObject implements Cloneable {
 
 	public static List<GrepExpressionItem> createDefaultItems() {
 		List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.RED, Color.WHITE)).grepExpression(".*FATAL"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.ORANGE, null)).grepExpression(".*ERROR"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.YELLOW, null)).grepExpression(".*WARN"));
+		grepExpressionItems.add(newItem().style(getGrepStyle(Color.RED, Color.WHITE)).grepExpression(".*FATAL.*"));
+		grepExpressionItems.add(newItem().style(getGrepStyle(Color.ORANGE, null)).grepExpression(".*ERROR.*"));
+		grepExpressionItems.add(newItem().style(getGrepStyle(Color.YELLOW, null)).grepExpression(".*WARN.*"));
 		return grepExpressionItems;
 	}
 
@@ -45,11 +45,6 @@ public class PluginState extends DomainObject implements Cloneable {
 			grepStyle = grepStyle.foregroundColor(new GrepColor(true, foreground));
 		}
 		return grepStyle;
-	}
-
-	public Profile getProfile(ConsoleView consoleView) {
-		// todo determine profile somehow
-		return getDefaultProfile();
 	}
 
 	public Profile getDefaultProfile() {
@@ -94,5 +89,13 @@ public class PluginState extends DomainObject implements Cloneable {
 		Cloner cloner = new Cloner();
 		cloner.nullInsteadOfClone();
 		return cloner.deepClone(this);
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(final boolean enabled) {
+		this.enabled = enabled;
 	}
 }

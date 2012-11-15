@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.*;
 
 import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.PluginState;
 
 import com.intellij.ui.table.TableView;
@@ -20,6 +21,7 @@ public class SettingsDialog {
 	private JTable table;
 	private JButton addNewButton;
 	private JButton resetToDefaultButton;
+	private JCheckBox enableCheckBox;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 
@@ -35,7 +37,7 @@ public class SettingsDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SettingsDialog.this.settings.setProfiles(PluginState.createDefault());
-				model.setItems(SettingsDialog.this.settings.getDefaultProfile().getGrepExpressionItems());
+				model.setItems(getProfile().getGrepExpressionItems());
 			}
 		});
 	}
@@ -44,17 +46,19 @@ public class SettingsDialog {
 		return rootComponent;
 	}
 
-	public boolean isModified(PluginState settings) {
-		return !this.settings.equals(settings);
+	public PluginState getSettings() {
+		getData(getProfile());
+		return settings;
 	}
 
-	public PluginState getSettings() {
-		return settings;
+	private Profile getProfile() {
+		return settings.getDefaultProfile();
 	}
 
 	public void importFrom(PluginState settings) {
 		this.settings = settings;
-		model.setItems(settings.getDefaultProfile().getGrepExpressionItems());
+		model.setItems(getProfile().getGrepExpressionItems());
+		setData(settings.getDefaultProfile());
 	}
 
 	private void createUIComponents() {
@@ -99,11 +103,30 @@ public class SettingsDialog {
 			}
 		});
 
-		List<GrepExpressionItem> grepExpressionItems = settings.getDefaultProfile().getGrepExpressionItems();
+		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
 		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),
 				grepExpressionItems, 0);
 		table = new TableView<GrepExpressionItem>(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
+	public boolean isSettingsModified(PluginState data) {
+		getData(getProfile());
+		return !this.settings.equals(data);
+
+	}
+
+	public void setData(Profile data) {
+		enableCheckBox.setSelected(data.isEnabled());
+	}
+
+	public void getData(Profile data) {
+		data.setEnabled(enableCheckBox.isSelected());
+	}
+
+	public boolean isModified(Profile data) {
+		if (enableCheckBox.isSelected() != data.isEnabled())
+			return true;
+		return false;
+	}
 }

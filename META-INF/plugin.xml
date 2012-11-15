@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>0.1</version>
+	<version>0.3</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -14,17 +14,17 @@
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>.
-			<br>
-			<br>
-			Note: Development is far from over, many new functions will be added. Also changes 
-			in IntelliJ API will be needed to support it fully
-			because not all consoles are extensible and no extension points exist.<br>
-			It should currently work for at least Run/Debug of Java applications (not unit tests).
 			
 			
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>0.3 (2012-11-15)
+        <br>- supports all consoles
+        <br>- fixed persisting
+        <br>- removed automatic padding of .* into expressions
+        <br>0.2 (2012-11-14)
+        <br>- temporarily disabled settings persisting 
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
@@ -47,6 +47,9 @@
 
 	<project-components>
 		<!-- Add your project components here -->
+		<component>
+			<implementation-class>krasa.grepconsole.plugin.GrepProjectComponent</implementation-class>
+		</component>
 	</project-components>
 
 	<actions>
@@ -54,7 +57,8 @@
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<consoleActionsPostProcessor implementation="krasa.grepconsole.plugin.GrepConsoleActionsPostProcessor"/>
+		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
+		<consoleFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
 
 		<!-- Add your extensions here -->
 	</extensions>

@@ -1,7 +1,9 @@
-package krasa.grepconsole.plugin;
+package krasa.grepconsole.integration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import krasa.grepconsole.plugin.OpenSettingsAction;
 
 import org.jetbrains.annotations.NotNull;
 
