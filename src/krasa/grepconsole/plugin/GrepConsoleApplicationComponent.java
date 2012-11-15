@@ -6,7 +6,7 @@ import java.util.Map;
 import javax.swing.*;
 
 import krasa.grepconsole.Cache;
-import krasa.grepconsole.GrepFilter;
+import krasa.grepconsole.GrepFilterService;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
 
@@ -30,7 +30,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	private SettingsDialog form;
 	private PluginState settings;
-	private Map<Project, GrepFilter> cache = new HashMap<Project, GrepFilter>();
+	private Map<Project, GrepFilterService> cache = new HashMap<Project, GrepFilterService>();
 
 	public GrepConsoleApplicationComponent() {
 	}
@@ -82,7 +82,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public void apply() throws ConfigurationException {
 		Cache.reset();
 		settings = form.getSettings().clone();
-		for (GrepFilter listener : cache.values()) {
+		for (GrepFilterService listener : cache.values()) {
 			listener.onChange();
 		}
 	}
@@ -117,10 +117,10 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		cache.remove(project);
 	}
 
-	public GrepFilter getGrepFilter(Project project) {
-		GrepFilter grepFilter = cache.get(project);
+	public GrepFilterService getGrepFilter(Project project) {
+		GrepFilterService grepFilter = cache.get(project);
 		if (grepFilter == null) {
-			grepFilter = new GrepFilter(project);
+			grepFilter = new GrepFilterService(project);
 		}
 		cache.put(project, grepFilter);
 		// warm up

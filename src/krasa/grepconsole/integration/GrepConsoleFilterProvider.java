@@ -1,6 +1,6 @@
 package krasa.grepconsole.integration;
 
-import krasa.grepconsole.GrepFilter;
+import krasa.grepconsole.GrepFilterService;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
 import org.jetbrains.annotations.NotNull;
@@ -15,7 +15,7 @@ public class GrepConsoleFilterProvider implements ConsoleFilterProvider {
 	@Override
 	public Filter[] getDefaultFilters(@NotNull Project project) {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
-		GrepFilter grepFilter = applicationComponent.getGrepFilter(project);
+		GrepFilterService grepFilter = applicationComponent.getGrepFilter(project);
 		return new Filter[] { grepFilter };
 	}
 }

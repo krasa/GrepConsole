@@ -13,19 +13,19 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 
-public class GrepFilter implements Filter {
+public class GrepFilterService implements Filter {
 
 	protected Project project;
 	private Profile profile;
 	private List<ConsoleTextDecorator> consoleTextDecorators;
 
-	public GrepFilter(Project project) {
+	public GrepFilterService(Project project) {
 		this.project = project;
 		profile = GrepConsoleApplicationComponent.getInstance().getProfile(project);
 		initDecorators();
 	}
 
-	public GrepFilter(Profile profile, List<ConsoleTextDecorator> consoleTextDecorators) {
+	public GrepFilterService(Profile profile, List<ConsoleTextDecorator> consoleTextDecorators) {
 		this.profile = profile;
 		this.consoleTextDecorators = consoleTextDecorators;
 	}

@@ -16,11 +16,12 @@ import org.junit.Test;
 
 import com.intellij.execution.filters.Filter;
 
-public class GrepFilterTest {
+public class GrepFilterServiceTest {
 
 	@Test
 	public void testNoDecorators() throws Exception {
-		GrepFilter grepConsoleService = new GrepFilter(new Profile(), new ArrayList<ConsoleTextDecorator>());
+		GrepFilterService grepConsoleService = new GrepFilterService(new Profile(),
+				new ArrayList<ConsoleTextDecorator>());
 		Filter.Result result = grepConsoleService.applyFilter("input", 10);
 
 		assertNull(result);
@@ -34,7 +35,7 @@ public class GrepFilterTest {
 				new GrepStyle().backgroundColor(new GrepColor(Color.RED)))));
 		consoleTextDecorators.add(new ConsoleTextDecorator(new GrepExpressionItem().grepExpression(".*INFO.*").style(
 				new GrepStyle().backgroundColor(new GrepColor(Color.BLUE)))));
-		GrepFilter grepFilter = new GrepFilter(new Profile(), consoleTextDecorators);
+		GrepFilterService grepFilter = new GrepFilterService(new Profile(), consoleTextDecorators);
 
 		assertNull(grepFilter.applyFilter("[WARN]", 10));
 
