@@ -2,13 +2,13 @@ package krasa.grepconsole;
 
 import com.intellij.openapi.editor.markup.TextAttributes;
 
-public class DecoratorState {
+public class FilterState {
 
 	private String line;
 	private Operation nextOperation = Operation.CONTINUE_MATCHING;
 	protected TextAttributes textAttributes;
 
-	public DecoratorState(String line) {
+	public FilterState(String line) {
 		this.line = line;
 	}
 

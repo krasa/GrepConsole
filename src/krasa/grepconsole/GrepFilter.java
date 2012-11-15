@@ -7,15 +7,15 @@ import krasa.grepconsole.model.GrepExpressionItem;
 
 import org.apache.commons.lang.StringUtils;
 
-public class ConsoleTextDecorator {
+public class GrepFilter {
 
 	private GrepExpressionItem grepExpressionItem;
 
-	public ConsoleTextDecorator(GrepExpressionItem grepExpressionItem) {
+	public GrepFilter(GrepExpressionItem grepExpressionItem) {
 		this.grepExpressionItem = grepExpressionItem;
 	}
 
-	public DecoratorState process(DecoratorState flow) {
+	public FilterState process(FilterState flow) {
 		if (!StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
 			String matchedLine = flow.getLine();
 

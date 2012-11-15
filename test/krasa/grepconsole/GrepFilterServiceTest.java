@@ -20,8 +20,7 @@ public class GrepFilterServiceTest {
 
 	@Test
 	public void testNoDecorators() throws Exception {
-		GrepFilterService grepConsoleService = new GrepFilterService(new Profile(),
-				new ArrayList<ConsoleTextDecorator>());
+		GrepFilterService grepConsoleService = new GrepFilterService(new Profile(), new ArrayList<GrepFilter>());
 		Filter.Result result = grepConsoleService.applyFilter("input", 10);
 
 		assertNull(result);
@@ -29,13 +28,13 @@ public class GrepFilterServiceTest {
 
 	@Test
 	public void testDecorators() throws Exception {
-		ArrayList<ConsoleTextDecorator> consoleTextDecorators = new ArrayList<ConsoleTextDecorator>();
+		ArrayList<GrepFilter> grepFilters = new ArrayList<GrepFilter>();
 
-		consoleTextDecorators.add(new ConsoleTextDecorator(new GrepExpressionItem().grepExpression(".*ERROR.*").style(
+		grepFilters.add(new GrepFilter(new GrepExpressionItem().grepExpression(".*ERROR.*").style(
 				new GrepStyle().backgroundColor(new GrepColor(Color.RED)))));
-		consoleTextDecorators.add(new ConsoleTextDecorator(new GrepExpressionItem().grepExpression(".*INFO.*").style(
+		grepFilters.add(new GrepFilter(new GrepExpressionItem().grepExpression(".*INFO.*").style(
 				new GrepStyle().backgroundColor(new GrepColor(Color.BLUE)))));
-		GrepFilterService grepFilter = new GrepFilterService(new Profile(), consoleTextDecorators);
+		GrepFilterService grepFilter = new GrepFilterService(new Profile(), grepFilters);
 
 		assertNull(grepFilter.applyFilter("[WARN]", 10));
 

@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import krasa.grepconsole.Cache;
-import krasa.grepconsole.ConsoleTextDecorator;
+import krasa.grepconsole.GrepFilter;
 import krasa.grepconsole.Operation;
 
 import org.apache.commons.lang.StringUtils;
@@ -119,8 +119,8 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		}
 	}
 
-	public ConsoleTextDecorator createDecorator() {
-		return new ConsoleTextDecorator(this);
+	public GrepFilter createDecorator() {
+		return new GrepFilter(this);
 	}
 
 	public GrepExpressionItem grepExpression(final String grepExpression) {

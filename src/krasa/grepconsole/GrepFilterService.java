@@ -17,7 +17,7 @@ public class GrepFilterService implements Filter {
 
 	protected Project project;
 	private Profile profile;
-	private List<ConsoleTextDecorator> consoleTextDecorators;
+	private List<GrepFilter> grepFilters;
 
 	public GrepFilterService(Project project) {
 		this.project = project;
@@ -25,9 +25,9 @@ public class GrepFilterService implements Filter {
 		initDecorators();
 	}
 
-	public GrepFilterService(Profile profile, List<ConsoleTextDecorator> consoleTextDecorators) {
+	public GrepFilterService(Profile profile, List<GrepFilter> grepFilters) {
 		this.profile = profile;
-		this.consoleTextDecorators = consoleTextDecorators;
+		this.grepFilters = grepFilters;
 	}
 
 	@Nullable
@@ -35,9 +35,9 @@ public class GrepFilterService implements Filter {
 	public Result applyFilter(String line, int entireLength) {
 		Result result = null;
 		if (profile.isEnabled()) {
-			DecoratorState state = new DecoratorState(line.substring(0, line.length() - 1));
-			FLOW: for (ConsoleTextDecorator consoleTextDecorator : getConsoleTextDecorators()) {
-				state = consoleTextDecorator.process(state);
+			FilterState state = new FilterState(line.substring(0, line.length() - 1));
+			FLOW: for (GrepFilter grepFilter : getGrepFilters()) {
+				state = grepFilter.process(state);
 				switch (state.getNextOperation()) {
 				case PRINT_IMMEDIATELY:
 					break FLOW;
@@ -54,14 +54,14 @@ public class GrepFilterService implements Filter {
 	}
 
 	private void initDecorators() {
-		consoleTextDecorators = new ArrayList<ConsoleTextDecorator>();
+		grepFilters = new ArrayList<GrepFilter>();
 		for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
-			consoleTextDecorators.add(grepExpressionItem.createDecorator());
+			grepFilters.add(grepExpressionItem.createDecorator());
 		}
 	}
 
-	private List<ConsoleTextDecorator> getConsoleTextDecorators() {
-		return consoleTextDecorators;
+	private List<GrepFilter> getGrepFilters() {
+		return grepFilters;
 	}
 
 	public void onChange() {

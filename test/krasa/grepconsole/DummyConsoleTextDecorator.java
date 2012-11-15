@@ -2,13 +2,13 @@ package krasa.grepconsole;
 
 import krasa.grepconsole.model.GrepExpressionItem;
 
-public class DummyConsoleTextDecorator extends ConsoleTextDecorator {
+public class DummyConsoleTextDecorator extends GrepFilter {
 	public DummyConsoleTextDecorator(GrepExpressionItem grepExpressionItem) {
 		super(grepExpressionItem);
 	}
 
 	@Override
-	public DecoratorState process(DecoratorState flow) {
+	public FilterState process(FilterState flow) {
 		return flow;
 	}
 }
