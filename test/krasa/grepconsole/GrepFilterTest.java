@@ -62,6 +62,17 @@ public class GrepFilterTest {
 
 	}
 
+	@Test
+	public void testNoGrepExpression() throws Exception {
+
+		GrepFilter grepFilter = new GrepFilter(new GrepExpressionItem());
+		FilterState process = grepFilter.process(new FilterState(LINE_FOO));
+		// unless matched = no match
+		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
+		assertEquals(null, process.getTextAttributes());
+		assertEquals(LINE_FOO, process.getLine());
+	}
+
 	private GrepExpressionItem getGrepExpressionItem() {
 		return new GrepExpressionItem().style(new GrepStyle().backgroundColor(new GrepColor(true, Color.RED))).grepExpression(
 				".*ERROR.*").unlessGrepExpression(".*foo.*");

@@ -7,7 +7,10 @@ import krasa.grepconsole.model.GrepExpressionItem;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.intellij.openapi.diagnostic.Logger;
+
 public class GrepFilter {
+	private static final Logger log = Logger.getInstance(GrepFilter.class.getName());
 
 	private GrepExpressionItem grepExpressionItem;
 
@@ -28,7 +31,12 @@ public class GrepFilter {
 	}
 
 	private boolean matches(String matchedLine) {
-		return grepExpressionItem.getPattern().matcher(matchedLine).matches();
+		Pattern pattern = grepExpressionItem.getPattern();
+		boolean matches = false;
+		if (pattern != null) {
+			matches = pattern.matcher(matchedLine).matches();
+		}
+		return matches;
 	}
 
 	private boolean matchesUnless(String matchedLine) {

@@ -22,7 +22,7 @@ public class GrepFilterService implements Filter {
 	public GrepFilterService(Project project) {
 		this.project = project;
 		profile = GrepConsoleApplicationComponent.getInstance().getProfile(project);
-		initDecorators();
+		initFilters();
 	}
 
 	public GrepFilterService(Profile profile, List<GrepFilter> grepFilters) {
@@ -35,7 +35,7 @@ public class GrepFilterService implements Filter {
 	public Result applyFilter(String line, int entireLength) {
 		Result result = null;
 		if (profile.isEnabled()) {
-			FilterState state = new FilterState(line.substring(0, line.length() - 1));
+			FilterState state = new FilterState(getSubstring(line));
 			FLOW: for (GrepFilter grepFilter : getGrepFilters()) {
 				state = grepFilter.process(state);
 				switch (state.getNextOperation()) {
@@ -45,18 +45,32 @@ public class GrepFilterService implements Filter {
 					break;
 				}
 			}
-			TextAttributes textAttributes = state.getTextAttributes();
-			if (textAttributes != null) {
-				result = new Result(entireLength - line.length(), entireLength, null, textAttributes);
-			}
+			result = prepareResult(line, entireLength, state);
 		}
 		return result;
 	}
 
-	private void initDecorators() {
+	private Result prepareResult(String line, int entireLength, FilterState state) {
+		Result result = null;
+		TextAttributes textAttributes = state.getTextAttributes();
+		if (textAttributes != null) {
+			result = new Result(entireLength - line.length(), entireLength, null, textAttributes);
+		}
+		return result;
+	}
+
+	private String getSubstring(String line) {
+		int endIndex = line.length() - 1;
+		if (profile.isEnableMaxLengthLimit()) {
+			endIndex = Math.min(endIndex, profile.getMaxLengthToMatch());
+		}
+		return line.substring(0, endIndex);
+	}
+
+	private void initFilters() {
 		grepFilters = new ArrayList<GrepFilter>();
 		for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
-			grepFilters.add(grepExpressionItem.createDecorator());
+			grepFilters.add(grepExpressionItem.createFilter());
 		}
 	}
 
@@ -66,7 +80,7 @@ public class GrepFilterService implements Filter {
 
 	public void onChange() {
 		profile = refreshProfile();
-		initDecorators();
+		initFilters();
 	}
 
 	private Profile refreshProfile() {
@@ -76,6 +90,6 @@ public class GrepFilterService implements Filter {
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
-		initDecorators();
+		initFilters();
 	}
 }

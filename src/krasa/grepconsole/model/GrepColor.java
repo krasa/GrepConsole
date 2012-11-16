@@ -12,6 +12,7 @@ public class GrepColor extends DomainObject {
 		this.enabled = enabled;
 		if (color == null) {
 			color = Color.BLACK;
+			this.enabled = false;
 		}
 		this.color = color.getRGB();
 	}

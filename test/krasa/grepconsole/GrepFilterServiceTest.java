@@ -19,21 +19,17 @@ import com.intellij.execution.filters.Filter;
 public class GrepFilterServiceTest {
 
 	@Test
-	public void testNoDecorators() throws Exception {
+	public void testWithoutFilters() throws Exception {
 		GrepFilterService grepConsoleService = new GrepFilterService(new Profile(), new ArrayList<GrepFilter>());
 		Filter.Result result = grepConsoleService.applyFilter("input", 10);
-
 		assertNull(result);
 	}
 
 	@Test
-	public void testDecorators() throws Exception {
+	public void testWithFilters() throws Exception {
 		ArrayList<GrepFilter> grepFilters = new ArrayList<GrepFilter>();
-
-		grepFilters.add(new GrepFilter(new GrepExpressionItem().grepExpression(".*ERROR.*").style(
-				new GrepStyle().backgroundColor(new GrepColor(Color.RED)))));
-		grepFilters.add(new GrepFilter(new GrepExpressionItem().grepExpression(".*INFO.*").style(
-				new GrepStyle().backgroundColor(new GrepColor(Color.BLUE)))));
+		grepFilters.add(getFilter(".*ERROR.*", Color.RED));
+		grepFilters.add(getFilter(".*INFO.*", Color.BLUE));
 		GrepFilterService grepFilter = new GrepFilterService(new Profile(), grepFilters);
 
 		assertNull(grepFilter.applyFilter("[WARN]", 10));
@@ -45,10 +41,15 @@ public class GrepFilterServiceTest {
 		assertNull(result.highlightAttributes.getErrorStripeColor());
 		assertNull(result.highlightAttributes.getForegroundColor());
 
-		Filter.Result result1 = grepFilter.applyFilter("[INFO]", 10);
-		assertNotNull(result1);
-		assertEquals(Color.BLUE, result1.highlightAttributes.getBackgroundColor());
+		result = grepFilter.applyFilter("[INFO]", 10);
+		assertNotNull(result);
+		assertEquals(Color.BLUE, result.highlightAttributes.getBackgroundColor());
 
+	}
+
+	private GrepFilter getFilter(String grepExpression, Color red) {
+		return new GrepFilter(new GrepExpressionItem().grepExpression(grepExpression).style(
+				new GrepStyle().backgroundColor(new GrepColor(red))));
 	}
 
 }

@@ -9,6 +9,8 @@ public class Profile extends DomainObject {
 	private boolean defaultProfile;
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
 	private boolean enabled = true;
+	private Integer maxLengthToMatch = 100;
+	private boolean enableMaxLengthLimit = true;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -44,5 +46,21 @@ public class Profile extends DomainObject {
 
 	public void setEnabled(final boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	public Integer getMaxLengthToMatch() {
+		return maxLengthToMatch;
+	}
+
+	public void setMaxLengthToMatch(final Integer maxLengthToMatch) {
+		this.maxLengthToMatch = maxLengthToMatch;
+	}
+
+	public boolean isEnableMaxLengthLimit() {
+		return enableMaxLengthLimit;
+	}
+
+	public void setEnableMaxLengthLimit(final boolean enableMaxLengthLimit) {
+		this.enableMaxLengthLimit = enableMaxLengthLimit;
 	}
 }

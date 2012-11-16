@@ -6,15 +6,17 @@ import javax.swing.table.TableCellRenderer;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.util.ui.ColumnInfo;
-
-public abstract class ButtonColumnInfo<Item> extends ColumnInfo<Item, Item> {
+public abstract class ButtonColumnInfo<Item> extends JavaBeanColumnInfo<Item, Item> {
 
 	private String label;
 
 	public ButtonColumnInfo(String name) {
-		super(null);
+		super(null, null);
 		label = name;
+	}
+
+	@Override
+	public void setValue(Item item, Item item2) {
 	}
 
 	@Nullable
@@ -47,7 +49,7 @@ public abstract class ButtonColumnInfo<Item> extends ColumnInfo<Item, Item> {
 	@Nullable
 	@Override
 	public TableCellRenderer getRenderer(Item aVoid) {
-		return new ButtonRenderer(){
+		return new ButtonRenderer() {
 			@Override
 			protected String getText(Object value) {
 				return label;

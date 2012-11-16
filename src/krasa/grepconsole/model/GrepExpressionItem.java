@@ -119,7 +119,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		}
 	}
 
-	public GrepFilter createDecorator() {
+	public GrepFilter createFilter() {
 		return new GrepFilter(this);
 	}
 

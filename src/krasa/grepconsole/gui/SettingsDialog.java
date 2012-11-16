@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.NumberFormatter;
 
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
@@ -22,15 +25,24 @@ public class SettingsDialog {
 	private JButton addNewButton;
 	private JButton resetToDefaultButton;
 	private JCheckBox enableCheckBox;
+	private JFormattedTextField maxLengthToMatch;
+	private JCheckBox enableMaxLength;
+	private JButton copyButton;
+	private JButton deleteButton;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
+	protected Integer selectedRow;
 
 	public SettingsDialog(PluginState settings) {
 		this.settings = settings;
 		addNewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				boolean selectNewRow = model.getRowCount() == 0;
 				model.addRow(new GrepExpressionItem());
+				if (selectNewRow) {
+					table.getSelectionModel().setSelectionInterval(0, 0);
+				}
 			}
 		});
 		resetToDefaultButton.addActionListener(new ActionListener() {
@@ -38,8 +50,53 @@ public class SettingsDialog {
 			public void actionPerformed(ActionEvent e) {
 				SettingsDialog.this.settings.setProfiles(PluginState.createDefault());
 				model.setItems(getProfile().getGrepExpressionItems());
+				disableCopyDeleteButton();
 			}
 		});
+		copyButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				GrepExpressionItem expressionItem = (GrepExpressionItem) new Cloner().deepClone(model.getItem(selectedRow));
+				expressionItem.generateNewId();
+				model.addRow(expressionItem);
+			}
+		});
+		deleteButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (selectedRow < model.getRowCount()) {
+					model.removeRow(selectedRow);
+					table.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
+					if (model.getRowCount() == 0) {
+						disableCopyDeleteButton();
+					}
+				}
+
+			}
+		});
+		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					Object source = e.getSource();
+					if (source instanceof DefaultListSelectionModel) {
+						setSelectedRow(((DefaultListSelectionModel) source).getLeadSelectionIndex());
+					}
+
+				}
+			}
+		});
+		disableCopyDeleteButton();
+	}
+
+	private void disableCopyDeleteButton() {
+		deleteButton.setEnabled(false);
+		copyButton.setEnabled(false);
+	}
+
+	private void setSelectedRow(Integer selectedRow) {
+		deleteButton.setEnabled(selectedRow != null);
+		copyButton.setEnabled(selectedRow != null);
+		this.selectedRow = selectedRow;
 	}
 
 	public JPanel getRootComponent() {
@@ -61,10 +118,19 @@ public class SettingsDialog {
 		setData(settings.getDefaultProfile());
 	}
 
+	public boolean isSettingsModified(PluginState data) {
+		getData(getProfile());
+		return !this.settings.equals(data);
+	}
+
 	private void createUIComponents() {
+		NumberFormatter numberFormatter = new NumberFormatter();
+		numberFormatter.setMinimum(0);
+		maxLengthToMatch = new JFormattedTextField(numberFormatter);
+		System.err.println("");
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
-		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression", "grepExpression"));
-		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression", "unlessGrepExpression"));
+		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression", "grepExpression").preferedStringValue("_____________________________________________"));
+		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression", "unlessGrepExpression").preferedStringValue("___________________________"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Case insensitive", "caseInsensitive"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Bold", "style.bold"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic", "style.italic"));
@@ -79,7 +145,7 @@ public class SettingsDialog {
 					table.setRowSelectionInterval(i - 1, i - 1);
 				}
 			}
-		});
+		}.width(50));
 		columns.add(new ButtonColumnInfo<GrepExpressionItem>("Down") {
 			@Override
 			void onButtonClicked(GrepExpressionItem grepExpressionItem) {
@@ -89,19 +155,7 @@ public class SettingsDialog {
 					table.setRowSelectionInterval(i + 1, i + 1);
 				}
 			}
-		});
-		columns.add(new ButtonColumnInfo<GrepExpressionItem>("Copy") {
-			@Override
-			void onButtonClicked(GrepExpressionItem grepExpressionItem) {
-				model.addRow((GrepExpressionItem) new Cloner().deepClone(grepExpressionItem).generateNewId());
-			}
-		});
-		columns.add(new ButtonColumnInfo<GrepExpressionItem>("Delete") {
-			@Override
-			void onButtonClicked(GrepExpressionItem grepExpressionItem) {
-				model.removeRow(model.indexOf(grepExpressionItem));
-			}
-		});
+		}.width(60));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
 		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),
@@ -110,22 +164,28 @@ public class SettingsDialog {
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 
-	public boolean isSettingsModified(PluginState data) {
-		getData(getProfile());
-		return !this.settings.equals(data);
-
-	}
-
 	public void setData(Profile data) {
 		enableCheckBox.setSelected(data.isEnabled());
+		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
+		maxLengthToMatch.setValue(data.getMaxLengthToMatch());
 	}
 
 	public void getData(Profile data) {
 		data.setEnabled(enableCheckBox.isSelected());
+		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
+		try {
+			data.setMaxLengthToMatch(Integer.valueOf(maxLengthToMatch.getText()));
+		} catch (NumberFormatException e) {
+		}
 	}
 
 	public boolean isModified(Profile data) {
 		if (enableCheckBox.isSelected() != data.isEnabled())
+			return true;
+		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
+			return true;
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
+				: data.getMaxLengthToMatch() != null)
 			return true;
 		return false;
 	}
