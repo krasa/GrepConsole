@@ -80,11 +80,12 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public void apply() throws ConfigurationException {
-		Cache.reset();
 		settings = form.getSettings().clone();
 		for (GrepFilterService listener : cache.values()) {
 			listener.onChange();
 		}
+		// todo this may not work properly, regenerate GrepExpressionItem id
+		Cache.reset();
 	}
 
 	public void reset() {
