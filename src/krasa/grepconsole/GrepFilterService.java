@@ -7,6 +7,7 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.filters.Filter;
@@ -34,7 +35,8 @@ public class GrepFilterService implements Filter {
 	@Override
 	public Result applyFilter(String line, int entireLength) {
 		Result result = null;
-		if (profile.isEnabled()) {
+		// line can be empty sometimes under heavy load
+		if (profile.isEnabled() && !StringUtils.isEmpty(line)) {
 			FilterState state = new FilterState(getSubstring(line));
 			FLOW: for (GrepFilter grepFilter : getGrepFilters()) {
 				state = grepFilter.process(state);
