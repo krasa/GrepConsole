@@ -23,7 +23,6 @@ public class PluginState extends DomainObject implements Cloneable {
 		profile.setDefaultProfile(true);
 		profiles.add(profile);
 		profile.setGrepExpressionItems(createDefaultItems());
-
 		return profiles;
 	}
 
@@ -33,6 +32,7 @@ public class PluginState extends DomainObject implements Cloneable {
 		grepExpressionItems.add(newItem().style(getGrepStyle(Color.ORANGE, null)).grepExpression(".*ERROR.*"));
 		grepExpressionItems.add(newItem().style(getGrepStyle(Color.YELLOW, null)).grepExpression(".*WARN.*"));
 		grepExpressionItems.add(newItem().style(getGrepStyle(null, Color.GRAY)).grepExpression(".*DEBUG.*"));
+		grepExpressionItems.add(newItem().style(getGrepStyle(null, Color.LIGHT_GRAY)).grepExpression(".*TRACE.*"));
 		return grepExpressionItems;
 	}
 

@@ -1,4 +1,4 @@
-package krasa.grepconsole;
+package krasa.grepconsole.service;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -7,6 +7,7 @@ import static junit.framework.Assert.assertNull;
 import java.awt.*;
 import java.util.ArrayList;
 
+import krasa.grepconsole.GrepFilter;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
@@ -45,6 +46,15 @@ public class GrepFilterServiceTest {
 		assertNotNull(result);
 		assertEquals(Color.BLUE, result.highlightAttributes.getBackgroundColor());
 
+		testVariousText(grepFilter);
+	}
+
+	private void testVariousText(GrepFilterService grepFilter) {
+		grepFilter.applyFilter("[INFO]\n", 10);
+		grepFilter.applyFilter("\n", 10);
+		grepFilter.applyFilter("\n\n", 10);
+		grepFilter.applyFilter("", 10);
+		grepFilter.applyFilter(null, 10);
 	}
 
 	private GrepFilter getFilter(String grepExpression, Color red) {

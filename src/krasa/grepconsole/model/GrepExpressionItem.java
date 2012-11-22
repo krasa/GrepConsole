@@ -10,10 +10,13 @@ import krasa.grepconsole.Operation;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
+	private boolean enabled = true;
+	private boolean filterOut;
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
@@ -31,6 +34,22 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem(String id) {
 		super(id);
 
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
+	public boolean isFilterOut() {
+		return filterOut;
+	}
+
+	public void setFilterOut(boolean filterOut) {
+		this.filterOut = filterOut;
 	}
 
 	public String getGrepExpression() {
@@ -165,12 +184,13 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.operationOnMatch = operationOnMatch;
 	}
 
-	public TextAttributes getTextAttributes() {
+	public ConsoleViewContentType getTextAttributes() {
 		String cacheIdentifier = getId();
-		TextAttributes result = Cache.getInstance().get(cacheIdentifier);
+		ConsoleViewContentType result = Cache.getInstance().get(cacheIdentifier);
 		if (result == null) {
-			result = new TextAttributes();
-			style.applyTo(result);
+			TextAttributes textAttributes = new TextAttributes();
+			style.applyTo(textAttributes);
+			result = new ConsoleViewContentType(cacheIdentifier, textAttributes);
 			Cache.getInstance().put(cacheIdentifier, result);
 		}
 		return result;

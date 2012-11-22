@@ -19,12 +19,12 @@ public class GrepFilter {
 	}
 
 	public FilterState process(FilterState flow) {
-		if (!StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
-			String matchedLine = flow.getLine();
+		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
+			String matchedLine = flow.getText();
 
 			if (matches(matchedLine) && !matchesUnless(matchedLine)) {
-				flow.setTextAttributes(grepExpressionItem.getTextAttributes());
 				flow.setNextOperation(grepExpressionItem.getOperationOnMatch());
+				flow.setConsoleViewContentType(grepExpressionItem.getTextAttributes());
 			}
 		}
 		return flow;

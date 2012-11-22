@@ -6,15 +6,18 @@ import java.util.Map;
 import javax.swing.*;
 
 import krasa.grepconsole.Cache;
-import krasa.grepconsole.GrepFilterService;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.service.AbstractGrepFilterService;
+import krasa.grepconsole.service.GrepFilterService;
+import krasa.grepconsole.service.GrepInputFilterService;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -31,6 +34,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	private SettingsDialog form;
 	private PluginState settings;
 	private Map<Project, GrepFilterService> cache = new HashMap<Project, GrepFilterService>();
+	private Map<Project, GrepInputFilterService> cacheInput = new HashMap<Project, GrepInputFilterService>();
 
 	public GrepConsoleApplicationComponent() {
 	}
@@ -81,7 +85,10 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
-		for (GrepFilterService listener : cache.values()) {
+		for (AbstractGrepFilterService listener : cache.values()) {
+			listener.onChange();
+		}
+		for (AbstractGrepFilterService listener : cacheInput.values()) {
 			listener.onChange();
 		}
 		// todo this may not work properly, regenerate GrepExpressionItem id
@@ -111,11 +118,19 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public void changeProfile(Project project, Profile profile) {
-		cache.get(project).setProfile(profile);
+		GrepFilterService grepFilterService = cache.get(project);
+		if (grepFilterService != null) {
+			grepFilterService.setProfile(profile);
+		}
+		GrepInputFilterService grepInputFilterService = cacheInput.get(project);
+		if (grepInputFilterService != null) {
+			grepInputFilterService.setProfile(profile);
+		}
 	}
 
 	public void projectClosed(Project project) {
 		cache.remove(project);
+		cacheInput.remove(project);
 	}
 
 	public GrepFilterService getGrepFilter(Project project) {
@@ -131,5 +146,17 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public Profile getProfile(Project project) {
 		return getState().getDefaultProfile();
+	}
+
+	public GrepInputFilterService getGrepInputFilter(Project project) {
+		GrepInputFilterService grepFilter = cacheInput.get(project);
+		if (grepFilter == null) {
+			grepFilter = new GrepInputFilterService(project);
+		}
+		cacheInput.put(project, grepFilter);
+		// warm up
+		grepFilter.applyFilter("foo", ConsoleViewContentType.NORMAL_OUTPUT);
+
+		return grepFilter;
 	}
 }

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>0.7</version>
+	<version>1.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -19,6 +19,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>1.0 (2012-xx-xx)
+        <br>- input filtering
         <br>0.7 (2012-11-22)
         <br>- fixed color chooser checkbox
         <br>0.6 (2012-11-20)
@@ -40,7 +42,7 @@
 			]]>
 	</change-notes>
 
-	<idea-version since-build="100.000"/>
+	<idea-version since-build="125.000"/>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
@@ -67,7 +69,7 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
-		<!--<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>-->
+		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
 
 		<!-- Add your extensions here -->
 	</extensions>

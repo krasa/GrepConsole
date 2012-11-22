@@ -3,11 +3,11 @@ package krasa.grepconsole;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.execution.ui.ConsoleViewContentType;
 
 public class Cache {
 	protected static Cache instance;
-	private Map<String, TextAttributes> map = new HashMap<String, TextAttributes>();
+	private Map<String, ConsoleViewContentType> map = new HashMap<String, ConsoleViewContentType>();
 
 	public static Cache getInstance() {
 		if (instance == null) {
@@ -17,22 +17,22 @@ public class Cache {
 	}
 
 	public static void reset() {
-		getInstance().setMap(new HashMap<String, TextAttributes>());
+		getInstance().setMap(new HashMap<String, ConsoleViewContentType>());
 	}
 
-	public Map<String, TextAttributes> getMap() {
+	public Map<String, ConsoleViewContentType> getMap() {
 		return map;
 	}
 
-	public void setMap(Map<String, TextAttributes> map) {
+	public void setMap(Map<String, ConsoleViewContentType> map) {
 		this.map = map;
 	}
 
-	public TextAttributes get(String id) {
+	public ConsoleViewContentType get(String id) {
 		return map.get(id);
 	}
 
-	public void put(String id, TextAttributes result) {
+	public void put(String id, ConsoleViewContentType result) {
 		map.put(id, result);
 	}
 
