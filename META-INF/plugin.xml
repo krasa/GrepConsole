@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>0.6</version>
+	<version>0.7</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -19,6 +19,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>0.7 (2012-11-22)
+        <br>- fixed color chooser checkbox
         <br>0.6 (2012-11-20)
         <br>- fixed exception occurring under heavy load
         <br>0.5 (2012-11-20)
@@ -65,6 +67,7 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
+		<!--<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>-->
 
 		<!-- Add your extensions here -->
 	</extensions>
