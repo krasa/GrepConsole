@@ -62,7 +62,6 @@ public class GrepFilterService implements Filter {
 	}
 
 	private String getSubstring(String line) {
-		// todo i wonder if \n is used on all platforms
 		int endIndex = line.length() - 1;
 		if (profile.isEnableMaxLengthLimit()) {
 			endIndex = Math.min(endIndex, profile.getMaxLengthToMatch());
