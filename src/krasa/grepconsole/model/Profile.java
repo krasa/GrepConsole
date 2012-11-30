@@ -8,7 +8,8 @@ public class Profile extends DomainObject {
 	private long id;
 	private boolean defaultProfile;
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
-	private boolean enabled = true;
+	private boolean enabledHighlighting = true;
+	private boolean enabledFiltering = true;
 	private Integer maxLengthToMatch = 100;
 	private boolean enableMaxLengthLimit = true;
 
@@ -40,12 +41,12 @@ public class Profile extends DomainObject {
 		this.grepExpressionItems = grepExpressionItems;
 	}
 
-	public boolean isEnabled() {
-		return enabled;
+	public boolean isEnabledHighlighting() {
+		return enabledHighlighting;
 	}
 
-	public void setEnabled(final boolean enabled) {
-		this.enabled = enabled;
+	public void setEnabledHighlighting(final boolean enabledHighlighting) {
+		this.enabledHighlighting = enabledHighlighting;
 	}
 
 	public Integer getMaxLengthToMatch() {
@@ -62,5 +63,13 @@ public class Profile extends DomainObject {
 
 	public void setEnableMaxLengthLimit(final boolean enableMaxLengthLimit) {
 		this.enableMaxLengthLimit = enableMaxLengthLimit;
+	}
+
+	public boolean isEnabledFiltering() {
+		return enabledFiltering;
+	}
+
+	public void setEnabledFiltering(boolean enabledFiltering) {
+		this.enabledFiltering = enabledFiltering;
 	}
 }

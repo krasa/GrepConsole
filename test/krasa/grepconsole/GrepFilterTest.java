@@ -11,7 +11,7 @@ import krasa.grepconsole.model.GrepStyle;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.execution.ui.ConsoleViewContentType;
 
 public class GrepFilterTest {
 
@@ -44,8 +44,8 @@ public class GrepFilterTest {
 		// matched
 		FilterState process = grepFilter.process(getInput(LINE));
 		assertEquals(Operation.PRINT_IMMEDIATELY, process.getNextOperation());
-		assertEquals(getTextAttributesFromCache(grepExpressionItem), process.getTextAttributes());
-		assertEquals(LINE, process.getLine());
+		assertEquals(getTextAttributesFromCache(grepExpressionItem), process.getConsoleViewContentType());
+		assertEquals(LINE, process.getText());
 
 	}
 
@@ -57,8 +57,8 @@ public class GrepFilterTest {
 		FilterState process = grepFilter.process(new FilterState(LINE_FOO));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
-		assertEquals(null, process.getTextAttributes());
-		assertEquals(LINE_FOO, process.getLine());
+		assertEquals(null, process.getConsoleViewContentType());
+		assertEquals(LINE_FOO, process.getText());
 
 	}
 
@@ -69,8 +69,8 @@ public class GrepFilterTest {
 		FilterState process = grepFilter.process(new FilterState(LINE_FOO));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
-		assertEquals(null, process.getTextAttributes());
-		assertEquals(LINE_FOO, process.getLine());
+		assertEquals(null, process.getConsoleViewContentType());
+		assertEquals(LINE_FOO, process.getText());
 	}
 
 	private GrepExpressionItem getGrepExpressionItem() {
@@ -78,7 +78,7 @@ public class GrepFilterTest {
 				".*ERROR.*").unlessGrepExpression(".*foo.*");
 	}
 
-	private TextAttributes getTextAttributesFromCache(GrepExpressionItem grepExpressionItem) {
+	private ConsoleViewContentType getTextAttributesFromCache(GrepExpressionItem grepExpressionItem) {
 		return Cache.getInstance().getMap().get(getCacheId(grepExpressionItem));
 	}
 
@@ -92,6 +92,6 @@ public class GrepFilterTest {
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {
 		assertEquals(1, Cache.getInstance().getMap().size());
-		assertEquals(process.getTextAttributes(), getTextAttributesFromCache(grepExpressionItem));
+		assertEquals(process.getConsoleViewContentType(), getTextAttributesFromCache(grepExpressionItem));
 	}
 }
