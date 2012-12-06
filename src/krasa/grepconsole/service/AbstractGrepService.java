@@ -1,9 +1,11 @@
 package krasa.grepconsole.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import krasa.grepconsole.FilterState;
 import krasa.grepconsole.GrepFilter;
+import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
@@ -11,19 +13,19 @@ import org.apache.commons.lang.StringUtils;
 
 import com.intellij.openapi.project.Project;
 
-public abstract class AbstractGrepFilterService<T> {
+public abstract class AbstractGrepService<T> {
 
 	protected Project project;
 	protected Profile profile;
 	protected List<GrepFilter> grepFilters;
 
-	public AbstractGrepFilterService(Project project) {
+	public AbstractGrepService(Project project) {
 		this.project = project;
 		profile = GrepConsoleApplicationComponent.getInstance().getProfile(project);
 		initFilters();
 	}
 
-	public AbstractGrepFilterService(Profile profile, List<GrepFilter> grepFilters) {
+	public AbstractGrepService(Profile profile, List<GrepFilter> grepFilters) {
 		this.profile = profile;
 		this.grepFilters = grepFilters;
 	}
@@ -33,10 +35,10 @@ public abstract class AbstractGrepFilterService<T> {
 		if (!StringUtils.isEmpty(text)) {
 			FilterState state = null;
 			state = new FilterState(getSubstring(text));
-			for (GrepFilter grepFilter : getGrepFilters()) {
+			for (GrepFilter grepFilter : grepFilters) {
 				state = grepFilter.process(state);
 				switch (state.getNextOperation()) {
-				case PRINT_IMMEDIATELY:
+				case EXIT:
 					return state;
 				case CONTINUE_MATCHING:
 					break;
@@ -58,11 +60,16 @@ public abstract class AbstractGrepFilterService<T> {
 		return text.substring(0, endIndex);
 	}
 
-	protected abstract void initFilters();
-
-	private List<GrepFilter> getGrepFilters() {
-		return grepFilters;
+	protected void initFilters() {
+		grepFilters = new ArrayList<GrepFilter>();
+		for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
+			if (shouldAdd(grepExpressionItem)) {
+				grepFilters.add(grepExpressionItem.createFilter());
+			}
+		}
 	}
+
+	abstract protected boolean shouldAdd(GrepExpressionItem item);
 
 	public void onChange() {
 		profile = refreshProfile();

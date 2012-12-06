@@ -21,6 +21,7 @@
 	<change-notes><![CDATA[
         <br>1.0 (2012-xx-xx)
         <br>- input filtering
+        <br>- improved highlighting for stacktraces
         <br>0.7 (2012-11-22)
         <br>- fixed color chooser checkbox
         <br>0.6 (2012-11-20)
@@ -68,7 +69,7 @@
 
 	<extensions defaultExtensionNs="com.intellij">
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
-		<consoleFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
+		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
 		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
 
 		<!-- Add your extensions here -->

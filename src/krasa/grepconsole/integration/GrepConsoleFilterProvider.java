@@ -14,6 +14,6 @@ public class GrepConsoleFilterProvider implements ConsoleFilterProvider {
 	@Override
 	public Filter[] getDefaultFilters(@NotNull Project project) {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
-		return new Filter[] { applicationComponent.getGrepFilter(project) };
+		return new Filter[] { applicationComponent.getHighlightService(project) };
 	}
 }

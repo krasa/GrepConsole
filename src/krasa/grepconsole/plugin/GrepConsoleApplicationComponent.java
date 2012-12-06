@@ -8,8 +8,8 @@ import javax.swing.*;
 import krasa.grepconsole.Cache;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.service.AbstractGrepFilterService;
-import krasa.grepconsole.service.GrepFilterService;
+import krasa.grepconsole.service.AbstractGrepService;
+import krasa.grepconsole.service.GrepHighlightService;
 import krasa.grepconsole.service.GrepInputFilterService;
 
 import org.jetbrains.annotations.Nls;
@@ -17,7 +17,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -33,7 +32,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	private SettingsDialog form;
 	private PluginState settings;
-	private Map<Project, GrepFilterService> cache = new HashMap<Project, GrepFilterService>();
+	private Map<Project, GrepHighlightService> cache = new HashMap<Project, GrepHighlightService>();
 	private Map<Project, GrepInputFilterService> cacheInput = new HashMap<Project, GrepInputFilterService>();
 
 	public GrepConsoleApplicationComponent() {
@@ -85,10 +84,10 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
-		for (AbstractGrepFilterService listener : cache.values()) {
+		for (AbstractGrepService listener : cache.values()) {
 			listener.onChange();
 		}
-		for (AbstractGrepFilterService listener : cacheInput.values()) {
+		for (AbstractGrepService listener : cacheInput.values()) {
 			listener.onChange();
 		}
 		// todo this may not work properly, regenerate GrepExpressionItem id
@@ -105,6 +104,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		form = null;
 	}
 
+	@NotNull
 	public PluginState getState() {
 		if (settings == null) {
 			settings = new PluginState();
@@ -118,9 +118,9 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public void changeProfile(Project project, Profile profile) {
-		GrepFilterService grepFilterService = cache.get(project);
-		if (grepFilterService != null) {
-			grepFilterService.setProfile(profile);
+		GrepHighlightService grepHighlightService = cache.get(project);
+		if (grepHighlightService != null) {
+			grepHighlightService.setProfile(profile);
 		}
 		GrepInputFilterService grepInputFilterService = cacheInput.get(project);
 		if (grepInputFilterService != null) {
@@ -133,30 +133,25 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		cacheInput.remove(project);
 	}
 
-	public GrepFilterService getGrepFilter(Project project) {
-		GrepFilterService grepFilter = cache.get(project);
-		if (grepFilter == null) {
-			grepFilter = new GrepFilterService(project);
-		}
-		cache.put(project, grepFilter);
-		// warm up
-		grepFilter.applyFilter("foo", 3);
-		return grepFilter;
-	}
-
 	public Profile getProfile(Project project) {
 		return getState().getDefaultProfile();
 	}
 
-	public GrepInputFilterService getGrepInputFilter(Project project) {
-		GrepInputFilterService grepFilter = cacheInput.get(project);
-		if (grepFilter == null) {
-			grepFilter = new GrepInputFilterService(project);
+	public GrepInputFilterService getInputFilterService(Project project) {
+		GrepInputFilterService service = cacheInput.get(project);
+		if (service == null) {
+			service = new GrepInputFilterService(project);
 		}
-		cacheInput.put(project, grepFilter);
-		// warm up
-		grepFilter.applyFilter("foo", ConsoleViewContentType.NORMAL_OUTPUT);
+		cacheInput.put(project, service);
+		return service;
+	}
 
-		return grepFilter;
+	public GrepHighlightService getHighlightService(Project project) {
+		GrepHighlightService service = cache.get(project);
+		if (service == null) {
+			service = new GrepHighlightService(project);
+		}
+		cache.put(project, service);
+		return service;
 	}
 }

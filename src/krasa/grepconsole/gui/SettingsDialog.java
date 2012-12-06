@@ -132,7 +132,7 @@ public class SettingsDialog {
 		System.err.println("");
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Enabled", "enabled"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Filter out", "filterOut"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Filter out", "inputFilter"));
 		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression", "grepExpression").preferedStringValue("_____________________________________________"));
 		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression", "unlessGrepExpression").preferedStringValue("___________________________"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Case insensitive", "caseInsensitive"));
@@ -169,14 +169,14 @@ public class SettingsDialog {
 	}
 
 	public void setData(Profile data) {
-		enableFiltering.setSelected(data.isEnabledFiltering());
+		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		maxLengthToMatch.setValue(data.getMaxLengthToMatch());
 	}
 
 	public void getData(Profile data) {
-		data.setEnabledFiltering(enableFiltering.isSelected());
+		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		try {

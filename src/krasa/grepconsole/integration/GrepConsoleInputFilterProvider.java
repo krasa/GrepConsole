@@ -14,6 +14,6 @@ public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvide
 	@Override
 	public InputFilter[] getDefaultFilters(@NotNull Project project) {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
-		return new InputFilter[] { applicationComponent.getGrepInputFilter(project) };
+		return new InputFilter[] { applicationComponent.getInputFilterService(project) };
 	}
 }

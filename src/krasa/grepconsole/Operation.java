@@ -1,6 +1,6 @@
 package krasa.grepconsole;
 
 public enum Operation {
-	PRINT_IMMEDIATELY,
+	EXIT,
 	CONTINUE_MATCHING,
 }

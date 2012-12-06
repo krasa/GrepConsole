@@ -3,14 +3,13 @@ package krasa.grepconsole.model;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Profile extends DomainObject {
 	private long id;
 	private boolean defaultProfile;
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
 	private boolean enabledHighlighting = true;
-	private boolean enabledFiltering = true;
-	private Integer maxLengthToMatch = 100;
+	private boolean enabledInputFiltering = true;
+	private Integer maxLengthToMatch = 40;
 	private boolean enableMaxLengthLimit = true;
 
 	public Profile() {
@@ -65,11 +64,11 @@ public class Profile extends DomainObject {
 		this.enableMaxLengthLimit = enableMaxLengthLimit;
 	}
 
-	public boolean isEnabledFiltering() {
-		return enabledFiltering;
+	public boolean isEnabledInputFiltering() {
+		return enabledInputFiltering;
 	}
 
-	public void setEnabledFiltering(boolean enabledFiltering) {
-		this.enabledFiltering = enabledFiltering;
+	public void setEnabledInputFiltering(boolean enabledInputFiltering) {
+		this.enabledInputFiltering = enabledInputFiltering;
 	}
 }

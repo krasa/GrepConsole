@@ -17,11 +17,11 @@ import org.junit.Test;
 
 import com.intellij.execution.filters.Filter;
 
-public class GrepFilterServiceTest {
+public class GrepHighlightServiceTest {
 
 	@Test
 	public void testWithoutFilters() throws Exception {
-		GrepFilterService grepConsoleService = new GrepFilterService(new Profile(), new ArrayList<GrepFilter>());
+		GrepHighlightService grepConsoleService = new GrepHighlightService(new Profile(), new ArrayList<GrepFilter>());
 		Filter.Result result = grepConsoleService.applyFilter("input", 10);
 		assertNull(result);
 	}
@@ -31,7 +31,7 @@ public class GrepFilterServiceTest {
 		ArrayList<GrepFilter> grepFilters = new ArrayList<GrepFilter>();
 		grepFilters.add(getFilter(".*ERROR.*", Color.RED));
 		grepFilters.add(getFilter(".*INFO.*", Color.BLUE));
-		GrepFilterService grepFilter = new GrepFilterService(new Profile(), grepFilters);
+		GrepHighlightService grepFilter = new GrepHighlightService(new Profile(), grepFilters);
 
 		assertNull(grepFilter.applyFilter("[WARN]", 10));
 
@@ -49,7 +49,7 @@ public class GrepFilterServiceTest {
 		testVariousText(grepFilter);
 	}
 
-	private void testVariousText(GrepFilterService grepFilter) {
+	private void testVariousText(GrepHighlightService grepFilter) {
 		grepFilter.applyFilter("[INFO]\n", 10);
 		grepFilter.applyFilter("\n", 10);
 		grepFilter.applyFilter("\n\n", 10);
