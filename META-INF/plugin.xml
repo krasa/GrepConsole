@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>0.7</version>
+	<version>0.8</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -9,16 +9,20 @@
 
 
 	<description><![CDATA[
-			Allows you to define a series of regular expressions which will be tested against the console output. 
+			Allows you to define a series of regular expressions which will be tested against the console output or currently opened file. 
 			Each expression matching a line will affect the style of the entire line. 
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
+	 		
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>.
 			
 			
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>0.8 (2013-01-13)
+        <br>- reset of console highligting when settings are changed
+        <br>- new action for editor highlighting
         <br>0.7 (2012-11-22)
         <br>- fixed color chooser checkbox
         <br>0.6 (2012-11-20)
@@ -61,7 +65,17 @@
 	</project-components>
 
 	<actions>
+		<action id="ClearHighlight" class="krasa.grepconsole.plugin.EditorClearHighlightAction"
+				text="Clear Grep Highlight"
+				description="Clear Highlight">
+			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+		</action>
 		<!-- Add your actions here -->
+		<action id="Highlight" class="krasa.grepconsole.plugin.EditorHighlightAction" text="Grep Highlight"
+				icon="highlight.gif" description="Grep Highlight">
+			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+		</action>
+
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
