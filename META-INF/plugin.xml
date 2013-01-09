@@ -44,7 +44,7 @@
 			]]>
 	</change-notes>
 
-	<idea-version since-build="100.000"/>
+	<idea-version since-build="122.883"/>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
