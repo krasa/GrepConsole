@@ -21,7 +21,7 @@
 
 	<change-notes><![CDATA[
         <br>0.8 (2013-01-13)
-        <br>- reset of console highligting when settings are changed
+        <br>- reset of console highlights when settings are changed
         <br>- new action for editor highlighting
         <br>0.7 (2012-11-22)
         <br>- fixed color chooser checkbox
@@ -44,7 +44,7 @@
 			]]>
 	</change-notes>
 
-	<idea-version since-build="122.883"/>
+	<idea-version since-build="100.000"/>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
