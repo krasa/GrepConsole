@@ -1,5 +1,6 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.execution.ui.ConsoleView;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
-@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
+@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
 		PersistentStateComponent<PluginState> {
 
@@ -34,6 +35,8 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	private PluginState settings;
 	private Map<Project, GrepHighlightService> cache = new HashMap<Project, GrepHighlightService>();
 	private Map<Project, GrepInputFilterService> cacheInput = new HashMap<Project, GrepInputFilterService>();
+	private ConsoleView currentConsole;
+	private HighlightManipulationAction action;
 
 	public GrepConsoleApplicationComponent() {
 	}
@@ -92,6 +95,9 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		}
 		// todo this may not work properly, regenerate GrepExpressionItem id
 		Cache.reset();
+		if (action != null) {
+			action.applySettings();
+		}
 	}
 
 	public void reset() {
@@ -153,5 +159,9 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		}
 		cache.put(project, service);
 		return service;
+	}
+
+	public void setCurrentAction(HighlightManipulationAction currentEditor) {
+		this.action = currentEditor;
 	}
 }

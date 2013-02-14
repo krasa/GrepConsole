@@ -46,13 +46,8 @@ public class GrepHighlightService extends AbstractGrepService implements Filter 
 
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem grepExpressionItem) {
-		return profile.isEnabledHighlighting() && isDisabledInputFiltering(grepExpressionItem);
+		return profile.isEnabledHighlighting();
 	}
 
-	private boolean isDisabledInputFiltering(GrepExpressionItem grepExpressionItem) {
-		boolean inputFilter = grepExpressionItem.isInputFilter();
-		boolean enabledInputFiltering = profile.isEnabledInputFiltering();
-		return !(inputFilter && enabledInputFiltering);
-	}
 
 }

@@ -20,12 +20,14 @@
       ]]></description>
 
 	<change-notes><![CDATA[
-        <br>1.0 (2012-xx-xx)
+        <br>1.0 (2012-02-15)
         <br>- input filtering
-        <br>- improved highlighting for stacktraces
-                 <br>0.8 (2013-01-13)
+        <br>- stacktraces are also highlighted
+        <br>- Apply button resets highlights
+		<br>0.8 (2013-01-13)
         <br>- reset of console highligting when settings are changed
-        <br>- new action for editor highlighting     <br>0.7 (2012-11-22)
+        <br>- new action for editor highlighting     
+        <br>0.7 (2012-11-22)
         <br>- fixed color chooser checkbox
         <br>0.6 (2012-11-20)
         <br>- fixed exception occurring under heavy load

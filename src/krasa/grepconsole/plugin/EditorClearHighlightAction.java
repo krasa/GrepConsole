@@ -9,6 +9,10 @@ public class EditorClearHighlightAction extends HighlightManipulationAction {
 	public EditorClearHighlightAction() {
 	}
 
+	@Override
+	public void applySettings() {
+	}
+
 	public void actionPerformed(AnActionEvent e) {
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		if (editor != null) {

@@ -27,7 +27,6 @@
   </component>
   <component name="EclipseCodeFormatter">
     <option name="defaultSettings" value="true" />
-    <option name="formatter" value="ECLIPSE" />
     <option name="id" value="1340799126271" />
     <option name="name" value="default" />
     <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../_T-Mobile/org.eclipse.jdt.core.prefs" />
@@ -185,7 +184,7 @@
       <module fileurl="file://$PROJECT_DIR$/GrepConsole.iml" filepath="$PROJECT_DIR$/GrepConsole.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-122.694 TEST" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-126.232" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">

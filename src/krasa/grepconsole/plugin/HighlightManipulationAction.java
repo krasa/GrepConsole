@@ -1,5 +1,7 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.openapi.project.DumbAware;
+import com.intellij.openapi.project.DumbAwareAction;
 import javax.swing.*;
 
 import org.jetbrains.annotations.Nullable;
@@ -11,12 +13,8 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.editor.Editor;
 
-public abstract class HighlightManipulationAction extends AnAction {
+public abstract class HighlightManipulationAction extends DumbAwareAction {
 	public HighlightManipulationAction() {
-	}
-
-	public HighlightManipulationAction(Icon icon) {
-		super(icon);
 	}
 
 	public HighlightManipulationAction(@Nullable String text) {
@@ -58,4 +56,5 @@ public abstract class HighlightManipulationAction extends AnAction {
 		editor.getMarkupModel().removeAllHighlighters();
 	}
 
+	public abstract void applySettings();
 }
