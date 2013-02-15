@@ -20,7 +20,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[
-        <br>1.0 (2012-02-15)
+        <br>1.0 (2013-02-15)
         <br>- input filtering
         <br>- stacktraces are also highlighted
         <br>- Apply button resets highlights
