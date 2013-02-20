@@ -1,6 +1,5 @@
 package krasa.grepconsole.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import krasa.grepconsole.FilterState;
@@ -11,8 +10,9 @@ import krasa.grepconsole.model.Profile;
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 
-public class GrepInputFilterService extends AbstractGrepFilterService implements InputFilter {
+public class GrepInputFilterService extends AbstractGrepService implements InputFilter {
 
 	public GrepInputFilterService(Project project) {
 		super(project);
@@ -23,33 +23,26 @@ public class GrepInputFilterService extends AbstractGrepFilterService implements
 	}
 
 	@Override
-	protected void initFilters() {
-		grepFilters = new ArrayList<GrepFilter>();
-		for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
-			if (grepExpressionItem.isFilterOut()) {
-				grepFilters.add(grepExpressionItem.createFilter());
-			}
+	public Pair<String, ConsoleViewContentType> applyFilter(String s, ConsoleViewContentType consoleViewContentType) {
+		Pair<String, ConsoleViewContentType> result = null;
+		FilterState state = super.filter(s);
+		if (state != null) {
+			result = prepareResult(state);
 		}
+		return result;
+	}
+
+	private Pair<String, ConsoleViewContentType> prepareResult(FilterState state) {
+		Pair<String, ConsoleViewContentType> result = null;
+		if (state.isExclude()) {
+			result = new Pair<String, ConsoleViewContentType>(null, null);
+		}
+		return result;
 	}
 
 	@Override
-	public Result applyFilter(String s, ConsoleViewContentType consoleViewContentType) {
-		Result result = null;
-		if (profile.isEnabledFiltering()) {
-			FilterState state = super.filter(s);
-			if (state != null) {
-				result = prepareResult(s, state);
-			}
-		}
-		return result;
-	}
-
-	private Result prepareResult(String s, FilterState state) {
-		Result result = null;
-		if (state != null) {
-			result = new Result();
-		}
-		return result;
+	protected boolean shouldAdd(GrepExpressionItem grepExpressionItem) {
+		return profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter();
 	}
 
 }

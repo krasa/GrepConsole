@@ -3,7 +3,7 @@ package krasa.grepconsole.integration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import krasa.grepconsole.plugin.OpenSettingsAction;
+import krasa.grepconsole.plugin.OpenConsoleSettingsAction;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
-		anActions.add(new OpenSettingsAction(console));
+		anActions.add(new OpenConsoleSettingsAction(console));
 		anActions.addAll(Arrays.asList(actions));
 		return anActions.toArray(new AnAction[anActions.size()]);
 	}

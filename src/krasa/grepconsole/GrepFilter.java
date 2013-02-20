@@ -25,6 +25,7 @@ public class GrepFilter {
 			if (matches(matchedLine) && !matchesUnless(matchedLine)) {
 				flow.setNextOperation(grepExpressionItem.getOperationOnMatch());
 				flow.setConsoleViewContentType(grepExpressionItem.getTextAttributes());
+				flow.setExclude(grepExpressionItem.isInputFilter());
 			}
 		}
 		return flow;

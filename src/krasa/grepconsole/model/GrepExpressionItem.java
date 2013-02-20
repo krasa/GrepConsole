@@ -16,7 +16,7 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	private boolean enabled = true;
-	private boolean filterOut;
+	private boolean inputFilter = false;
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
@@ -25,7 +25,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private transient Pattern pattern;
 	private transient Pattern unlessPattern;
 
-	private Operation operationOnMatch = Operation.PRINT_IMMEDIATELY;
+	private Operation operationOnMatch = Operation.EXIT;
 
 	public GrepExpressionItem() {
 		this(null);
@@ -44,12 +44,12 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.enabled = enabled;
 	}
 
-	public boolean isFilterOut() {
-		return filterOut;
+	public boolean isInputFilter() {
+		return inputFilter;
 	}
 
-	public void setFilterOut(boolean filterOut) {
-		this.filterOut = filterOut;
+	public void setInputFilter(boolean inputFilter) {
+		this.inputFilter = inputFilter;
 	}
 
 	public String getGrepExpression() {
@@ -194,5 +194,30 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 			Cache.getInstance().put(cacheIdentifier, result);
 		}
 		return result;
+	}
+
+	public GrepExpressionItem enabled(final boolean enabled) {
+		this.enabled = enabled;
+		return this;
+	}
+
+	public GrepExpressionItem inputFilter(final boolean inputFilter) {
+		this.inputFilter = inputFilter;
+		return this;
+	}
+
+	public GrepExpressionItem pattern(final Pattern pattern) {
+		this.pattern = pattern;
+		return this;
+	}
+
+	public GrepExpressionItem unlessPattern(final Pattern unlessPattern) {
+		this.unlessPattern = unlessPattern;
+		return this;
+	}
+
+	public GrepExpressionItem operationOnMatch(final Operation operationOnMatch) {
+		this.operationOnMatch = operationOnMatch;
+		return this;
 	}
 }

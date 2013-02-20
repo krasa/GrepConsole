@@ -43,7 +43,7 @@ public class GrepFilterTest {
 		GrepFilter grepFilter = new GrepFilter(grepExpressionItem);
 		// matched
 		FilterState process = grepFilter.process(getInput(LINE));
-		assertEquals(Operation.PRINT_IMMEDIATELY, process.getNextOperation());
+		assertEquals(Operation.EXIT, process.getNextOperation());
 		assertEquals(getTextAttributesFromCache(grepExpressionItem), process.getConsoleViewContentType());
 		assertEquals(LINE, process.getText());
 

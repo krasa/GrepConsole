@@ -14,8 +14,8 @@ import krasa.grepconsole.model.Profile;
 
 import org.junit.Test;
 
-import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.util.Pair;
 
 public class GrepInputFilterServiceTest {
 
@@ -27,7 +27,8 @@ public class GrepInputFilterServiceTest {
 	public void testWithoutFilters() throws Exception {
 		GrepInputFilterService grepConsoleService = new GrepInputFilterService(new Profile(),
 				new ArrayList<GrepFilter>());
-		InputFilter.Result result = grepConsoleService.applyFilter("input", ConsoleViewContentType.NORMAL_OUTPUT);
+		Pair<String, ConsoleViewContentType> result = grepConsoleService.applyFilter("input",
+				ConsoleViewContentType.NORMAL_OUTPUT);
 		assertNull(result);
 	}
 
@@ -40,20 +41,24 @@ public class GrepInputFilterServiceTest {
 
 		assertNull(grepFilter.applyFilter(WARN, ConsoleViewContentType.NORMAL_OUTPUT));
 
-		InputFilter.Result result = grepFilter.applyFilter(ERROR, ConsoleViewContentType.NORMAL_OUTPUT);
+		Pair<String, ConsoleViewContentType> result = grepFilter.applyFilter(ERROR,
+				ConsoleViewContentType.NORMAL_OUTPUT);
 		assertNotNull(result);
-		assertNull(result.getLine());
-		assertNull(result.getConsoleViewContentType());
+		assertNull(result.first);
+		assertNull(result.second);
 
 		result = grepFilter.applyFilter(INFO, ConsoleViewContentType.NORMAL_OUTPUT);
 		assertNotNull(result);
-		assertNull(result.getLine());
-		assertNull(result.getConsoleViewContentType());
+		assertNull(result.first);
+		assertNull(result.second);
 
 	}
 
 	private GrepFilter getFilter(String grepExpression, Color red) {
-		return new GrepFilter(new GrepExpressionItem().grepExpression(grepExpression).style(
-				new GrepStyle().backgroundColor(new GrepColor(red))));
+		GrepStyle style1 = new GrepStyle().backgroundColor(new GrepColor(red));
+
+		GrepExpressionItem item = new GrepExpressionItem().grepExpression(grepExpression).style(style1).inputFilter(
+				true);
+		return new GrepFilter(item);
 	}
 }
