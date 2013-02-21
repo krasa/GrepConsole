@@ -1,5 +1,4 @@
-package krasa.grepconsole.service.ansi.utils;
-
+package krasa.grepconsole.ansi.utils;
 
 import java.awt.*;
 
@@ -11,8 +10,7 @@ public class AnsiConsoleColorPalette {
 	public static final String PALETTE_XTERM = "paletteXTerm";
 
 	// From Wikipedia, http://en.wikipedia.org/wiki/ANSI_escape_code
-	private final static Color[] paletteVGA = {
-			new Color(0, 0, 0), // black
+	private final static Color[] paletteVGA = { new Color(0, 0, 0), // black
 			new Color(170, 0, 0), // red
 			new Color(0, 170, 0), // green
 			new Color(170, 85, 0), // brown/yellow
@@ -27,10 +25,9 @@ public class AnsiConsoleColorPalette {
 			new Color(85, 85, 255), // bright blue
 			new Color(255, 85, 255), // bright magenta
 			new Color(85, 255, 255), // bright cyan
-			new Color(255, 255, 255)  // white
+			new Color(255, 255, 255) // white
 	};
-	private final static Color[] paletteXP = {
-			new Color(0, 0, 0), // black
+	private final static Color[] paletteXP = { new Color(0, 0, 0), // black
 			new Color(128, 0, 0), // red
 			new Color(0, 128, 0), // green
 			new Color(128, 128, 0), // brown/yellow
@@ -45,10 +42,9 @@ public class AnsiConsoleColorPalette {
 			new Color(0, 0, 255), // bright blue
 			new Color(255, 0, 255), // bright magenta
 			new Color(0, 255, 255), // bright cyan
-			new Color(255, 255, 255)  // white
+			new Color(255, 255, 255) // white
 	};
-	private final static Color[] paletteMac = {
-			new Color(0, 0, 0), // black
+	private final static Color[] paletteMac = { new Color(0, 0, 0), // black
 			new Color(194, 54, 33), // red
 			new Color(37, 188, 36), // green
 			new Color(173, 173, 39), // brown/yellow
@@ -63,10 +59,9 @@ public class AnsiConsoleColorPalette {
 			new Color(88, 51, 255), // bright blue
 			new Color(249, 53, 248), // bright magenta
 			new Color(20, 240, 240), // bright cyan
-			new Color(233, 235, 235)  // white
+			new Color(233, 235, 235) // white
 	};
-	private final static Color[] palettePuTTY = {
-			new Color(0, 0, 0), // black
+	private final static Color[] palettePuTTY = { new Color(0, 0, 0), // black
 			new Color(187, 0, 0), // red
 			new Color(0, 187, 0), // green
 			new Color(187, 187, 0), // brown/yellow
@@ -81,10 +76,9 @@ public class AnsiConsoleColorPalette {
 			new Color(85, 85, 255), // bright blue
 			new Color(255, 85, 255), // bright magenta
 			new Color(85, 255, 255), // bright cyan
-			new Color(255, 255, 255)  // white
+			new Color(255, 255, 255) // white
 	};
-	private final static Color[] paletteXTerm = {
-			new Color(0, 0, 0), // black
+	private final static Color[] paletteXTerm = { new Color(0, 0, 0), // black
 			new Color(205, 0, 0), // red
 			new Color(0, 205, 0), // green
 			new Color(205, 205, 0), // brown/yellow
@@ -99,7 +93,7 @@ public class AnsiConsoleColorPalette {
 			new Color(92, 92, 255), // bright blue
 			new Color(255, 0, 255), // bright magenta
 			new Color(0, 255, 255), // bright cyan
-			new Color(255, 255, 255)  // white
+			new Color(255, 255, 255) // white
 	};
 	private static Color[] palette = paletteXP;
 	private static String currentPaletteName = PALETTE_WINXP;

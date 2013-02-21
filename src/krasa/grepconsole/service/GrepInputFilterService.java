@@ -24,7 +24,8 @@ public class GrepInputFilterService extends AbstractGrepService implements Input
 	}
 
 	@Override
-	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s, ConsoleViewContentType consoleViewContentType) {
+	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
+			ConsoleViewContentType consoleViewContentType) {
 		Pair<String, ConsoleViewContentType> result = null;
 		FilterState state = super.filter(s);
 		if (state != null) {

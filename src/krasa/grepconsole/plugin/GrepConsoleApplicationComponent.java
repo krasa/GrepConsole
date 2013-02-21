@@ -1,6 +1,5 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.execution.ui.ConsoleView;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +17,7 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -27,7 +27,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
-@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
+@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
 		PersistentStateComponent<PluginState> {
 

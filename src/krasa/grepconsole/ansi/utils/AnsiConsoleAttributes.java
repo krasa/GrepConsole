@@ -1,13 +1,11 @@
-package krasa.grepconsole.service.ansi.utils;
+package krasa.grepconsole.ansi.utils;
 
+import static krasa.grepconsole.ansi.utils.AnsiCommands.*;
 
-import static krasa.grepconsole.service.ansi.utils.AnsiCommands.COMMAND_COLOR_INTENSITY_DELTA;
+import java.awt.*;
 
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import java.awt.*;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 
 public class AnsiConsoleAttributes implements Cloneable {
 	public Integer currentBgColor;
@@ -49,9 +47,12 @@ public class AnsiConsoleAttributes implements Cloneable {
 		int green = c.getGreen() * 2;
 		int blue = c.getBlue() * 2;
 
-		if (red > 0xff) red = 0xff;
-		if (green > 0xff) green = 0xff;
-		if (blue > 0xff) blue = 0xff;
+		if (red > 0xff)
+			red = 0xff;
+		if (green > 0xff)
+			green = 0xff;
+		if (blue > 0xff)
+			blue = 0xff;
 
 		return new Color(red, green, blue); // here
 	}
@@ -59,49 +60,46 @@ public class AnsiConsoleAttributes implements Cloneable {
 	public Color getBgColor() {
 		if (currentBgColor == null)
 			return null;
-		boolean useWindowsMapping = true;
-		if (useWindowsMapping && underline)
-			return AnsiConsoleColorPalette.getColor(currentBgColor.intValue() + COMMAND_COLOR_INTENSITY_DELTA);
-		else
-			return AnsiConsoleColorPalette.getColor(currentBgColor.intValue());
+		return AnsiConsoleColorPalette.getColor(currentBgColor);
 	}
 
 	public Color getFgColor() {
 		if (currentFgColor == null)
 			return null;
 
-		boolean useWindowsMapping = true;
-		if (useWindowsMapping && bold)
-			return AnsiConsoleColorPalette.getColor(currentFgColor.intValue() + COMMAND_COLOR_INTENSITY_DELTA);
+		if (bold)
+			return AnsiConsoleColorPalette.getColor(currentFgColor + COMMAND_COLOR_INTENSITY_DELTA);
 		else
-			return AnsiConsoleColorPalette.getColor(currentFgColor.intValue());
+			return AnsiConsoleColorPalette.getColor(currentFgColor);
 	}
 
-	public void updateRangeStyle(final TextAttributes textAttributes, final boolean useWindowsMapping) {
-
+	public void updateRangeStyle(final TextAttributes textAttributes) {
 
 		Color color = getFgColor();
-		if (color != null)
-			textAttributes.setForegroundColor(color);
-		else if (useWindowsMapping && bold) {
+		if (color != null && bold) {
 			textAttributes.setForegroundColor(hiliteColor(textAttributes.getForegroundColor()));
+		} else if (color != null) {
+			textAttributes.setForegroundColor(color);
 		}
 
 		color = getBgColor();
-		if (color != null)
-			textAttributes.setBackgroundColor(color);
-		else if (useWindowsMapping && underline) {
+		if (color != null && bold)
 			textAttributes.setBackgroundColor(hiliteColor(color));
+		else if (color != null) {
+			textAttributes.setBackgroundColor(color);
 		}
 
-		if (!useWindowsMapping) {
+		if (underline) {
 			textAttributes.setEffectType(EffectType.LINE_UNDERSCORE);
+		} else {
+			textAttributes.setEffectType(null);
 		}
-		if (bold && !useWindowsMapping)
+		if (bold)
 			textAttributes.setFontType(Font.BOLD);
 		if (italic)
 			textAttributes.setFontType(Font.ITALIC);
-
+		if (!bold && !italic)
+			textAttributes.setFontType(Font.PLAIN);
 
 		if (invert) {
 			Color tmp = textAttributes.getBackgroundColor();
@@ -112,17 +110,25 @@ public class AnsiConsoleAttributes implements Cloneable {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
 		AnsiConsoleAttributes that = (AnsiConsoleAttributes) o;
 
-		if (bold != that.bold) return false;
-		if (invert != that.invert) return false;
-		if (italic != that.italic) return false;
-		if (underline != that.underline) return false;
-		if (!currentBgColor.equals(that.currentBgColor)) return false;
-		if (!currentFgColor.equals(that.currentFgColor)) return false;
+		if (bold != that.bold)
+			return false;
+		if (invert != that.invert)
+			return false;
+		if (italic != that.italic)
+			return false;
+		if (underline != that.underline)
+			return false;
+		if (!currentBgColor.equals(that.currentBgColor))
+			return false;
+		if (!currentFgColor.equals(that.currentFgColor))
+			return false;
 
 		return true;
 	}

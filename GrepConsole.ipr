@@ -27,6 +27,7 @@
   </component>
   <component name="EclipseCodeFormatter">
     <option name="defaultSettings" value="true" />
+    <option name="formatter" value="ECLIPSE" />
     <option name="id" value="1340799126271" />
     <option name="name" value="default" />
     <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../_T-Mobile/org.eclipse.jdt.core.prefs" />
@@ -37,6 +38,11 @@
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
+  </component>
+  <component name="IntelliCalc">
+    <mode value="0" />
+    <system value="10" />
+    <angles value="deg" />
   </component>
   <component name="IvyIDEA.ProjectSettings">
     <option name="artifactTypeSettings">
@@ -184,7 +190,7 @@
       <module fileurl="file://$PROJECT_DIR$/GrepConsole.iml" filepath="$PROJECT_DIR$/GrepConsole.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU- builded" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-custom" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">
