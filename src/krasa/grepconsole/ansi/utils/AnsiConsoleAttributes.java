@@ -77,7 +77,7 @@ public class AnsiConsoleAttributes implements Cloneable {
 
 		Color color = getFgColor();
 		if (color != null && bold) {
-			textAttributes.setForegroundColor(hiliteColor(textAttributes.getForegroundColor()));
+			textAttributes.setForegroundColor(hiliteColor(color));
 		} else if (color != null) {
 			textAttributes.setForegroundColor(color);
 		}
