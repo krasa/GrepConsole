@@ -17,37 +17,6 @@ public class PluginState extends DomainObject implements Cloneable {
 	private List<Profile> profiles = new ArrayList<Profile>();
 	private boolean enabled;
 
-	public static List<Profile> createDefault() {
-		List<Profile> profiles = new ArrayList<Profile>();
-		Profile profile = new Profile();
-		profile.setDefaultProfile(true);
-		profiles.add(profile);
-		profile.setGrepExpressionItems(createDefaultItems());
-		return profiles;
-	}
-
-	public static List<GrepExpressionItem> createDefaultItems() {
-		List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.RED, Color.WHITE)).grepExpression(".*FATAL.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.ORANGE, null)).grepExpression(".*ERROR.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(Color.YELLOW, null)).grepExpression(".*WARN.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(null, Color.GRAY)).grepExpression(".*DEBUG.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(null, Color.LIGHT_GRAY)).grepExpression(".*TRACE.*"));
-		return grepExpressionItems;
-	}
-
-	private static GrepExpressionItem newItem() {
-		return new GrepExpressionItem();
-	}
-
-	private static GrepStyle getGrepStyle(Color color, Color foreground) {
-		GrepStyle grepStyle = new GrepStyle().backgroundColor(new GrepColor(true, color));
-		if (foreground != null) {
-			grepStyle = grepStyle.foregroundColor(new GrepColor(true, foreground));
-		}
-		return grepStyle;
-	}
-
 	public Profile getDefaultProfile() {
 		Profile result = null;
 		for (Profile profile : profiles) {

@@ -22,6 +22,7 @@
 	<change-notes><![CDATA[
         <br>1.1 (2013-02-27)
         <br>- new console action: highlight selected text
+        <br>- new default colors for Darcula
         <br>1.0 (2013-02-15)
         <br>- input filtering
         <br>- stacktraces are also highlighted

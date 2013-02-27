@@ -120,7 +120,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public PluginState getState() {
 		if (settings == null) {
 			settings = new PluginState();
-			settings.setProfiles(PluginState.createDefault());
+			settings.setProfiles(DefaultState.createDefault());
 		}
 		return settings;
 	}

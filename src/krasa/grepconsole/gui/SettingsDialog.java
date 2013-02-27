@@ -12,6 +12,7 @@ import javax.swing.text.NumberFormatter;
 
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.DefaultState;
 import krasa.grepconsole.plugin.PluginState;
 
 import com.intellij.ui.table.TableView;
@@ -49,7 +50,7 @@ public class SettingsDialog {
 		resetToDefaultButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SettingsDialog.this.settings.setProfiles(PluginState.createDefault());
+				SettingsDialog.this.settings.setProfiles(DefaultState.createDefault());
 				model.setItems(getProfile().getGrepExpressionItems());
 				disableCopyDeleteButton();
 				setData(getProfile());

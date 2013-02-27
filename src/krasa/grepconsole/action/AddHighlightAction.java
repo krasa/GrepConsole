@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.ui.JBColor;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -46,7 +47,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 		Profile profile = profile1;
 		GrepStyle style = new GrepStyle();
 		style.setForegroundColor(new GrepColor(Color.BLACK));
-		style.setBackgroundColor(new GrepColor(Color.CYAN));
+		style.setBackgroundColor(new GrepColor(JBColor.CYAN));
 		profile.getGrepExpressionItems().add(new GrepExpressionItem().grepExpression(".*" + string + ".*").style(style));
 	}
 
