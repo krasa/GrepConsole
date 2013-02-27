@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.swing.*;
 
 import krasa.grepconsole.Cache;
+import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.service.AbstractGrepService;
@@ -87,6 +88,13 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
+		resetCache();
+		if (action != null) {
+			action.applySettings();
+		}
+	}
+
+	public void resetCache() {
 		for (AbstractGrepService listener : cache.values()) {
 			listener.onChange();
 		}
@@ -95,9 +103,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		}
 		// todo this may not work properly, regenerate GrepExpressionItem id
 		Cache.reset();
-		if (action != null) {
-			action.applySettings();
-		}
+
 	}
 
 	public void reset() {

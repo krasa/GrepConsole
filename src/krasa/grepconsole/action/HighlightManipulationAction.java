@@ -1,9 +1,10 @@
-package krasa.grepconsole.plugin;
+package krasa.grepconsole.action;
 
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import javax.swing.*;
 
+import krasa.grepconsole.plugin.ReflectionUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.filters.Filter;
@@ -34,7 +35,7 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 		}
 	}
 
-	protected void reset(ConsoleViewImpl consoleViewImpl) {
+	private void reset(ConsoleViewImpl consoleViewImpl) {
 		try {
 			Editor editor = consoleViewImpl.getEditor();
 			removeAllHighlighters(editor);

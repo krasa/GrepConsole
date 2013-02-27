@@ -1,6 +1,7 @@
-package krasa.grepconsole.plugin;
+package krasa.grepconsole.action;
 
 
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.service.GrepHighlightService;
 import org.jetbrains.annotations.Nullable;
 

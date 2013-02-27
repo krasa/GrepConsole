@@ -3,7 +3,7 @@ package krasa.grepconsole.integration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import krasa.grepconsole.plugin.OpenConsoleSettingsAction;
+import krasa.grepconsole.action.OpenConsoleSettingsAction;
 
 import org.jetbrains.annotations.NotNull;
 
