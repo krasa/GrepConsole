@@ -26,8 +26,8 @@ public class DefaultState {
 		items.add(newItem().style(getGrepStyle(JBColor.RED, UIUtil.isUnderDarcula() ? Color.BLACK : Color.WHITE).bold(true)).grepExpression(".*FATAL.*"));
 		items.add(newItem().style(getGrepStyle(JBColor.ORANGE, UIUtil.isUnderDarcula() ? Color.BLACK : null)).grepExpression(".*ERROR.*"));
 		items.add(newItem().style(getGrepStyle(JBColor.YELLOW, UIUtil.isUnderDarcula() ? Color.BLACK : null)).grepExpression(".*WARN.*"));
-		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.LIGHT_GRAY : Color.GRAY)).grepExpression(".*DEBUG.*"));
-		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.GRAY : Color.LIGHT_GRAY)).grepExpression(".*TRACE.*"));
+		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.GRAY : Color.GRAY)).grepExpression(".*DEBUG.*"));
+		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(".*TRACE.*"));
 		return items;
 	}
 
