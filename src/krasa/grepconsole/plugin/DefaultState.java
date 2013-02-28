@@ -22,13 +22,13 @@ public class DefaultState {
 	}
 
 	public static List<GrepExpressionItem> createDefaultItems() {
-		List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
-		grepExpressionItems.add(newItem().style(getGrepStyle(JBColor.RED, UIUtil.isUnderDarcula() ? Color.BLACK : Color.WHITE)).grepExpression(".*FATAL.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(JBColor.ORANGE, null)).grepExpression(".*ERROR.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(JBColor.YELLOW, null)).grepExpression(".*WARN.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.LIGHT_GRAY : Color.GRAY)).grepExpression(".*DEBUG.*"));
-		grepExpressionItems.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.GRAY : Color.LIGHT_GRAY)).grepExpression(".*TRACE.*"));
-		return grepExpressionItems;
+		List<GrepExpressionItem> items = new ArrayList<GrepExpressionItem>();
+		items.add(newItem().style(getGrepStyle(JBColor.RED, UIUtil.isUnderDarcula() ? Color.BLACK : Color.WHITE).bold(true)).grepExpression(".*FATAL.*"));
+		items.add(newItem().style(getGrepStyle(JBColor.ORANGE, UIUtil.isUnderDarcula() ? Color.BLACK : null)).grepExpression(".*ERROR.*"));
+		items.add(newItem().style(getGrepStyle(JBColor.YELLOW, UIUtil.isUnderDarcula() ? Color.BLACK : null)).grepExpression(".*WARN.*"));
+		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.LIGHT_GRAY : Color.GRAY)).grepExpression(".*DEBUG.*"));
+		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.GRAY : Color.LIGHT_GRAY)).grepExpression(".*TRACE.*"));
+		return items;
 	}
 
 	public static GrepExpressionItem newItem() {
