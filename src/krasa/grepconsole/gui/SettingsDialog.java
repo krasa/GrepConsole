@@ -132,7 +132,6 @@ public class SettingsDialog {
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
-		System.err.println("");
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Enabled", "enabled"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Filter out", "inputFilter"));

@@ -21,7 +21,8 @@
 
 	<change-notes><![CDATA[
         <br>2.0 (2013-03-04)
-        <br>- ansi coloring
+        <br>- ANSI coloring
+        <br>- IntelliJ API change
         <br>1.1 (2013-02-27)
         <br>- new console action: highlight selected text
         <br>- new default colors for Darcula
@@ -53,7 +54,7 @@
 			]]>
 	</change-notes>
 
-	<idea-version since-build="125.000"/>
+	<idea-version since-build="128.55"/>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
