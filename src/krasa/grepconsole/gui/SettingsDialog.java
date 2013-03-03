@@ -31,6 +31,8 @@ public class SettingsDialog {
 	private JButton copyButton;
 	private JButton deleteButton;
 	private JCheckBox enableFiltering;
+	private JCheckBox ansi;
+	private JCheckBox printAnsiCharacters;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -170,29 +172,36 @@ public class SettingsDialog {
 	}
 
 	public void setData(Profile data) {
+		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
-		maxLengthToMatch.setValue(data.getMaxLengthToMatch());
+		ansi.setSelected(data.isEnableAnsi());
+		printAnsiCharacters.setSelected(data.isPrintAnsi());
 	}
 
 	public void getData(Profile data) {
+		data.setMaxLengthToMatch(maxLengthToMatch.getText());
+		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
-		try {
-			data.setMaxLengthToMatch(Integer.valueOf(maxLengthToMatch.getText()));
-		} catch (NumberFormatException e) {
-		}
+		data.setEnableAnsi(ansi.isSelected());
+		data.setPrintAnsi(printAnsiCharacters.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
-		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
+				: data.getMaxLengthToMatch() != null)
 			return true;
 		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
 			return true;
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
-				: data.getMaxLengthToMatch() != null)
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
+			return true;
+		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
+			return true;
+		if (ansi.isSelected() != data.isEnableAnsi())
+			return true;
+		if (printAnsiCharacters.isSelected() != data.isPrintAnsi())
 			return true;
 		return false;
 	}
