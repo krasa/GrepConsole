@@ -20,6 +20,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>2.0 (2013-03-04)
+        <br>- ansi coloring
         <br>1.1 (2013-02-27)
         <br>- new console action: highlight selected text
         <br>- new default colors for Darcula
@@ -94,7 +96,7 @@
 	<extensions defaultExtensionNs="com.intellij">
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
-		<consoleInputFilterProvider2 implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
+		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
 
 		<!-- Add your extensions here -->
 	</extensions>

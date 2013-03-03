@@ -1,6 +1,21 @@
 package krasa.grepconsole.ansi;
 
-import static krasa.grepconsole.ansi.utils.AnsiCommands.*;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_INTENSITY_BRIGHT;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_INTENSITY_FAINT;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_INTENSITY_NORMAL;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_ITALIC;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_ITALIC_OFF;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_NEGATIVE_ON;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_NEGATIVE_Off;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_RESET;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_UNDERLINE;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_UNDERLINE_OFF;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_BACKGROUND_FIRST;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_BACKGROUND_LAST;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_BACKGROUND_RESET;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_FOREGROUND_FIRST;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_FOREGROUND_LAST;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_FOREGROUND_RESET;
 
 import java.util.ArrayList;
 import java.util.HashMap;

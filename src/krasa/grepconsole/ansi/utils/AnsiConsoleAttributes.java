@@ -1,6 +1,6 @@
 package krasa.grepconsole.ansi.utils;
 
-import static krasa.grepconsole.ansi.utils.AnsiCommands.*;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_INTENSITY_DELTA;
 
 import java.awt.*;
 
