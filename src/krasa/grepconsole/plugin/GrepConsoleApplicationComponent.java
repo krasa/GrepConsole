@@ -10,6 +10,7 @@ import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.service.AbstractGrepService;
+import krasa.grepconsole.service.AnsiFilterService;
 import krasa.grepconsole.service.GrepHighlightService;
 import krasa.grepconsole.service.GrepInputFilterService;
 
@@ -34,8 +35,9 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	private SettingsDialog form;
 	private PluginState settings;
-	private Map<Project, GrepHighlightService> cache = new HashMap<Project, GrepHighlightService>();
+	private Map<Project, GrepHighlightService> cacheHighlight = new HashMap<Project, GrepHighlightService>();
 	private Map<Project, GrepInputFilterService> cacheInput = new HashMap<Project, GrepInputFilterService>();
+	private Map<Project, AnsiFilterService> cacheAnsi = new HashMap<Project, AnsiFilterService>();
 	private ConsoleView currentConsole;
 	private HighlightManipulationAction action;
 
@@ -95,10 +97,13 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public void resetCache() {
-		for (AbstractGrepService listener : cache.values()) {
+		for (AbstractGrepService listener : cacheHighlight.values()) {
 			listener.onChange();
 		}
 		for (AbstractGrepService listener : cacheInput.values()) {
+			listener.onChange();
+		}
+		for (AnsiFilterService listener : cacheAnsi.values()) {
 			listener.onChange();
 		}
 		// todo this may not work properly, regenerate GrepExpressionItem id
@@ -130,7 +135,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public void changeProfile(Project project, Profile profile) {
-		GrepHighlightService grepHighlightService = cache.get(project);
+		GrepHighlightService grepHighlightService = cacheHighlight.get(project);
 		if (grepHighlightService != null) {
 			grepHighlightService.setProfile(profile);
 		}
@@ -138,10 +143,15 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		if (grepInputFilterService != null) {
 			grepInputFilterService.setProfile(profile);
 		}
+		AnsiFilterService ansiFilterService = cacheAnsi.get(project);
+		if (ansiFilterService != null) {
+			ansiFilterService.setProfile(profile);
+		}
 	}
 
 	public void projectClosed(Project project) {
-		cache.remove(project);
+		cacheHighlight.remove(project);
+		cacheAnsi.remove(project);
 		cacheInput.remove(project);
 	}
 
@@ -158,12 +168,21 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		return service;
 	}
 
+	public AnsiFilterService getAnsiFilterService(Project project) {
+		AnsiFilterService service = cacheAnsi.get(project);
+		if (service == null) {
+			service = new AnsiFilterService(project);
+		}
+		cacheAnsi.put(project, service);
+		return service;
+	}
+
 	public GrepHighlightService getHighlightService(Project project) {
-		GrepHighlightService service = cache.get(project);
+		GrepHighlightService service = cacheHighlight.get(project);
 		if (service == null) {
 			service = new GrepHighlightService(project);
 		}
-		cache.put(project, service);
+		cacheHighlight.put(project, service);
 		return service;
 	}
 

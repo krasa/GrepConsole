@@ -102,12 +102,12 @@
           <text value="Enable ANSI coloring"/>
         </properties>
       </component>
-      <component id="b84dc" class="javax.swing.JCheckBox" binding="printAnsiCharacters">
+      <component id="b84dc" class="javax.swing.JCheckBox" binding="hideAnsiCharacters">
         <constraints>
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Print ANSI codes"/>
+          <text value="Hide ANSI commands"/>
         </properties>
       </component>
     </children>

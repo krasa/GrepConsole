@@ -32,7 +32,7 @@ public class SettingsDialog {
 	private JButton deleteButton;
 	private JCheckBox enableFiltering;
 	private JCheckBox ansi;
-	private JCheckBox printAnsiCharacters;
+	private JCheckBox hideAnsiCharacters;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -175,8 +175,8 @@ public class SettingsDialog {
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		ansi.setSelected(data.isEnableAnsi());
-		printAnsiCharacters.setSelected(data.isPrintAnsi());
+		ansi.setSelected(data.isEnableAnsiColoring());
+		hideAnsiCharacters.setSelected(data.isHideAnsiCommands());
 	}
 
 	public void getData(Profile data) {
@@ -184,8 +184,8 @@ public class SettingsDialog {
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setEnableAnsi(ansi.isSelected());
-		data.setPrintAnsi(printAnsiCharacters.isSelected());
+		data.setEnableAnsiColoring(ansi.isSelected());
+		data.setHideAnsiCommands(hideAnsiCharacters.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
@@ -198,9 +198,9 @@ public class SettingsDialog {
 			return true;
 		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
 			return true;
-		if (ansi.isSelected() != data.isEnableAnsi())
+		if (ansi.isSelected() != data.isEnableAnsiColoring())
 			return true;
-		if (printAnsiCharacters.isSelected() != data.isPrintAnsi())
+		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
 			return true;
 		return false;
 	}

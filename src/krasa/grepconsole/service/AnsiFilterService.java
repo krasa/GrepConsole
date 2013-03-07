@@ -26,10 +26,6 @@ public class AnsiFilterService extends AbstractService implements InputFilter {
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 			ConsoleViewContentType consoleViewContentType) {
-		if (!profile.isEnableAnsi()) {
-			return null;
-		}
-
 		List<Pair<String, ConsoleViewContentType>> list = ansiConsoleStyleFilter.process(s, consoleViewContentType);
 		if (list == null || list.isEmpty()) {
 			return null;
@@ -37,4 +33,12 @@ public class AnsiFilterService extends AbstractService implements InputFilter {
 		return list;
 	}
 
+	public void setProfile(Profile profile) {
+		ansiConsoleStyleFilter.setProfile(profile);
+	}
+
+	public void onChange() {
+		profile = refreshProfile();
+		ansiConsoleStyleFilter.setProfile(profile);
+	}
 }

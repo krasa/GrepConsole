@@ -11,8 +11,8 @@ public class Profile extends DomainObject {
 	private boolean enabledInputFiltering = true;
 	private String maxLengthToMatch = "40";
 	private boolean enableMaxLengthLimit = true;
-	private boolean enableAnsi;
-	private boolean printAnsi;
+	private boolean enableAnsiColoring;
+	private boolean hideAnsiCommands;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -78,19 +78,19 @@ public class Profile extends DomainObject {
 		this.enabledInputFiltering = enabledInputFiltering;
 	}
 
-	public boolean isEnableAnsi() {
-		return enableAnsi;
+	public boolean isEnableAnsiColoring() {
+		return enableAnsiColoring;
 	}
 
-	public void setEnableAnsi(final boolean enableAnsi) {
-		this.enableAnsi = enableAnsi;
+	public void setEnableAnsiColoring(final boolean enableAnsiColoring) {
+		this.enableAnsiColoring = enableAnsiColoring;
 	}
 
-	public boolean isPrintAnsi() {
-		return printAnsi;
+	public boolean isHideAnsiCommands() {
+		return hideAnsiCommands;
 	}
 
-	public void setPrintAnsi(final boolean printAnsi) {
-		this.printAnsi = printAnsi;
+	public void setHideAnsiCommands(final boolean hideAnsiCommands) {
+		this.hideAnsiCommands = hideAnsiCommands;
 	}
 }

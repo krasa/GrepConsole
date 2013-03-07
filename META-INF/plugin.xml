@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>2.0</version>
+	<version>2.1</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -20,6 +20,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>2.1 (2013-03-08)
+        <br>- option to hide ANSI commands when ANSI coloring is disabled
+        <br>- some fixes
         <br>2.0 (2013-03-04)
         <br>- ANSI coloring
         <br>- IntelliJ API change

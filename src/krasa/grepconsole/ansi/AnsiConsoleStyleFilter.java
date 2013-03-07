@@ -35,7 +35,7 @@ public class AnsiConsoleStyleFilter {
 	private final static Pattern pattern = Pattern.compile("\u001b\\[[\\d;]*m");
 	private final static Map<String, ConsoleViewContentType> cache = new HashMap<String, ConsoleViewContentType>();
 	protected AnsiConsoleAttributes lastConsoleAttributes;
-	private Profile profile;
+	private volatile Profile profile;
 
 	public AnsiConsoleStyleFilter(Profile profile) {
 		this.profile = profile;
@@ -118,13 +118,16 @@ public class AnsiConsoleStyleFilter {
 		ranges.add(new Pair<String, ConsoleViewContentType>(substring, contentType));
 	}
 
-	private ConsoleViewContentType getContentType(AnsiConsoleAttributes consoleAttributes) {
+	private ConsoleViewContentType getContentType(AnsiConsoleAttributes consoleAttributes,
+			ConsoleViewContentType inputType) {
+		if (!profile.isEnableAnsiColoring()) {
+			return inputType;
+		}
 		if (consoleAttributes == null) {
 			return null;
 		}
 		String key = consoleAttributes.toString();
-		ConsoleViewContentType contentType = null;
-		// contentType = cache.get(key);
+		ConsoleViewContentType contentType = cache.get(key);
 		if (contentType == null) {
 			TextAttributes textAttributes = new TextAttributes();
 			consoleAttributes.updateRangeStyle(textAttributes);
@@ -155,7 +158,7 @@ public class AnsiConsoleStyleFilter {
 
 			// first match - add previous text if there is any
 			if (isFirstMatch(lastRangeEnd, start)) {
-				ConsoleViewContentType lastType = getContentType(lastConsoleAttributes);
+				ConsoleViewContentType lastType = getContentType(lastConsoleAttributes, consoleViewContentType);
 				if (lastType == null) {
 					lastType = consoleViewContentType;
 				}
@@ -167,7 +170,7 @@ public class AnsiConsoleStyleFilter {
 			for (String cmd : theEscape.split(";")) {
 				consoleAttributes = interpretCommand(cmd, consoleAttributes);
 			}
-			if (profile.isPrintAnsi()) {
+			if (!profile.isHideAnsiCommands()) {
 				String substring = currentText.substring(start, end);
 				addRange(ranges, substring, ConsoleViewContentType.SYSTEM_OUTPUT);
 			}
@@ -175,7 +178,7 @@ public class AnsiConsoleStyleFilter {
 			// we do it in the second+ round, so that we know where the end of text to highlight is.
 			if (!isFirstMatch(lastRangeEnd, start) && start != 0) {
 				String substring = currentText.substring(lastRangeEnd, start);
-				addRange(ranges, substring, getContentType(lastConsoleAttributes));
+				addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
 			}
 
 			lastConsoleAttributes = consoleAttributes;
@@ -195,7 +198,7 @@ public class AnsiConsoleStyleFilter {
 			int endIndex = endsWithLineEnd ? currentText.length() - 1 : currentText.length();
 			String substring = currentText.substring(lastRangeEnd, endIndex);
 			if (substring.length() != 0) {
-				addRange(ranges, substring, getContentType(lastConsoleAttributes));
+				addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
 			}
 			if (endsWithLineEnd) {
 				addRange(ranges, "\n", consoleViewContentType);
@@ -209,4 +212,7 @@ public class AnsiConsoleStyleFilter {
 		return start != 0 && lastRangeEnd == 0;
 	}
 
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
 }
