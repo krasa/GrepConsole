@@ -91,6 +91,14 @@ public class SettingsDialog {
 			}
 		});
 		disableCopyDeleteButton();
+		ansi.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (ansi.getModel().isSelected()) {
+					hideAnsiCharacters.getModel().setSelected(true);
+				}
+			}
+		});
 	}
 
 	private void disableCopyDeleteButton() {
