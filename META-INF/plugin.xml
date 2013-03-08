@@ -14,7 +14,8 @@
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
 	 		
-			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>.
+			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
+			and <a href="http://www.mihai-nita.net/eclipse/">Ansi Console plugin for Eclipse</a>.
 			
 			
       ]]></description>

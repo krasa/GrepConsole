@@ -26,6 +26,10 @@ public class AnsiFilterService extends AbstractService implements InputFilter {
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 			ConsoleViewContentType consoleViewContentType) {
+		if (!profile.isEnableAnsiColoring() && !profile.isHideAnsiCommands()) {
+			return null;
+		}
+
 		List<Pair<String, ConsoleViewContentType>> list = ansiConsoleStyleFilter.process(s, consoleViewContentType);
 		if (list == null || list.isEmpty()) {
 			return null;
