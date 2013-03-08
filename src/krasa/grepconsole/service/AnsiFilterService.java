@@ -6,21 +6,25 @@ import krasa.grepconsole.ansi.AnsiConsoleStyleFilter;
 import krasa.grepconsole.model.Profile;
 
 import com.intellij.execution.filters.InputFilter;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 
-public class AnsiFilterService extends AbstractService implements InputFilter {
+public class AnsiFilterService extends AbstractService implements InputFilter, ConsoleListener {
 	protected AnsiConsoleStyleFilter ansiConsoleStyleFilter;
+	private ConsoleView console;
 
 	public AnsiFilterService(Project project) {
 		super(project);
 		ansiConsoleStyleFilter = new AnsiConsoleStyleFilter(profile);
+		ansiConsoleStyleFilter.addListener(this);
 	}
 
 	public AnsiFilterService(Profile profile) {
 		super(profile);
 		ansiConsoleStyleFilter = new AnsiConsoleStyleFilter(profile);
+		ansiConsoleStyleFilter.addListener(this);
 	}
 
 	@Override
@@ -44,5 +48,14 @@ public class AnsiFilterService extends AbstractService implements InputFilter {
 	public void onChange() {
 		profile = refreshProfile();
 		ansiConsoleStyleFilter.setProfile(profile);
+	}
+
+	public void setConsole(ConsoleView console) {
+		this.console = console;
+	}
+
+	@Override
+	public void clearConsole() {
+		console.clear();
 	}
 }

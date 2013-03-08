@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.service.AnsiFilterService;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -16,6 +18,10 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 	@NotNull
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
+		AnsiFilterService lastAnsi = GrepConsoleApplicationComponent.lastAnsi;
+		if (lastAnsi != null) {
+			lastAnsi.setConsole(console);
+		}
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
 		anActions.add(new OpenConsoleSettingsAction(console));
 		anActions.addAll(Arrays.asList(actions));

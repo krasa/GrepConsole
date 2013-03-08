@@ -1,21 +1,6 @@
 package krasa.grepconsole.ansi;
 
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_INTENSITY_BRIGHT;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_INTENSITY_FAINT;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_INTENSITY_NORMAL;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_ITALIC;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_ITALIC_OFF;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_NEGATIVE_ON;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_NEGATIVE_Off;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_RESET;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_UNDERLINE;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_ATTR_UNDERLINE_OFF;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_BACKGROUND_FIRST;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_BACKGROUND_LAST;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_BACKGROUND_RESET;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_FOREGROUND_FIRST;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_FOREGROUND_LAST;
-import static krasa.grepconsole.ansi.utils.AnsiCommands.COMMAND_COLOR_FOREGROUND_RESET;
+import static krasa.grepconsole.ansi.utils.AnsiCommands.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,16 +11,19 @@ import java.util.regex.Pattern;
 
 import krasa.grepconsole.ansi.utils.AnsiConsoleAttributes;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.service.ConsoleListener;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Pair;
 
 public class AnsiConsoleStyleFilter {
-	private final static Pattern pattern = Pattern.compile("\u001b\\[[\\d;]*m");
+
+	private final static Pattern pattern = Pattern.compile("\u001b\\[[\\d;]*[mJ]");
 	private final static Map<String, ConsoleViewContentType> cache = new HashMap<String, ConsoleViewContentType>();
 	protected AnsiConsoleAttributes lastConsoleAttributes;
 	private volatile Profile profile;
+	private ConsoleListener ansiFilterService;
 
 	public AnsiConsoleStyleFilter(Profile profile) {
 		this.profile = profile;
@@ -52,12 +40,22 @@ public class AnsiConsoleStyleFilter {
 		}
 	}
 
-	private AnsiConsoleAttributes interpretCommand(String cmd, AnsiConsoleAttributes currentAttributes) {
+	private AnsiConsoleAttributes interpretCommand(String cmd, AnsiConsoleAttributes currentAttributes,
+			ArrayList<Pair<String, ConsoleViewContentType>> ranges) {
 		if (currentAttributes == null) {
 			currentAttributes = new AnsiConsoleAttributes();
 		}
+		int nCmd = tryParseInteger(cmd.substring(0, cmd.length() - 1));
 
-		int nCmd = tryParseInteger(cmd);
+		if (cmd.endsWith("J")) {
+			switch (nCmd) {
+			case 2:
+				ansiFilterService.clearConsole();
+				ranges.clear();
+				break;
+			}
+			return currentAttributes;
+		}
 
 		switch (nCmd) {
 		case COMMAND_ATTR_RESET:
@@ -166,9 +164,9 @@ public class AnsiConsoleStyleFilter {
 				ranges.add(new Pair<String, ConsoleViewContentType>(substring, lastType));
 			}
 
-			String theEscape = currentText.substring(matcher.start() + 2, matcher.end() - 1);
+			String theEscape = currentText.substring(matcher.start() + 2, matcher.end());
 			for (String cmd : theEscape.split(";")) {
-				consoleAttributes = interpretCommand(cmd, consoleAttributes);
+				consoleAttributes = interpretCommand(cmd, consoleAttributes, ranges);
 			}
 			if (!profile.isHideAnsiCommands()) {
 				String substring = currentText.substring(start, end);
@@ -214,5 +212,9 @@ public class AnsiConsoleStyleFilter {
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
+	}
+
+	public void addListener(ConsoleListener consoleListener) {
+		this.ansiFilterService = consoleListener;
 	}
 }

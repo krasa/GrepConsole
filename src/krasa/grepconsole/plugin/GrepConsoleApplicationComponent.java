@@ -1,6 +1,10 @@
 package krasa.grepconsole.plugin;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.*;
@@ -19,7 +23,6 @@ import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -37,9 +40,10 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	private PluginState settings;
 	private Map<Project, GrepHighlightService> cacheHighlight = new HashMap<Project, GrepHighlightService>();
 	private Map<Project, GrepInputFilterService> cacheInput = new HashMap<Project, GrepInputFilterService>();
-	private Map<Project, AnsiFilterService> cacheAnsi = new HashMap<Project, AnsiFilterService>();
-	private ConsoleView currentConsole;
-	private HighlightManipulationAction action;
+	private List<WeakReference<AnsiFilterService>> cacheAnsi = new ArrayList<WeakReference<AnsiFilterService>>();
+	public static AnsiFilterService lastAnsi;
+
+	private HighlightManipulationAction currentAction;
 
 	public GrepConsoleApplicationComponent() {
 	}
@@ -91,8 +95,8 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
 		resetCache();
-		if (action != null) {
-			action.applySettings();
+		if (currentAction != null) {
+			currentAction.applySettings();
 		}
 	}
 
@@ -103,8 +107,16 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		for (AbstractGrepService listener : cacheInput.values()) {
 			listener.onChange();
 		}
-		for (AnsiFilterService listener : cacheAnsi.values()) {
-			listener.onChange();
+
+		Iterator<WeakReference<AnsiFilterService>> iterator = cacheAnsi.iterator();
+		while (iterator.hasNext()) {
+			WeakReference<AnsiFilterService> next = iterator.next();
+			AnsiFilterService ansiFilterService = next.get();
+			if (ansiFilterService == null) {
+				iterator.remove();
+			} else {
+				ansiFilterService.onChange();
+			}
 		}
 		// todo this may not work properly, regenerate GrepExpressionItem id
 		Cache.reset();
@@ -143,10 +155,6 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		if (grepInputFilterService != null) {
 			grepInputFilterService.setProfile(profile);
 		}
-		AnsiFilterService ansiFilterService = cacheAnsi.get(project);
-		if (ansiFilterService != null) {
-			ansiFilterService.setProfile(profile);
-		}
 	}
 
 	public void projectClosed(Project project) {
@@ -169,11 +177,9 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public AnsiFilterService getAnsiFilterService(Project project) {
-		AnsiFilterService service = cacheAnsi.get(project);
-		if (service == null) {
-			service = new AnsiFilterService(project);
-		}
-		cacheAnsi.put(project, service);
+		AnsiFilterService service = new AnsiFilterService(project);
+		cacheAnsi.add(new WeakReference<AnsiFilterService>(service));
+		lastAnsi = service;
 		return service;
 	}
 
@@ -187,6 +193,6 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public void setCurrentAction(HighlightManipulationAction currentEditor) {
-		this.action = currentEditor;
+		this.currentAction = currentEditor;
 	}
 }
