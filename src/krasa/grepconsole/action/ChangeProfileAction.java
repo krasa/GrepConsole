@@ -1,4 +1,4 @@
-package krasa.grepconsole.plugin;
+package krasa.grepconsole.action;
 
 import javax.swing.*;
 
@@ -8,6 +8,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.util.IconLoader;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
 public class ChangeProfileAction extends AnAction {
 	public static final Icon ICON = IconLoader.getIcon("settings1.png", ChangeProfileAction.class);

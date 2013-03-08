@@ -1,4 +1,4 @@
-package krasa.grepconsole.plugin;
+package krasa.grepconsole.action;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;

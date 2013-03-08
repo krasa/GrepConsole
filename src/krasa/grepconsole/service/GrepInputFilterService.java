@@ -1,5 +1,6 @@
 package krasa.grepconsole.service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import krasa.grepconsole.FilterState;
@@ -23,13 +24,17 @@ public class GrepInputFilterService extends AbstractGrepService implements Input
 	}
 
 	@Override
-	public Pair<String, ConsoleViewContentType> applyFilter(String s, ConsoleViewContentType consoleViewContentType) {
+	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
+			ConsoleViewContentType consoleViewContentType) {
 		Pair<String, ConsoleViewContentType> result = null;
 		FilterState state = super.filter(s);
 		if (state != null) {
 			result = prepareResult(state);
 		}
-		return result;
+		if (state == null) {
+			return null;
+		}
+		return Arrays.asList(result);
 	}
 
 	private Pair<String, ConsoleViewContentType> prepareResult(FilterState state) {

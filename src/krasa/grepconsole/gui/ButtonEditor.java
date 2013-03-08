@@ -1,25 +1,10 @@
 package krasa.grepconsole.gui;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.UIManager;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 
 public class ButtonEditor<Item> extends DefaultCellEditor {
 	protected JButton button;
@@ -40,8 +25,7 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 		});
 	}
 
-	public Component getTableCellEditorComponent(JTable table, Object value,
-												 boolean isSelected, int row, int column) {
+	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		if (isSelected) {
 			button.setForeground(table.getSelectionForeground());
 			button.setBackground(table.getSelectionBackground());

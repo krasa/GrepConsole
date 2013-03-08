@@ -12,6 +12,7 @@ import javax.swing.text.NumberFormatter;
 
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.DefaultState;
 import krasa.grepconsole.plugin.PluginState;
 
 import com.intellij.ui.table.TableView;
@@ -30,6 +31,8 @@ public class SettingsDialog {
 	private JButton copyButton;
 	private JButton deleteButton;
 	private JCheckBox enableFiltering;
+	private JCheckBox ansi;
+	private JCheckBox hideAnsiCharacters;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -49,7 +52,7 @@ public class SettingsDialog {
 		resetToDefaultButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				SettingsDialog.this.settings.setProfiles(PluginState.createDefault());
+				SettingsDialog.this.settings.setProfiles(DefaultState.createDefault());
 				model.setItems(getProfile().getGrepExpressionItems());
 				disableCopyDeleteButton();
 				setData(getProfile());
@@ -129,7 +132,6 @@ public class SettingsDialog {
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
-		System.err.println("");
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Enabled", "enabled"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Filter out", "inputFilter"));
@@ -169,29 +171,36 @@ public class SettingsDialog {
 	}
 
 	public void setData(Profile data) {
+		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
-		maxLengthToMatch.setValue(data.getMaxLengthToMatch());
+		ansi.setSelected(data.isEnableAnsiColoring());
+		hideAnsiCharacters.setSelected(data.isHideAnsiCommands());
 	}
 
 	public void getData(Profile data) {
+		data.setMaxLengthToMatch(maxLengthToMatch.getText());
+		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
-		try {
-			data.setMaxLengthToMatch(Integer.valueOf(maxLengthToMatch.getText()));
-		} catch (NumberFormatException e) {
-		}
+		data.setEnableAnsiColoring(ansi.isSelected());
+		data.setHideAnsiCommands(hideAnsiCharacters.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
-		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
+				: data.getMaxLengthToMatch() != null)
 			return true;
 		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
 			return true;
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
-				: data.getMaxLengthToMatch() != null)
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
+			return true;
+		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
+			return true;
+		if (ansi.isSelected() != data.isEnableAnsiColoring())
+			return true;
+		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
 			return true;
 		return false;
 	}

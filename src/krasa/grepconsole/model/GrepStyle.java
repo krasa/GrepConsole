@@ -144,4 +144,14 @@ public class GrepStyle extends DomainObject {
 		this.effectColor = effectColor;
 	}
 
+	public GrepStyle bold(final boolean bold) {
+		this.bold = bold;
+		return this;
+	}
+
+	public GrepStyle italic(final boolean italic) {
+		this.italic = italic;
+		return this;
+	}
+
 }

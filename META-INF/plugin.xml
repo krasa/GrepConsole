@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>1.0</version>
+	<version>2.1</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -14,12 +14,22 @@
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
 	 		
-			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>.
+			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
+			and <a href="http://www.mihai-nita.net/eclipse/">Ansi Console plugin for Eclipse</a>.
 			
 			
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>2.1 (2013-03-08)
+        <br>- option to hide ANSI commands when ANSI coloring is disabled
+        <br>- some fixes
+        <br>2.0 (2013-03-04)
+        <br>- ANSI coloring
+        <br>- IntelliJ API change
+        <br>1.1 (2013-02-27)
+        <br>- new console action: highlight selected text
+        <br>- new default colors for Darcula
         <br>1.0 (2013-02-15)
         <br>- input filtering
         <br>- stacktraces are also highlighted
@@ -48,7 +58,7 @@
 			]]>
 	</change-notes>
 
-	<idea-version since-build="125.000"/>
+	<idea-version since-build="128.55"/>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
@@ -69,13 +79,19 @@
 	</project-components>
 
 	<actions>
-		<action id="ClearHighlight" class="krasa.grepconsole.plugin.EditorClearHighlightAction"
+		<action id="ConsoleView.OpenConsoleSettingsAction" class="krasa.grepconsole.action.AddHighlightAction"
+				text="Add highlight"
+				description="Add highlight for this selected text">
+			<add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
+		</action>
+
+		<action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
 				text="Clear Grep Highlight"
 				description="Clear Highlight">
 			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
 		</action>
 		<!-- Add your actions here -->
-		<action id="Highlight" class="krasa.grepconsole.plugin.EditorHighlightAction" text="Grep Highlight"
+		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight"
 				icon="highlight.gif" description="Grep Highlight">
 			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
 		</action>
