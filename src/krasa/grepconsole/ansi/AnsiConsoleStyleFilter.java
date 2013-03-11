@@ -1,7 +1,5 @@
 package krasa.grepconsole.ansi;
 
-import static krasa.grepconsole.ansi.utils.AnsiCommands.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +11,15 @@ import krasa.grepconsole.ansi.utils.AnsiConsoleAttributes;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.service.ConsoleListener;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Pair;
 
 public class AnsiConsoleStyleFilter {
 
-	private final static Pattern pattern = Pattern.compile("\u001b\\[[\\d;]*[mJ]");
+	private final static Pattern pattern = Pattern.compile("\u001b\\[[\\d;]*\\p{Alpha}");
 	private final static Map<String, ConsoleViewContentType> cache = new HashMap<String, ConsoleViewContentType>();
 	protected AnsiConsoleAttributes lastConsoleAttributes;
 	private volatile Profile profile;
@@ -29,23 +29,12 @@ public class AnsiConsoleStyleFilter {
 		this.profile = profile;
 	}
 
-	private static int tryParseInteger(String text) {
-		if ("".equals(text))
-			return 0;
-
-		try {
-			return Integer.parseInt(text);
-		} catch (NumberFormatException e) {
-			return 0;
-		}
-	}
-
 	private AnsiConsoleAttributes interpretCommand(String cmd, AnsiConsoleAttributes currentAttributes,
-			ArrayList<Pair<String, ConsoleViewContentType>> ranges) {
+			List<Pair<String, ConsoleViewContentType>> ranges) {
 		if (currentAttributes == null) {
 			currentAttributes = new AnsiConsoleAttributes();
 		}
-		int nCmd = tryParseInteger(cmd.substring(0, cmd.length() - 1));
+		int nCmd = Utils.tryParseInteger(cmd.substring(0, cmd.length() - 1));
 
 		if (cmd.endsWith("J")) {
 			switch (nCmd) {
@@ -55,65 +44,11 @@ public class AnsiConsoleStyleFilter {
 				break;
 			}
 			return currentAttributes;
+		} else if (cmd.endsWith("m")) {
+			AnsiCommandStyleInterpretter.interpretStyle(currentAttributes, nCmd);
+
 		}
-
-		switch (nCmd) {
-		case COMMAND_ATTR_RESET:
-			currentAttributes.reset();
-			break;
-
-		case COMMAND_ATTR_INTENSITY_BRIGHT:
-			currentAttributes.bold = true;
-			break;
-		case COMMAND_ATTR_INTENSITY_FAINT:
-			currentAttributes.bold = false;
-			break;
-		case COMMAND_ATTR_INTENSITY_NORMAL:
-			currentAttributes.bold = false;
-			break;
-
-		case COMMAND_ATTR_ITALIC:
-			currentAttributes.italic = true;
-			break;
-		case COMMAND_ATTR_ITALIC_OFF:
-			currentAttributes.italic = false;
-			break;
-
-		case COMMAND_ATTR_UNDERLINE:
-			currentAttributes.underline = true;
-			break;
-		case COMMAND_ATTR_UNDERLINE_OFF:
-			currentAttributes.underline = false;
-			break;
-
-		case COMMAND_ATTR_NEGATIVE_ON:
-			currentAttributes.invert = true;
-			break;
-		case COMMAND_ATTR_NEGATIVE_Off:
-			currentAttributes.invert = false;
-			break;
-
-		case COMMAND_COLOR_FOREGROUND_RESET:
-			currentAttributes.currentFgColor = null;
-			break;
-		case COMMAND_COLOR_BACKGROUND_RESET:
-			currentAttributes.currentBgColor = null;
-			break;
-
-		default:
-			if (nCmd >= COMMAND_COLOR_FOREGROUND_FIRST && nCmd <= COMMAND_COLOR_FOREGROUND_LAST) // text color
-				currentAttributes.currentFgColor = Integer.valueOf(nCmd - COMMAND_COLOR_FOREGROUND_FIRST);
-			else if (nCmd >= COMMAND_COLOR_BACKGROUND_FIRST && nCmd <= COMMAND_COLOR_BACKGROUND_LAST) // background
-																										// color
-				currentAttributes.currentBgColor = Integer.valueOf(nCmd - COMMAND_COLOR_BACKGROUND_FIRST);
-		}
-
 		return currentAttributes;
-	}
-
-	private void addRange(ArrayList<Pair<String, ConsoleViewContentType>> ranges, final String substring,
-			final ConsoleViewContentType contentType) {
-		ranges.add(new Pair<String, ConsoleViewContentType>(substring, contentType));
 	}
 
 	private ConsoleViewContentType getContentType(AnsiConsoleAttributes consoleAttributes,
@@ -138,12 +73,13 @@ public class AnsiConsoleStyleFilter {
 	// it is executed with one thread per output stream
 	public List<Pair<String, ConsoleViewContentType>> process(String currentText,
 			ConsoleViewContentType consoleViewContentType) {
-		if ((currentText == null) || (currentText.length() == 0))
+		if (StringUtils.isEmpty(currentText)) {
 			return null;
-		ArrayList<Pair<String, ConsoleViewContentType>> ranges = new ArrayList<Pair<String, ConsoleViewContentType>>();
+		}
+		List<Pair<String, ConsoleViewContentType>> ranges = new ArrayList<Pair<String, ConsoleViewContentType>>();
 
-		int lastRangeEnd = 0;
-		Matcher matcher = pattern.matcher(currentText);
+		int previousRangeEnd = 0;
+		Matcher matcher = getMatcher(currentText);
 
 		while (matcher.find()) {
 			AnsiConsoleAttributes consoleAttributes = null;
@@ -151,59 +87,109 @@ public class AnsiConsoleStyleFilter {
 			if (lastConsoleAttributes != null) {
 				consoleAttributes = lastConsoleAttributes.clone();
 			}
-			int start = matcher.start();
-			int end = matcher.end();
 
-			// first match - add previous text if there is any
-			if (isFirstMatch(lastRangeEnd, start)) {
-				ConsoleViewContentType lastType = getContentType(lastConsoleAttributes, consoleViewContentType);
-				if (lastType == null) {
-					lastType = consoleViewContentType;
-				}
-				String substring = currentText.substring(0, start);
-				ranges.add(new Pair<String, ConsoleViewContentType>(substring, lastType));
-			}
+			// add previous text if there is any
+			addTextOnFirstMatchCase(currentText, consoleViewContentType, ranges, matcher);
 
-			String theEscape = currentText.substring(matcher.start() + 2, matcher.end());
-			for (String cmd : theEscape.split(";")) {
-				consoleAttributes = interpretCommand(cmd, consoleAttributes, ranges);
-			}
-			if (!profile.isHideAnsiCommands()) {
-				String substring = currentText.substring(start, end);
-				addRange(ranges, substring, ConsoleViewContentType.SYSTEM_OUTPUT);
-			}
+			consoleAttributes = interpretAsciCommand(currentText, ranges, matcher, consoleAttributes);
+
+			printAsciCommandIfEnabled(currentText, ranges, matcher);
 
 			// we do it in the second+ round, so that we know where the end of text to highlight is.
-			if (!isFirstMatch(lastRangeEnd, start) && start != 0) {
-				String substring = currentText.substring(lastRangeEnd, start);
-				addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
-			}
-
+			addRangeIfNotFirstMatch(currentText, consoleViewContentType, ranges, previousRangeEnd, matcher);
+			// set it after print!
 			lastConsoleAttributes = consoleAttributes;
-			lastRangeEnd = end;
+			previousRangeEnd = matcher.end();
 		}
 
+		return addRestOfTextOrReturnNothing(currentText, consoleViewContentType, ranges, previousRangeEnd);
+	}
+
+	private List<Pair<String, ConsoleViewContentType>> addRestOfTextOrReturnNothing(String currentText,
+			ConsoleViewContentType consoleViewContentType, List<Pair<String, ConsoleViewContentType>> ranges,
+			int previousRangeEnd) {
 		// if there was matches previously, add the rest of text, if there is any
-		if (lastConsoleAttributes != null && (lastRangeEnd != currentText.length() || lastRangeEnd == 0)) {
-			// 'Process finished with exit code', or just one '\n'
-			if (currentText.startsWith("\n")) {
-				addRange(ranges, currentText, consoleViewContentType);
+		if (lastConsoleAttributes != null && (previousRangeEnd != currentText.length() || previousRangeEnd == 0)) {
+			if (isIntellijGeneratedLastLine(currentText, consoleViewContentType, ranges))
 				return null;
-			}
-
-			boolean endsWithLineEnd = currentText.endsWith("\n");
-
-			int endIndex = endsWithLineEnd ? currentText.length() - 1 : currentText.length();
-			String substring = currentText.substring(lastRangeEnd, endIndex);
-			if (substring.length() != 0) {
-				addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
-			}
-			if (endsWithLineEnd) {
-				addRange(ranges, "\n", consoleViewContentType);
-			}
+			addRestOfText(currentText, consoleViewContentType, ranges, previousRangeEnd);
 		}
-
 		return ranges;
+	}
+
+	private void addRestOfText(String currentText, ConsoleViewContentType consoleViewContentType,
+			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd) {
+		boolean endsWithLineEnd = currentText.endsWith("\n");
+
+		String substring = getStringWithoutLineEnd(currentText, previousRangeEnd, endsWithLineEnd);
+		if (substring.length() != 0) {
+			addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
+		}
+		if (endsWithLineEnd) {
+			addRange(ranges, "\n", consoleViewContentType);
+		}
+	}
+
+	private String getStringWithoutLineEnd(String currentText, int previousRangeEnd, boolean endsWithLineEnd) {
+		int endIndex = endsWithLineEnd ? currentText.length() - 1 : currentText.length();
+		return currentText.substring(previousRangeEnd, endIndex);
+	}
+
+	private boolean isIntellijGeneratedLastLine(String currentText, ConsoleViewContentType consoleViewContentType,
+			List<Pair<String, ConsoleViewContentType>> ranges) {
+		// 'Process finished with exit code', or just one '\n'
+		if (currentText.startsWith("\n")) {
+			addRange(ranges, currentText, consoleViewContentType);
+			return true;
+		}
+		return false;
+	}
+
+	private void addRangeIfNotFirstMatch(String currentText, ConsoleViewContentType consoleViewContentType,
+			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
+		if (!isFirstMatch(previousRangeEnd, matcher.start()) && matcher.start() != 0) {
+			String substring = currentText.substring(previousRangeEnd, matcher.start());
+			addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
+		}
+	}
+
+	private void printAsciCommandIfEnabled(String currentText, List<Pair<String, ConsoleViewContentType>> ranges,
+			Matcher matcher) {
+		if (!profile.isHideAnsiCommands()) {
+			String substring = currentText.substring(matcher.start(), matcher.end());
+			addRange(ranges, substring, ConsoleViewContentType.SYSTEM_OUTPUT);
+		}
+	}
+
+	private void addRange(List<Pair<String, ConsoleViewContentType>> ranges, final String substring,
+			final ConsoleViewContentType contentType) {
+		ranges.add(new Pair<String, ConsoleViewContentType>(substring, contentType));
+	}
+
+	private void addTextOnFirstMatchCase(String currentText, ConsoleViewContentType consoleViewContentType,
+			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher) {
+		int start = matcher.start();
+		if (isFirstMatch(matcher.end(), start)) {
+			ConsoleViewContentType lastType = getContentType(lastConsoleAttributes, consoleViewContentType);
+			if (lastType == null) {
+				lastType = consoleViewContentType;
+			}
+			String substring = currentText.substring(0, start);
+			ranges.add(new Pair<String, ConsoleViewContentType>(substring, lastType));
+		}
+	}
+
+	private AnsiConsoleAttributes interpretAsciCommand(String currentText,
+			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, AnsiConsoleAttributes consoleAttributes) {
+		String theEscape = currentText.substring(matcher.start() + 2, matcher.end());
+		for (String cmd : theEscape.split(";")) {
+			consoleAttributes = interpretCommand(cmd, consoleAttributes, ranges);
+		}
+		return consoleAttributes;
+	}
+
+	protected Matcher getMatcher(String currentText) {
+		return pattern.matcher(currentText);
 	}
 
 	private boolean isFirstMatch(int lastRangeEnd, int start) {
