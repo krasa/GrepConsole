@@ -29,28 +29,6 @@ public class AnsiConsoleStyleFilter {
 		this.profile = profile;
 	}
 
-	private AnsiConsoleAttributes interpretCommand(String cmd, AnsiConsoleAttributes currentAttributes,
-			List<Pair<String, ConsoleViewContentType>> ranges) {
-		if (currentAttributes == null) {
-			currentAttributes = new AnsiConsoleAttributes();
-		}
-		int nCmd = Utils.tryParseInteger(cmd.substring(0, cmd.length() - 1));
-
-		if (cmd.endsWith("J")) {
-			switch (nCmd) {
-			case 2:
-				ansiFilterService.clearConsole();
-				ranges.clear();
-				break;
-			}
-			return currentAttributes;
-		} else if (cmd.endsWith("m")) {
-			AnsiCommandStyleInterpretter.interpretStyle(currentAttributes, nCmd);
-
-		}
-		return currentAttributes;
-	}
-
 	private ConsoleViewContentType getContentType(AnsiConsoleAttributes consoleAttributes,
 			ConsoleViewContentType inputType) {
 		if (!profile.isEnableAnsiColoring()) {
@@ -181,9 +159,26 @@ public class AnsiConsoleStyleFilter {
 
 	private AnsiConsoleAttributes interpretAsciCommand(String currentText,
 			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, AnsiConsoleAttributes consoleAttributes) {
-		String theEscape = currentText.substring(matcher.start() + 2, matcher.end());
+		if (consoleAttributes == null) {
+			consoleAttributes = new AnsiConsoleAttributes();
+		}
+
+		String theEscape = currentText.substring(matcher.start() + 2, matcher.end() - 1);
+		String kind = currentText.substring(matcher.end() - 1, matcher.end());
+
 		for (String cmd : theEscape.split(";")) {
-			consoleAttributes = interpretCommand(cmd, consoleAttributes, ranges);
+			int nCmd = Utils.tryParseInteger(cmd);
+			if ("J".equals(kind) && profile.isHideAnsiCommands()) {
+				switch (nCmd) {
+				case 2:
+					ansiFilterService.clearConsole();
+					ranges.clear();
+					break;
+				}
+				return consoleAttributes;
+			} else if ("m".equals(kind)) {
+				AnsiCommandStyleInterpretter.interpretStyle(consoleAttributes, nCmd);
+			}
 		}
 		return consoleAttributes;
 	}
