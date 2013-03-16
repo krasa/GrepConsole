@@ -13,6 +13,7 @@ public class Profile extends DomainObject {
 	private boolean enableMaxLengthLimit = true;
 	private boolean enableAnsiColoring;
 	private boolean hideAnsiCommands;
+	private boolean encodeText;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -92,5 +93,13 @@ public class Profile extends DomainObject {
 
 	public void setHideAnsiCommands(final boolean hideAnsiCommands) {
 		this.hideAnsiCommands = hideAnsiCommands;
+	}
+
+	public boolean isEncodeText() {
+		return encodeText;
+	}
+
+	public void setEncodeText(boolean encodeText) {
+		this.encodeText = encodeText;
 	}
 }

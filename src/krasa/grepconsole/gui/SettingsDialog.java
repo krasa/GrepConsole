@@ -33,6 +33,7 @@ public class SettingsDialog {
 	private JCheckBox enableFiltering;
 	private JCheckBox ansi;
 	private JCheckBox hideAnsiCharacters;
+	private JCheckBox encodeText;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -185,6 +186,7 @@ public class SettingsDialog {
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		ansi.setSelected(data.isEnableAnsiColoring());
 		hideAnsiCharacters.setSelected(data.isHideAnsiCommands());
+		encodeText.setSelected(data.isEncodeText());
 	}
 
 	public void getData(Profile data) {
@@ -194,6 +196,7 @@ public class SettingsDialog {
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setEnableAnsiColoring(ansi.isSelected());
 		data.setHideAnsiCommands(hideAnsiCharacters.isSelected());
+		data.setEncodeText(encodeText.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
@@ -209,6 +212,8 @@ public class SettingsDialog {
 		if (ansi.isSelected() != data.isEnableAnsiColoring())
 			return true;
 		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
+			return true;
+		if (encodeText.isSelected() != data.isEncodeText())
 			return true;
 		return false;
 	}

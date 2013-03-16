@@ -21,7 +21,8 @@
       ]]></description>
 
     <change-notes><![CDATA[
-        <br>2.3 (2013-03-15)
+        <br>2.3 (2013-03-16)
+        <br>- option to print every line with Base64
         <br>- hiding of all ANSI commands and bugfix
         <br>2.2 (2013-03-09)
         <br>- ANSI clear screen command support

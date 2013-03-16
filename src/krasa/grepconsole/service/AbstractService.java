@@ -19,9 +19,13 @@ public abstract class AbstractService {
 		this.profile = profile;
 	}
 
-	protected Profile refreshProfile() {
+	protected void refreshProfile() {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
-		return applicationComponent.getState().getProfile(profile);
+		profile = applicationComponent.getState().getProfile(profile);
+	}
+
+	public void onChange() {
+		refreshProfile();
 	}
 
 }

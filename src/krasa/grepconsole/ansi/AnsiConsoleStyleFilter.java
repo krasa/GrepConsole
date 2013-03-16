@@ -12,6 +12,7 @@ import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.service.ConsoleListener;
 
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
@@ -49,6 +50,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	// it is executed with one thread per output stream
+	@Nullable
 	public List<Pair<String, ConsoleViewContentType>> process(String currentText,
 			ConsoleViewContentType consoleViewContentType) {
 		if (StringUtils.isEmpty(currentText)) {

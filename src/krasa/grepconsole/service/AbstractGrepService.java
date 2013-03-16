@@ -68,7 +68,7 @@ public abstract class AbstractGrepService extends AbstractService {
 	abstract protected boolean shouldAdd(GrepExpressionItem item);
 
 	public void onChange() {
-		profile = refreshProfile();
+		super.onChange();
 		initFilters();
 	}
 

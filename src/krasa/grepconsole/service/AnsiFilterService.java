@@ -1,9 +1,12 @@
 package krasa.grepconsole.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import krasa.grepconsole.ansi.AnsiConsoleStyleFilter;
 import krasa.grepconsole.model.Profile;
+
+import org.apache.commons.net.util.Base64;
 
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleView;
@@ -30,11 +33,22 @@ public class AnsiFilterService extends AbstractService implements InputFilter, C
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 			ConsoleViewContentType consoleViewContentType) {
-		if (!profile.isEnableAnsiColoring() && !profile.isHideAnsiCommands()) {
-			return null;
+		List<Pair<String, ConsoleViewContentType>> list = null;
+
+		if (profile.isEnableAnsiColoring() || profile.isHideAnsiCommands()) {
+			list = ansiConsoleStyleFilter.process(s, consoleViewContentType);
+		}
+		if (profile.isEncodeText()) {
+			if (list == null) {
+				list = new ArrayList<Pair<String, ConsoleViewContentType>>(2);
+			}
+			if (list.isEmpty()) {
+				list.add(new Pair<String, ConsoleViewContentType>(s, consoleViewContentType));
+			}
+			list.add(new Pair<String, ConsoleViewContentType>(Base64.encodeBase64String(s.getBytes()),
+					consoleViewContentType));
 		}
 
-		List<Pair<String, ConsoleViewContentType>> list = ansiConsoleStyleFilter.process(s, consoleViewContentType);
 		if (list == null || list.isEmpty()) {
 			return null;
 		}
@@ -46,7 +60,8 @@ public class AnsiFilterService extends AbstractService implements InputFilter, C
 	}
 
 	public void onChange() {
-		profile = refreshProfile();
+		super.onChange();
+
 		ansiConsoleStyleFilter.setProfile(profile);
 	}
 

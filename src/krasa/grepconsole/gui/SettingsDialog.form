@@ -51,7 +51,7 @@
           <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Reset all to default"/>
+          <text value="Reset to default"/>
         </properties>
       </component>
       <component id="f941c" class="javax.swing.JCheckBox" binding="enableMaxLength">
@@ -108,6 +108,14 @@
         </constraints>
         <properties>
           <text value="Hide ANSI commands"/>
+        </properties>
+      </component>
+      <component id="ed352" class="javax.swing.JCheckBox" binding="encodeText">
+        <constraints>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Print Base64 of every line"/>
         </properties>
       </component>
     </children>
