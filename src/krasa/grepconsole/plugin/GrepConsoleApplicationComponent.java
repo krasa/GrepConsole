@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.swing.*;
 
 import krasa.grepconsole.Cache;
+import krasa.grepconsole.Mode;
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
@@ -95,8 +96,16 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
 		resetCache();
+		setMode(Mode.APPLY_SETTINGS);
 		if (currentAction != null) {
 			currentAction.applySettings();
+		}
+		setMode(Mode.DEFAULT);
+	}
+
+	private void setMode(Mode mode) {
+		for (AbstractGrepService listener : cacheHighlight.values()) {
+			listener.setMode(mode);
 		}
 	}
 

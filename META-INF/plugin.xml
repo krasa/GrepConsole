@@ -1,16 +1,16 @@
 <idea-plugin version="2">
-    <id>GrepConsole</id>
-    <name>Grep Console</name>
-    <version>2.3</version>
+	<id>GrepConsole</id>
+	<name>Grep Console</name>
+	<version>2.4</version>
 
-    <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
-        Krasa
-    </vendor>
+	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
+		Krasa
+	</vendor>
 
 
-    <description><![CDATA[
+	<description><![CDATA[
 			Allows you to define a series of regular expressions which will be tested against the console output or currently opened file. 
-			Each expression matching a line will affect the style of the entire line. 
+			Each expression matching a line will affect the style of the entire line, or play a sound. 
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
 	 		
@@ -20,7 +20,9 @@
 			
       ]]></description>
 
-    <change-notes><![CDATA[
+	<change-notes><![CDATA[
+        <br>2.4 (2013-04-02)
+        <br>- sound alerts when a pattern in console is matched. 
         <br>2.3 (2013-03-16)
         <br>- option to print every line with Base64
         <br>- hiding of all ANSI commands and bugfix
@@ -62,53 +64,53 @@
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
-    </change-notes>
+	</change-notes>
 
-    <idea-version since-build="128.55"/>
+	<idea-version since-build="128.55"/>
 
-    <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-           on how to target different products -->
-    <depends>com.intellij.modules.lang</depends>
+	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+		   on how to target different products -->
+	<depends>com.intellij.modules.lang</depends>
 
-    <application-components>
-        <!-- Add your application components here -->
-        <component>
-            <implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
-        </component>
-    </application-components>
+	<application-components>
+		<!-- Add your application components here -->
+		<component>
+			<implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
+		</component>
+	</application-components>
 
-    <project-components>
-        <!-- Add your project components here -->
-        <component>
-            <implementation-class>krasa.grepconsole.plugin.GrepProjectComponent</implementation-class>
-        </component>
-    </project-components>
+	<project-components>
+		<!-- Add your project components here -->
+		<component>
+			<implementation-class>krasa.grepconsole.plugin.GrepProjectComponent</implementation-class>
+		</component>
+	</project-components>
 
-    <actions>
-        <action id="ConsoleView.OpenConsoleSettingsAction" class="krasa.grepconsole.action.AddHighlightAction"
-                text="Add highlight"
-                description="Add highlight for this selected text">
-            <add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
-        </action>
+	<actions>
+		<action id="ConsoleView.OpenConsoleSettingsAction" class="krasa.grepconsole.action.AddHighlightAction"
+				text="Add highlight"
+				description="Add highlight for this selected text">
+			<add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
+		</action>
 
-        <action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
-                text="Clear Grep Highlight"
-                description="Clear Highlight">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-        </action>
-        <!-- Add your actions here -->
-        <action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight"
-                icon="highlight.gif" description="Grep Highlight">
-            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
-        </action>
+		<action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
+				text="Clear Grep Highlight"
+				description="Clear Highlight">
+			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+		</action>
+		<!-- Add your actions here -->
+		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight"
+				icon="highlight.gif" description="Grep Highlight">
+			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+		</action>
 
-    </actions>
+	</actions>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
-        <consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
-        <consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
+	<extensions defaultExtensionNs="com.intellij">
+		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
+		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
+		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
 
-        <!-- Add your extensions here -->
-    </extensions>
+		<!-- Add your extensions here -->
+	</extensions>
 </idea-plugin>

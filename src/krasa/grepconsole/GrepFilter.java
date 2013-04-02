@@ -26,9 +26,17 @@ public class GrepFilter {
 				flow.setNextOperation(grepExpressionItem.getOperationOnMatch());
 				flow.setConsoleViewContentType(grepExpressionItem.getTextAttributes());
 				flow.setExclude(grepExpressionItem.isInputFilter());
+
+				playSound(flow);
 			}
 		}
 		return flow;
+	}
+
+	private void playSound(FilterState flow) {
+		if (flow.getMode() == Mode.DEFAULT) {
+			grepExpressionItem.getSound().play();
+		}
 	}
 
 	private boolean matches(String matchedLine) {

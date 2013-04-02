@@ -26,6 +26,7 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+		item = (Item) value;
 		if (isSelected) {
 			button.setForeground(table.getSelectionForeground());
 			button.setBackground(table.getSelectionBackground());
@@ -33,11 +34,14 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 			button.setForeground(table.getForeground());
 			button.setBackground(table.getBackground());
 		}
-		label = getLabel(value);
-		item = (Item) value;
-		button.setText(label);
+		setStyle(item);
 		isPushed = true;
 		return button;
+	}
+
+	protected void setStyle(Item item) {
+		label = getLabel(item);
+		button.setText(label);
 	}
 
 	protected String getLabel(Object value) {
@@ -49,7 +53,7 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 
 		}
 		isPushed = false;
-		return new String(label);
+		return label;
 	}
 
 	protected void onButtonClicked(Item item) {

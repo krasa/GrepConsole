@@ -1,6 +1,6 @@
 package krasa.grepconsole;
 
-import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.*;
 
 import java.awt.*;
 
@@ -32,7 +32,7 @@ public class GrepFilterTest {
 		FilterState process = grepFilter.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepFilter.process(new FilterState(LINE));
+		process = grepFilter.process(new FilterState(LINE, Mode.DEFAULT));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -54,7 +54,7 @@ public class GrepFilterTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		GrepFilter grepFilter = new GrepFilter(grepExpressionItem);
-		FilterState process = grepFilter.process(new FilterState(LINE_FOO));
+		FilterState process = grepFilter.process(new FilterState(LINE_FOO, Mode.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -66,7 +66,7 @@ public class GrepFilterTest {
 	public void testNoGrepExpression() throws Exception {
 
 		GrepFilter grepFilter = new GrepFilter(new GrepExpressionItem());
-		FilterState process = grepFilter.process(new FilterState(LINE_FOO));
+		FilterState process = grepFilter.process(new FilterState(LINE_FOO, Mode.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -87,7 +87,7 @@ public class GrepFilterTest {
 	}
 
 	private FilterState getInput(String line) {
-		return new FilterState(line);
+		return new FilterState(line, Mode.DEFAULT);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {

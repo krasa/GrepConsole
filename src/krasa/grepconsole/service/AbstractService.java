@@ -1,5 +1,6 @@
 package krasa.grepconsole.service;
 
+import krasa.grepconsole.Mode;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
@@ -9,6 +10,7 @@ public abstract class AbstractService {
 
 	protected Project project;
 	protected Profile profile;
+	protected Mode mode = Mode.DEFAULT;
 
 	public AbstractService(Project project) {
 		this.project = project;
@@ -28,4 +30,7 @@ public abstract class AbstractService {
 		refreshProfile();
 	}
 
+	public void setMode(Mode mode) {
+		this.mode = mode;
+	}
 }

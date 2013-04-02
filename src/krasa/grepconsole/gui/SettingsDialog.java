@@ -151,6 +151,7 @@ public class SettingsDialog {
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic", "style.italic"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
+		columns.add(new SoundColumn("Sound", this));
 		columns.add(new ButtonColumnInfo<GrepExpressionItem>("Up") {
 			@Override
 			void onButtonClicked(GrepExpressionItem grepExpressionItem) {

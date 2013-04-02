@@ -13,6 +13,7 @@
     <orderEntry type="library" scope="TEST" name="test" level="project" />
     <orderEntry type="library" scope="TEST" name="test (2)" level="project" />
     <orderEntry type="library" scope="TEST" name="caliper" level="project" />
+    <orderEntry type="library" name="jfm" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

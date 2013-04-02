@@ -21,6 +21,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
 	private GrepStyle style = new GrepStyle();
+	private Sound sound = new Sound();
 
 	private transient Pattern pattern;
 	private transient Pattern unlessPattern;
@@ -34,6 +35,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem(String id) {
 		super(id);
 
+	}
+
+	public void setSound(Sound sound) {
+		this.sound = sound;
+	}
+
+	public Sound getSound() {
+		return sound;
 	}
 
 	public boolean isEnabled() {

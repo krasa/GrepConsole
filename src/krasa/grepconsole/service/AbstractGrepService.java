@@ -30,7 +30,7 @@ public abstract class AbstractGrepService extends AbstractService {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text)) {
 			FilterState state = null;
-			state = new FilterState(getSubstring(text));
+			state = new FilterState(getSubstring(text), mode);
 			for (GrepFilter grepFilter : grepFilters) {
 				state = grepFilter.process(state);
 				switch (state.getNextOperation()) {
