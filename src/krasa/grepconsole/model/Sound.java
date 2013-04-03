@@ -1,36 +1,53 @@
 package krasa.grepconsole.model;
 
 import java.io.File;
-import java.net.URL;
+import java.io.IOException;
 
+import javax.media.ControllerEvent;
+import javax.media.ControllerListener;
 import javax.media.Manager;
+import javax.media.NoPlayerException;
 import javax.media.Player;
+import javax.media.StopEvent;
 
 import com.intellij.openapi.diagnostic.Logger;
 
 /**
  * @author Vojtech Krasa
  */
-public class Sound extends DomainObject {
+public class Sound extends DomainObject implements ControllerListener {
 	private static final Logger log = Logger.getInstance(Sound.class.getName());
 
 	private String path;
 	private boolean enabled;
 
+	private volatile transient boolean playing;
+
 	public String getPath() {
 		return path;
 	}
 
-	public void play() {
-		if (enabled) {
+	public synchronized void play() {
+		if (enabled && !playing && isNotBlank(path)) {
 			try {
-				Player player = Manager.createPlayer(new URL("file:" + path));
-				player.start();
+				playing = true;
+				getPlayer().start();
 			} catch (Exception ex) {
+				playing = false;
 				log.error("Playing of sound failed. Sound file path=" + path + ", exists:" + new File(path).exists()
 						+ ".", ex);
 			}
 		}
+	}
+
+	private boolean isNotBlank(String path) {
+		return path != null && path.length() != 0;
+	}
+
+	private Player getPlayer() throws IOException, NoPlayerException {
+		Player player = Manager.createPlayer(new File(path).toURI().toURL());
+		player.addControllerListener(this);
+		return player;
 	}
 
 	public void setPath(String path) {
@@ -45,4 +62,10 @@ public class Sound extends DomainObject {
 		this.enabled = enabled;
 	}
 
+	@Override
+	public void controllerUpdate(ControllerEvent controllerEvent) {
+		if (controllerEvent instanceof StopEvent) {
+			playing = false;
+		}
+	}
 }

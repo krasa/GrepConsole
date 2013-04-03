@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>2.4</version>
+	<version>2.5</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,6 +21,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>2.5 (2013-04-03)
+        <br>- table drag&drop
         <br>2.4 (2013-04-02)
         <br>- sound alerts when a pattern in console is matched. 
         <br>2.3 (2013-03-16)

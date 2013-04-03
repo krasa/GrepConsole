@@ -1,5 +1,7 @@
 package krasa.grepconsole.gui;
 
+import static krasa.grepconsole.Cloner.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -18,7 +20,6 @@ import krasa.grepconsole.plugin.PluginState;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
-import com.rits.cloning.Cloner;
 
 public class SettingsDialog {
 	private JPanel rootComponent;
@@ -62,7 +63,7 @@ public class SettingsDialog {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GrepExpressionItem expressionItem = (GrepExpressionItem) new Cloner().deepClone(model.getItem(selectedRow));
+				GrepExpressionItem expressionItem = deepClone((GrepExpressionItem) model.getItem(selectedRow));
 				expressionItem.generateNewId();
 				model.addRow(expressionItem);
 			}
@@ -152,31 +153,14 @@ public class SettingsDialog {
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
 		columns.add(new SoundColumn("Sound", this));
-		columns.add(new ButtonColumnInfo<GrepExpressionItem>("Up") {
-			@Override
-			void onButtonClicked(GrepExpressionItem grepExpressionItem) {
-				int i = model.indexOf(grepExpressionItem);
-				if (i > 0) {
-					model.exchangeRows(i - 1, i);
-					table.setRowSelectionInterval(i - 1, i - 1);
-				}
-			}
-		}.width(50));
-		columns.add(new ButtonColumnInfo<GrepExpressionItem>("Down") {
-			@Override
-			void onButtonClicked(GrepExpressionItem grepExpressionItem) {
-				int i = model.indexOf(grepExpressionItem);
-				if (i < model.getRowCount() - 1) {
-					model.exchangeRows(i + 1, i);
-					table.setRowSelectionInterval(i + 1, i + 1);
-				}
-			}
-		}.width(70));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
 		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),
 				grepExpressionItems, 0);
 		table = new TableView<GrepExpressionItem>(model);
+		table.setDragEnabled(true);
+		table.setDropMode(DropMode.INSERT_ROWS);
+		table.setTransferHandler(new TableRowTransferHandler(table));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	}
 

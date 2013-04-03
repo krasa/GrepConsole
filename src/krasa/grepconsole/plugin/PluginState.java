@@ -1,16 +1,10 @@
 package krasa.grepconsole.plugin;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import krasa.grepconsole.model.DomainObject;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Profile;
-
-import com.rits.cloning.Cloner;
 
 public class PluginState extends DomainObject implements Cloneable {
 
@@ -56,9 +50,7 @@ public class PluginState extends DomainObject implements Cloneable {
 
 	@Override
 	protected PluginState clone() {
-		Cloner cloner = new Cloner();
-		cloner.nullInsteadOfClone();
-		return cloner.deepClone(this);
+		return krasa.grepconsole.Cloner.deepClone(this);
 	}
 
 	public boolean isEnabled() {
