@@ -69,7 +69,7 @@ public class AnsiConsoleStyleFilter {
 			}
 
 			// add previous text if there is any
-			addTextOnFirstMatchCase(currentText, consoleViewContentType, ranges, matcher);
+			addTextOnFirstMatchCase(currentText, consoleViewContentType, ranges, matcher, previousRangeEnd);
 
 			consoleAttributes = interpretAsciCommand(currentText, ranges, matcher, consoleAttributes);
 
@@ -127,7 +127,7 @@ public class AnsiConsoleStyleFilter {
 
 	private void addRangeIfNotFirstMatch(String currentText, ConsoleViewContentType consoleViewContentType,
 			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
-		if (!isFirstMatch(previousRangeEnd, matcher.start()) && matcher.start() != 0) {
+		if (!isFirstMatch(previousRangeEnd, matcher.start()) && previousRangeEnd != matcher.start()) {
 			String substring = currentText.substring(previousRangeEnd, matcher.start());
 			addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
 		}
@@ -147,9 +147,9 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private void addTextOnFirstMatchCase(String currentText, ConsoleViewContentType consoleViewContentType,
-			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher) {
+			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, int previousRangeEnd) {
 		int start = matcher.start();
-		if (isFirstMatch(matcher.end(), start)) {
+		if (isFirstMatch(previousRangeEnd, start)) {
 			ConsoleViewContentType lastType = getContentType(lastConsoleAttributes, consoleViewContentType);
 			if (lastType == null) {
 				lastType = consoleViewContentType;
