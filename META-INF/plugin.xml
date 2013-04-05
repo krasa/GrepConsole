@@ -17,11 +17,11 @@
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
 			and <a href="http://www.mihai-nita.net/eclipse/">Ansi Console plugin for Eclipse</a>.
 			
-			
+			 
       ]]></description>
 
 	<change-notes><![CDATA[
-        <br>2.6 (2013-04-04)
+        <br>2.6 (2013-04-05)
         <br>- ANSI bugfix
         <br>2.5 (2013-04-03)
         <br>- table drag&drop

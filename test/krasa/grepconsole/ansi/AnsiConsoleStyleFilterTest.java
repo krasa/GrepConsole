@@ -36,7 +36,7 @@ public class AnsiConsoleStyleFilterTest {
 
 		process("foo\u001B[0m\u001B[36mbar", "foobar", 2);
 		process("\u001B[0m\u001B[36mbar", "bar", 1);
-		process("\u001B[0m\u001B[36m", "", 0);
+		process("\u001B[0m\u001B[36m", "", 1);
 	}
 
 	private void process(final String input, final String expected, final int numberOfItems) {

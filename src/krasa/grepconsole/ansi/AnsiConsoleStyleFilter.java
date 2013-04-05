@@ -94,6 +94,10 @@ public class AnsiConsoleStyleFilter {
 				return null;
 			addRestOfText(currentText, consoleViewContentType, ranges, previousRangeEnd);
 		}
+		// there was only ansi text, we must return something otherwise it will be displayed
+		if (previousRangeEnd != 0 && ranges.isEmpty()) {
+			ranges.add(new Pair<String, ConsoleViewContentType>("", consoleViewContentType));
+		}
 		return ranges;
 	}
 

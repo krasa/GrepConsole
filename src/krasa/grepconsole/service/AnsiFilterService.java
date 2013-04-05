@@ -45,7 +45,14 @@ public class AnsiFilterService extends AbstractService implements InputFilter, C
 			if (list.isEmpty()) {
 				list.add(new Pair<String, ConsoleViewContentType>(s, consoleViewContentType));
 			}
-			list.add(new Pair<String, ConsoleViewContentType>(Base64.encodeBase64String(s.getBytes()),
+			StringBuilder stringBuilder = new StringBuilder();
+			for (Pair<String, ConsoleViewContentType> stringConsoleViewContentTypePair : list) {
+				stringBuilder.append(stringConsoleViewContentTypePair.first);
+			}
+			list.add(new Pair<String, ConsoleViewContentType>(
+					"input:" + Base64.encodeBase64URLSafeString(s.getBytes()), consoleViewContentType));
+			list.add(new Pair<String, ConsoleViewContentType>("\nresult:"
+					+ Base64.encodeBase64URLSafeString(stringBuilder.toString().getBytes()) + "\n",
 					consoleViewContentType));
 		}
 
