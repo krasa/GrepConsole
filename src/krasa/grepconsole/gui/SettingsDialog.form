@@ -39,7 +39,9 @@
             <preferred-size width="150" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <text value=""/>
+        </properties>
       </component>
       <vspacer id="38ff7">
         <constraints>
@@ -59,7 +61,7 @@
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Limit max length of matching:"/>
+          <text value="Match only first N characters on each line:"/>
         </properties>
       </component>
       <component id="4270c" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
@@ -76,22 +78,6 @@
         </constraints>
         <properties>
           <text value="Copy"/>
-        </properties>
-      </component>
-      <component id="ac111" class="javax.swing.JCheckBox" binding="enableFiltering">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Enable filtering out"/>
-        </properties>
-      </component>
-      <component id="9c3fa" class="javax.swing.JCheckBox" binding="enableHighlightingCheckBox" default-binding="true">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Enable highlighting"/>
         </properties>
       </component>
       <component id="479f2" class="javax.swing.JCheckBox" binding="ansi">
@@ -117,6 +103,30 @@
         <properties>
           <text value="Print Base64 of every line"/>
         </properties>
+      </component>
+      <component id="ac111" class="javax.swing.JCheckBox" binding="enableFiltering">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Enable filtering out"/>
+        </properties>
+      </component>
+      <component id="9c3fa" class="javax.swing.JCheckBox" binding="enableHighlightingCheckBox" default-binding="true">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Enable highlighting"/>
+        </properties>
+      </component>
+      <component id="21ce1" class="javax.swing.JSeparator">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="1" fill="1" indent="0" use-parent-layout="false">
+            <maximum-size width="-1" height="5"/>
+          </grid>
+        </constraints>
+        <properties/>
       </component>
     </children>
   </grid>

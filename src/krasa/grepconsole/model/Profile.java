@@ -9,7 +9,7 @@ public class Profile extends DomainObject {
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
-	private String maxLengthToMatch = "40";
+	private String maxLengthToMatch = "60";
 	private boolean enableMaxLengthLimit = true;
 	private boolean enableAnsiColoring;
 	private boolean hideAnsiCommands;
