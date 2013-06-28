@@ -1,13 +1,11 @@
-package krasa.grepconsole;
+package krasa.grepconsole.filter;
+
+import com.intellij.openapi.diagnostic.Logger;
+import krasa.grepconsole.model.GrepExpressionItem;
+import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import krasa.grepconsole.model.GrepExpressionItem;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.intellij.openapi.diagnostic.Logger;
 
 public class GrepFilter {
 	private static final Logger log = Logger.getInstance(GrepFilter.class.getName());

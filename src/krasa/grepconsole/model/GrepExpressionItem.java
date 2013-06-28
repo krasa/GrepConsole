@@ -1,17 +1,15 @@
 package krasa.grepconsole.model;
 
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import krasa.grepconsole.filter.Cache;
+import krasa.grepconsole.filter.GrepFilter;
+import krasa.grepconsole.filter.Operation;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import krasa.grepconsole.Cache;
-import krasa.grepconsole.GrepFilter;
-import krasa.grepconsole.Operation;
-
-import org.apache.commons.lang.StringUtils;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -110,7 +108,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Compiles the specified grep expression. Swallows exceptions caused by invalid expressions.
-	 * 
+	 *
 	 * @param expression
 	 * @return The compiled pattern, or <code>null</code> if an error occurs.
 	 */
@@ -128,7 +126,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Computes flags for the regular expression pattern.
-	 * 
+	 *
 	 * @return Flags.
 	 */
 	private int computeFlags() {
@@ -193,6 +191,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.operationOnMatch = operationOnMatch;
 	}
 
+	/*TODO this all need to be changed*/
 	public ConsoleViewContentType getTextAttributes() {
 		String cacheIdentifier = getId();
 		ConsoleViewContentType result = Cache.getInstance().get(cacheIdentifier);
@@ -229,4 +228,13 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.operationOnMatch = operationOnMatch;
 		return this;
 	}
+
+	public boolean isContinueMatching() {
+		return operationOnMatch == Operation.CONTINUE_MATCHING;
+	}
+
+	public void setContinueMatching(boolean continueMatching) {
+		this.operationOnMatch = continueMatching ? Operation.CONTINUE_MATCHING : Operation.EXIT;
+	}
+
 }

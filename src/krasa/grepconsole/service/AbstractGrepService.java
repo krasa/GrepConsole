@@ -1,16 +1,14 @@
 package krasa.grepconsole.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import krasa.grepconsole.FilterState;
-import krasa.grepconsole.GrepFilter;
+import com.intellij.openapi.project.Project;
+import krasa.grepconsole.filter.FilterState;
+import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
-
 import org.apache.commons.lang.StringUtils;
 
-import com.intellij.openapi.project.Project;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractGrepService extends AbstractService {
 
@@ -34,10 +32,10 @@ public abstract class AbstractGrepService extends AbstractService {
 			for (GrepFilter grepFilter : grepFilters) {
 				state = grepFilter.process(state);
 				switch (state.getNextOperation()) {
-				case EXIT:
-					return state;
-				case CONTINUE_MATCHING:
-					break;
+					case EXIT:
+						return state;
+					case CONTINUE_MATCHING:
+						break;
 				}
 			}
 		}

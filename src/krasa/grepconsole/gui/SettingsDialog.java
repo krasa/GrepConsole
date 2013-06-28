@@ -1,25 +1,23 @@
 package krasa.grepconsole.gui;
 
-import static krasa.grepconsole.Cloner.*;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.text.NumberFormatter;
-
+import com.intellij.ui.table.TableView;
+import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.ui.ListTableModel;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.DefaultState;
 import krasa.grepconsole.plugin.PluginState;
 
-import com.intellij.ui.table.TableView;
-import com.intellij.util.ui.ColumnInfo;
-import com.intellij.util.ui.ListTableModel;
+import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.NumberFormatter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import static krasa.grepconsole.Cloner.*;
 
 public class SettingsDialog {
 	private JPanel rootComponent;
@@ -153,6 +151,7 @@ public class SettingsDialog {
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
 		columns.add(new SoundColumn("Sound", this));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching"));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
 		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),

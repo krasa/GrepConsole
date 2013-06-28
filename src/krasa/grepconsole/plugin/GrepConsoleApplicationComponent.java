@@ -1,29 +1,5 @@
 package krasa.grepconsole.plugin;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.*;
-
-import krasa.grepconsole.Cache;
-import krasa.grepconsole.Mode;
-import krasa.grepconsole.action.HighlightManipulationAction;
-import krasa.grepconsole.gui.SettingsDialog;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.service.AbstractGrepService;
-import krasa.grepconsole.service.AnsiFilterService;
-import krasa.grepconsole.service.GrepHighlightService;
-import krasa.grepconsole.service.GrepInputFilterService;
-
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -32,8 +8,29 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.action.HighlightManipulationAction;
+import krasa.grepconsole.filter.Cache;
+import krasa.grepconsole.filter.Mode;
+import krasa.grepconsole.gui.SettingsDialog;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.service.AbstractGrepService;
+import krasa.grepconsole.service.AnsiFilterService;
+import krasa.grepconsole.service.GrepHighlightService;
+import krasa.grepconsole.service.GrepInputFilterService;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
+import javax.swing.*;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
 		PersistentStateComponent<PluginState> {
 

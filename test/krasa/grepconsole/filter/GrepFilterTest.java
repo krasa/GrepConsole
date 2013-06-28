@@ -1,17 +1,15 @@
-package krasa.grepconsole;
+package krasa.grepconsole.filter;
 
-import static junit.framework.Assert.*;
-
-import java.awt.*;
-
+import com.intellij.execution.ui.ConsoleViewContentType;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
+import java.awt.*;
+
+import static junit.framework.Assert.*;
 
 public class GrepFilterTest {
 

@@ -1,4 +1,4 @@
-package krasa.grepconsole;
+package krasa.grepconsole.filter;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;

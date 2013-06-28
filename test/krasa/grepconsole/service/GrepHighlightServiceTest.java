@@ -1,21 +1,17 @@
 package krasa.grepconsole.service;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-
-import java.awt.*;
-import java.util.ArrayList;
-
-import krasa.grepconsole.GrepFilter;
+import com.intellij.execution.filters.Filter;
+import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Profile;
-
 import org.junit.Test;
 
-import com.intellij.execution.filters.Filter;
+import java.awt.*;
+import java.util.ArrayList;
+
+import static junit.framework.Assert.*;
 
 public class GrepHighlightServiceTest {
 

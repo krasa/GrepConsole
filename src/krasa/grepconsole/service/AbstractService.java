@@ -1,10 +1,9 @@
 package krasa.grepconsole.service;
 
-import krasa.grepconsole.Mode;
+import com.intellij.openapi.project.Project;
+import krasa.grepconsole.filter.Mode;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-
-import com.intellij.openapi.project.Project;
 
 public abstract class AbstractService {
 
