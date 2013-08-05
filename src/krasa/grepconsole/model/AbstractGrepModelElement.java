@@ -1,14 +1,9 @@
 package krasa.grepconsole.model;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-
 import java.util.Set;
 import java.util.UUID;
 
-
-public abstract class AbstractGrepModelElement extends DomainObject{
+public abstract class AbstractGrepModelElement extends DomainObject {
 	private String id;
 	private String name;
 	private boolean defaultEnabled;
@@ -90,7 +85,6 @@ public abstract class AbstractGrepModelElement extends DomainObject{
 		this.id = id;
 	}
 
-
 	public String getName() {
 		return name;
 	}
@@ -122,5 +116,5 @@ public abstract class AbstractGrepModelElement extends DomainObject{
 	public void setParent(GrepExpressionFolder parent) {
 		this.parent = parent;
 	}
-	
+
 }

@@ -8,18 +8,18 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.ide.CopyPasteManager;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.ui.JBColor;
-import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+
+import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 
 public class AddHighlightAction extends HighlightManipulationAction {
 	@Override
@@ -28,7 +28,8 @@ public class AddHighlightAction extends HighlightManipulationAction {
 		if (consoleView != null) {
 			try {
 				String string = getString(e);
-				if (string == null) return;
+				if (string == null)
+					return;
 				GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
 				addExpressionItem(string, instance.getProfile(e.getProject()));
 				instance.resetCache();

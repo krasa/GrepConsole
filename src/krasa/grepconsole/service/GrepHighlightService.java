@@ -47,5 +47,4 @@ public class GrepHighlightService extends AbstractGrepService implements Filter 
 		return profile.isEnabledHighlighting();
 	}
 
-
 }

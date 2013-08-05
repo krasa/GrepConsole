@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-
 public class GrepExpressionRootFolder extends GrepExpressionFolder {
 	/**
 	 * Map of styles (id/style).
@@ -26,9 +25,8 @@ public class GrepExpressionRootFolder extends GrepExpressionFolder {
 
 	/**
 	 * Sets a new collection of styles. Style references of all items will be updated using their ID.
-	 * 
-	 * @param styles
-	 *            New styles.
+	 *
+	 * @param styles New styles.
 	 */
 	public void setStyles(Collection<GrepStyle> styles) {
 		this.styles.clear();

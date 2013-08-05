@@ -30,10 +30,11 @@ public class GrepInputFilterService extends AbstractGrepService implements Input
 		if (state != null) {
 			result = prepareResult(state);
 		}
-		if (state == null) {
-			return null;
+		if (result == null) {
+			return null;//input is not changed
+		} else {
+			return Arrays.asList(result);
 		}
-		return Arrays.asList(result);
 	}
 
 	private Pair<String, ConsoleViewContentType> prepareResult(FilterState state) {

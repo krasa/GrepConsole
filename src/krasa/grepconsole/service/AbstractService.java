@@ -1,7 +1,7 @@
 package krasa.grepconsole.service;
 
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.filter.Mode;
+import krasa.grepconsole.filter.GuiContext;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
@@ -9,7 +9,7 @@ public abstract class AbstractService {
 
 	protected Project project;
 	protected Profile profile;
-	protected Mode mode = Mode.DEFAULT;
+	protected GuiContext guiContext = GuiContext.DEFAULT;
 
 	public AbstractService(Project project) {
 		this.project = project;
@@ -29,7 +29,7 @@ public abstract class AbstractService {
 		refreshProfile();
 	}
 
-	public void setMode(Mode mode) {
-		this.mode = mode;
+	public void setGuiContext(GuiContext guiContext) {
+		this.guiContext = guiContext;
 	}
 }

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>2.6.1</version>
+	<version>2.7</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -15,12 +15,14 @@
 	 		<br>
 	 		
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
-			and <a href="http://www.mihai-nita.net/eclipse/">Ansi Console plugin for Eclipse</a>.
+			and <a href="http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/">Ansi Console plugin for Eclipse</a>.
 			
 			 
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>2.7 (2013-06-25)
+        <br>- new option to continue matching - multiple styles can be combined for a single line
         <br>2.6.1 (2013-06-25)
         <br>- minor settings improvements
         <br>2.6 (2013-04-05)

@@ -10,14 +10,14 @@ public class AnsiCommands {
 	public static final int COMMAND_ATTR_UNDERLINE = 4; // Underline: Single
 	public static final int COMMAND_ATTR_BLINK_SLOW = 5; // Blink: Slow less than 150 per minute
 	public static final int COMMAND_ATTR_BLINK_FAST = 6; // Blink: Rapid MS-DOS ANSI.SYS; 150 per minute or more; not
-															// widely supported
+	// widely supported
 	public static final int COMMAND_ATTR_NEGATIVE_ON = 7; // Image: Negative inverse or reverse; swap foreground and
-															// background
+	// background
 	public static final int COMMAND_ATTR_CONCEAL_ON = 8; // Conceal not widely supported
 	public static final int COMMAND_ATTR_UNDERLINE_DOUBLE = 21; // Bright/Bold: off or Underline: Double bold off not
-																// widely supported, double underline hardly ever
+	// widely supported, double underline hardly ever
 	public static final int COMMAND_ATTR_INTENSITY_NORMAL = 22; // Normal color or intensity neither bright, bold nor
-																// faint
+	// faint
 	public static final int COMMAND_ATTR_ITALIC_OFF = 23; // Not italic, not Fraktur
 	public static final int COMMAND_ATTR_UNDERLINE_OFF = 24; // Underline: None not singly or doubly underlined
 	public static final int COMMAND_ATTR_BLINK_OFF = 25; // Blink: off

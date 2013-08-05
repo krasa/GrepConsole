@@ -191,16 +191,31 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.operationOnMatch = operationOnMatch;
 	}
 
-	/*TODO this all need to be changed*/
-	public ConsoleViewContentType getTextAttributes() {
-		String cacheIdentifier = getId();
-		ConsoleViewContentType result = Cache.getInstance().get(cacheIdentifier);
-		if (result == null) {
-			TextAttributes textAttributes = new TextAttributes();
-			style.applyTo(textAttributes);
-			result = new ConsoleViewContentType(cacheIdentifier, textAttributes);
-			Cache.getInstance().put(cacheIdentifier, result);
+	/* TODO this all need to be changed */
+	public ConsoleViewContentType getConsoleViewContentType(ConsoleViewContentType consoleViewContentType) {
+		ConsoleViewContentType result;
+		if (consoleViewContentType != null) {
+			// TODO maybe tree would have better performance?
+			final String newId = consoleViewContentType.toString() + "-" + getId();
+			result = Cache.getInstance().get(newId);
+			if (result == null) {
+				result = createConsoleViewContentType(newId, consoleViewContentType.getAttributes().clone());
+			}
+		} else {
+			String cacheIdentifier = getId();
+			result = Cache.getInstance().get(cacheIdentifier);
+			if (result == null) {
+				result = createConsoleViewContentType(cacheIdentifier, new TextAttributes());
+			}
 		}
+		return result;
+	}
+
+	private ConsoleViewContentType createConsoleViewContentType(String newId, TextAttributes newTextAttributes) {
+		ConsoleViewContentType result;
+		style.applyTo(newTextAttributes);
+		result = new ConsoleViewContentType(newId, newTextAttributes);
+		Cache.getInstance().put(newId, result);
 		return result;
 	}
 

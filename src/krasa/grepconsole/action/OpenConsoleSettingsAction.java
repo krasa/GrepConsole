@@ -1,12 +1,12 @@
 package krasa.grepconsole.action;
 
-import javax.swing.*;
-
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+
+import javax.swing.*;
 
 public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	public static final Icon ICON = IconLoader.getIcon("highlight.gif", OpenConsoleSettingsAction.class);
@@ -24,8 +24,7 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	public void actionPerformed(final AnActionEvent e) {
 		GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
 		instance.setCurrentAction(this);
-		ShowSettingsUtil.getInstance().editConfigurable(e.getProject(),
-				instance);
+		ShowSettingsUtil.getInstance().editConfigurable(e.getProject(), instance);
 		instance.setCurrentAction(null);
 
 	}

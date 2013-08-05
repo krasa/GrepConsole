@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-
 public class GrepExpressionFolder extends AbstractGrepModelElement {
 	protected List<AbstractGrepModelElement> children;
 
@@ -30,11 +29,9 @@ public class GrepExpressionFolder extends AbstractGrepModelElement {
 
 	/**
 	 * Adds a new element at the specified index in the child list.
-	 * 
-	 * @param element
-	 *            New element.
-	 * @param index
-	 *            Index. Values smaller than 0 refer to the end of the list.
+	 *
+	 * @param element New element.
+	 * @param index   Index. Values smaller than 0 refer to the end of the list.
 	 */
 	public void add(AbstractGrepModelElement element, int index) {
 		if (element.getParent() != null) {
@@ -53,9 +50,8 @@ public class GrepExpressionFolder extends AbstractGrepModelElement {
 
 	/**
 	 * Removes the specified child.
-	 * 
-	 * @param element
-	 *            Element to remove.
+	 *
+	 * @param element Element to remove.
 	 * @return <code>true</code> if the element was removed, or <code>false</code> if it was not a child of this group.
 	 */
 	public boolean remove(AbstractGrepModelElement element) {
@@ -69,7 +65,7 @@ public class GrepExpressionFolder extends AbstractGrepModelElement {
 
 	/**
 	 * Returns an unmodifiable list of all children.
-	 * 
+	 *
 	 * @return Children.
 	 */
 	public List<AbstractGrepModelElement> getChildren() {
@@ -106,9 +102,8 @@ public class GrepExpressionFolder extends AbstractGrepModelElement {
 	 * Recursively finds the element with the specified ID among the children of this group.
 	 * <p/>
 	 * Note: This group itself is not found by the search.
-	 * 
-	 * @param id
-	 *            Search ID.
+	 *
+	 * @param id Search ID.
 	 * @return Element with a matching ID. <code>null</code> if no such element is found.
 	 */
 	public AbstractGrepModelElement findById(String id) {

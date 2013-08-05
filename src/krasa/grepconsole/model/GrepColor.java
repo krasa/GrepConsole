@@ -2,7 +2,6 @@ package krasa.grepconsole.model;
 
 import java.awt.*;
 
-
 public class GrepColor extends DomainObject {
 
 	private boolean enabled;

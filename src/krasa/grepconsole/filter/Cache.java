@@ -35,5 +35,4 @@ public class Cache {
 	public void put(String id, ConsoleViewContentType result) {
 		map.put(id, result);
 	}
-
 }

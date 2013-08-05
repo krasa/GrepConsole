@@ -2,6 +2,7 @@ package krasa.grepconsole.service;
 
 import com.intellij.execution.filters.Filter;
 import krasa.grepconsole.filter.GrepFilter;
+import krasa.grepconsole.filter.Operation;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
@@ -25,8 +26,8 @@ public class GrepHighlightServiceTest {
 	@Test
 	public void testWithFilters() throws Exception {
 		ArrayList<GrepFilter> grepFilters = new ArrayList<GrepFilter>();
-		grepFilters.add(getFilter(".*ERROR.*", Color.RED));
-		grepFilters.add(getFilter(".*INFO.*", Color.BLUE));
+		grepFilters.add(getFilterB(".*ERROR.*", Color.RED, Operation.EXIT));
+		grepFilters.add(getFilterB(".*INFO.*", Color.BLUE, Operation.EXIT));
 		GrepHighlightService grepFilter = new GrepHighlightService(new Profile(), grepFilters);
 
 		assertNull(grepFilter.applyFilter("[WARN]", 10));
@@ -45,6 +46,30 @@ public class GrepHighlightServiceTest {
 		testVariousText(grepFilter);
 	}
 
+	@Test
+	public void testCombinations() throws Exception {
+		ArrayList<GrepFilter> grepFilters = new ArrayList<GrepFilter>();
+		grepFilters.add(getFilterF(".*BLACK FOREGROUND.*", Color.BLACK, Operation.CONTINUE_MATCHING));
+		grepFilters.add(getFilterB(".*RED BACKGROUND.*", Color.RED, Operation.CONTINUE_MATCHING));
+		GrepHighlightService grepFilter = new GrepHighlightService(new Profile(), grepFilters);
+
+		Filter.Result result = grepFilter.applyFilter("BLACK FOREGROUND RED BACKGROUND", 10);
+		assertNotNull(result);
+		assertEquals(Color.RED, result.highlightAttributes.getBackgroundColor());
+		assertEquals(Color.BLACK, result.highlightAttributes.getForegroundColor());
+		assertNull(result.highlightAttributes.getEffectColor());
+		assertNull(result.highlightAttributes.getErrorStripeColor());
+
+		result = grepFilter.applyFilter("BLACK FOREGROUND", 10);
+		assertEquals(null, result.highlightAttributes.getBackgroundColor());
+		assertEquals(Color.BLACK, result.highlightAttributes.getForegroundColor());
+
+
+		result = grepFilter.applyFilter("RED BACKGROUND", 10);
+		assertEquals(Color.RED, result.highlightAttributes.getBackgroundColor());
+		assertEquals(null, result.highlightAttributes.getForegroundColor());
+	}
+
 	private void testVariousText(GrepHighlightService grepFilter) {
 		grepFilter.applyFilter("[INFO]\n", 10);
 		grepFilter.applyFilter("\n", 10);
@@ -53,9 +78,20 @@ public class GrepHighlightServiceTest {
 		grepFilter.applyFilter(null, 10);
 	}
 
-	private GrepFilter getFilter(String grepExpression, Color red) {
-		return new GrepFilter(new GrepExpressionItem().grepExpression(grepExpression).style(
-				new GrepStyle().backgroundColor(new GrepColor(red))));
+	private GrepFilter getFilterB(String grepExpression, Color red, Operation exit) {
+		final GrepExpressionItem grepExpressionItem = getGrepExpressionItem(grepExpression, exit).style(
+				new GrepStyle().backgroundColor(new GrepColor(red)));
+		return new GrepFilter(grepExpressionItem);
+	}
+
+	private GrepFilter getFilterF(String grepExpression, Color red, Operation exit) {
+		final GrepExpressionItem grepExpressionItem = getGrepExpressionItem(grepExpression, exit).style(
+				new GrepStyle().foregroundColor(new GrepColor(red)));
+		return new GrepFilter(grepExpressionItem);
+	}
+
+	private GrepExpressionItem getGrepExpressionItem(String grepExpression, Operation exit) {
+		return new GrepExpressionItem().grepExpression(grepExpression).operationOnMatch(exit);
 	}
 
 }

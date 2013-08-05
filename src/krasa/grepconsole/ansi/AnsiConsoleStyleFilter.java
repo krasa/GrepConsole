@@ -1,22 +1,20 @@
 package krasa.grepconsole.ansi;
 
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.util.Pair;
+import krasa.grepconsole.ansi.utils.AnsiConsoleAttributes;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.service.ConsoleListener;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import krasa.grepconsole.ansi.utils.AnsiConsoleAttributes;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.service.ConsoleListener;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.util.Pair;
 
 public class AnsiConsoleStyleFilter {
 
@@ -31,7 +29,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private ConsoleViewContentType getContentType(AnsiConsoleAttributes consoleAttributes,
-			ConsoleViewContentType inputType) {
+												  ConsoleViewContentType inputType) {
 		if (!profile.isEnableAnsiColoring()) {
 			return inputType;
 		}
@@ -52,7 +50,7 @@ public class AnsiConsoleStyleFilter {
 	// it is executed with one thread per output stream
 	@Nullable
 	public List<Pair<String, ConsoleViewContentType>> process(String currentText,
-			ConsoleViewContentType consoleViewContentType) {
+															  ConsoleViewContentType consoleViewContentType) {
 		if (StringUtils.isEmpty(currentText)) {
 			return null;
 		}
@@ -86,8 +84,8 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private List<Pair<String, ConsoleViewContentType>> addRestOfTextOrReturnNothing(String currentText,
-			ConsoleViewContentType consoleViewContentType, List<Pair<String, ConsoleViewContentType>> ranges,
-			int previousRangeEnd) {
+																					ConsoleViewContentType consoleViewContentType, List<Pair<String, ConsoleViewContentType>> ranges,
+																					int previousRangeEnd) {
 		// if there was matches previously, add the rest of text, if there is any
 		if (lastConsoleAttributes != null && (previousRangeEnd != currentText.length() || previousRangeEnd == 0)) {
 			if (isIntellijGeneratedLastLine(currentText, consoleViewContentType, ranges))
@@ -102,7 +100,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private void addRestOfText(String currentText, ConsoleViewContentType consoleViewContentType,
-			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd) {
+							   List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd) {
 		boolean endsWithLineEnd = currentText.endsWith("\n");
 
 		String substring = getStringWithoutLineEnd(currentText, previousRangeEnd, endsWithLineEnd);
@@ -120,7 +118,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private boolean isIntellijGeneratedLastLine(String currentText, ConsoleViewContentType consoleViewContentType,
-			List<Pair<String, ConsoleViewContentType>> ranges) {
+												List<Pair<String, ConsoleViewContentType>> ranges) {
 		// 'Process finished with exit code', or just one '\n'
 		if (currentText.startsWith("\n")) {
 			addRange(ranges, currentText, consoleViewContentType);
@@ -130,7 +128,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private void addRangeIfNotFirstMatch(String currentText, ConsoleViewContentType consoleViewContentType,
-			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
+										 List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
 		if (!isFirstMatch(previousRangeEnd, matcher.start()) && previousRangeEnd != matcher.start()) {
 			String substring = currentText.substring(previousRangeEnd, matcher.start());
 			addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
@@ -138,7 +136,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private void printAsciCommandIfEnabled(String currentText, List<Pair<String, ConsoleViewContentType>> ranges,
-			Matcher matcher) {
+										   Matcher matcher) {
 		if (!profile.isHideAnsiCommands()) {
 			String substring = currentText.substring(matcher.start(), matcher.end());
 			addRange(ranges, substring, ConsoleViewContentType.SYSTEM_OUTPUT);
@@ -146,12 +144,12 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private void addRange(List<Pair<String, ConsoleViewContentType>> ranges, final String substring,
-			final ConsoleViewContentType contentType) {
+						  final ConsoleViewContentType contentType) {
 		ranges.add(new Pair<String, ConsoleViewContentType>(substring, contentType));
 	}
 
 	private void addTextOnFirstMatchCase(String currentText, ConsoleViewContentType consoleViewContentType,
-			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, int previousRangeEnd) {
+										 List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, int previousRangeEnd) {
 		int start = matcher.start();
 		if (isFirstMatch(previousRangeEnd, start)) {
 			ConsoleViewContentType lastType = getContentType(lastConsoleAttributes, consoleViewContentType);
@@ -164,7 +162,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private AnsiConsoleAttributes interpretAsciCommand(String currentText,
-			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, AnsiConsoleAttributes consoleAttributes) {
+													   List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, AnsiConsoleAttributes consoleAttributes) {
 		if (consoleAttributes == null) {
 			consoleAttributes = new AnsiConsoleAttributes();
 		}
@@ -176,10 +174,10 @@ public class AnsiConsoleStyleFilter {
 			int nCmd = Utils.tryParseInteger(cmd);
 			if ("J".equals(kind) && profile.isHideAnsiCommands()) {
 				switch (nCmd) {
-				case 2:
-					ansiFilterService.clearConsole();
-					ranges.clear();
-					break;
+					case 2:
+						ansiFilterService.clearConsole();
+						ranges.clear();
+						break;
 				}
 				return consoleAttributes;
 			} else if ("m".equals(kind)) {

@@ -16,23 +16,23 @@ public class GrepFilter {
 		this.grepExpressionItem = grepExpressionItem;
 	}
 
-	public FilterState process(FilterState flow) {
+	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
-			String matchedLine = flow.getText();
+			String matchedLine = state.getText();
 
 			if (matches(matchedLine) && !matchesUnless(matchedLine)) {
-				flow.setNextOperation(grepExpressionItem.getOperationOnMatch());
-				flow.setConsoleViewContentType(grepExpressionItem.getTextAttributes());
-				flow.setExclude(grepExpressionItem.isInputFilter());
+				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
+				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
+				state.setExclude(grepExpressionItem.isInputFilter());
 
-				playSound(flow);
+				playSound(state);
 			}
 		}
-		return flow;
+		return state;
 	}
 
 	private void playSound(FilterState flow) {
-		if (flow.getMode() == Mode.DEFAULT) {
+		if (flow.getGuiContext() != GuiContext.NO_SOUND) {
 			grepExpressionItem.getSound().play();
 		}
 	}

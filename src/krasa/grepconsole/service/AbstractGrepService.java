@@ -26,9 +26,8 @@ public abstract class AbstractGrepService extends AbstractService {
 
 	public FilterState filter(String text) {
 		// line can be empty sometimes under heavy load
-		if (!StringUtils.isEmpty(text)) {
-			FilterState state = null;
-			state = new FilterState(getSubstring(text), mode);
+		if (!StringUtils.isEmpty(text) && !grepFilters.isEmpty()) {
+			FilterState state = new FilterState(getSubstring(text), guiContext);
 			for (GrepFilter grepFilter : grepFilters) {
 				state = grepFilter.process(state);
 				switch (state.getNextOperation()) {
@@ -38,6 +37,7 @@ public abstract class AbstractGrepService extends AbstractService {
 						break;
 				}
 			}
+			return state;
 		}
 		return null;
 	}

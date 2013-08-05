@@ -30,7 +30,7 @@ public class GrepFilterTest {
 		FilterState process = grepFilter.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepFilter.process(new FilterState(LINE, Mode.DEFAULT));
+		process = grepFilter.process(new FilterState(LINE, GuiContext.DEFAULT));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -52,7 +52,7 @@ public class GrepFilterTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		GrepFilter grepFilter = new GrepFilter(grepExpressionItem);
-		FilterState process = grepFilter.process(new FilterState(LINE_FOO, Mode.DEFAULT));
+		FilterState process = grepFilter.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -64,7 +64,7 @@ public class GrepFilterTest {
 	public void testNoGrepExpression() throws Exception {
 
 		GrepFilter grepFilter = new GrepFilter(new GrepExpressionItem());
-		FilterState process = grepFilter.process(new FilterState(LINE_FOO, Mode.DEFAULT));
+		FilterState process = grepFilter.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -85,7 +85,7 @@ public class GrepFilterTest {
 	}
 
 	private FilterState getInput(String line) {
-		return new FilterState(line, Mode.DEFAULT);
+		return new FilterState(line, GuiContext.DEFAULT);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {

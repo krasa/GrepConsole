@@ -4,8 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * This software is provided as IS by Antilia-Soft SL.
- * Copyright 2006-2007.
+ * This software is provided as IS by Antilia-Soft SL. Copyright 2006-2007.
  */
 public class ReflectionUtils {
 

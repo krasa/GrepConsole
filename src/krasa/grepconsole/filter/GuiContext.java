@@ -3,7 +3,7 @@ package krasa.grepconsole.filter;
 /**
  * @author Vojtech Krasa
  */
-public enum Mode {
+public enum GuiContext {
 	DEFAULT,
-	APPLY_SETTINGS,
+	NO_SOUND,
 }

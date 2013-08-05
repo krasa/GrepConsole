@@ -7,13 +7,13 @@ public class FilterState {
 
 	private String text;
 	private Operation nextOperation = Operation.CONTINUE_MATCHING;
-	private Mode mode = Mode.APPLY_SETTINGS;
+	private final GuiContext guiContext;
 	protected ConsoleViewContentType consoleViewContentType;
 	private boolean exclude;
 
-	public FilterState(String text, Mode mode) {
+	public FilterState(String text, GuiContext guiContext) {
 		this.text = text;
-		this.mode = mode;
+		this.guiContext = guiContext;
 	}
 
 	public Operation getNextOperation() {
@@ -56,11 +56,8 @@ public class FilterState {
 		return exclude;
 	}
 
-	public Mode getMode() {
-		return mode;
+	public GuiContext getGuiContext() {
+		return guiContext;
 	}
 
-	public void setMode(Mode mode) {
-		this.mode = mode;
-	}
 }

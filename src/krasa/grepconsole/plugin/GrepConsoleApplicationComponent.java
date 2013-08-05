@@ -10,7 +10,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.Cache;
-import krasa.grepconsole.filter.Mode;
+import krasa.grepconsole.filter.GuiContext;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.service.AbstractGrepService;
@@ -93,16 +93,16 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
 		resetCache();
-		setMode(Mode.APPLY_SETTINGS);
+		setMode(GuiContext.NO_SOUND);
 		if (currentAction != null) {
 			currentAction.applySettings();
 		}
-		setMode(Mode.DEFAULT);
+		setMode(GuiContext.DEFAULT);
 	}
 
-	private void setMode(Mode mode) {
+	private void setMode(GuiContext guiContext) {
 		for (AbstractGrepService listener : cacheHighlight.values()) {
-			listener.setMode(mode);
+			listener.setGuiContext(guiContext);
 		}
 	}
 
