@@ -25,24 +25,22 @@ public class GrepInputFilterService extends AbstractGrepService implements Input
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 																  ConsoleViewContentType consoleViewContentType) {
-		Pair<String, ConsoleViewContentType> result = null;
 		FilterState state = super.filter(s);
+		return prepareResult(state);
+	}
+
+	private List<Pair<String, ConsoleViewContentType>> prepareResult(FilterState state) {
+		Pair<String, ConsoleViewContentType> result = null;
 		if (state != null) {
-			result = prepareResult(state);
+			if (state.isExclude()) {
+				result = new Pair<String, ConsoleViewContentType>(null, null);
+			}
 		}
 		if (result == null) {
 			return null;//input is not changed
 		} else {
 			return Arrays.asList(result);
 		}
-	}
-
-	private Pair<String, ConsoleViewContentType> prepareResult(FilterState state) {
-		Pair<String, ConsoleViewContentType> result = null;
-		if (state.isExclude()) {
-			result = new Pair<String, ConsoleViewContentType>(null, null);
-		}
-		return result;
 	}
 
 	@Override
