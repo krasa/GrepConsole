@@ -24,14 +24,14 @@ public class AnsiConsoleStyleProcessor {
 	private final static Map<String, ConsoleViewContentType> cache = new HashMap<String, ConsoleViewContentType>();
 	protected AnsiConsoleAttributes lastConsoleAttributes;
 	private volatile Profile profile;
-	private ConsoleListener ansiFilterService;
+	private ConsoleListener ansiFilter;
 
 	public AnsiConsoleStyleProcessor(Profile profile) {
 		this.profile = profile;
 	}
 
 	private ConsoleViewContentType getContentType(AnsiConsoleAttributes consoleAttributes,
-												  ConsoleViewContentType inputType) {
+			ConsoleViewContentType inputType) {
 		if (!profile.isEnableAnsiColoring()) {
 			return inputType;
 		}
@@ -52,7 +52,7 @@ public class AnsiConsoleStyleProcessor {
 	// it is executed with one thread per output stream
 	@Nullable
 	public List<Pair<String, ConsoleViewContentType>> process(String currentText,
-															  ConsoleViewContentType consoleViewContentType) {
+			ConsoleViewContentType consoleViewContentType) {
 		if (StringUtils.isEmpty(currentText)) {
 			return null;
 		}
@@ -86,8 +86,8 @@ public class AnsiConsoleStyleProcessor {
 	}
 
 	private List<Pair<String, ConsoleViewContentType>> addRestOfTextOrReturnNothing(String currentText,
-																					ConsoleViewContentType consoleViewContentType, List<Pair<String, ConsoleViewContentType>> ranges,
-																					int previousRangeEnd) {
+			ConsoleViewContentType consoleViewContentType, List<Pair<String, ConsoleViewContentType>> ranges,
+			int previousRangeEnd) {
 		// if there was matches previously, add the rest of text, if there is any
 		if (lastConsoleAttributes != null && (previousRangeEnd != currentText.length() || previousRangeEnd == 0)) {
 			if (isIntellijGeneratedLastLine(currentText, consoleViewContentType, ranges))
@@ -102,7 +102,7 @@ public class AnsiConsoleStyleProcessor {
 	}
 
 	private void addRestOfText(String currentText, ConsoleViewContentType consoleViewContentType,
-							   List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd) {
+			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd) {
 		boolean endsWithLineEnd = currentText.endsWith("\n");
 
 		String substring = getStringWithoutLineEnd(currentText, previousRangeEnd, endsWithLineEnd);
@@ -130,7 +130,7 @@ public class AnsiConsoleStyleProcessor {
 	}
 
 	private void addRangeIfNotFirstMatch(String currentText, ConsoleViewContentType consoleViewContentType,
-										 List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
+			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
 		if (!isFirstMatch(previousRangeEnd, matcher.start()) && previousRangeEnd != matcher.start()) {
 			String substring = currentText.substring(previousRangeEnd, matcher.start());
 			addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
@@ -151,7 +151,7 @@ public class AnsiConsoleStyleProcessor {
 	}
 
 	private void addTextOnFirstMatchCase(String currentText, ConsoleViewContentType consoleViewContentType,
-										 List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, int previousRangeEnd) {
+			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, int previousRangeEnd) {
 		int start = matcher.start();
 		if (isFirstMatch(previousRangeEnd, start)) {
 			ConsoleViewContentType lastType = getContentType(lastConsoleAttributes, consoleViewContentType);
@@ -164,7 +164,7 @@ public class AnsiConsoleStyleProcessor {
 	}
 
 	private AnsiConsoleAttributes interpretAsciCommand(String currentText,
-													   List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, AnsiConsoleAttributes consoleAttributes) {
+			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, AnsiConsoleAttributes consoleAttributes) {
 		if (consoleAttributes == null) {
 			consoleAttributes = new AnsiConsoleAttributes();
 		}
@@ -177,7 +177,7 @@ public class AnsiConsoleStyleProcessor {
 			if ("J".equals(kind) && profile.isHideAnsiCommands()) {
 				switch (nCmd) {
 				case 2:
-					ansiFilterService.clearConsole();
+					ansiFilter.clearConsole();
 					ranges.clear();
 					break;
 				}
@@ -202,6 +202,6 @@ public class AnsiConsoleStyleProcessor {
 	}
 
 	public void addListener(ConsoleListener consoleListener) {
-		this.ansiFilterService = consoleListener;
+		this.ansiFilter = consoleListener;
 	}
 }

@@ -18,7 +18,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 
 	public AbstractGrepFilter(Project project) {
 		super(project);
-		initFilters();
+		initProcessors();
 	}
 
 	public AbstractGrepFilter(Profile profile, List<GrepProcessor> grepProcessors) {
@@ -33,10 +33,10 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				state = grepProcessor.process(state);
 				switch (state.getNextOperation()) {
-					case EXIT:
-						return state;
-					case CONTINUE_MATCHING:
-						break;
+				case EXIT:
+					return state;
+				case CONTINUE_MATCHING:
+					break;
 				}
 			}
 			return state;
@@ -56,11 +56,11 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		return text.substring(0, endIndex);
 	}
 
-	protected void initFilters() {
+	protected void initProcessors() {
 		grepProcessors = new ArrayList<GrepProcessor>();
 		for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
 			if (shouldAdd(grepExpressionItem)) {
-				grepProcessors.add(grepExpressionItem.createFilter());
+				grepProcessors.add(grepExpressionItem.createProcessor());
 			}
 		}
 	}
@@ -69,11 +69,11 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 
 	public void onChange() {
 		super.onChange();
-		initFilters();
+		initProcessors();
 	}
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
-		initFilters();
+		initProcessors();
 	}
 }

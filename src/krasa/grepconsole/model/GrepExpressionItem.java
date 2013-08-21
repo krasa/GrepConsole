@@ -146,7 +146,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		}
 	}
 
-	public GrepProcessor createFilter() {
+	public GrepProcessor createProcessor() {
 		return new GrepProcessor(this);
 	}
 
