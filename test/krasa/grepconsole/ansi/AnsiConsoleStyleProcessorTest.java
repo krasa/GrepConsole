@@ -13,12 +13,12 @@ import org.junit.Test;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.Pair;
 
-public class AnsiConsoleStyleFilterTest {
+public class AnsiConsoleStyleProcessorTest {
 
-	protected final AnsiConsoleStyleFilter ansiConsoleStyleFilter;
+	protected final AnsiConsoleStyleProcessor ansiConsoleStyleProcessor;
 
-	public AnsiConsoleStyleFilterTest() {
-		ansiConsoleStyleFilter = new AnsiConsoleStyleFilter(new Profile());
+	public AnsiConsoleStyleProcessorTest() {
+		ansiConsoleStyleProcessor = new AnsiConsoleStyleProcessor(new Profile());
 	}
 
 	@Test
@@ -32,7 +32,7 @@ public class AnsiConsoleStyleFilterTest {
 	public void testHideAnsi() throws Exception {
 		Profile profile = new Profile();
 		profile.setHideAnsiCommands(true);
-		ansiConsoleStyleFilter.setProfile(profile);
+		ansiConsoleStyleProcessor.setProfile(profile);
 
 		process("foo\u001B[0m\u001B[36mbar", "foobar", 2);
 		process("\u001B[0m\u001B[36mbar", "bar", 1);
@@ -40,7 +40,7 @@ public class AnsiConsoleStyleFilterTest {
 	}
 
 	private void process(final String input, final String expected, final int numberOfItems) {
-		List<Pair<String, ConsoleViewContentType>> list = ansiConsoleStyleFilter.process(input,
+		List<Pair<String, ConsoleViewContentType>> list = ansiConsoleStyleProcessor.process(input,
 				ConsoleViewContentType.NORMAL_OUTPUT);
 		assertNotNull(list);
 		assertEquals(numberOfItems, list.size());
@@ -65,7 +65,7 @@ public class AnsiConsoleStyleFilterTest {
 	}
 
 	private void matches(final Ansi ansi1) {
-		Matcher matcher = this.ansiConsoleStyleFilter.getMatcher(ansi1.toString());
+		Matcher matcher = this.ansiConsoleStyleProcessor.getMatcher(ansi1.toString());
 		assertTrue(ansi1.toString(), matcher.matches());
 	}
 

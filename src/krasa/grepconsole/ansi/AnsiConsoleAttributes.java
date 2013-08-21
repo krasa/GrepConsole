@@ -1,11 +1,11 @@
-package krasa.grepconsole.ansi.utils;
+package krasa.grepconsole.ansi;
 
-import com.intellij.openapi.editor.markup.EffectType;
-import com.intellij.openapi.editor.markup.TextAttributes;
+import static krasa.grepconsole.ansi.AnsiCommands.*;
 
 import java.awt.*;
 
-import static krasa.grepconsole.ansi.utils.AnsiCommands.*;
+import com.intellij.openapi.editor.markup.EffectType;
+import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class AnsiConsoleAttributes implements Cloneable {
 	public Integer currentBgColor;

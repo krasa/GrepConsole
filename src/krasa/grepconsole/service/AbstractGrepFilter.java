@@ -1,35 +1,37 @@
 package krasa.grepconsole.service;
 
-import com.intellij.openapi.project.Project;
-import krasa.grepconsole.filter.FilterState;
-import krasa.grepconsole.filter.GrepFilter;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractGrepService extends AbstractService {
+import krasa.grepconsole.grep.FilterState;
+import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
 
-	protected List<GrepFilter> grepFilters;
+import org.apache.commons.lang.StringUtils;
 
-	public AbstractGrepService(Project project) {
+import com.intellij.openapi.project.Project;
+
+public abstract class AbstractGrepFilter extends AbstractFilter {
+
+	protected List<GrepProcessor> grepProcessors;
+
+	public AbstractGrepFilter(Project project) {
 		super(project);
 		initFilters();
 	}
 
-	public AbstractGrepService(Profile profile, List<GrepFilter> grepFilters) {
+	public AbstractGrepFilter(Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile);
-		this.grepFilters = grepFilters;
+		this.grepProcessors = grepProcessors;
 	}
 
 	public FilterState filter(String text) {
 		// line can be empty sometimes under heavy load
-		if (!StringUtils.isEmpty(text) && !grepFilters.isEmpty()) {
+		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
 			FilterState state = new FilterState(getSubstring(text), guiContext);
-			for (GrepFilter grepFilter : grepFilters) {
-				state = grepFilter.process(state);
+			for (GrepProcessor grepProcessor : grepProcessors) {
+				state = grepProcessor.process(state);
 				switch (state.getNextOperation()) {
 					case EXIT:
 						return state;
@@ -55,10 +57,10 @@ public abstract class AbstractGrepService extends AbstractService {
 	}
 
 	protected void initFilters() {
-		grepFilters = new ArrayList<GrepFilter>();
+		grepProcessors = new ArrayList<GrepProcessor>();
 		for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
 			if (shouldAdd(grepExpressionItem)) {
-				grepFilters.add(grepExpressionItem.createFilter());
+				grepProcessors.add(grepExpressionItem.createFilter());
 			}
 		}
 	}

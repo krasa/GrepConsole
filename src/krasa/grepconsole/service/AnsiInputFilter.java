@@ -3,9 +3,10 @@ package krasa.grepconsole.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import krasa.grepconsole.ansi.AnsiConsoleStyleFilter;
+import krasa.grepconsole.ansi.AnsiConsoleStyleProcessor;
 import krasa.grepconsole.model.Profile;
 
+import krasa.grepconsole.service.support.ConsoleListener;
 import org.apache.commons.net.util.Base64;
 
 import com.intellij.execution.filters.InputFilter;
@@ -14,20 +15,20 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 
-public class AnsiFilterService extends AbstractService implements InputFilter, ConsoleListener {
-	protected AnsiConsoleStyleFilter ansiConsoleStyleFilter;
+public class AnsiInputFilter extends AbstractFilter implements InputFilter, ConsoleListener {
+	protected AnsiConsoleStyleProcessor ansiConsoleStyleProcessor;
 	private ConsoleView console;
 
-	public AnsiFilterService(Project project) {
+	public AnsiInputFilter(Project project) {
 		super(project);
-		ansiConsoleStyleFilter = new AnsiConsoleStyleFilter(profile);
-		ansiConsoleStyleFilter.addListener(this);
+		ansiConsoleStyleProcessor = new AnsiConsoleStyleProcessor(profile);
+		ansiConsoleStyleProcessor.addListener(this);
 	}
 
-	public AnsiFilterService(Profile profile) {
+	public AnsiInputFilter(Profile profile) {
 		super(profile);
-		ansiConsoleStyleFilter = new AnsiConsoleStyleFilter(profile);
-		ansiConsoleStyleFilter.addListener(this);
+		ansiConsoleStyleProcessor = new AnsiConsoleStyleProcessor(profile);
+		ansiConsoleStyleProcessor.addListener(this);
 	}
 
 	@Override
@@ -36,7 +37,7 @@ public class AnsiFilterService extends AbstractService implements InputFilter, C
 		List<Pair<String, ConsoleViewContentType>> list = null;
 
 		if (profile.isEnableAnsiColoring() || profile.isHideAnsiCommands()) {
-			list = ansiConsoleStyleFilter.process(s, consoleViewContentType);
+			list = ansiConsoleStyleProcessor.process(s, consoleViewContentType);
 		}
 		if (profile.isEncodeText()) {
 			if (list == null) {
@@ -63,13 +64,13 @@ public class AnsiFilterService extends AbstractService implements InputFilter, C
 	}
 
 	public void setProfile(Profile profile) {
-		ansiConsoleStyleFilter.setProfile(profile);
+		ansiConsoleStyleProcessor.setProfile(profile);
 	}
 
 	public void onChange() {
 		super.onChange();
 
-		ansiConsoleStyleFilter.setProfile(profile);
+		ansiConsoleStyleProcessor.setProfile(profile);
 	}
 
 	public void setConsole(ConsoleView console) {

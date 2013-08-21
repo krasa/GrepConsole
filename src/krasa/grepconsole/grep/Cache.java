@@ -1,9 +1,9 @@
-package krasa.grepconsole.filter;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
+package krasa.grepconsole.grep;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
 
 public class Cache {
 	protected static Cache instance;

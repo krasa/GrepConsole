@@ -1,4 +1,4 @@
-package krasa.grepconsole.ansi;
+package krasa.grepconsole.utils;
 
 public class Utils {
 	public static int tryParseInteger(String text) {

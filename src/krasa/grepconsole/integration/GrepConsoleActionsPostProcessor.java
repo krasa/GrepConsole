@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.service.AnsiFilterService;
+import krasa.grepconsole.service.AnsiInputFilter;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 	@NotNull
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
-		AnsiFilterService lastAnsi = GrepConsoleApplicationComponent.lastAnsi;
+		AnsiInputFilter lastAnsi = GrepConsoleApplicationComponent.lastAnsi;
 		if (lastAnsi != null) {
 			lastAnsi.setConsole(console);
 		}

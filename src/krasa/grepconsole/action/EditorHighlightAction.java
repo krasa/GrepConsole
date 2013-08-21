@@ -1,5 +1,10 @@
 package krasa.grepconsole.action;
 
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.service.GrepHighlightFilter;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.impl.EditorHyperlinkSupport;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -7,9 +12,6 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.service.GrepHighlightService;
-import org.jetbrains.annotations.Nullable;
 
 public class EditorHighlightAction extends HighlightManipulationAction {
 
@@ -38,7 +40,7 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 		}
 	}
 
-	private GrepHighlightService getGrepFilter(Project project) {
+	private GrepHighlightFilter getGrepFilter(Project project) {
 		return GrepConsoleApplicationComponent.getInstance().getHighlightService(project);
 	}
 

@@ -1,17 +1,21 @@
-package krasa.grepconsole.filter;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.awt.*;
+package krasa.grepconsole.grep;
 
 import static junit.framework.Assert.*;
 
-public class GrepFilterTest {
+import java.awt.*;
+
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.GrepStyle;
+import krasa.grepconsole.model.Operation;
+import krasa.grepconsole.service.support.GuiContext;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
+
+public class GrepProcessorTest {
 
 	public static final String BAR = "bar";
 	public static final String LINE = "[ERROR]";
@@ -26,11 +30,11 @@ public class GrepFilterTest {
 	public void testCache() throws Exception {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
-		GrepFilter grepFilter = new GrepFilter(grepExpressionItem);
-		FilterState process = grepFilter.process(getInput(LINE));
+		GrepProcessor grepProcessor = new GrepProcessor(grepExpressionItem);
+		FilterState process = grepProcessor.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepFilter.process(new FilterState(LINE, GuiContext.DEFAULT));
+		process = grepProcessor.process(new FilterState(LINE, GuiContext.DEFAULT));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -38,9 +42,9 @@ public class GrepFilterTest {
 	public void testMatches() throws Exception {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
-		GrepFilter grepFilter = new GrepFilter(grepExpressionItem);
+		GrepProcessor grepProcessor = new GrepProcessor(grepExpressionItem);
 		// matched
-		FilterState process = grepFilter.process(getInput(LINE));
+		FilterState process = grepProcessor.process(getInput(LINE));
 		assertEquals(Operation.EXIT, process.getNextOperation());
 		assertEquals(getTextAttributesFromCache(grepExpressionItem), process.getConsoleViewContentType());
 		assertEquals(LINE, process.getText());
@@ -51,8 +55,8 @@ public class GrepFilterTest {
 	public void testMatchesUnless() throws Exception {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
-		GrepFilter grepFilter = new GrepFilter(grepExpressionItem);
-		FilterState process = grepFilter.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
+		GrepProcessor grepProcessor = new GrepProcessor(grepExpressionItem);
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -63,8 +67,8 @@ public class GrepFilterTest {
 	@Test
 	public void testNoGrepExpression() throws Exception {
 
-		GrepFilter grepFilter = new GrepFilter(new GrepExpressionItem());
-		FilterState process = grepFilter.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
+		GrepProcessor grepProcessor = new GrepProcessor(new GrepExpressionItem());
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());

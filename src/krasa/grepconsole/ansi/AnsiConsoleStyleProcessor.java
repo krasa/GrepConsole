@@ -1,14 +1,5 @@
 package krasa.grepconsole.ansi;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.util.Pair;
-import krasa.grepconsole.ansi.utils.AnsiConsoleAttributes;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.service.ConsoleListener;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +7,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class AnsiConsoleStyleFilter {
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.service.support.ConsoleListener;
+import krasa.grepconsole.utils.Utils;
+
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.util.Pair;
+
+public class AnsiConsoleStyleProcessor {
 
 	private final static Pattern pattern = Pattern.compile("\u001b\\[[\\d;]*\\p{Alpha}");
 	private final static Map<String, ConsoleViewContentType> cache = new HashMap<String, ConsoleViewContentType>();
@@ -24,7 +26,7 @@ public class AnsiConsoleStyleFilter {
 	private volatile Profile profile;
 	private ConsoleListener ansiFilterService;
 
-	public AnsiConsoleStyleFilter(Profile profile) {
+	public AnsiConsoleStyleProcessor(Profile profile) {
 		this.profile = profile;
 	}
 
@@ -118,7 +120,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private boolean isIntellijGeneratedLastLine(String currentText, ConsoleViewContentType consoleViewContentType,
-												List<Pair<String, ConsoleViewContentType>> ranges) {
+			List<Pair<String, ConsoleViewContentType>> ranges) {
 		// 'Process finished with exit code', or just one '\n'
 		if (currentText.startsWith("\n")) {
 			addRange(ranges, currentText, consoleViewContentType);
@@ -136,7 +138,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private void printAsciCommandIfEnabled(String currentText, List<Pair<String, ConsoleViewContentType>> ranges,
-										   Matcher matcher) {
+			Matcher matcher) {
 		if (!profile.isHideAnsiCommands()) {
 			String substring = currentText.substring(matcher.start(), matcher.end());
 			addRange(ranges, substring, ConsoleViewContentType.SYSTEM_OUTPUT);
@@ -144,7 +146,7 @@ public class AnsiConsoleStyleFilter {
 	}
 
 	private void addRange(List<Pair<String, ConsoleViewContentType>> ranges, final String substring,
-						  final ConsoleViewContentType contentType) {
+			final ConsoleViewContentType contentType) {
 		ranges.add(new Pair<String, ConsoleViewContentType>(substring, contentType));
 	}
 
@@ -174,10 +176,10 @@ public class AnsiConsoleStyleFilter {
 			int nCmd = Utils.tryParseInteger(cmd);
 			if ("J".equals(kind) && profile.isHideAnsiCommands()) {
 				switch (nCmd) {
-					case 2:
-						ansiFilterService.clearConsole();
-						ranges.clear();
-						break;
+				case 2:
+					ansiFilterService.clearConsole();
+					ranges.clear();
+					break;
 				}
 				return consoleAttributes;
 			} else if ("m".equals(kind)) {

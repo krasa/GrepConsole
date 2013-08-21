@@ -1,4 +1,4 @@
-package krasa.grepconsole.ansi.utils;
+package krasa.grepconsole.ansi;
 
 // From Wikipedia, http://en.wikipedia.org/wiki/ANSI_escape_code
 public class AnsiCommands {

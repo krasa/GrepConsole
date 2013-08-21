@@ -1,34 +1,36 @@
 package krasa.grepconsole.service;
 
-import com.intellij.execution.filters.Filter;
-import krasa.grepconsole.filter.GrepFilter;
-import krasa.grepconsole.filter.Operation;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
-import krasa.grepconsole.model.Profile;
-import org.junit.Test;
+import static junit.framework.Assert.*;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import static junit.framework.Assert.*;
+import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.GrepStyle;
+import krasa.grepconsole.model.Operation;
+import krasa.grepconsole.model.Profile;
 
-public class GrepHighlightServiceTest {
+import org.junit.Test;
+
+import com.intellij.execution.filters.Filter;
+
+public class GrepHighlightFilterTest {
 
 	@Test
 	public void testWithoutFilters() throws Exception {
-		GrepHighlightService grepConsoleService = new GrepHighlightService(new Profile(), new ArrayList<GrepFilter>());
+		GrepHighlightFilter grepConsoleService = new GrepHighlightFilter(new Profile(), new ArrayList<GrepProcessor>());
 		Filter.Result result = grepConsoleService.applyFilter("input", 10);
 		assertNull(result);
 	}
 
 	@Test
 	public void testWithFilters() throws Exception {
-		ArrayList<GrepFilter> grepFilters = new ArrayList<GrepFilter>();
-		grepFilters.add(getFilterB(".*ERROR.*", Color.RED, Operation.EXIT));
-		grepFilters.add(getFilterB(".*INFO.*", Color.BLUE, Operation.EXIT));
-		GrepHighlightService grepFilter = new GrepHighlightService(new Profile(), grepFilters);
+		ArrayList<GrepProcessor> grepProcessors = new ArrayList<GrepProcessor>();
+		grepProcessors.add(getFilterB(".*ERROR.*", Color.RED, Operation.EXIT));
+		grepProcessors.add(getFilterB(".*INFO.*", Color.BLUE, Operation.EXIT));
+		GrepHighlightFilter grepFilter = new GrepHighlightFilter(new Profile(), grepProcessors);
 
 		assertNull(grepFilter.applyFilter("[WARN]", 10));
 
@@ -48,10 +50,10 @@ public class GrepHighlightServiceTest {
 
 	@Test
 	public void testCombinations() throws Exception {
-		ArrayList<GrepFilter> grepFilters = new ArrayList<GrepFilter>();
-		grepFilters.add(getFilterF(".*BLACK FOREGROUND.*", Color.BLACK, Operation.CONTINUE_MATCHING));
-		grepFilters.add(getFilterB(".*RED BACKGROUND.*", Color.RED, Operation.CONTINUE_MATCHING));
-		GrepHighlightService grepFilter = new GrepHighlightService(new Profile(), grepFilters);
+		ArrayList<GrepProcessor> grepProcessors = new ArrayList<GrepProcessor>();
+		grepProcessors.add(getFilterF(".*BLACK FOREGROUND.*", Color.BLACK, Operation.CONTINUE_MATCHING));
+		grepProcessors.add(getFilterB(".*RED BACKGROUND.*", Color.RED, Operation.CONTINUE_MATCHING));
+		GrepHighlightFilter grepFilter = new GrepHighlightFilter(new Profile(), grepProcessors);
 
 		Filter.Result result = grepFilter.applyFilter("BLACK FOREGROUND RED BACKGROUND", 10);
 		assertNotNull(result);
@@ -64,13 +66,12 @@ public class GrepHighlightServiceTest {
 		assertEquals(null, result.highlightAttributes.getBackgroundColor());
 		assertEquals(Color.BLACK, result.highlightAttributes.getForegroundColor());
 
-
 		result = grepFilter.applyFilter("RED BACKGROUND", 10);
 		assertEquals(Color.RED, result.highlightAttributes.getBackgroundColor());
 		assertEquals(null, result.highlightAttributes.getForegroundColor());
 	}
 
-	private void testVariousText(GrepHighlightService grepFilter) {
+	private void testVariousText(GrepHighlightFilter grepFilter) {
 		grepFilter.applyFilter("[INFO]\n", 10);
 		grepFilter.applyFilter("\n", 10);
 		grepFilter.applyFilter("\n\n", 10);
@@ -78,16 +79,16 @@ public class GrepHighlightServiceTest {
 		grepFilter.applyFilter(null, 10);
 	}
 
-	private GrepFilter getFilterB(String grepExpression, Color red, Operation exit) {
+	private GrepProcessor getFilterB(String grepExpression, Color red, Operation exit) {
 		final GrepExpressionItem grepExpressionItem = getGrepExpressionItem(grepExpression, exit).style(
 				new GrepStyle().backgroundColor(new GrepColor(red)));
-		return new GrepFilter(grepExpressionItem);
+		return new GrepProcessor(grepExpressionItem);
 	}
 
-	private GrepFilter getFilterF(String grepExpression, Color red, Operation exit) {
+	private GrepProcessor getFilterF(String grepExpression, Color red, Operation exit) {
 		final GrepExpressionItem grepExpressionItem = getGrepExpressionItem(grepExpression, exit).style(
 				new GrepStyle().foregroundColor(new GrepColor(red)));
-		return new GrepFilter(grepExpressionItem);
+		return new GrepProcessor(grepExpressionItem);
 	}
 
 	private GrepExpressionItem getGrepExpressionItem(String grepExpression, Operation exit) {

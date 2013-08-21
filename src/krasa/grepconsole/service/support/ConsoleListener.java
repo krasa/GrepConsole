@@ -1,4 +1,4 @@
-package krasa.grepconsole.service;
+package krasa.grepconsole.service.support;
 
 public interface ConsoleListener {
 	void clearConsole();

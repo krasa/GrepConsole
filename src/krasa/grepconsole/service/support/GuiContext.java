@@ -1,4 +1,4 @@
-package krasa.grepconsole.filter;
+package krasa.grepconsole.service.support;
 
 /**
  * @author Vojtech Krasa

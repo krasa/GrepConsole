@@ -11,14 +11,14 @@ import java.util.Map;
 import javax.swing.*;
 
 import krasa.grepconsole.action.HighlightManipulationAction;
-import krasa.grepconsole.filter.Cache;
-import krasa.grepconsole.filter.GuiContext;
+import krasa.grepconsole.grep.Cache;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.service.AbstractGrepService;
-import krasa.grepconsole.service.AnsiFilterService;
-import krasa.grepconsole.service.GrepHighlightService;
-import krasa.grepconsole.service.GrepInputFilterService;
+import krasa.grepconsole.service.AbstractGrepFilter;
+import krasa.grepconsole.service.AnsiInputFilter;
+import krasa.grepconsole.service.GrepHighlightFilter;
+import krasa.grepconsole.service.GrepInputFilter;
+import krasa.grepconsole.service.support.GuiContext;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
@@ -42,10 +42,10 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	private SettingsDialog form;
 	private PluginState settings;
-	private Map<Project, GrepHighlightService> cacheHighlight = new HashMap<Project, GrepHighlightService>();
-	private Map<Project, GrepInputFilterService> cacheInput = new HashMap<Project, GrepInputFilterService>();
-	private List<WeakReference<AnsiFilterService>> cacheAnsi = new ArrayList<WeakReference<AnsiFilterService>>();
-	public static AnsiFilterService lastAnsi;
+	private Map<Project, GrepHighlightFilter> cacheHighlight = new HashMap<Project, GrepHighlightFilter>();
+	private Map<Project, GrepInputFilter> cacheInput = new HashMap<Project, GrepInputFilter>();
+	private List<WeakReference<AnsiInputFilter>> cacheAnsi = new ArrayList<WeakReference<AnsiInputFilter>>();
+	public static AnsiInputFilter lastAnsi;
 
 	private HighlightManipulationAction currentAction;
 
@@ -107,27 +107,27 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	private void setMode(GuiContext guiContext) {
-		for (AbstractGrepService listener : cacheHighlight.values()) {
+		for (AbstractGrepFilter listener : cacheHighlight.values()) {
 			listener.setGuiContext(guiContext);
 		}
 	}
 
 	public void resetCache() {
-		for (AbstractGrepService listener : cacheHighlight.values()) {
+		for (AbstractGrepFilter listener : cacheHighlight.values()) {
 			listener.onChange();
 		}
-		for (AbstractGrepService listener : cacheInput.values()) {
+		for (AbstractGrepFilter listener : cacheInput.values()) {
 			listener.onChange();
 		}
 
-		Iterator<WeakReference<AnsiFilterService>> iterator = cacheAnsi.iterator();
+		Iterator<WeakReference<AnsiInputFilter>> iterator = cacheAnsi.iterator();
 		while (iterator.hasNext()) {
-			WeakReference<AnsiFilterService> next = iterator.next();
-			AnsiFilterService ansiFilterService = next.get();
-			if (ansiFilterService == null) {
+			WeakReference<AnsiInputFilter> next = iterator.next();
+			AnsiInputFilter ansiInputFilter = next.get();
+			if (ansiInputFilter == null) {
 				iterator.remove();
 			} else {
-				ansiFilterService.onChange();
+				ansiInputFilter.onChange();
 			}
 		}
 		// todo this may not work properly, regenerate GrepExpressionItem id
@@ -159,13 +159,13 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public void changeProfile(Project project, Profile profile) {
-		GrepHighlightService grepHighlightService = cacheHighlight.get(project);
-		if (grepHighlightService != null) {
-			grepHighlightService.setProfile(profile);
+		GrepHighlightFilter grepHighlightFilter = cacheHighlight.get(project);
+		if (grepHighlightFilter != null) {
+			grepHighlightFilter.setProfile(profile);
 		}
-		GrepInputFilterService grepInputFilterService = cacheInput.get(project);
-		if (grepInputFilterService != null) {
-			grepInputFilterService.setProfile(profile);
+		GrepInputFilter grepInputFilter = cacheInput.get(project);
+		if (grepInputFilter != null) {
+			grepInputFilter.setProfile(profile);
 		}
 	}
 
@@ -179,26 +179,26 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		return getState().getDefaultProfile();
 	}
 
-	public GrepInputFilterService getInputFilterService(Project project) {
-		GrepInputFilterService service = cacheInput.get(project);
+	public GrepInputFilter getInputFilterService(Project project) {
+		GrepInputFilter service = cacheInput.get(project);
 		if (service == null) {
-			service = new GrepInputFilterService(project);
+			service = new GrepInputFilter(project);
 		}
 		cacheInput.put(project, service);
 		return service;
 	}
 
-	public AnsiFilterService getAnsiFilterService(Project project) {
-		AnsiFilterService service = new AnsiFilterService(project);
-		cacheAnsi.add(new WeakReference<AnsiFilterService>(service));
+	public AnsiInputFilter getAnsiFilterService(Project project) {
+		AnsiInputFilter service = new AnsiInputFilter(project);
+		cacheAnsi.add(new WeakReference<AnsiInputFilter>(service));
 		lastAnsi = service;
 		return service;
 	}
 
-	public GrepHighlightService getHighlightService(Project project) {
-		GrepHighlightService service = cacheHighlight.get(project);
+	public GrepHighlightFilter getHighlightService(Project project) {
+		GrepHighlightFilter service = cacheHighlight.get(project);
 		if (service == null) {
-			service = new GrepHighlightService(project);
+			service = new GrepHighlightFilter(project);
 		}
 		cacheHighlight.put(project, service);
 		return service;

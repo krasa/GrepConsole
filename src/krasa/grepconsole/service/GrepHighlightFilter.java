@@ -1,24 +1,26 @@
 package krasa.grepconsole.service;
 
+import java.util.List;
+
+import krasa.grepconsole.grep.FilterState;
+import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.filter.FilterState;
-import krasa.grepconsole.filter.GrepFilter;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
-public class GrepHighlightService extends AbstractGrepService implements Filter {
-
-	public GrepHighlightService(Project project) {
+	public GrepHighlightFilter(Project project) {
 		super(project);
 	}
 
-	public GrepHighlightService(Profile profile, List<GrepFilter> grepFilters) {
-		super(profile, grepFilters);
+	public GrepHighlightFilter(Profile profile, List<GrepProcessor> grepProcessors) {
+		super(profile, grepProcessors);
 	}
 
 	@Nullable

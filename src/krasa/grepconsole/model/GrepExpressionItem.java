@@ -1,15 +1,16 @@
 package krasa.grepconsole.model;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import krasa.grepconsole.filter.Cache;
-import krasa.grepconsole.filter.GrepFilter;
-import krasa.grepconsole.filter.Operation;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import krasa.grepconsole.grep.Cache;
+import krasa.grepconsole.grep.GrepProcessor;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -108,7 +109,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Compiles the specified grep expression. Swallows exceptions caused by invalid expressions.
-	 *
+	 * 
 	 * @param expression
 	 * @return The compiled pattern, or <code>null</code> if an error occurs.
 	 */
@@ -126,7 +127,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Computes flags for the regular expression pattern.
-	 *
+	 * 
 	 * @return Flags.
 	 */
 	private int computeFlags() {
@@ -145,8 +146,8 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		}
 	}
 
-	public GrepFilter createFilter() {
-		return new GrepFilter(this);
+	public GrepProcessor createFilter() {
+		return new GrepProcessor(this);
 	}
 
 	public GrepExpressionItem grepExpression(final String grepExpression) {

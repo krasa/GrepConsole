@@ -1,22 +1,23 @@
 package krasa.grepconsole.service;
 
-import com.intellij.openapi.project.Project;
-import krasa.grepconsole.filter.GuiContext;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
-public abstract class AbstractService {
+import com.intellij.openapi.project.Project;
+import krasa.grepconsole.service.support.GuiContext;
+
+public abstract class AbstractFilter {
 
 	protected Project project;
 	protected Profile profile;
 	protected GuiContext guiContext = GuiContext.DEFAULT;
 
-	public AbstractService(Project project) {
+	public AbstractFilter(Project project) {
 		this.project = project;
 		profile = GrepConsoleApplicationComponent.getInstance().getProfile(project);
 	}
 
-	public AbstractService(Profile profile) {
+	public AbstractFilter(Profile profile) {
 		this.profile = profile;
 	}
 

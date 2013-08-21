@@ -1,18 +1,21 @@
-package krasa.grepconsole.filter;
-
-import com.intellij.openapi.diagnostic.Logger;
-import krasa.grepconsole.model.GrepExpressionItem;
-import org.apache.commons.lang.StringUtils;
+package krasa.grepconsole.grep;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GrepFilter {
-	private static final Logger log = Logger.getInstance(GrepFilter.class.getName());
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.service.support.GuiContext;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellij.openapi.diagnostic.Logger;
+
+public class GrepProcessor {
+	private static final Logger log = Logger.getInstance(GrepProcessor.class.getName());
 
 	private GrepExpressionItem grepExpressionItem;
 
-	public GrepFilter(GrepExpressionItem grepExpressionItem) {
+	public GrepProcessor(GrepExpressionItem grepExpressionItem) {
 		this.grepExpressionItem = grepExpressionItem;
 	}
 
