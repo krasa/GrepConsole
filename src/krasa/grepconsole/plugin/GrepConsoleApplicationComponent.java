@@ -10,18 +10,6 @@ import java.util.Map;
 
 import javax.swing.*;
 
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.ExportableApplicationComponent;
-import krasa.grepconsole.Cache;
-import krasa.grepconsole.Mode;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
-import com.intellij.openapi.project.Project;
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.Cache;
 import krasa.grepconsole.filter.GuiContext;
@@ -31,20 +19,24 @@ import krasa.grepconsole.service.AbstractGrepService;
 import krasa.grepconsole.service.AnsiFilterService;
 import krasa.grepconsole.service.GrepHighlightService;
 import krasa.grepconsole.service.GrepInputFilterService;
+
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.ExportableApplicationComponent;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 
-@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
+@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
 

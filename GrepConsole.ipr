@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AntConfiguration">
-    <defaultAnt bundledAnt="true" />
-  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Eclipse" />
     <resourceExtensions />
@@ -26,15 +23,16 @@
     <option name="SKIP_IMPORT_STATEMENTS" value="false" />
   </component>
   <component name="EclipseCodeFormatter">
-    <option name="defaultSettings" value="true" />
     <option name="formatter" value="ECLIPSE" />
-    <option name="id" value="1340799126271" />
-    <option name="name" value="default" />
-    <option name="pathToConfigFileJava" value="$PROJECT_DIR$/../../_T-Mobile/org.eclipse.jdt.core.prefs" />
+    <option name="id" value="2" />
+    <option name="name" value="EclipseFormatter" />
+    <option name="pathToConfigFileJava" value="$PROJECT_DIR$/test/formatSettings.xml" />
+    <option name="selectedJavaProfile" value="Ales" />
   </component>
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$/lib/cloning-1.8.5.jar" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib/commons-beanutils.jar" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/test/formatSettings.xml" charset="UTF-8" />
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
@@ -190,7 +188,7 @@
       <module fileurl="file://$PROJECT_DIR$/GrepConsole.iml" filepath="$PROJECT_DIR$/GrepConsole.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU custom" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-130.962" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">
@@ -207,6 +205,16 @@
       </SOURCES>
       <jarDirectory url="file://$PROJECT_DIR$/lib/test/caliper" recursive="false" />
       <jarDirectory url="file://$PROJECT_DIR$/lib/test/caliper" recursive="false" type="SOURCES" />
+    </library>
+    <library name="jfm">
+      <CLASSES>
+        <root url="file://$PROJECT_DIR$/lib/JMF-2.1.1e/lib" />
+        <root url="file://$PROJECT_DIR$/lib/JMF-2.1.1e/lib" />
+      </CLASSES>
+      <JAVADOC />
+      <SOURCES />
+      <jarDirectory url="file://$PROJECT_DIR$/lib/JMF-2.1.1e/lib" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/lib/JMF-2.1.1e/lib" recursive="false" />
     </library>
     <library name="lib">
       <CLASSES>
