@@ -1,7 +1,7 @@
 package krasa.grepconsole.action;
 
+import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.service.GrepHighlightFilter;
 
 import org.jetbrains.annotations.Nullable;
 

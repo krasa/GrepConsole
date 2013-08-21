@@ -1,10 +1,10 @@
-package krasa.grepconsole.service;
+package krasa.grepconsole.filter;
 
+import krasa.grepconsole.filter.support.GuiContext;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.service.support.GuiContext;
 
 public abstract class AbstractFilter {
 

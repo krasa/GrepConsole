@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
+import krasa.grepconsole.filter.AnsiInputFilter;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.service.AnsiInputFilter;
 
 import org.jetbrains.annotations.NotNull;
 

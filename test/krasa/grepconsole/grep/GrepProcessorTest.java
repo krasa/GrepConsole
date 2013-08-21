@@ -8,7 +8,7 @@ import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Operation;
-import krasa.grepconsole.service.support.GuiContext;
+import krasa.grepconsole.filter.support.GuiContext;
 
 import org.junit.Before;
 import org.junit.Test;

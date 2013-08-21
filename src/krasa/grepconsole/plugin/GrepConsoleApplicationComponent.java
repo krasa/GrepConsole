@@ -11,14 +11,14 @@ import java.util.Map;
 import javax.swing.*;
 
 import krasa.grepconsole.action.HighlightManipulationAction;
+import krasa.grepconsole.filter.AbstractGrepFilter;
+import krasa.grepconsole.filter.AnsiInputFilter;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.GrepInputFilter;
+import krasa.grepconsole.filter.support.GuiContext;
 import krasa.grepconsole.grep.Cache;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.service.AbstractGrepFilter;
-import krasa.grepconsole.service.AnsiInputFilter;
-import krasa.grepconsole.service.GrepHighlightFilter;
-import krasa.grepconsole.service.GrepInputFilter;
-import krasa.grepconsole.service.support.GuiContext;
 
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;

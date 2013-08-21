@@ -1,7 +1,7 @@
 package krasa.grepconsole.grep;
 
+import krasa.grepconsole.filter.support.GuiContext;
 import krasa.grepconsole.model.Operation;
-import krasa.grepconsole.service.support.GuiContext;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;

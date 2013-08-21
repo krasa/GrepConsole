@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.service.support.GuiContext;
+import krasa.grepconsole.filter.support.GuiContext;
 
 import org.apache.commons.lang.StringUtils;
 

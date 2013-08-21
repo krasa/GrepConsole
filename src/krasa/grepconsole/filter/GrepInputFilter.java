@@ -1,4 +1,4 @@
-package krasa.grepconsole.service;
+package krasa.grepconsole.filter;
 
 import java.util.Arrays;
 import java.util.List;

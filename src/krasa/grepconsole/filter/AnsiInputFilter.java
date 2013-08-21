@@ -1,12 +1,12 @@
-package krasa.grepconsole.service;
+package krasa.grepconsole.filter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import krasa.grepconsole.ansi.AnsiConsoleStyleProcessor;
+import krasa.grepconsole.filter.support.ConsoleListener;
 import krasa.grepconsole.model.Profile;
 
-import krasa.grepconsole.service.support.ConsoleListener;
 import org.apache.commons.net.util.Base64;
 
 import com.intellij.execution.filters.InputFilter;

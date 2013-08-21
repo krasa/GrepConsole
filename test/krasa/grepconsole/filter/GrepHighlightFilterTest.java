@@ -1,4 +1,4 @@
-package krasa.grepconsole.service;
+package krasa.grepconsole.filter;
 
 import static junit.framework.Assert.*;
 

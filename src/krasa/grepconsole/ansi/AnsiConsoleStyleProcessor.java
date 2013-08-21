@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import krasa.grepconsole.filter.support.ConsoleListener;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.service.support.ConsoleListener;
 import krasa.grepconsole.utils.Utils;
 
 import org.apache.commons.lang.StringUtils;
