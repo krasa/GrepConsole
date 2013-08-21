@@ -1,5 +1,19 @@
 package krasa.grepconsole.plugin;
 
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.*;
+
+import com.intellij.openapi.application.PathManager;
+import com.intellij.openapi.components.ExportableApplicationComponent;
+import krasa.grepconsole.Cache;
+import krasa.grepconsole.Mode;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -32,7 +46,7 @@ import java.util.Map;
 
 @State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
-		PersistentStateComponent<PluginState> {
+		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
 
 	private SettingsDialog form;
 	private PluginState settings;
@@ -200,5 +214,17 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public void setCurrentAction(HighlightManipulationAction currentEditor) {
 		this.currentAction = currentEditor;
+	}
+
+	@NotNull
+	@Override
+	public File[] getExportFiles() {
+		return new File[] { PathManager.getOptionsFile("grepConsole") };
+	}
+
+	@NotNull
+	@Override
+	public String getPresentableName() {
+		return "Grep Console";
 	}
 }
