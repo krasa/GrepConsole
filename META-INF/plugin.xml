@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>2.9</version>
+	<version>3.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,6 +21,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>3.0 (2013-12-29)
+        <br>- new action for tailing files - Main menu | Tools | Open File in Console
         <br>2.9 (2013-12-13)
         <br>- fixed settings table drag&drop
         <br>2.8 (2013-08-21)
@@ -115,7 +117,10 @@
 				icon="highlight.gif" description="Grep Highlight">
 			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
 		</action>
-
+		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsole" text="Open File in Console"
+				description="Open File in Console">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
+		</action>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
