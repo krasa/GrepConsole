@@ -1,16 +1,5 @@
 package krasa.grepconsole.action;
 
-import com.intellij.execution.RunContentExecutor;
-import com.intellij.execution.process.DefaultJavaProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
-import com.intellij.ide.util.BrowseFilesListener;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.fileChooser.FileChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,32 +7,49 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import com.intellij.execution.RunContentExecutor;
+import com.intellij.execution.process.DefaultJavaProcessHandler;
+import com.intellij.execution.process.ProcessHandler;
+import com.intellij.ide.util.BrowseFilesListener;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.fileChooser.FileChooserDialog;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
+
 /**
  * @author Vojtech Krasa
  */
-public class OpenFileInConsole extends AnAction {
+public class OpenFileInConsole extends DumbAwareAction {
 
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
-		final FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(BrowseFilesListener.SINGLE_FILE_DESCRIPTOR, project, null);
+		final FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(
+				BrowseFilesListener.SINGLE_FILE_DESCRIPTOR, project, null);
 
 		final VirtualFile[] choose = fileChooser.choose(null, project);
 		if (choose.length > 0) {
 			final VirtualFile virtualFile = choose[0];
-			final Process process = new MyProcess(virtualFile);
-			ProcessHandler osProcessHandler = new DefaultJavaProcessHandler(process, null, Charset.defaultCharset());
-			RunContentExecutor executor = new RunContentExecutor(project, osProcessHandler);
-			executor.run();
+			final String path1 = virtualFile.getPath();
+			openFileInConsole(project, path1);
 		}
+	}
+
+	protected void openFileInConsole(Project project, String path) {
+		final Process process = new MyProcess(path);
+		ProcessHandler osProcessHandler = new DefaultJavaProcessHandler(process, null, Charset.defaultCharset());
+		RunContentExecutor executor = new RunContentExecutor(project, osProcessHandler);
+		executor.run();
 	}
 
 	private class MyProcess extends Process {
 		protected volatile boolean running = true;
 		protected InputStream inputStream;
 
-		private MyProcess(VirtualFile virtualFile) {
+		private MyProcess(final String path) {
 			try {
-				inputStream = new FileInputStream(new File(virtualFile.getPath()));
+				inputStream = new FileInputStream(new File(path));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -93,7 +99,7 @@ public class OpenFileInConsole extends AnAction {
 			try {
 				inputStream.close();
 			} catch (IOException e) {
-				//who cares
+				// who cares
 			}
 			running = false;
 		}

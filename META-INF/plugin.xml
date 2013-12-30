@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.0</version>
+	<version>3.1</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,6 +21,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>3.1 (2013-12-30)
+        <br>- new action for tailing currently opened file - Main menu | Tools | Open Current File in Console
         <br>3.0 (2013-12-29)
         <br>- new action for tailing files - Main menu | Tools | Open File in Console
         <br>2.9 (2013-12-13)
@@ -119,6 +121,10 @@
 		</action>
 		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsole" text="Open File in Console"
 				description="Open File in Console">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
+		</action>
+		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsole" text="Open Current File in Console"
+				description="Open Current Editor File in Console">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 	</actions>
