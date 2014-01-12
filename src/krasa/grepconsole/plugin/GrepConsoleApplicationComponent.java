@@ -15,7 +15,7 @@ import krasa.grepconsole.filter.AbstractGrepFilter;
 import krasa.grepconsole.filter.AnsiInputFilter;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.filter.GrepInputFilter;
-import krasa.grepconsole.filter.support.GuiContext;
+import krasa.grepconsole.filter.support.ConsoleMode;
 import krasa.grepconsole.grep.Cache;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
@@ -99,16 +99,16 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
 		resetCache();
-		setMode(GuiContext.NO_SOUND);
+		setMode(ConsoleMode.NO_SOUND);
 		if (currentAction != null) {
 			currentAction.applySettings();
 		}
-		setMode(GuiContext.DEFAULT);
+		setMode(ConsoleMode.DEFAULT);
 	}
 
-	private void setMode(GuiContext guiContext) {
+	private void setMode(ConsoleMode consoleMode) {
 		for (AbstractGrepFilter listener : cacheHighlight.values()) {
-			listener.setGuiContext(guiContext);
+			listener.setConsoleMode(consoleMode);
 		}
 	}
 

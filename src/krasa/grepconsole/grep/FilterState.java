@@ -1,6 +1,6 @@
 package krasa.grepconsole.grep;
 
-import krasa.grepconsole.filter.support.GuiContext;
+import krasa.grepconsole.filter.support.ConsoleMode;
 import krasa.grepconsole.model.Operation;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -10,13 +10,13 @@ public class FilterState {
 
 	private String text;
 	private Operation nextOperation = Operation.CONTINUE_MATCHING;
-	private final GuiContext guiContext;
+	private final ConsoleMode consoleMode;
 	protected ConsoleViewContentType consoleViewContentType;
 	private boolean exclude;
 
-	public FilterState(String text, GuiContext guiContext) {
+	public FilterState(String text, ConsoleMode consoleMode) {
 		this.text = text;
-		this.guiContext = guiContext;
+		this.consoleMode = consoleMode;
 	}
 
 	public Operation getNextOperation() {
@@ -59,8 +59,8 @@ public class FilterState {
 		return exclude;
 	}
 
-	public GuiContext getGuiContext() {
-		return guiContext;
+	public ConsoleMode getConsoleMode() {
+		return consoleMode;
 	}
 
 }

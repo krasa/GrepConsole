@@ -4,7 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.filter.support.GuiContext;
+import krasa.grepconsole.filter.support.ConsoleMode;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -35,7 +35,7 @@ public class GrepProcessor {
 	}
 
 	private void playSound(FilterState flow) {
-		if (flow.getGuiContext() != GuiContext.NO_SOUND) {
+		if (flow.getConsoleMode() != ConsoleMode.NO_SOUND) {
 			grepExpressionItem.getSound().play();
 		}
 	}

@@ -29,7 +29,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 	public FilterState filter(String text) {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
-			FilterState state = new FilterState(getSubstring(text), guiContext);
+			FilterState state = new FilterState(getSubstring(text), consoleMode);
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				state = grepProcessor.process(state);
 				switch (state.getNextOperation()) {

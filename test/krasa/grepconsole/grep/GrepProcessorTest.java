@@ -8,7 +8,7 @@ import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Operation;
-import krasa.grepconsole.filter.support.GuiContext;
+import krasa.grepconsole.filter.support.ConsoleMode;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class GrepProcessorTest {
 		FilterState process = grepProcessor.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepProcessor.process(new FilterState(LINE, GuiContext.DEFAULT));
+		process = grepProcessor.process(new FilterState(LINE, ConsoleMode.DEFAULT));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -56,7 +56,7 @@ public class GrepProcessorTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		GrepProcessor grepProcessor = new GrepProcessor(grepExpressionItem);
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, ConsoleMode.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -68,7 +68,7 @@ public class GrepProcessorTest {
 	public void testNoGrepExpression() throws Exception {
 
 		GrepProcessor grepProcessor = new GrepProcessor(new GrepExpressionItem());
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, GuiContext.DEFAULT));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, ConsoleMode.DEFAULT));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -89,7 +89,7 @@ public class GrepProcessorTest {
 	}
 
 	private FilterState getInput(String line) {
-		return new FilterState(line, GuiContext.DEFAULT);
+		return new FilterState(line, ConsoleMode.DEFAULT);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {
