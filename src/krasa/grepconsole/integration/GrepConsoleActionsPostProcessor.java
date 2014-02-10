@@ -13,7 +13,7 @@ import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
 
-public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProcessor {
+public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 
 	@NotNull
 	@Override
