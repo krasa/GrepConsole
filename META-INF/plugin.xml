@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.2.128.55</version>
+	<version>3.3.128.55</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,6 +21,10 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>3.3 (2014-03-21)
+        <br>- Match only first N characters on each line fixed for 1000+
+        <br>3.2 (2014-02-10)
+        <br>- API change
         <br>3.1 (2013-12-30)
         <br>- new action for tailing currently opened file - Main menu | Tools | Open Current File in Console
         <br>3.0 (2013-12-29)
@@ -37,46 +41,6 @@
         <br>- ANSI bugfix
         <br>2.5 (2013-04-03)
         <br>- table drag&drop
-        <br>2.4 (2013-04-02)
-        <br>- sound alerts when a pattern in console is matched. 
-        <br>2.3 (2013-03-16)
-        <br>- option to print every line with Base64
-        <br>- hiding of all ANSI commands and bugfix
-        <br>2.2 (2013-03-09)
-        <br>- ANSI clear screen command support
-        <br>- some fixes
-        <br>2.1 (2013-03-08)
-        <br>- option to hide ANSI commands when ANSI coloring is disabled
-        <br>- some fixes
-        <br>2.0 (2013-03-04)
-        <br>- ANSI coloring
-        <br>- IntelliJ API change
-        <br>1.1 (2013-02-27)
-        <br>- new console action: highlight selected text
-        <br>- new default colors for Darcula
-        <br>1.0 (2013-02-15)
-        <br>- input filtering
-        <br>- stacktraces are also highlighted
-        <br>- Apply button resets highlights
-		<br>0.8 (2013-01-13)
-        <br>- reset of console highligting when settings are changed
-        <br>- new action for editor highlighting     
-        <br>0.7 (2012-11-22)	
-        <br>- fixed color chooser checkbox
-        <br>0.6 (2012-11-20)
-        <br>- fixed exception occurring under heavy load
-        <br>0.5 (2012-11-20)
-        <br>- enabled for all IDEs
-        <br>0.4 (2012-11-16)
-        <br>- changed gui
-        <br>- added new option to limit length of matching - for performance reasons
-        <br>- fixed NPE
-        <br>0.3 (2012-11-15)
-        <br>- supports all consoles
-        <br>- fixed persisting
-        <br>- removed automatic padding of .* into expressions
-        <br>0.2 (2012-11-14)
-        <br>- temporarily disabled settings persisting 
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
