@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.2.134.1007</version>
+	<version>3.3.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,6 +21,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>3.3 (2014-03-21)
+        <br>- Match only first N characters on each line fixed for 1000+
         <br>3.2 (2014-02-10)
         <br>- API change
         <br>3.1 (2013-12-30)
