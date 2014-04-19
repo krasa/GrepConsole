@@ -86,7 +86,9 @@ public class RunContentExecutor implements Disposable {
 
 	private ConsoleView createConsole(@NotNull Project project, @NotNull ProcessHandler processHandler) {
 		TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
-		consoleBuilder.filters(myFilterList);
+		for (Filter filter : myFilterList) {
+			consoleBuilder.addFilter(filter);
+		}
 		ConsoleView console = consoleBuilder.getConsole();
 		console.attachToProcess(processHandler);
 		return console;
