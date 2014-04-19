@@ -1,13 +1,14 @@
 package krasa.grepconsole.model;
 
 import com.intellij.util.xmlb.annotations.Transient;
+import org.apache.commons.lang.math.NumberUtils;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.math.NumberUtils;
 
 public class Profile extends DomainObject {
 	public static final String DEFAULT = "60";
-	
+
 	private long id;
 	private boolean defaultProfile;
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
@@ -20,6 +21,7 @@ public class Profile extends DomainObject {
 	private boolean encodeText;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
+	private boolean multiLineOutput;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -69,7 +71,7 @@ public class Profile extends DomainObject {
 	}
 
 	public void setMaxLengthToMatch(String maxLengthToMatch) {
-		if (maxLengthToMatch == null || maxLengthToMatch.length()==0) {
+		if (maxLengthToMatch == null || maxLengthToMatch.length() == 0) {
 			maxLengthToMatch = DEFAULT;
 		}
 		maxLengthToMatch = maxLengthToMatch.replace("\u00A0", "").replace(" ", "");
@@ -118,5 +120,13 @@ public class Profile extends DomainObject {
 
 	public void setEncodeText(boolean encodeText) {
 		this.encodeText = encodeText;
+	}
+
+	public boolean isMultiLineOutput() {
+		return multiLineOutput;
+	}
+
+	public void setMultiLineOutput(boolean multiLineOutput) {
+		this.multiLineOutput = multiLineOutput;
 	}
 }

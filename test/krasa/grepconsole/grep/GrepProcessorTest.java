@@ -1,19 +1,13 @@
 package krasa.grepconsole.grep;
 
-import static junit.framework.Assert.*;
-
-import java.awt.*;
-
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
-import krasa.grepconsole.model.Operation;
-import krasa.grepconsole.filter.support.ConsoleMode;
-
+import com.intellij.execution.ui.ConsoleViewContentType;
+import krasa.grepconsole.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
+import java.awt.*;
+
+import static junit.framework.Assert.assertEquals;
 
 public class GrepProcessorTest {
 
@@ -34,7 +28,7 @@ public class GrepProcessorTest {
 		FilterState process = grepProcessor.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepProcessor.process(new FilterState(LINE, ConsoleMode.DEFAULT));
+		process = grepProcessor.process(new FilterState(LINE));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -56,7 +50,7 @@ public class GrepProcessorTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		GrepProcessor grepProcessor = new GrepProcessor(grepExpressionItem);
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, ConsoleMode.DEFAULT));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -68,7 +62,7 @@ public class GrepProcessorTest {
 	public void testNoGrepExpression() throws Exception {
 
 		GrepProcessor grepProcessor = new GrepProcessor(new GrepExpressionItem());
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, ConsoleMode.DEFAULT));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -89,7 +83,7 @@ public class GrepProcessorTest {
 	}
 
 	private FilterState getInput(String line) {
-		return new FilterState(line, ConsoleMode.DEFAULT);
+		return new FilterState(line);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {

@@ -1,16 +1,13 @@
 package krasa.grepconsole.filter;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.intellij.openapi.project.Project;
 import krasa.grepconsole.grep.FilterState;
 import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
-
+import krasa.grepconsole.model.*;
 import org.apache.commons.lang.StringUtils;
 
-import com.intellij.openapi.project.Project;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractGrepFilter extends AbstractFilter {
 
@@ -26,22 +23,21 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		this.grepProcessors = grepProcessors;
 	}
 
-	public FilterState filter(String text) {
+	protected FilterState filter(String text) {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
-			FilterState state = new FilterState(getSubstring(text), consoleMode);
+			FilterState state = new FilterState(getSubstring(text));
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				state = grepProcessor.process(state);
-				switch (state.getNextOperation()) {
-				case EXIT:
-					return state;
-				case CONTINUE_MATCHING:
-					break;
-				}
+				if (!continueFiltering(state)) return state;
 			}
 			return state;
 		}
 		return null;
+	}
+
+	protected boolean continueFiltering(FilterState state) {
+		return state.getNextOperation() != Operation.EXIT;
 	}
 
 	// for higlighting, it always ends with \n, but for input filtering it does not

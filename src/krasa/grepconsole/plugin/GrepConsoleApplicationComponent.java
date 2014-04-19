@@ -1,53 +1,30 @@
 package krasa.grepconsole.plugin;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.*;
-
-import krasa.grepconsole.action.HighlightManipulationAction;
-import krasa.grepconsole.filter.AbstractGrepFilter;
-import krasa.grepconsole.filter.AnsiInputFilter;
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.filter.GrepInputFilter;
-import krasa.grepconsole.filter.support.ConsoleMode;
-import krasa.grepconsole.grep.Cache;
-import krasa.grepconsole.gui.SettingsDialog;
-import krasa.grepconsole.model.Profile;
-
-import org.jetbrains.annotations.Nls;
-import org.jetbrains.annotations.NonNls;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.components.ExportableApplicationComponent;
-import com.intellij.openapi.components.PersistentStateComponent;
-import com.intellij.openapi.components.State;
-import com.intellij.openapi.components.Storage;
+import com.intellij.openapi.components.*;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.action.HighlightManipulationAction;
+import krasa.grepconsole.filter.support.SoundMode;
+import krasa.grepconsole.gui.SettingsDialog;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.Sound;
+import org.jetbrains.annotations.*;
 
-@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
+import javax.swing.*;
+import java.io.File;
+
+@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
 
 	private SettingsDialog form;
 	private PluginState settings;
-	private Map<Project, GrepHighlightFilter> cacheHighlight = new HashMap<Project, GrepHighlightFilter>();
-	private Map<Project, GrepInputFilter> cacheInput = new HashMap<Project, GrepInputFilter>();
-	private List<WeakReference<AnsiInputFilter>> cacheAnsi = new ArrayList<WeakReference<AnsiInputFilter>>();
-	public static AnsiInputFilter lastAnsi;
 
 	private HighlightManipulationAction currentAction;
+	private ServiceManager serviceManager = ServiceManager.getInstance();
 
 	public GrepConsoleApplicationComponent() {
 	}
@@ -98,42 +75,14 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
-		resetCache();
-		setMode(ConsoleMode.NO_SOUND);
+		serviceManager.resetSettings();
+		Sound.soundMode = SoundMode.DISABLED;
 		if (currentAction != null) {
 			currentAction.applySettings();
 		}
-		setMode(ConsoleMode.DEFAULT);
+		Sound.soundMode = SoundMode.ENABLED;
 	}
 
-	private void setMode(ConsoleMode consoleMode) {
-		for (AbstractGrepFilter listener : cacheHighlight.values()) {
-			listener.setConsoleMode(consoleMode);
-		}
-	}
-
-	public void resetCache() {
-		for (AbstractGrepFilter listener : cacheHighlight.values()) {
-			listener.onChange();
-		}
-		for (AbstractGrepFilter listener : cacheInput.values()) {
-			listener.onChange();
-		}
-
-		Iterator<WeakReference<AnsiInputFilter>> iterator = cacheAnsi.iterator();
-		while (iterator.hasNext()) {
-			WeakReference<AnsiInputFilter> next = iterator.next();
-			AnsiInputFilter ansiInputFilter = next.get();
-			if (ansiInputFilter == null) {
-				iterator.remove();
-			} else {
-				ansiInputFilter.onChange();
-			}
-		}
-		// todo this may not work properly, regenerate GrepExpressionItem id
-		Cache.reset();
-
-	}
 
 	public void reset() {
 		if (form != null) {
@@ -158,50 +107,8 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		this.settings = state;
 	}
 
-	public void changeProfile(Project project, Profile profile) {
-		GrepHighlightFilter grepHighlightFilter = cacheHighlight.get(project);
-		if (grepHighlightFilter != null) {
-			grepHighlightFilter.setProfile(profile);
-		}
-		GrepInputFilter grepInputFilter = cacheInput.get(project);
-		if (grepInputFilter != null) {
-			grepInputFilter.setProfile(profile);
-		}
-	}
-
-	public void projectClosed(Project project) {
-		cacheHighlight.remove(project);
-		cacheAnsi.remove(project);
-		cacheInput.remove(project);
-	}
-
 	public Profile getProfile(Project project) {
 		return getState().getDefaultProfile();
-	}
-
-	public GrepInputFilter getInputFilterService(Project project) {
-		GrepInputFilter service = cacheInput.get(project);
-		if (service == null) {
-			service = new GrepInputFilter(project);
-		}
-		cacheInput.put(project, service);
-		return service;
-	}
-
-	public AnsiInputFilter getAnsiFilterService(Project project) {
-		AnsiInputFilter service = new AnsiInputFilter(project);
-		cacheAnsi.add(new WeakReference<AnsiInputFilter>(service));
-		lastAnsi = service;
-		return service;
-	}
-
-	public GrepHighlightFilter getHighlightService(Project project) {
-		GrepHighlightFilter service = cacheHighlight.get(project);
-		if (service == null) {
-			service = new GrepHighlightFilter(project);
-		}
-		cacheHighlight.put(project, service);
-		return service;
 	}
 
 	public void setCurrentAction(HighlightManipulationAction currentEditor) {
@@ -211,7 +118,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	@NotNull
 	@Override
 	public File[] getExportFiles() {
-		return new File[] { PathManager.getOptionsFile("grepConsole") };
+		return new File[]{PathManager.getOptionsFile("grepConsole")};
 	}
 
 	@NotNull

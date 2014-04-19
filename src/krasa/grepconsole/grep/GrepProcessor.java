@@ -1,14 +1,11 @@
 package krasa.grepconsole.grep;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.filter.support.ConsoleMode;
-
 import org.apache.commons.lang.StringUtils;
 
-import com.intellij.openapi.diagnostic.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GrepProcessor {
 	private static final Logger log = Logger.getInstance(GrepProcessor.class.getName());
@@ -27,17 +24,11 @@ public class GrepProcessor {
 				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
 				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
 				state.setExclude(grepExpressionItem.isInputFilter());
-
-				playSound(state);
+				state.setMatchesSomething(true);
+				grepExpressionItem.getSound().play();
 			}
 		}
 		return state;
-	}
-
-	private void playSound(FilterState flow) {
-		if (flow.getConsoleMode() != ConsoleMode.NO_SOUND) {
-			grepExpressionItem.getSound().play();
-		}
 	}
 
 	private boolean matches(String matchedLine) {

@@ -128,6 +128,14 @@
         </constraints>
         <properties/>
       </component>
+      <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
+        <constraints>
+          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Enable multiline output"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>
