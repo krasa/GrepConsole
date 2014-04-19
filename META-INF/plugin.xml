@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.4.134.1007</version>
+	<version>3.5.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -21,9 +21,12 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>3.5 (2014-04-19)
+        <br>- added console buttons for "Open File in Console" action
         <br>3.4 (2014-04-19)
         <br>- multiline output highlighting
-        <br>- highlight matching items are not filtered out
+        <br>- items are not filtered out if they match highlight item with higher priority
+        <br>- improved color chooser
         <br>3.3 (2014-03-21)
         <br>- Match only first N characters on each line fixed for 1000+
         <br>3.2 (2014-02-10)
