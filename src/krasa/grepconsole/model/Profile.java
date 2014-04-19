@@ -3,6 +3,9 @@ package krasa.grepconsole.model;
 import com.intellij.util.xmlb.annotations.Transient;
 import org.apache.commons.lang.math.NumberUtils;
 
+import com.intellij.util.xmlb.annotations.Transient;
+import org.apache.commons.lang.math.NumberUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
