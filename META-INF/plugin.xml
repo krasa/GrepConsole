@@ -13,7 +13,9 @@
 			Each expression matching a line will affect the style of the entire line, or play a sound. 
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
-	 		
+	 		Additional Features:<br>
+	 		File tailing - Main menu | Tools | Open File in Console<br>
+	 		<br>
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
 			and <a href="http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/">Ansi Console plugin for Eclipse</a>.
 			
@@ -22,7 +24,7 @@
 
 	<change-notes><![CDATA[
         <br>3.5 (2014-04-19)
-        <br>- added console buttons for "Open File in Console" action
+        <br>- added console buttons for file tailing
         <br>3.4 (2014-04-19)
         <br>- multiline output highlighting
         <br>- items are not filtered out if they match highlight item with higher priority

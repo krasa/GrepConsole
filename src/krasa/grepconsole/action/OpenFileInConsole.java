@@ -44,6 +44,7 @@ public class OpenFileInConsole extends DumbAwareAction {
 				openFileInConsole(project, path);
 			}
 		});
+		executor.withTitle(path);
 		executor.run();
 	}
 
