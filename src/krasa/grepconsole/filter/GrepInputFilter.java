@@ -1,17 +1,16 @@
 package krasa.grepconsole.filter;
 
-import java.util.Arrays;
-import java.util.List;
-
+import com.intellij.execution.filters.InputFilter;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 import krasa.grepconsole.grep.FilterState;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 
-import com.intellij.execution.filters.InputFilter;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
+import java.util.Arrays;
+import java.util.List;
 
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
@@ -25,9 +24,14 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
-			ConsoleViewContentType consoleViewContentType) {
+																  ConsoleViewContentType consoleViewContentType) {
 		FilterState state = super.filter(s);
 		return prepareResult(state);
+	}
+
+	@Override
+	protected boolean continueFiltering(FilterState state) {
+		return !state.isMatchesSomething();
 	}
 
 	private List<Pair<String, ConsoleViewContentType>> prepareResult(FilterState state) {
@@ -46,7 +50,6 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem grepExpressionItem) {
-		return profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter();
+		return profile.isEnabledInputFiltering();
 	}
-
 }

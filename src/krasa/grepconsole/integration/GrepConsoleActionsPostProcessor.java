@@ -1,24 +1,22 @@
 package krasa.grepconsole.integration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import krasa.grepconsole.action.OpenConsoleSettingsAction;
-import krasa.grepconsole.filter.AnsiInputFilter;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnAction;
+import krasa.grepconsole.action.OpenConsoleSettingsAction;
+import krasa.grepconsole.filter.AnsiInputFilter;
+import krasa.grepconsole.plugin.ServiceManager;
+import org.jetbrains.annotations.NotNull;
 
-public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProcessor {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 
 	@NotNull
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
-		AnsiInputFilter lastAnsi = GrepConsoleApplicationComponent.lastAnsi;
+		AnsiInputFilter lastAnsi = ServiceManager.getInstance().getLastAnsi();
 		if (lastAnsi != null) {
 			lastAnsi.setConsole(console);
 		}

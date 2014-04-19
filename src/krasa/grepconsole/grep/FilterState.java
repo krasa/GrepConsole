@@ -1,22 +1,19 @@
 package krasa.grepconsole.grep;
 
-import krasa.grepconsole.filter.support.ConsoleMode;
-import krasa.grepconsole.model.Operation;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import krasa.grepconsole.model.Operation;
 
 public class FilterState {
 
 	private String text;
 	private Operation nextOperation = Operation.CONTINUE_MATCHING;
-	private final ConsoleMode consoleMode;
 	protected ConsoleViewContentType consoleViewContentType;
 	private boolean exclude;
+	private boolean matchesSomething;
 
-	public FilterState(String text, ConsoleMode consoleMode) {
+	public FilterState(String text) {
 		this.text = text;
-		this.consoleMode = consoleMode;
 	}
 
 	public Operation getNextOperation() {
@@ -59,8 +56,12 @@ public class FilterState {
 		return exclude;
 	}
 
-	public ConsoleMode getConsoleMode() {
-		return consoleMode;
+
+	public void setMatchesSomething(boolean matchesSomething) {
+		this.matchesSomething = matchesSomething;
 	}
 
+	public boolean isMatchesSomething() {
+		return matchesSomething;
+	}
 }

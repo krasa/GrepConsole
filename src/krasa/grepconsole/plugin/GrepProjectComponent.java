@@ -1,9 +1,8 @@
 package krasa.grepconsole.plugin;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public class GrepProjectComponent implements ProjectComponent {
 	private Project project;
@@ -30,6 +29,5 @@ public class GrepProjectComponent implements ProjectComponent {
 	}
 
 	public void projectClosed() {
-		GrepConsoleApplicationComponent.getInstance().projectClosed(project);
 	}
 }

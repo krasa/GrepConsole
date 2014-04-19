@@ -1,19 +1,27 @@
 package krasa.grepconsole.model;
 
+import com.intellij.util.xmlb.annotations.Transient;
+import org.apache.commons.lang.math.NumberUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Profile extends DomainObject {
+	public static final String DEFAULT = "60";
+
 	private long id;
 	private boolean defaultProfile;
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
-	private String maxLengthToMatch = "60";
+	private String maxLengthToMatch = DEFAULT;
 	private boolean enableMaxLengthLimit = true;
 	private boolean enableAnsiColoring;
 	private boolean hideAnsiCommands;
 	private boolean encodeText;
+	@Transient
+	private transient Integer maxLengthToMatchAsInt;
+	private boolean multiLineOutput;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -52,7 +60,10 @@ public class Profile extends DomainObject {
 	}
 
 	public Integer getMaxLengthToMatchAsInt() {
-		return Integer.valueOf(maxLengthToMatch);
+		if (maxLengthToMatchAsInt == null) {
+			maxLengthToMatchAsInt = Integer.valueOf(maxLengthToMatch);
+		}
+		return maxLengthToMatchAsInt;
 	}
 
 	public String getMaxLengthToMatch() {
@@ -60,7 +71,15 @@ public class Profile extends DomainObject {
 	}
 
 	public void setMaxLengthToMatch(String maxLengthToMatch) {
+		if (maxLengthToMatch == null || maxLengthToMatch.length() == 0) {
+			maxLengthToMatch = DEFAULT;
+		}
+		maxLengthToMatch = maxLengthToMatch.replace("\u00A0", "").replace(" ", "");
+		if (maxLengthToMatch.length() == 0 || !NumberUtils.isNumber(maxLengthToMatch)) {
+			maxLengthToMatch = DEFAULT;
+		}
 		this.maxLengthToMatch = maxLengthToMatch;
+		maxLengthToMatchAsInt = Integer.valueOf(maxLengthToMatch);
 	}
 
 	public boolean isEnableMaxLengthLimit() {
@@ -101,5 +120,13 @@ public class Profile extends DomainObject {
 
 	public void setEncodeText(boolean encodeText) {
 		this.encodeText = encodeText;
+	}
+
+	public boolean isMultiLineOutput() {
+		return multiLineOutput;
+	}
+
+	public void setMultiLineOutput(boolean multiLineOutput) {
+		this.multiLineOutput = multiLineOutput;
 	}
 }

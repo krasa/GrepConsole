@@ -1,16 +1,11 @@
 package krasa.grepconsole.model;
 
+import com.intellij.openapi.diagnostic.Logger;
+import krasa.grepconsole.filter.support.SoundMode;
+
+import javax.media.*;
 import java.io.File;
 import java.io.IOException;
-
-import javax.media.ControllerEvent;
-import javax.media.ControllerListener;
-import javax.media.Manager;
-import javax.media.NoPlayerException;
-import javax.media.Player;
-import javax.media.StopEvent;
-
-import com.intellij.openapi.diagnostic.Logger;
 
 /**
  * @author Vojtech Krasa
@@ -18,7 +13,10 @@ import com.intellij.openapi.diagnostic.Logger;
 public class Sound extends DomainObject implements ControllerListener {
 	private static final Logger log = Logger.getInstance(Sound.class.getName());
 
+	public static SoundMode soundMode = SoundMode.ENABLED;
+
 	private String path;
+
 	private boolean enabled;
 
 	private volatile transient boolean playing;
@@ -28,7 +26,7 @@ public class Sound extends DomainObject implements ControllerListener {
 	}
 
 	public synchronized void play() {
-		if (enabled && !playing && isNotBlank(path)) {
+		if (soundMode == SoundMode.ENABLED && enabled && !playing && isNotBlank(path)) {
 			try {
 				playing = true;
 				getPlayer().start();

@@ -4,6 +4,7 @@ import com.intellij.execution.filters.ConsoleInputFilterProvider;
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
 public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvider {
@@ -12,8 +13,8 @@ public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvide
 	@Override
 	public InputFilter[] getDefaultFilters(@NotNull Project project) {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
-		return new InputFilter[]{applicationComponent.getInputFilterService(project),
-				applicationComponent.getAnsiFilterService(project)};
+		return new InputFilter[]{ServiceManager.getInstance().createInputFilter(project),
+				ServiceManager.getInstance().createAnsiFilter(project)};
 	}
 
 }

@@ -2,23 +2,15 @@ package krasa.grepconsole.action;
 
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.ide.CopyProvider;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.ui.JBColor;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
-import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.*;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.ServiceManager;
 
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.*;
 import java.io.IOException;
 
 public class AddHighlightAction extends HighlightManipulationAction {
@@ -32,7 +24,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 					return;
 				GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
 				addExpressionItem(string, instance.getProfile(e.getProject()));
-				instance.resetCache();
+				ServiceManager.getInstance().resetSettings();
 				resetHighlights(consoleView);
 
 				OpenConsoleSettingsAction openConsoleSettingsAction = new OpenConsoleSettingsAction(consoleView);

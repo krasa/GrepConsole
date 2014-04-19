@@ -26,6 +26,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private transient Pattern unlessPattern;
 
 	private Operation operationOnMatch = Operation.EXIT;
+	private ItemType itemType = ItemType.REGEXP;
 
 	public GrepExpressionItem() {
 		this(null);
@@ -34,6 +35,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem(String id) {
 		super(id);
 
+	}
+
+	public ItemType getItemType() {
+		return itemType;
+	}
+
+	public void setItemType(ItemType itemType) {
+		this.itemType = itemType;
 	}
 
 	public void setSound(Sound sound) {

@@ -1,6 +1,5 @@
 package krasa.grepconsole.gui;
 
-import com.intellij.ui.CheckBoxWithColorChooser;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import krasa.grepconsole.model.GrepColor;
 import org.jetbrains.annotations.Nullable;
@@ -11,6 +10,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EventObject;
 
 public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Item, GrepColor> {
 
@@ -33,6 +33,8 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 	@Override
 	public TableCellRenderer getRenderer(final Item o) {
 		return new TableCellRenderer() {
+
+
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
 														   boolean hasFocus, int row, int column) {
@@ -47,6 +49,11 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 		AbstractTableCellEditor abstractTableCellEditor = new AbstractTableCellEditor() {
 
 			protected CheckBoxWithColorChooser checkBoxWithColorChooser;
+
+			@Override
+			public boolean shouldSelectCell(EventObject anEvent) {
+				return true;
+			}
 
 			@Override
 			public Object getCellEditorValue() {
@@ -69,6 +76,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 		}
 		CheckBoxWithColorChooser checkBoxWithColorChooser = new CheckBoxWithColorChooser(null, color.isEnabled(),
 				color.getColorAsAWT());
+		//hack for updating color in the table after it is selected in the dialog 
 		Component[] components = checkBoxWithColorChooser.getComponents();
 		for (Component component : components) {
 			if (component instanceof JCheckBox) {

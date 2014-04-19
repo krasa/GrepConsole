@@ -17,7 +17,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static krasa.grepconsole.Cloner.*;
+import static krasa.grepconsole.Cloner.deepClone;
 
 public class SettingsDialog {
 	private JPanel rootComponent;
@@ -33,6 +33,7 @@ public class SettingsDialog {
 	private JCheckBox ansi;
 	private JCheckBox hideAnsiCharacters;
 	private JCheckBox encodeText;
+	private JCheckBox multilineOutput;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -166,39 +167,35 @@ public class SettingsDialog {
 	public void setData(Profile data) {
 		maxLengthToMatch.setText(data.getMaxLengthToMatch());
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
-		enableFiltering.setSelected(data.isEnabledInputFiltering());
-		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		ansi.setSelected(data.isEnableAnsiColoring());
 		hideAnsiCharacters.setSelected(data.isHideAnsiCommands());
 		encodeText.setSelected(data.isEncodeText());
+		enableFiltering.setSelected(data.isEnabledInputFiltering());
+		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
+		multilineOutput.setSelected(data.isMultiLineOutput());
 	}
 
 	public void getData(Profile data) {
 		data.setMaxLengthToMatch(maxLengthToMatch.getText());
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
-		data.setEnabledInputFiltering(enableFiltering.isSelected());
-		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setEnableAnsiColoring(ansi.isSelected());
 		data.setHideAnsiCommands(hideAnsiCharacters.isSelected());
 		data.setEncodeText(encodeText.isSelected());
+		data.setEnabledInputFiltering(enableFiltering.isSelected());
+		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
+		data.setMultiLineOutput(multilineOutput.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
-				: data.getMaxLengthToMatch() != null)
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch()) : data.getMaxLengthToMatch() != null)
 			return true;
-		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
-			return true;
-		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
-			return true;
-		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
-			return true;
-		if (ansi.isSelected() != data.isEnableAnsiColoring())
-			return true;
-		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
-			return true;
-		if (encodeText.isSelected() != data.isEncodeText())
-			return true;
+		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit()) return true;
+		if (ansi.isSelected() != data.isEnableAnsiColoring()) return true;
+		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands()) return true;
+		if (encodeText.isSelected() != data.isEncodeText()) return true;
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering()) return true;
+		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting()) return true;
+		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
 		return false;
 	}
 }

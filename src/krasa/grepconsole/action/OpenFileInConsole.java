@@ -1,13 +1,5 @@
 package krasa.grepconsole.action;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-
-import com.intellij.execution.RunContentExecutor;
 import com.intellij.execution.process.DefaultJavaProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.BrowseFilesListener;
@@ -17,6 +9,10 @@ import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import krasa.grepconsole.integration.RunContentExecutor;
+
+import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * @author Vojtech Krasa
@@ -36,10 +32,19 @@ public class OpenFileInConsole extends DumbAwareAction {
 		}
 	}
 
-	protected void openFileInConsole(Project project, String path) {
+	protected void openFileInConsole(final Project project, final String path) {
 		final Process process = new MyProcess(path);
-		ProcessHandler osProcessHandler = new DefaultJavaProcessHandler(process, null, Charset.defaultCharset());
-		RunContentExecutor executor = new RunContentExecutor(project, osProcessHandler);
+		final ProcessHandler osProcessHandler = new DefaultJavaProcessHandler(process, null, Charset.defaultCharset());
+		final RunContentExecutor executor = new RunContentExecutor(project, osProcessHandler);
+		executor.withRerun(new Runnable() {
+			@Override
+			public void run() {
+				osProcessHandler.destroyProcess();
+				osProcessHandler.waitFor(2000L);
+				openFileInConsole(project, path);
+			}
+		});
+		executor.withTitle(path);
 		executor.run();
 	}
 
