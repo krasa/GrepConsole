@@ -5,6 +5,7 @@ import krasa.grepconsole.grep.FilterState;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.*;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		this.grepProcessors = grepProcessors;
 	}
 
-	protected FilterState filter(String text, int offset) {
+	protected FilterState filter(@Nullable String text, int offset) {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
 			FilterState state = new FilterState(getSubstring(text), offset);

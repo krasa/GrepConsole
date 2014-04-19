@@ -13,6 +13,9 @@ import java.util.regex.PatternSyntaxException;
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	private boolean enabled = true;
+	/**
+	 * filter out text if matches
+	 */
 	private boolean inputFilter = false;
 	private String grepExpression;
 	private String unlessGrepExpression;
