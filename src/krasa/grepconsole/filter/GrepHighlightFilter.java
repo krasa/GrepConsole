@@ -9,6 +9,7 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
@@ -25,27 +26,47 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	@Nullable
 	@Override
-	public Result applyFilter(String s, int entireLength) {
+	// line can be empty sometimes under heavy load
+	public Result applyFilter(@Nullable String s, int entireLength) {
 		Result result = null;
-		FilterState state = super.filter(s);
+		int offset = entireLength;
+		if (s != null) {
+			offset = entireLength - s.length();
+		}
+		FilterState state = super.filter(s, offset);
 		if (state != null) {
-			result = prepareResult(s, entireLength, state);
+			result = prepareResult(entireLength, state);
 		}
 		return result;
 	}
 
-	private Result prepareResult(String line, int entireLength, FilterState state) {
+	private Result prepareResult(int entireLength, FilterState state) {
 		Result result = null;
 		TextAttributes textAttributes = state.getTextAttributes();
+		List<ResultItem> resultItemList = state.getResultItemList();
 		if (textAttributes != null) {
 			lastTextAttributes = textAttributes;
-			result = new Result(entireLength - line.length(), entireLength, null, textAttributes);
-			result.setNextAction(NextAction.CONTINUE_FILTERING);
+			if (resultItemList == null) {
+				resultItemList = Collections.singletonList(getResultItem(entireLength, state, textAttributes));
+			} else {
+				resultItemList.add(getResultItem(entireLength, state, textAttributes));
+			}
 		} else if (lastTextAttributes != null && profile.isMultiLineOutput()) {
-			result = new Result(entireLength - line.length(), entireLength, null, lastTextAttributes);
+			if (resultItemList == null) {
+				resultItemList = Collections.singletonList(getResultItem(entireLength, state, lastTextAttributes));
+			} else {
+				resultItemList.add(getResultItem(entireLength, state, lastTextAttributes));
+			}
+		}
+		if (resultItemList != null) {
+			result = new Result(resultItemList);
 			result.setNextAction(NextAction.CONTINUE_FILTERING);
 		}
 		return result;
+	}
+
+	private ResultItem getResultItem(int entireLength, FilterState state, TextAttributes textAttributes) {
+		return new ResultItem(state.getOffset(), entireLength, null, textAttributes);
 	}
 
 	@Override

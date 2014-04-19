@@ -1,5 +1,7 @@
 package krasa.grepconsole.gui;
 
+import com.centerkey.utils.BareBonesBrowserLaunch;
+import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.ui.table.TableView;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.ListTableModel;
@@ -12,8 +14,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,12 +35,21 @@ public class SettingsDialog {
 	private JCheckBox hideAnsiCharacters;
 	private JCheckBox encodeText;
 	private JCheckBox multilineOutput;
+	private JButton DONATEButton;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
 
 	public SettingsDialog(PluginState settings) {
 		this.settings = settings;
+		DONATEButton.setBorder(BorderFactory.createEmptyBorder());
+		DONATEButton.setContentAreaFilled(false);
+		DONATEButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
+			}
+		});
 		addNewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -62,21 +72,13 @@ public class SettingsDialog {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GrepExpressionItem expressionItem = deepClone((GrepExpressionItem) model.getItem(selectedRow));
-				expressionItem.generateNewId();
-				model.addRow(expressionItem);
+				copyRow();
 			}
 		});
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (selectedRow < model.getRowCount()) {
-					model.removeRow(selectedRow);
-					table.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
-					if (model.getRowCount() == 0) {
-						disableCopyDeleteButton();
-					}
-				}
+				delete();
 
 			}
 		});
@@ -91,6 +93,31 @@ public class SettingsDialog {
 				}
 			}
 		});
+		table.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (SwingUtilities.isLeftMouseButton(e)) {
+				} else if (SwingUtilities.isRightMouseButton(e)) {
+					JPopupMenu popup = new JBPopupMenu();
+					final JMenuItem copy = new JMenuItem("Copy");
+					final JMenuItem delete = new JMenuItem("Delete");
+					copy.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							copyRow();
+						}
+					});
+					delete.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							delete();
+						}
+					});
+					popup.add(copy);
+					popup.add(delete);
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+		});
 		disableCopyDeleteButton();
 		ansi.addActionListener(new ActionListener() {
 			@Override
@@ -100,6 +127,22 @@ public class SettingsDialog {
 				}
 			}
 		});
+	}
+
+	private void delete() {
+		if (selectedRow < model.getRowCount()) {
+			model.removeRow(selectedRow);
+			table.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
+			if (model.getRowCount() == 0) {
+				disableCopyDeleteButton();
+			}
+		}
+	}
+
+	private void copyRow() {
+		GrepExpressionItem expressionItem = deepClone((GrepExpressionItem) model.getItem(selectedRow));
+		expressionItem.generateNewId();
+		model.insertRow(selectedRow, expressionItem);
 	}
 
 	private void disableCopyDeleteButton() {
@@ -153,6 +196,7 @@ public class SettingsDialog {
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
 		columns.add(new SoundColumn("Sound", this));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text", "highlightOnlyMatchingText"));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
 		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),

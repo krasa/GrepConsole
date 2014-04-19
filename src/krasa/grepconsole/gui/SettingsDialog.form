@@ -134,6 +134,21 @@
         </constraints>
         <properties>
           <text value="Enable multiline output"/>
+          <toolTipText value="The style is applied for all following lines until another match occurs"/>
+        </properties>
+      </component>
+      <component id="71707" class="javax.swing.JButton" binding="DONATEButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-2697514"/>
+          <font/>
+          <hideActionText value="false"/>
+          <horizontalTextPosition value="0"/>
+          <icon value="krasa/grepconsole/gui/btn_donate_LG.gif"/>
+          <text value=""/>
+          <toolTipText value="Donate via PayPal"/>
         </properties>
       </component>
     </children>

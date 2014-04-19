@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.5.134.1007</version>
+	<version>3.6.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -23,6 +23,10 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>3.6 (2014-04-19)
+        <br>- new feature: colorization of single words, not whole lines
+        <br>- tooltips for settings table, right click menu 
+        <br>- donation button
         <br>3.5 (2014-04-19)
         <br>- added console buttons for file tailing
         <br>3.4 (2014-04-19)

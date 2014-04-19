@@ -1,20 +1,14 @@
 package krasa.grepconsole.filter;
 
-import static junit.framework.Assert.*;
+import com.intellij.execution.filters.Filter;
+import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.model.*;
+import org.junit.Test;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
-import krasa.grepconsole.model.Operation;
-import krasa.grepconsole.model.Profile;
-
-import org.junit.Test;
-
-import com.intellij.execution.filters.Filter;
+import static junit.framework.Assert.*;
 
 public class GrepHighlightFilterTest {
 
@@ -36,14 +30,18 @@ public class GrepHighlightFilterTest {
 
 		Filter.Result result = grepFilter.applyFilter("[ERROR]", 10);
 		assertNotNull(result);
-		assertEquals(Color.RED, result.highlightAttributes.getBackgroundColor());
-		assertNull(result.highlightAttributes.getEffectColor());
-		assertNull(result.highlightAttributes.getErrorStripeColor());
-		assertNull(result.highlightAttributes.getForegroundColor());
+		assertEquals(1, result.getResultItems().size());
+		Filter.ResultItem resultItem = result.getResultItems().get(0);
+		assertEquals(Color.RED, resultItem.highlightAttributes.getBackgroundColor());
+		assertNull(resultItem.highlightAttributes.getEffectColor());
+		assertNull(resultItem.highlightAttributes.getErrorStripeColor());
+		assertNull(resultItem.highlightAttributes.getForegroundColor());
 
 		result = grepFilter.applyFilter("[INFO]", 10);
-		assertNotNull(result);
-		assertEquals(Color.BLUE, result.highlightAttributes.getBackgroundColor());
+		assertEquals(1, result.getResultItems().size());
+		resultItem = result.getResultItems().get(0);
+		assertNotNull(resultItem);
+		assertEquals(Color.BLUE, resultItem.highlightAttributes.getBackgroundColor());
 
 		testVariousText(grepFilter);
 	}
@@ -57,18 +55,24 @@ public class GrepHighlightFilterTest {
 
 		Filter.Result result = grepFilter.applyFilter("BLACK FOREGROUND RED BACKGROUND", 10);
 		assertNotNull(result);
-		assertEquals(Color.RED, result.highlightAttributes.getBackgroundColor());
-		assertEquals(Color.BLACK, result.highlightAttributes.getForegroundColor());
-		assertNull(result.highlightAttributes.getEffectColor());
-		assertNull(result.highlightAttributes.getErrorStripeColor());
+		assertEquals(1, result.getResultItems().size());
+		Filter.ResultItem resultItem = result.getResultItems().get(0);
+		assertEquals(Color.RED, resultItem.highlightAttributes.getBackgroundColor());
+		assertEquals(Color.BLACK, resultItem.highlightAttributes.getForegroundColor());
+		assertNull(resultItem.highlightAttributes.getEffectColor());
+		assertNull(resultItem.highlightAttributes.getErrorStripeColor());
 
 		result = grepFilter.applyFilter("BLACK FOREGROUND", 10);
-		assertEquals(null, result.highlightAttributes.getBackgroundColor());
-		assertEquals(Color.BLACK, result.highlightAttributes.getForegroundColor());
+		assertEquals(1, result.getResultItems().size());
+		resultItem = result.getResultItems().get(0);
+		assertEquals(null, resultItem.highlightAttributes.getBackgroundColor());
+		assertEquals(Color.BLACK, resultItem.highlightAttributes.getForegroundColor());
 
 		result = grepFilter.applyFilter("RED BACKGROUND", 10);
-		assertEquals(Color.RED, result.highlightAttributes.getBackgroundColor());
-		assertEquals(null, result.highlightAttributes.getForegroundColor());
+		assertEquals(1, result.getResultItems().size());
+		resultItem = result.getResultItems().get(0);
+		assertEquals(Color.RED, resultItem.highlightAttributes.getBackgroundColor());
+		assertEquals(null, resultItem.highlightAttributes.getForegroundColor());
 	}
 
 	private void testVariousText(GrepHighlightFilter grepFilter) {

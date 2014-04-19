@@ -23,10 +23,10 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		this.grepProcessors = grepProcessors;
 	}
 
-	protected FilterState filter(String text) {
+	protected FilterState filter(String text, int offset) {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
-			FilterState state = new FilterState(getSubstring(text));
+			FilterState state = new FilterState(getSubstring(text), offset);
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				state = grepProcessor.process(state);
 				if (!continueFiltering(state)) return state;

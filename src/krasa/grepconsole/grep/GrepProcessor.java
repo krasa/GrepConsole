@@ -1,5 +1,6 @@
 package krasa.grepconsole.grep;
 
+import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.model.GrepExpressionItem;
 import org.apache.commons.lang.StringUtils;
@@ -19,8 +20,20 @@ public class GrepProcessor {
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
 			String matchedLine = state.getText();
-
-			if (matches(matchedLine) && !matchesUnless(matchedLine)) {
+			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
+				Pattern pattern = grepExpressionItem.getPattern();
+				if (pattern != null) {
+					final Matcher matcher = pattern.matcher(matchedLine);
+					while (matcher.find()) {
+						final int start = matcher.start();
+						final int end = matcher.end();
+						state.setNextOperation(grepExpressionItem.getOperationOnMatch());
+						state.setExclude(grepExpressionItem.isInputFilter());
+						state.setMatchesSomething(true);
+						state.add(new Filter.ResultItem(state.getOffset() + start, state.getOffset() + end, null, grepExpressionItem.getConsoleViewContentType(null).getAttributes()));
+					}
+				}
+			} else if (matches(matchedLine) && !matchesUnless(matchedLine)) {
 				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
 				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
 				state.setExclude(grepExpressionItem.isInputFilter());
