@@ -1,19 +1,17 @@
 package krasa.grepconsole.filter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import krasa.grepconsole.ansi.AnsiConsoleStyleProcessor;
-import krasa.grepconsole.filter.support.ConsoleListener;
-import krasa.grepconsole.model.Profile;
-
-import org.apache.commons.net.util.Base64;
-
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import krasa.grepconsole.ansi.AnsiConsoleStyleProcessor;
+import krasa.grepconsole.filter.support.ConsoleListener;
+import krasa.grepconsole.model.Profile;
+import org.apache.commons.net.util.Base64;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AnsiInputFilter extends AbstractFilter implements InputFilter, ConsoleListener {
 	protected AnsiConsoleStyleProcessor ansiConsoleStyleProcessor;
@@ -51,8 +49,8 @@ public class AnsiInputFilter extends AbstractFilter implements InputFilter, Cons
 				stringBuilder.append(stringConsoleViewContentTypePair.first);
 			}
 			list.add(new Pair<String, ConsoleViewContentType>(
-					"input:" + Base64.encodeBase64URLSafeString(s.getBytes()), consoleViewContentType));
-			list.add(new Pair<String, ConsoleViewContentType>("\nresult:"
+					"\n>>>input:" + Base64.encodeBase64URLSafeString(s.getBytes()), consoleViewContentType));
+			list.add(new Pair<String, ConsoleViewContentType>("\n>>>result:"
 					+ Base64.encodeBase64URLSafeString(stringBuilder.toString().getBytes()) + "\n",
 					consoleViewContentType));
 		}
