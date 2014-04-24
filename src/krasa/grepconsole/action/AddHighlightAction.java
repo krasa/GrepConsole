@@ -1,17 +1,23 @@
 package krasa.grepconsole.action;
 
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.ide.CopyProvider;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.ide.CopyPasteManager;
-import com.intellij.ui.JBColor;
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.io.IOException;
+
+import javax.swing.*;
+
 import krasa.grepconsole.model.*;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.io.IOException;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.ide.CopyProvider;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.ui.ColorPicker;
 
 public class AddHighlightAction extends HighlightManipulationAction {
 	@Override
@@ -23,12 +29,16 @@ public class AddHighlightAction extends HighlightManipulationAction {
 				if (string == null)
 					return;
 				GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
-				addExpressionItem(string, instance.getProfile(e.getProject()));
+				Color color = ColorPicker.showDialog(rootComponent(getEventProject(e)), "Background color", Color.CYAN,
+						true, null, true);
+				if (color == null) {
+					return;
+				}
+
+				addExpressionItem(string, color, instance.getProfile(e.getProject()));
 				ServiceManager.getInstance().resetSettings();
 				resetHighlights(consoleView);
-
-				OpenConsoleSettingsAction openConsoleSettingsAction = new OpenConsoleSettingsAction(consoleView);
-				openConsoleSettingsAction.actionPerformed(e);
+				
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				return;
@@ -36,12 +46,24 @@ public class AddHighlightAction extends HighlightManipulationAction {
 		}
 	}
 
-	private void addExpressionItem(String string, final Profile profile1) {
-		Profile profile = profile1;
+	private static JComponent rootComponent(Project project) {
+		if (project != null) {
+			IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
+			if (frame != null)
+				return frame.getComponent();
+		}
+
+		JFrame frame = WindowManager.getInstance().findVisibleFrame();
+		return frame != null ? frame.getRootPane() : null;
+	}
+
+	private void addExpressionItem(String string, Color color, final Profile profile) {
 		GrepStyle style = new GrepStyle();
 		style.setForegroundColor(new GrepColor(Color.BLACK));
-		style.setBackgroundColor(new GrepColor(JBColor.CYAN));
-		profile.getGrepExpressionItems().add(new GrepExpressionItem().grepExpression(".*" + string + ".*").style(style));
+		style.setBackgroundColor(new GrepColor(color));
+		profile.getGrepExpressionItems().add(0,
+				new GrepExpressionItem().grepExpression(string).style(style).highlightOnlyMatchingText(true).operationOnMatch(
+						Operation.CONTINUE_MATCHING));
 	}
 
 	private String getString(AnActionEvent e) throws UnsupportedFlavorException, IOException {

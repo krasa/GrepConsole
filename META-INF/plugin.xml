@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.7.134.1007</version>
+	<version>3.8.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -22,10 +22,12 @@
 			 
       ]]></description>
 
-	<change-notes><![CDATA[
-        <br>3.7 (2014-04-24)
+	<change-notes><![CDATA[        
+        <br>3.8 (2014-04-24)
         <br>- PhpStorm tail file fix
         <br>- moved editor context actions into Tools
+        <br>3.7 (2014-04-22)
+        <br>- usability improvements
         <br>3.6 (2014-04-19)
         <br>- new feature: colorization of single words, not whole lines
         <br>- tooltips for settings table, right click menu 
