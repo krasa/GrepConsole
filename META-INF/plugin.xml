@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.6.134.1007</version>
+	<version>3.7.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -23,6 +23,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>3.7 (2014-04-24)
+        <br>- PhpStorm tail file fix
+        <br>- moved editor context actions into Tools
         <br>3.6 (2014-04-19)
         <br>- new feature: colorization of single words, not whole lines
         <br>- tooltips for settings table, right click menu 
@@ -87,14 +90,14 @@
 		</action>
 
 		<action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
-				text="Clear Grep Highlight"
-				description="Clear Highlight">
-			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+				text="Clear Grep Highlights in Editor"
+				description="Clear Highlights in Editor">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<!-- Add your actions here -->
-		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight"
-				icon="highlight.gif" description="Grep Highlight">
-			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight Editor"
+				icon="highlight.gif" description="Grep Highlight Editor">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsole" text="Open File in Console"
 				description="Open File in Console">

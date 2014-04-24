@@ -1,6 +1,11 @@
 package krasa.grepconsole.action;
 
-import com.intellij.execution.process.DefaultJavaProcessHandler;
+import java.io.*;
+import java.nio.charset.Charset;
+
+import krasa.grepconsole.integration.RunContentExecutor;
+
+import com.intellij.execution.process.BaseOSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -9,10 +14,6 @@ import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import krasa.grepconsole.integration.RunContentExecutor;
-
-import java.io.*;
-import java.nio.charset.Charset;
 
 /**
  * @author Vojtech Krasa
@@ -34,7 +35,7 @@ public class OpenFileInConsole extends DumbAwareAction {
 
 	protected void openFileInConsole(final Project project, final String path) {
 		final Process process = new MyProcess(path);
-		final ProcessHandler osProcessHandler = new DefaultJavaProcessHandler(process, null, Charset.defaultCharset());
+		final ProcessHandler osProcessHandler = new BaseOSProcessHandler(process, null, Charset.defaultCharset());
 		final RunContentExecutor executor = new RunContentExecutor(project, osProcessHandler);
 		executor.withRerun(new Runnable() {
 			@Override
