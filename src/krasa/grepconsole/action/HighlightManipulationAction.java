@@ -1,15 +1,17 @@
 package krasa.grepconsole.action;
 
+import javax.swing.*;
+
+import krasa.grepconsole.plugin.ReflectionUtils;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
-import krasa.grepconsole.plugin.ReflectionUtils;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
 
 public abstract class HighlightManipulationAction extends DumbAwareAction {
 	public HighlightManipulationAction() {
@@ -46,7 +48,7 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 						lineCount - 1);
 			}
 		} catch (NoSuchFieldException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("IJ API was probably changed, update the plugin", e);
 		}
 	}
 
