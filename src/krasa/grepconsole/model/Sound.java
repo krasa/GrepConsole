@@ -1,11 +1,13 @@
 package krasa.grepconsole.model;
 
-import com.intellij.openapi.diagnostic.Logger;
-import krasa.grepconsole.filter.support.SoundMode;
-
-import javax.media.*;
 import java.io.File;
 import java.io.IOException;
+
+import javax.media.*;
+
+import krasa.grepconsole.filter.support.SoundMode;
+
+import com.intellij.openapi.diagnostic.Logger;
 
 /**
  * @author Vojtech Krasa
@@ -26,7 +28,7 @@ public class Sound extends DomainObject implements ControllerListener {
 	}
 
 	public synchronized void play() {
-		if (soundMode == SoundMode.ENABLED && enabled && !playing && isNotBlank(path)) {
+		if (enabled && soundMode == SoundMode.ENABLED && !playing && isNotBlank(path)) {
 			try {
 				playing = true;
 				getPlayer().start();

@@ -1,21 +1,24 @@
 package krasa.grepconsole.filter;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
+import krasa.grepconsole.ansi.AnsiConsoleStyleProcessor;
+import krasa.grepconsole.filter.support.ConsoleListener;
+import krasa.grepconsole.model.Profile;
+
+import org.apache.commons.net.util.Base64;
+
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import krasa.grepconsole.ansi.AnsiConsoleStyleProcessor;
-import krasa.grepconsole.filter.support.ConsoleListener;
-import krasa.grepconsole.model.Profile;
-import org.apache.commons.net.util.Base64;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AnsiInputFilter extends AbstractFilter implements InputFilter, ConsoleListener {
 	protected AnsiConsoleStyleProcessor ansiConsoleStyleProcessor;
-	private ConsoleView console;
+	private WeakReference<ConsoleView> console;
 
 	public AnsiInputFilter(Project project) {
 		super(project);
@@ -48,8 +51,8 @@ public class AnsiInputFilter extends AbstractFilter implements InputFilter, Cons
 			for (Pair<String, ConsoleViewContentType> stringConsoleViewContentTypePair : list) {
 				stringBuilder.append(stringConsoleViewContentTypePair.first);
 			}
-			list.add(new Pair<String, ConsoleViewContentType>(
-					"\n>>>input:" + Base64.encodeBase64URLSafeString(s.getBytes()), consoleViewContentType));
+			list.add(new Pair<String, ConsoleViewContentType>("\n>>>input:"
+					+ Base64.encodeBase64URLSafeString(s.getBytes()), consoleViewContentType));
 			list.add(new Pair<String, ConsoleViewContentType>("\n>>>result:"
 					+ Base64.encodeBase64URLSafeString(stringBuilder.toString().getBytes()) + "\n",
 					consoleViewContentType));
@@ -72,11 +75,14 @@ public class AnsiInputFilter extends AbstractFilter implements InputFilter, Cons
 	}
 
 	public void setConsole(ConsoleView console) {
-		this.console = console;
+		this.console = new WeakReference<ConsoleView>(console);
 	}
 
 	@Override
 	public void clearConsole() {
-		console.clear();
+		final ConsoleView consoleView = console.get();
+		if (consoleView != null) {
+			console.clear();
+		}
 	}
 }

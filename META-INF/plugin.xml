@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.8.134.1007</version>
+	<version>3.9.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -23,6 +23,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>3.9 (2014-05-04)
+        <br>- enable Apply button in settings immediately after color change 
+        <br>- memory leak fix
         <br>3.8 (2014-04-24)
         <br>- PhpStorm tail file fix
         <br>- moved editor context actions into Tools

@@ -1,11 +1,14 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.openapi.project.Project;
+import java.lang.ref.WeakReference;
+import java.util.*;
+
 import krasa.grepconsole.filter.*;
 import krasa.grepconsole.grep.Cache;
 
-import java.lang.ref.WeakReference;
-import java.util.*;
+import org.jetbrains.annotations.Nullable;
+
+import com.intellij.openapi.project.Project;
 
 /**
  * @author Vojtech Krasa
@@ -17,7 +20,7 @@ public class ServiceManager {
 	private List<WeakReference<GrepHighlightFilter>> cacheHighlight = new ArrayList<WeakReference<GrepHighlightFilter>>();
 	private List<WeakReference<GrepInputFilter>> cacheInput = new ArrayList<WeakReference<GrepInputFilter>>();
 	private List<WeakReference<AnsiInputFilter>> cacheAnsi = new ArrayList<WeakReference<AnsiInputFilter>>();
-	private AnsiInputFilter lastAnsi;
+	private WeakReference<AnsiInputFilter> lastAnsi;
 
 	public static ServiceManager getInstance() {
 		return SERVICE_MANAGER;
@@ -54,7 +57,7 @@ public class ServiceManager {
 	public AnsiInputFilter createAnsiFilter(Project project) {
 		AnsiInputFilter service = new AnsiInputFilter(project);
 		cacheAnsi.add(new WeakReference<AnsiInputFilter>(service));
-		lastAnsi = service;
+		lastAnsi = new WeakReference<AnsiInputFilter>(service);
 		return service;
 	}
 
@@ -64,7 +67,12 @@ public class ServiceManager {
 		return grepHighlightFilter;
 	}
 
+	@Nullable
 	public AnsiInputFilter getLastAnsi() {
-		return lastAnsi;
+		if (lastAnsi != null) {
+			return lastAnsi.get();
+		} else {
+			return null;
+		}
 	}
 }
