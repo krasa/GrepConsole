@@ -1,10 +1,11 @@
 package krasa.grepconsole.model;
 
-import com.intellij.util.xmlb.annotations.Transient;
-import org.apache.commons.lang.math.NumberUtils;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.math.NumberUtils;
+
+import com.intellij.util.xmlb.annotations.Transient;
 
 public class Profile extends DomainObject {
 	public static final String DEFAULT = "60";
@@ -19,12 +20,21 @@ public class Profile extends DomainObject {
 	private boolean enableAnsiColoring;
 	private boolean hideAnsiCommands;
 	private boolean encodeText;
+	private boolean showStatsByDefault;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
 
 	public Profile() {
 		id = System.currentTimeMillis();
+	}
+
+	public boolean isShowStatsByDefault() {
+		return showStatsByDefault;
+	}
+
+	public void setShowStatsByDefault(boolean showStatsByDefault) {
+		this.showStatsByDefault = showStatsByDefault;
 	}
 
 	public long getId() {

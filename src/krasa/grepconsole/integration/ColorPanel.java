@@ -10,9 +10,6 @@ import javax.swing.*;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.ui.*;
-import com.intellij.util.ui.UIUtil;
-
 public class ColorPanel extends JComponent {
 	private static final Dimension SIZE = new Dimension(15, 15);
 
@@ -21,21 +18,26 @@ public class ColorPanel extends JComponent {
 	private final List<ActionListener> myListeners = new CopyOnWriteArrayList<ActionListener>();
 	@Nullable
 	private Color myColor = null;
+	private Color borderColor = null;
+	private String tooltip;
 
-	public ColorPanel() {
+	public ColorPanel(String tooltip) {
+		this.tooltip = tooltip;
 		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (!isEnabled() || !isEditable)
-					return;
-				Color color = ColorChooser.chooseColor(ColorPanel.this,
-						UIBundle.message("color.panel.select.color.dialog.description"), myColor);
-				if (color != null) {
-					setSelectedColor(color);
-					fireActionEvent();
-				}
-			}
 		});
+		// addMouseListener(new MouseAdapter() {
+		// @Override
+		// public void mousePressed(MouseEvent e) {
+		// if (!isEnabled() || !isEditable)
+		// return;
+		// Color color = ColorChooser.chooseColor(ColorPanel.this,
+		// UIBundle.message("color.panel.select.color.dialog.description"), myColor);
+		// if (color != null) {
+		// setSelectedColor(color);
+		// fireActionEvent();
+		// }
+		// }
+		// });
 	}
 
 	@Override
@@ -47,7 +49,7 @@ public class ColorPanel extends JComponent {
 				g2d.fillRect(0, 0, getWidth(), getHeight());
 				g2d.draw(new Rectangle2D.Double(0.5, 0.5, getWidth() - 1, getHeight() - 1));
 			}
-			g2d.setColor(UIUtil.getBorderColor());
+			g2d.setColor(borderColor);
 			g2d.draw(new Rectangle2D.Double(1.5, 1.5, getWidth() - 3, getHeight() - 3));
 		} finally {
 			g2d.dispose();
@@ -71,14 +73,14 @@ public class ColorPanel extends JComponent {
 
 	@Override
 	public String getToolTipText() {
-		if (myColor == null || !isEnabled()) {
-			return null;
-		}
-		StringBuilder buffer = new StringBuilder("0x").append(ColorUtil.toHex(myColor).toUpperCase());
-		if (isEnabled() && isEditable) {
-			buffer.append(" (Click to customize)");
-		}
-		return buffer.toString();
+		// if (myColor == null || !isEnabled()) {
+		// return null;
+		// }
+		// StringBuilder buffer = new StringBuilder("0x").append(ColorUtil.toHex(myColor).toUpperCase());
+		// if (isEnabled() && isEditable) {
+		// buffer.append(" (Click to customize)");
+		// }
+		return tooltip;
 	}
 
 	private void fireActionEvent() {
@@ -113,6 +115,10 @@ public class ColorPanel extends JComponent {
 	public void setSelectedColor(@Nullable Color color) {
 		myColor = color;
 		repaint();
+	}
+
+	public void setBorderColor(Color borderColor) {
+		this.borderColor = borderColor;
 	}
 
 	public void setEditable(boolean isEditable) {

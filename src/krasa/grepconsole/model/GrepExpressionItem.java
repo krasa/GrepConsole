@@ -1,14 +1,16 @@
 package krasa.grepconsole.model;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import krasa.grepconsole.grep.Cache;
-import krasa.grepconsole.grep.GrepProcessor;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import krasa.grepconsole.grep.Cache;
+import krasa.grepconsole.grep.GrepProcessor;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -17,6 +19,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	 * filter out text if matches
 	 */
 	private boolean inputFilter = false;
+	private boolean stats = false;
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
@@ -120,7 +123,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Compiles the specified grep expression. Swallows exceptions caused by invalid expressions.
-	 *
+	 * 
 	 * @param expression
 	 * @return The compiled pattern, or <code>null</code> if an error occurs.
 	 */
@@ -138,7 +141,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Computes flags for the regular expression pattern.
-	 *
+	 * 
 	 * @return Flags.
 	 */
 	private int computeFlags() {
@@ -267,6 +270,19 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem highlightOnlyMatchingText(final boolean highlightOnlyMatchingText) {
 		this.highlightOnlyMatchingText = highlightOnlyMatchingText;
 		return this;
+	}
+
+	public GrepExpressionItem stats(final boolean stats) {
+		this.stats = stats;
+		return this;
+	}
+
+	public boolean isStats() {
+		return stats;
+	}
+
+	public void setStats(boolean stats) {
+		this.stats = stats;
 	}
 
 	public boolean isContinueMatching() {

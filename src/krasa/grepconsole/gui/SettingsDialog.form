@@ -146,6 +146,15 @@
           <text value="Reset to default"/>
         </properties>
       </component>
+      <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsByDefault">
+        <constraints>
+          <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Show statistics by default"/>
+          <toolTipText value="The style is applied for all following lines until another match occurs"/>
+        </properties>
+      </component>
     </children>
   </grid>
 </form>

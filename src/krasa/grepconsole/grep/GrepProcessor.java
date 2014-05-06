@@ -14,9 +14,22 @@ public class GrepProcessor {
 	private static final Logger log = Logger.getInstance(GrepProcessor.class.getName());
 
 	private GrepExpressionItem grepExpressionItem;
+	private int matches;
 
 	public GrepProcessor(GrepExpressionItem grepExpressionItem) {
 		this.grepExpressionItem = grepExpressionItem;
+	}
+
+	public GrepExpressionItem getGrepExpressionItem() {
+		return grepExpressionItem;
+	}
+
+	public int getMatches() {
+		return matches;
+	}
+
+	public void resetMatches() {
+		this.matches = 0;
 	}
 
 	public FilterState process(FilterState state) {
@@ -27,15 +40,18 @@ public class GrepProcessor {
 				if (pattern != null) {
 					final Matcher matcher = pattern.matcher(matchedLine);
 					while (matcher.find()) {
+						matches++;
 						final int start = matcher.start();
 						final int end = matcher.end();
 						state.setNextOperation(grepExpressionItem.getOperationOnMatch());
 						state.setExclude(grepExpressionItem.isInputFilter());
 						state.setMatchesSomething(true);
-						state.add(new Filter.ResultItem(state.getOffset() + start, state.getOffset() + end, null, grepExpressionItem.getConsoleViewContentType(null).getAttributes()));
+						state.add(new Filter.ResultItem(state.getOffset() + start, state.getOffset() + end, null,
+								grepExpressionItem.getConsoleViewContentType(null).getAttributes()));
 					}
 				}
 			} else if (matches(matchedLine) && !matchesUnless(matchedLine)) {
+				matches++;
 				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
 				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
 				state.setExclude(grepExpressionItem.isInputFilter());

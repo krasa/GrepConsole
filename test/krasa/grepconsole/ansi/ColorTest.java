@@ -4,19 +4,11 @@ public class ColorTest {
 	final static String CSI = "\u001b[";
 	final static String RESET = CSI + "0m";
 
-	final static Prefix[] prefixes = {
-			new Prefix(0, " 0 normal"),
-			new Prefix(1, " 1 bold/increased intensity"),
-			new Prefix(3, " 3 italic on"),
-			new Prefix(7, " 7 image negative"),
-			new Prefix(8, " 8 conceal"),
-			new Prefix(51, "51 framed"),
-			new Prefix(9, " 9 crossed out (strike)"),
-			new Prefix(4, " 4 underlined, single"),
-			new Prefix(21, "21 undeline double")
-	};
-	final static Integer[] colors = {
-			30, // normal
+	final static Prefix[] prefixes = { new Prefix(0, " 0 normal"), new Prefix(1, " 1 bold/increased intensity"),
+			new Prefix(3, " 3 italic on"), new Prefix(7, " 7 image negative"), new Prefix(8, " 8 conceal"),
+			new Prefix(51, "51 framed"), new Prefix(9, " 9 crossed out (strike)"),
+			new Prefix(4, " 4 underlined, single"), new Prefix(21, "21 undeline double") };
+	final static Integer[] colors = { 30, // normal
 			40, // background
 			90, // high intensity normal
 			100 // high intensity background

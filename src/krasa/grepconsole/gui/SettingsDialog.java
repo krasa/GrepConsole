@@ -38,6 +38,7 @@ public class SettingsDialog {
 	private JCheckBox encodeText;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
+	private JCheckBox showStatsByDefault;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -135,8 +136,9 @@ public class SettingsDialog {
 			private JMenuItem getConvertAction() {
 				final GrepExpressionItem item = model.getItem(selectedRow);
 				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
-				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line":"Convert to words only" );
-			
+				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
+						: "Convert to words only");
+
 				convert.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -147,7 +149,8 @@ public class SettingsDialog {
 								item.grepExpression(item.getGrepExpression().substring(2));
 							}
 							if (item.getGrepExpression().endsWith(".*")) {
-								item.grepExpression(item.getGrepExpression().substring(0, item.getGrepExpression().length() - 2));
+								item.grepExpression(item.getGrepExpression().substring(0,
+										item.getGrepExpression().length() - 2));
 							}
 						} else {
 							model.getItem(selectedRow).setHighlightOnlyMatchingText(false);
@@ -244,6 +247,7 @@ public class SettingsDialog {
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text",
 				"highlightOnlyMatchingText"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Statistics", "stats"));
 		columns.add(new SoundColumn("Sound", this));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
@@ -265,6 +269,7 @@ public class SettingsDialog {
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		multilineOutput.setSelected(data.isMultiLineOutput());
+		showStatsByDefault.setSelected(data.isShowStatsByDefault());
 	}
 
 	public void getData(Profile data) {
@@ -276,6 +281,7 @@ public class SettingsDialog {
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setMultiLineOutput(multilineOutput.isSelected());
+		data.setShowStatsByDefault(showStatsByDefault.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
@@ -295,6 +301,8 @@ public class SettingsDialog {
 		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
 			return true;
 		if (multilineOutput.isSelected() != data.isMultiLineOutput())
+			return true;
+		if (showStatsByDefault.isSelected() != data.isShowStatsByDefault())
 			return true;
 		return false;
 	}
