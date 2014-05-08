@@ -11,11 +11,15 @@ import javax.swing.event.HyperlinkEvent;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.ServiceManager;
 
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.ui.*;
 import com.intellij.util.ui.UIUtil;
@@ -29,21 +33,44 @@ public class StatisticsPanel extends JPanel {
 	private final JPanel jPanel;
 	private ConsoleView consoleView;
 	private GrepHighlightFilter grepHighlightFilter;
-	private boolean show;
+
+	public static void createStatisticsPanel(ConsoleView console) {
+		JPanel consolePanel = (JPanel) console;
+		StatisticsPanel statisticsPanel = getStatisticsPanel(consolePanel);
+		if (statisticsPanel != null) {
+			statisticsPanel.reset();
+			statisticsPanel.setVisible(statisticsPanel.hasItems() && statisticsPanel.isVisible());
+			statisticsPanel.revalidate();
+		} else {
+			GrepHighlightFilter lastGrepHighlightFilter = ServiceManager.getInstance().getLastGrepHighlightFilter();
+			if (lastGrepHighlightFilter != null) {
+				Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(
+						lastGrepHighlightFilter.getProject());
+				statisticsPanel = new StatisticsPanel(console, lastGrepHighlightFilter);
+				statisticsPanel.setVisible(statisticsPanel.hasItems() && profile.isShowStatsByDefault());
+				consolePanel.add(statisticsPanel, BorderLayout.SOUTH);
+			}
+		}
+
+	}
+
+	static StatisticsPanel getStatisticsPanel(JPanel consolePanel) {
+		final BorderLayout layout = (BorderLayout) consolePanel.getLayout();
+		final Component layoutComponent = layout.getLayoutComponent(BorderLayout.SOUTH);
+		return (StatisticsPanel) layoutComponent;
+	}
 
 	public StatisticsPanel(ConsoleView consoleView, GrepHighlightFilter filter) {
 		super(new BorderLayout());
 		this.consoleView = consoleView;
 		this.grepHighlightFilter = filter;
 		setBorder(new EmptyBorder(0, 0, 0, 0));
-
 		final FlowLayout layout = new FlowLayout();
 		layout.setVgap(-4);
 		layout.setHgap(0);
 		jPanel = new JPanel(layout);
 		jPanel.setBackground(getBackground());
 		add(jPanel, BorderLayout.WEST);
-
 		init();
 		startUpdater();
 	}
@@ -52,6 +79,10 @@ public class StatisticsPanel extends JPanel {
 		pairs.clear();
 		jPanel.removeAll();
 		init();
+	}
+
+	public Project getProject() {
+		return grepHighlightFilter.getProject();
 	}
 
 	private void init() {
@@ -80,8 +111,6 @@ public class StatisticsPanel extends JPanel {
 			@Override
 			public void run() {
 				StatisticsPanel.this.setVisible(false);
-				show = false;
-				// StatisticsPanel.this.revalidate();
 			}
 		}));
 	}
@@ -104,7 +133,6 @@ public class StatisticsPanel extends JPanel {
 		color.setSelectedColor(backgroundColor.getColorAsAWT());
 		color.setBorderColor(foregroundColor.getColorAsAWT());
 		color.setBackground(getBackground());
-
 		panel.add(color);
 		panel.add(label);
 		return panel;
@@ -153,18 +181,13 @@ public class StatisticsPanel extends JPanel {
 
 	@Override
 	public void setVisible(boolean aFlag) {
-		if (aFlag && show) {
+		if (aFlag) {
 			cancelTimer();
 			startUpdater();
 		} else {
 			cancelTimer();
 		}
-		super.setVisible(aFlag && show);
-	}
-
-	public void showStatistics() {
-		show = true;
-		setVisible(true);
+		super.setVisible(aFlag);
 	}
 
 	private void cancelTimer() {
