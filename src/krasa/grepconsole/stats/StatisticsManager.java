@@ -37,7 +37,8 @@ public class StatisticsManager {
 				Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(
 						lastGrepHighlightFilter.getProject());
 				statisticsConsolePanel = new StatisticsConsolePanel(lastGrepHighlightFilter);
-				statisticsConsolePanel.setVisible(statisticsConsolePanel.hasItems() && profile.isShowStatsByDefault());
+				statisticsConsolePanel.setVisible(statisticsConsolePanel.hasItems()
+						&& profile.isShowStatsInConsoleByDefault());
 				consolePanel.add(statisticsConsolePanel, BorderLayout.SOUTH);
 
 				createStatusPanel(console, consoleView1, lastGrepHighlightFilter);
@@ -78,7 +79,7 @@ public class StatisticsManager {
 		public JComponent getComponent() {
 			Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(
 					lastGrepHighlightFilter.getProject());
-			statisticsPanel.setVisible(statisticsPanel.hasItems() && profile.isShowStatsByDefault());
+			statisticsPanel.setVisible(statisticsPanel.hasItems() && profile.isShowStatsInStatusBarByDefault());
 			return statisticsPanel;
 		}
 

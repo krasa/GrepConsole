@@ -38,7 +38,8 @@ public class SettingsDialog {
 	private JCheckBox encodeText;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
-	private JCheckBox showStatsByDefault;
+	private JCheckBox showStatsInConsoleByDefault;
+	private JCheckBox showStatsInStatusBarByDefault;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -244,10 +245,12 @@ public class SettingsDialog {
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic", "style.italic"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching").tooltipText("If not checked, the first match will end highlighting"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text",
 				"highlightOnlyMatchingText"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Statistics", "stats"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurances in Console statistics panel\n(the number may not be right for test executions)"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("StatusBar count",
+				"showCountInStatusBar").tooltipText("Show count of occurances in Status Bar statistics panel\n(the number may not be right for test executions)"));
 		columns.add(new SoundColumn("Sound", this));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
@@ -269,7 +272,8 @@ public class SettingsDialog {
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		multilineOutput.setSelected(data.isMultiLineOutput());
-		showStatsByDefault.setSelected(data.isShowStatsByDefault());
+		showStatsInConsoleByDefault.setSelected(data.isShowStatsInConsoleByDefault());
+		showStatsInStatusBarByDefault.setSelected(data.isShowStatsInStatusBarByDefault());
 	}
 
 	public void getData(Profile data) {
@@ -281,7 +285,8 @@ public class SettingsDialog {
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setMultiLineOutput(multilineOutput.isSelected());
-		data.setShowStatsByDefault(showStatsByDefault.isSelected());
+		data.setShowStatsInConsoleByDefault(showStatsInConsoleByDefault.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBarByDefault.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
@@ -302,7 +307,9 @@ public class SettingsDialog {
 			return true;
 		if (multilineOutput.isSelected() != data.isMultiLineOutput())
 			return true;
-		if (showStatsByDefault.isSelected() != data.isShowStatsByDefault())
+		if (showStatsInConsoleByDefault.isSelected() != data.isShowStatsInConsoleByDefault())
+			return true;
+		if (showStatsInStatusBarByDefault.isSelected() != data.isShowStatsInStatusBarByDefault())
 			return true;
 		return false;
 	}

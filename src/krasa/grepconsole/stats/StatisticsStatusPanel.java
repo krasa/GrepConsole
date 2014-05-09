@@ -97,7 +97,7 @@ public class StatisticsStatusPanel extends JPanel {
 	private void init() {
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
 		for (GrepProcessor grepProcessor : grepProcessors) {
-			if (grepProcessor.getGrepExpressionItem().isStats()) {
+			if (grepProcessor.getGrepExpressionItem().isShowCountInStatusBar()) {
 				add(grepProcessor);
 			}
 		}

@@ -20,21 +20,15 @@ public class Profile extends DomainObject {
 	private boolean enableAnsiColoring;
 	private boolean hideAnsiCommands;
 	private boolean encodeText;
-	private boolean showStatsByDefault;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
 
+	private boolean showStatsInConsoleByDefault;
+	private boolean showStatsInStatusBarByDefault;
+
 	public Profile() {
 		id = System.currentTimeMillis();
-	}
-
-	public boolean isShowStatsByDefault() {
-		return showStatsByDefault;
-	}
-
-	public void setShowStatsByDefault(boolean showStatsByDefault) {
-		this.showStatsByDefault = showStatsByDefault;
 	}
 
 	public long getId() {
@@ -138,5 +132,21 @@ public class Profile extends DomainObject {
 
 	public void setMultiLineOutput(boolean multiLineOutput) {
 		this.multiLineOutput = multiLineOutput;
+	}
+
+	public boolean isShowStatsInStatusBarByDefault() {
+		return showStatsInStatusBarByDefault;
+	}
+
+	public void setShowStatsInStatusBarByDefault(boolean showStatsInStatusBarByDefault) {
+		this.showStatsInStatusBarByDefault = showStatsInStatusBarByDefault;
+	}
+
+	public boolean isShowStatsInConsoleByDefault() {
+		return showStatsInConsoleByDefault;
+	}
+
+	public void setShowStatsInConsoleByDefault(boolean showStatsInConsoleByDefault) {
+		this.showStatsInConsoleByDefault = showStatsInConsoleByDefault;
 	}
 }

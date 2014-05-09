@@ -1,13 +1,15 @@
 package krasa.grepconsole.gui;
 
-import com.intellij.util.ui.ColumnInfo;
+import javax.swing.*;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
+import com.intellij.util.ui.ColumnInfo;
 
 public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	private String maxStringValue = null;
+	private String tooltipText = null;
 	private String preferedStringValue = null;
 	private int additionalWidth = 0;
 	private String propertyName;
@@ -18,10 +20,18 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 		this.propertyName = propertyName;
 	}
 
+	public JavaBeanColumnInfo tooltipText(final String tooltipText) {
+		this.tooltipText = tooltipText;
+		return this;
+	}
+
 	@Nullable
 	@Override
 	public String getTooltipText() {
-		return getName();
+		if (tooltipText == null) {
+			return getName();
+		}
+		return tooltipText;
 	}
 
 	@Nullable
@@ -101,5 +111,10 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	public JavaBeanColumnInfo maxStringValue(final String maxStringValue) {
 		this.maxStringValue = maxStringValue;
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		return "JavaBeanColumnInfo{" + "tooltipText='" + tooltipText + '\'' + "} " + super.toString();
 	}
 }

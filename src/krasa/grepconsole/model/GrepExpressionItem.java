@@ -19,7 +19,6 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	 * filter out text if matches
 	 */
 	private boolean inputFilter = false;
-	private boolean stats = false;
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
@@ -32,6 +31,9 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private Operation operationOnMatch = Operation.EXIT;
 	private boolean highlightOnlyMatchingText = false;
 	private ItemType itemType = ItemType.REGEXP;
+
+	private boolean showCountInConsole = false;
+	private boolean showCountInStatusBar = false;
 
 	public GrepExpressionItem() {
 		this(null);
@@ -272,17 +274,20 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		return this;
 	}
 
-	public GrepExpressionItem stats(final boolean stats) {
-		this.stats = stats;
-		return this;
+	public boolean isShowCountInConsole() {
+		return showCountInConsole;
 	}
 
-	public boolean isStats() {
-		return stats;
+	public void setShowCountInConsole(boolean showCountInConsole) {
+		this.showCountInConsole = showCountInConsole;
 	}
 
-	public void setStats(boolean stats) {
-		this.stats = stats;
+	public boolean isShowCountInStatusBar() {
+		return showCountInStatusBar;
+	}
+
+	public void setShowCountInStatusBar(boolean showCountInStatusBar) {
+		this.showCountInStatusBar = showCountInStatusBar;
 	}
 
 	public boolean isContinueMatching() {
