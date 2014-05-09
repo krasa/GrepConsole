@@ -1,4 +1,4 @@
-package krasa.grepconsole.integration;
+package krasa.grepconsole.stats;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -24,6 +24,11 @@ public class ColorPanel extends JComponent {
 	public ColorPanel(String tooltip) {
 		this.tooltip = tooltip;
 		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				onMousePressed(e);
+			}
+
 		});
 		// addMouseListener(new MouseAdapter() {
 		// @Override
@@ -38,6 +43,9 @@ public class ColorPanel extends JComponent {
 		// }
 		// }
 		// });
+	}
+
+	protected void onMousePressed(MouseEvent e) {
 	}
 
 	@Override
