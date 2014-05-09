@@ -22,7 +22,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
-import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 
 /**
@@ -51,12 +50,12 @@ public class StatisticsStatusPanel extends JPanel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				activateConsole();
+				showToolWindow();
 			}
 		});
 	}
 
-	private void activateConsole() {
+	private void showToolWindow() {
 		final ConsoleViewImpl consoleViewImpl = (ConsoleViewImpl) this.consoleView.get();
 		if (consoleViewImpl != null) {
 			activate(consoleViewImpl);
@@ -72,17 +71,13 @@ public class StatisticsStatusPanel extends JPanel {
 				final ToolWindow toolWindowByDescriptor = runContentManager.getToolWindowByDescriptor(descriptor);
 				if (toolWindowByDescriptor != null) {
 					final ContentManager contentManager = toolWindowByDescriptor.getContentManager();
-					for (Content content : contentManager.getContents()) {
-						if (content == descriptor.getAttachedContent()) {
-							toolWindowByDescriptor.activate(null);
-							contentManager.setSelectedContent(content, true);
-							return;
-						}
-					}
+					toolWindowByDescriptor.activate(null);
+					contentManager.setSelectedContent(descriptor.getAttachedContent(), true);
+					return;
 				}
-			}
 		}
-	}
+		}
+}
 
 	public void reset() {
 		pairs.clear();
@@ -120,7 +115,7 @@ public class StatisticsStatusPanel extends JPanel {
 		final ColorPanel color = new ColorPanel(processor.getGrepExpressionItem().getGrepExpression()) {
 			@Override
 			protected void onMousePressed(MouseEvent e) {
-				activateConsole();
+				showToolWindow();
 			}
 		};
 		color.setSelectedColor(backgroundColor.getColorAsAWT());

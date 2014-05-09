@@ -7,7 +7,7 @@ import krasa.grepconsole.action.AddHighlightAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.AnsiInputFilter;
 import krasa.grepconsole.plugin.ServiceManager;
-import krasa.grepconsole.stats.ShowHideStatisticsConsolePanel;
+import krasa.grepconsole.stats.ShowHideStatisticsConsolePanelAction;
 import krasa.grepconsole.stats.StatisticsManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 	public AnAction[] postProcessPopupActions(@NotNull final ConsoleView console, @NotNull AnAction[] actions) {
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
 		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", null));
-		anActions.add(new ShowHideStatisticsConsolePanel(console));
+		anActions.add(new ShowHideStatisticsConsolePanelAction(console));
 		anActions.addAll(Arrays.asList(super.postProcessPopupActions(console, actions)));
 
 		return anActions.toArray(new AnAction[anActions.size()]);

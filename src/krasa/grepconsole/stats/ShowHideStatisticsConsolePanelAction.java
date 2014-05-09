@@ -12,10 +12,10 @@ import com.intellij.openapi.project.DumbAwareAction;
 /**
  * @author Vojtech Krasa
  */
-public class ShowHideStatisticsConsolePanel extends DumbAwareAction {
+public class ShowHideStatisticsConsolePanelAction extends DumbAwareAction {
 	private final ConsoleView console;
 
-	public ShowHideStatisticsConsolePanel(ConsoleView console) {
+	public ShowHideStatisticsConsolePanelAction(ConsoleView console) {
 		super(GrepConsoleActionsPostProcessor.SHOW_GREP_CONSOLE_STATISTICS);
 		this.console = console;
 	}
