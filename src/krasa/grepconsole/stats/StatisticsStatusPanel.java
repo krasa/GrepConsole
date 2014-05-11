@@ -8,7 +8,6 @@ import java.util.*;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
@@ -22,6 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.SeparatorComponent;
 import com.intellij.ui.content.ContentManager;
 
 /**
@@ -38,14 +38,16 @@ public class StatisticsStatusPanel extends JPanel {
 		super(new BorderLayout());
 		this.consoleView = new WeakReference<ConsoleView>(consoleView);
 		this.grepHighlightFilter = filter;
-		setBorder(new EmptyBorder(0, 0, 0, 0));
+		add(new SeparatorComponent(7), BorderLayout.WEST);
+
 		final FlowLayout layout = new FlowLayout();
-		layout.setVgap(-4);
+		layout.setVgap(0);
 		layout.setHgap(0);
-		jPanel = new JPanel(layout);
-		// jPanel.setBackground(getBackground());
-		add(jPanel, BorderLayout.WEST);
-		init();
+		jPanel = new JPanel(new GridBagLayout());
+
+		// jPanel.setBackground(Color.BLUE);
+		add(jPanel, BorderLayout.CENTER);
+		initComponents();
 		startUpdater();
 		addMouseListener(new MouseAdapter() {
 			@Override
@@ -53,6 +55,35 @@ public class StatisticsStatusPanel extends JPanel {
 				showToolWindow();
 			}
 		});
+	}
+
+	private JPanel createCounterPanel(GrepProcessor processor) {
+		GrepColor backgroundColor = processor.getGrepExpressionItem().getStyle().getBackgroundColor();
+		GrepColor foregroundColor = processor.getGrepExpressionItem().getStyle().getForegroundColor();
+		// panel.setBackground(getBackground());
+		final GridBagLayout layout = new GridBagLayout();
+		// layout.setVgap(0);
+		// layout.setHgap(0);
+		final JPanel panel = new JPanel(layout);
+		// panel.setBackground(Color.RED);
+
+		final JLabel label = new JLabel("0");
+		label.setForeground(JBColor.BLACK);
+		pairs.add(new Pair<JLabel, GrepProcessor>(label, processor));
+
+		final ColorPanel color = new ColorPanel(processor.getGrepExpressionItem().getGrepExpression(), new Dimension(
+				14, 14)) {
+			@Override
+			protected void onMousePressed(MouseEvent e) {
+				showToolWindow();
+			}
+		};
+		color.setSelectedColor(backgroundColor.getColorAsAWT());
+		color.setBorderColor(foregroundColor.getColorAsAWT());
+		// color.setBackground(getBackground());
+		panel.add(color);
+		panel.add(label);
+		return panel;
 	}
 
 	private void showToolWindow() {
@@ -82,14 +113,14 @@ public class StatisticsStatusPanel extends JPanel {
 	public void reset() {
 		pairs.clear();
 		jPanel.removeAll();
-		init();
+		initComponents();
 	}
 
 	public Project getProject() {
 		return grepHighlightFilter.getProject();
 	}
 
-	private void init() {
+	private void initComponents() {
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInStatusBar()) {
@@ -100,30 +131,6 @@ public class StatisticsStatusPanel extends JPanel {
 
 	public void add(GrepProcessor processor) {
 		jPanel.add(createCounterPanel(processor));
-	}
-
-	private JPanel createCounterPanel(GrepProcessor processor) {
-		GrepColor backgroundColor = processor.getGrepExpressionItem().getStyle().getBackgroundColor();
-		GrepColor foregroundColor = processor.getGrepExpressionItem().getStyle().getForegroundColor();
-		final JPanel panel = new JPanel(new FlowLayout());
-		// panel.setBackground(getBackground());
-
-		final JLabel label = new JLabel("0");
-		label.setForeground(JBColor.BLACK);
-		pairs.add(new Pair<JLabel, GrepProcessor>(label, processor));
-
-		final ColorPanel color = new ColorPanel(processor.getGrepExpressionItem().getGrepExpression()) {
-			@Override
-			protected void onMousePressed(MouseEvent e) {
-				showToolWindow();
-			}
-		};
-		color.setSelectedColor(backgroundColor.getColorAsAWT());
-		color.setBorderColor(foregroundColor.getColorAsAWT());
-		// color.setBackground(getBackground());
-		panel.add(color);
-		panel.add(label);
-		return panel;
 	}
 
 	public boolean hasItems() {

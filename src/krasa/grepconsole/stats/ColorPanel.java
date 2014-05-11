@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ColorPanel extends JComponent {
 	private static final Dimension SIZE = new Dimension(15, 15);
+	protected final Dimension size;
 
 	private boolean isFiringEvent = false;
 	private boolean isEditable = true;
@@ -43,6 +44,32 @@ public class ColorPanel extends JComponent {
 		// }
 		// }
 		// });
+		size = SIZE;
+	}
+
+	public ColorPanel(String tooltip, final Dimension dimension) {
+		this.tooltip = tooltip;
+		addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				onMousePressed(e);
+			}
+
+		});
+		// addMouseListener(new MouseAdapter() {
+		// @Override
+		// public void mousePressed(MouseEvent e) {
+		// if (!isEnabled() || !isEditable)
+		// return;
+		// Color color = ColorChooser.chooseColor(ColorPanel.this,
+		// UIBundle.message("color.panel.select.color.dialog.description"), myColor);
+		// if (color != null) {
+		// setSelectedColor(color);
+		// fireActionEvent();
+		// }
+		// }
+		// });
+		size = dimension;
 	}
 
 	protected void onMousePressed(MouseEvent e) {
@@ -66,17 +93,17 @@ public class ColorPanel extends JComponent {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return SIZE;
+		return size;
 	}
 
 	@Override
 	public Dimension getMaximumSize() {
-		return SIZE;
+		return size;
 	}
 
 	@Override
 	public Dimension getMinimumSize() {
-		return SIZE;
+		return size;
 	}
 
 	@Override
