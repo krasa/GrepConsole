@@ -12,6 +12,7 @@ import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
@@ -23,9 +24,9 @@ import com.intellij.util.ui.UIUtil;
 /**
  * @author Vojtech Krasa
  */
-public class StatisticsConsolePanel extends JPanel {
-	List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<Pair<JLabel, GrepProcessor>>();
-	java.util.Timer timer;
+public class StatisticsConsolePanel extends JPanel implements Disposable {
+	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<Pair<JLabel, GrepProcessor>>();
+	private java.util.Timer timer;
 	private final JPanel jPanel;
 	private GrepHighlightFilter grepHighlightFilter;
 
@@ -67,18 +68,14 @@ public class StatisticsConsolePanel extends JPanel {
 		jPanel.add(createActionLabel("Reset", new Runnable() {
 			@Override
 			public void run() {
-				for (Pair<JLabel, GrepProcessor> pair : pairs) {
-					GrepProcessor second = pair.second;
-					second.resetMatches();
-					pair.getFirst().setText(String.valueOf(second.getMatches()));
-				}
+				StatisticsManager.clearCount(grepHighlightFilter);
 			}
 		}));
 
 		jPanel.add(createActionLabel("Hide", new Runnable() {
 			@Override
 			public void run() {
-				StatisticsConsolePanel.this.setVisible(false);
+				StatisticsConsolePanel.this.dispose();
 			}
 		}));
 	}
@@ -97,7 +94,8 @@ public class StatisticsConsolePanel extends JPanel {
 		label.setForeground(JBColor.BLACK);
 		pairs.add(new Pair<JLabel, GrepProcessor>(label, processor));
 
-		final ColorPanel color = new ColorPanel(processor.getGrepExpressionItem().getGrepExpression());
+		final krasa.grepconsole.stats.common.ColorPanel color = new krasa.grepconsole.stats.common.ColorPanel(
+				processor.getGrepExpressionItem().getGrepExpression());
 		color.setSelectedColor(backgroundColor.getColorAsAWT());
 		color.setBorderColor(foregroundColor.getColorAsAWT());
 		color.setBackground(getBackground());
@@ -147,21 +145,22 @@ public class StatisticsConsolePanel extends JPanel {
 		}, 100, 100);
 	}
 
-	@Override
-	public void setVisible(boolean aFlag) {
-		if (aFlag) {
-			cancelTimer();
-			startUpdater();
-		} else {
-			cancelTimer();
-		}
-		super.setVisible(aFlag);
-	}
-
 	private void cancelTimer() {
 		if (timer != null) {
 			timer.cancel();
 			timer = null;
+		}
+	}
+
+	@Override
+	public void dispose() {
+		cancelTimer();
+		Container parent = getParent();
+		if (parent != null) {
+			parent.remove(this);
+			if (parent instanceof JPanel) {
+				((JPanel) parent).revalidate();
+			}
 		}
 	}
 }

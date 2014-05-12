@@ -248,9 +248,9 @@ public class SettingsDialog {
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching").tooltipText("If not checked, the first match will end highlighting"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text",
 				"highlightOnlyMatchingText"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurances in Console statistics panel\n(the number may not be right for test executions)"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("StatusBar count",
-				"showCountInStatusBar").tooltipText("Show count of occurances in Status Bar statistics panel\n(the number may not be right for test executions)"));
+				"showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)"));
 		columns.add(new SoundColumn("Sound", this));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();

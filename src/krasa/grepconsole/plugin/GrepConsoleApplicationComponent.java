@@ -19,7 +19,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 
-@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
+@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
 
@@ -86,7 +86,6 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		Sound.soundMode = SoundMode.ENABLED;
 	}
 
-
 	public void reset() {
 		if (form != null) {
 			form.importFrom(settings.clone());
@@ -121,7 +120,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	@NotNull
 	@Override
 	public File[] getExportFiles() {
-		return new File[]{PathManager.getOptionsFile("grepConsole")};
+		return new File[] { PathManager.getOptionsFile("grepConsole") };
 	}
 
 	@NotNull

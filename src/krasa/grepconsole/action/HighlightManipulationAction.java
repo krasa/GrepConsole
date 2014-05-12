@@ -51,7 +51,7 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 		} catch (NoSuchFieldException e) {
 			throw new RuntimeException("IJ API was probably changed, update the plugin", e);
 		}
-		StatisticsManager.createStatisticsPanel(consoleViewImpl);
+		StatisticsManager.resetStatisticsPanels(consoleViewImpl);
 	}
 
 	protected void removeAllHighlighters(Editor editor) {

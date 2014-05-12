@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.9.134.1007</version>
+	<version>4.0.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -9,12 +9,13 @@
 
 
 	<description><![CDATA[
-			Allows you to define a series of regular expressions which will be tested against the console output or currently opened file. 
+			Allows you to define a series of regular expressions which will be tested against the console output or file. 
 			Each expression matching a line will affect the style of the entire line, or play a sound. 
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
 	 		Additional Features:<br>
-	 		File tailing - Main menu | Tools | Open File in Console<br>
+	 		ANSI colouring<br>
+	 		File tailing: Main menu | Tools | Open File in Console<br>
 	 		<br>
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
 			and <a href="http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/">Ansi Console plugin for Eclipse</a>.
@@ -23,6 +24,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>4.0 (2014-05-14)
+        <br>- statistics
         <br>3.9 (2014-05-04)
         <br>- enable Apply button in settings immediately after color change 
         <br>- memory leak fix

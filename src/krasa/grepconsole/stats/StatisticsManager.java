@@ -5,6 +5,7 @@ import java.awt.*;
 import javax.swing.*;
 
 import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.*;
@@ -22,91 +24,120 @@ import com.intellij.openapi.wm.*;
  * @author Vojtech Krasa
  */
 public class StatisticsManager {
-	public static void createStatisticsPanel(final ConsoleView console) {
-		JPanel consolePanel = (JPanel) console;
-		ConsoleViewImpl consoleView1 = (ConsoleViewImpl) console;
-		StatisticsConsolePanel statisticsConsolePanel = getStatisticsPanel(consolePanel);
-		if (statisticsConsolePanel != null) {
-			statisticsConsolePanel.reset();
-			statisticsConsolePanel.setVisible(statisticsConsolePanel.hasItems() && statisticsConsolePanel.isVisible());
-			statisticsConsolePanel.revalidate();
-		} else {
-			final GrepHighlightFilter lastGrepHighlightFilter = ServiceManager.getInstance().getLastGrepHighlightFilter();
-			if (lastGrepHighlightFilter != null) {
-				// todo optimize it, no need to create it always i guess
-				Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(
-						lastGrepHighlightFilter.getProject());
-				statisticsConsolePanel = new StatisticsConsolePanel(lastGrepHighlightFilter);
-				statisticsConsolePanel.setVisible(statisticsConsolePanel.hasItems()
-						&& profile.isShowStatsInConsoleByDefault());
-				consolePanel.add(statisticsConsolePanel, BorderLayout.SOUTH);
+	private static final Logger log = Logger.getInstance(StatisticsManager.class.getName());
 
-				createStatusPanel(console, consoleView1, lastGrepHighlightFilter);
-			}
+	public static void createStatisticsPanels(final ConsoleViewImpl console) {
+		GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
+		if (highlightFilter == null) {
+			log.error("highlightFilter is null");
+			return;
 		}
 
+		Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(highlightFilter.getProject());
+		if (profile.isShowStatsInStatusBarByDefault()) {
+			createStatusBarPanel(console, highlightFilter);
+		}
+
+		if (profile.isShowStatsInConsoleByDefault()) {
+			createConsolePanel(console, highlightFilter);
+		}
 	}
 
-	private static void createStatusPanel(final ConsoleView console, ConsoleViewImpl consoleView1,
-			final GrepHighlightFilter lastGrepHighlightFilter) {
-		final Project project = consoleView1.getProject();
-		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
-		final MyCustomStatusBarWidget statusBarWidget = new MyCustomStatusBarWidget((ConsoleViewImpl) console,
-				lastGrepHighlightFilter);
-		statusBar.addWidget(statusBarWidget);
+	public static void resetStatisticsPanels(ConsoleViewImpl consoleViewImpl) {
+		resetConsolePanel(consoleViewImpl);
+		resetStatusBarPanel(consoleViewImpl);
+	}
 
-		Disposer.register(console, statusBarWidget);
+	private static void resetStatusBarPanel(ConsoleViewImpl console) {
+		GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
+		if (highlightFilter == null) {
+			log.error("highlightFilter is null");
+			return;
+		}
+		GrepConsoleStatusBarWidget statusBarPanel = getStatusBarPanel(console);
+		if (statusBarPanel != null) {
+			StatisticsStatusBarPanel statisticsPanel = statusBarPanel.getStatisticsPanel();
+			statisticsPanel.reset();
+			if (!statisticsPanel.hasItems()) {
+				statusBarPanel.dispose();
+			} else {
+				statisticsPanel.revalidate();
+			}
+		} else {
+			Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(highlightFilter.getProject());
+			if (profile.isShowStatsInStatusBarByDefault()) {
+				createStatusBarPanel(console, highlightFilter);
+			}
+		}
+	}
+
+	public static void createStatusBarPanel(@NotNull ConsoleViewImpl consoleView,
+			@NotNull GrepHighlightFilter highlightFilter) {
+		final Project project = consoleView.getProject();
+		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
+		final GrepConsoleStatusBarWidget statusBarWidget = new GrepConsoleStatusBarWidget(consoleView, highlightFilter);
+		statusBar.addWidget(statusBarWidget);
+		statusBar.getComponent().revalidate();
+		Disposer.register(consoleView, statusBarWidget);
+	}
+
+	public static void resetConsolePanel(ConsoleViewImpl consoleView) {
+		GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(consoleView);
+		if (highlightFilter == null) {
+			log.error("highlightFilter is null");
+			return;
+		}
+		StatisticsConsolePanel statisticsConsolePanel = getConsolePanel(consoleView);
+		if (statisticsConsolePanel != null) {
+			statisticsConsolePanel.reset();
+			if (!statisticsConsolePanel.hasItems()) {
+				statisticsConsolePanel.dispose();
+			} else {
+				statisticsConsolePanel.revalidate();
+			}
+		} else {
+			Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(consoleView.getProject());
+			if (profile.isShowStatsInConsoleByDefault()) {
+				createConsolePanel(consoleView, highlightFilter);
+			}
+		}
+	}
+
+	public static void createConsolePanel(@NotNull JPanel consolePanel, @NotNull GrepHighlightFilter highlightFilter) {
+		StatisticsConsolePanel statisticsConsolePanel;
+		statisticsConsolePanel = new StatisticsConsolePanel(highlightFilter);
+		consolePanel.add(statisticsConsolePanel, BorderLayout.SOUTH);
+		consolePanel.revalidate();
 	}
 
 	@Nullable
-	public static StatisticsConsolePanel getStatisticsPanel(JPanel consolePanel) {
+	public static GrepConsoleStatusBarWidget getStatusBarPanel(@NotNull ConsoleViewImpl consoleView) {
+		final Project project = consoleView.getProject();
+		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
+
+		StatusBarWidget widget = statusBar.getWidget(GrepConsoleStatusBarWidget.createId(consoleView));
+		return (GrepConsoleStatusBarWidget) widget;
+	}
+
+	@Nullable
+	public static StatisticsConsolePanel getConsolePanel(JPanel consolePanel) {
 		final BorderLayout layout = (BorderLayout) consolePanel.getLayout();
 		final Component layoutComponent = layout.getLayoutComponent(BorderLayout.SOUTH);
 		return (StatisticsConsolePanel) layoutComponent;
 	}
 
-	private static class MyCustomStatusBarWidget implements CustomStatusBarWidget {
+	public static void clearCount(ConsoleView console) {
+		final GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
+		clearCount(highlightFilter);
 
-		private GrepHighlightFilter lastGrepHighlightFilter;
-		protected StatisticsStatusPanel statisticsPanel;
+	}
 
-		public MyCustomStatusBarWidget(ConsoleViewImpl console, GrepHighlightFilter lastGrepHighlightFilter) {
-			this.lastGrepHighlightFilter = lastGrepHighlightFilter;
-			statisticsPanel = new StatisticsStatusPanel(console, lastGrepHighlightFilter);
-		}
-
-		@Override
-		public JComponent getComponent() {
-			Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile(
-					lastGrepHighlightFilter.getProject());
-			statisticsPanel.setVisible(statisticsPanel.hasItems() && profile.isShowStatsInStatusBarByDefault());
-			return statisticsPanel;
-		}
-
-		@NotNull
-		@Override
-		public String ID() {
-			return "StatisticsPanel";
-		}
-
-		@Nullable
-		@Override
-		public WidgetPresentation getPresentation(@NotNull PlatformType platformType) {
-			return null;
-		}
-
-		@Override
-		public void install(@NotNull StatusBar statusBar) {
-		}
-
-		@Override
-		public void dispose() {
-			System.err.println("dispose");
-			lastGrepHighlightFilter = null;
-			statisticsPanel.cancelTimer();
-			statisticsPanel.getParent().remove(statisticsPanel);
-			statisticsPanel = null;
-
+	public static void clearCount(GrepHighlightFilter highlightFilter) {
+		if (highlightFilter != null) {
+			for (GrepProcessor grepProcessor : highlightFilter.getGrepProcessors()) {
+				grepProcessor.resetMatches();
+			}
 		}
 	}
+
 }

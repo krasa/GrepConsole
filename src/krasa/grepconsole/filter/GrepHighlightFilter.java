@@ -1,18 +1,22 @@
 package krasa.grepconsole.filter;
 
-import com.intellij.execution.filters.Filter;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.project.Project;
+import java.util.Collections;
+import java.util.List;
+
 import krasa.grepconsole.grep.FilterState;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
+import com.intellij.execution.filters.Filter;
+import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.project.Project;
 
 public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
+
+	private long executionId;
 
 	public GrepHighlightFilter(Project project) {
 		super(project);
@@ -77,7 +81,15 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem grepExpressionItem) {
-		return profile.isEnabledHighlighting() && !(profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter());
+		return profile.isEnabledHighlighting()
+				&& !(profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter());
 	}
 
+	public void setExecutionId(long executionId) {
+		this.executionId = executionId;
+	}
+
+	public long getExecutionId() {
+		return executionId;
+	}
 }

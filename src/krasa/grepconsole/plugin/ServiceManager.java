@@ -6,8 +6,10 @@ import java.util.*;
 import krasa.grepconsole.filter.*;
 import krasa.grepconsole.grep.Cache;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 
 /**
@@ -22,6 +24,8 @@ public class ServiceManager {
 	private List<WeakReference<AnsiInputFilter>> ansiFilters = new ArrayList<WeakReference<AnsiInputFilter>>();
 	private WeakReference<AnsiInputFilter> lastAnsi;
 	private WeakReference<GrepHighlightFilter> lastGrepHighlightFilter;
+	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHashMap = new WeakHashMap<ConsoleView, GrepHighlightFilter>();
+	private long lastExecutionId;
 
 	public static ServiceManager getInstance() {
 		return SERVICE_MANAGER;
@@ -64,6 +68,7 @@ public class ServiceManager {
 
 	public GrepHighlightFilter createHighlightFilter(Project project) {
 		final GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project);
+		grepHighlightFilter.setExecutionId(getLastExecutionId());
 		highlightFilters.add(new WeakReference<GrepHighlightFilter>(grepHighlightFilter));
 		lastGrepHighlightFilter = new WeakReference<GrepHighlightFilter>(grepHighlightFilter);
 		return grepHighlightFilter;
@@ -85,5 +90,22 @@ public class ServiceManager {
 		} else {
 			return null;
 		}
+	}
+
+	@Nullable
+	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
+		return weakHashMap.get(console);
+	}
+
+	public void register(@NotNull ConsoleView console, @NotNull GrepHighlightFilter lastGrepHighlightFilter) {
+		weakHashMap.put(console, lastGrepHighlightFilter);
+	}
+
+	public void setLastExecutionId(long lastExecutionId) {
+		this.lastExecutionId = lastExecutionId;
+	}
+
+	public long getLastExecutionId() {
+		return lastExecutionId;
 	}
 }
