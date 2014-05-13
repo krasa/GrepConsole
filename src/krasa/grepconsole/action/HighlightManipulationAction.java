@@ -3,6 +3,7 @@ package krasa.grepconsole.action;
 import javax.swing.*;
 
 import krasa.grepconsole.plugin.ReflectionUtils;
+import krasa.grepconsole.stats.StatisticsManager;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -50,6 +51,7 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 		} catch (NoSuchFieldException e) {
 			throw new RuntimeException("IJ API was probably changed, update the plugin", e);
 		}
+		StatisticsManager.resetStatisticsPanels(consoleViewImpl);
 	}
 
 	protected void removeAllHighlighters(Editor editor) {

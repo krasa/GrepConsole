@@ -1,10 +1,11 @@
 package krasa.grepconsole.model;
 
-import com.intellij.util.xmlb.annotations.Transient;
-import org.apache.commons.lang.math.NumberUtils;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.commons.lang.math.NumberUtils;
+
+import com.intellij.util.xmlb.annotations.Transient;
 
 public class Profile extends DomainObject {
 	public static final String DEFAULT = "60";
@@ -22,6 +23,9 @@ public class Profile extends DomainObject {
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
+
+	private boolean showStatsInConsoleByDefault;
+	private boolean showStatsInStatusBarByDefault;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -128,5 +132,21 @@ public class Profile extends DomainObject {
 
 	public void setMultiLineOutput(boolean multiLineOutput) {
 		this.multiLineOutput = multiLineOutput;
+	}
+
+	public boolean isShowStatsInStatusBarByDefault() {
+		return showStatsInStatusBarByDefault;
+	}
+
+	public void setShowStatsInStatusBarByDefault(boolean showStatsInStatusBarByDefault) {
+		this.showStatsInStatusBarByDefault = showStatsInStatusBarByDefault;
+	}
+
+	public boolean isShowStatsInConsoleByDefault() {
+		return showStatsInConsoleByDefault;
+	}
+
+	public void setShowStatsInConsoleByDefault(boolean showStatsInConsoleByDefault) {
+		this.showStatsInConsoleByDefault = showStatsInConsoleByDefault;
 	}
 }

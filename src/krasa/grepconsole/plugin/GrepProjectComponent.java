@@ -1,8 +1,13 @@
 package krasa.grepconsole.plugin;
 
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.execution.ExecutionAdapter;
+import com.intellij.execution.ExecutionManager;
+import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.util.messages.MessageBusConnection;
 
 public class GrepProjectComponent implements ProjectComponent {
 	private Project project;
@@ -12,7 +17,14 @@ public class GrepProjectComponent implements ProjectComponent {
 	}
 
 	public void initComponent() {
-		// TODO: insert component initialization logic here
+		final MessageBusConnection conn = project.getMessageBus().connect();
+
+		conn.subscribe(ExecutionManager.EXECUTION_TOPIC, new ExecutionAdapter() {
+			@Override
+			public void processStarting(String executorId, @NotNull ExecutionEnvironment env) {
+				ServiceManager.getInstance().setLastExecutionId(env.getExecutionId());
+			}
+		});
 	}
 
 	public void disposeComponent() {

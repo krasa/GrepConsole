@@ -1,14 +1,16 @@
 package krasa.grepconsole.model;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import krasa.grepconsole.grep.Cache;
-import krasa.grepconsole.grep.GrepProcessor;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
+import krasa.grepconsole.grep.Cache;
+import krasa.grepconsole.grep.GrepProcessor;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.editor.markup.TextAttributes;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -29,6 +31,9 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private Operation operationOnMatch = Operation.EXIT;
 	private boolean highlightOnlyMatchingText = false;
 	private ItemType itemType = ItemType.REGEXP;
+
+	private boolean showCountInConsole = false;
+	private boolean showCountInStatusBar = false;
 
 	public GrepExpressionItem() {
 		this(null);
@@ -120,7 +125,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Compiles the specified grep expression. Swallows exceptions caused by invalid expressions.
-	 *
+	 * 
 	 * @param expression
 	 * @return The compiled pattern, or <code>null</code> if an error occurs.
 	 */
@@ -138,7 +143,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Computes flags for the regular expression pattern.
-	 *
+	 * 
 	 * @return Flags.
 	 */
 	private int computeFlags() {
@@ -267,6 +272,22 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem highlightOnlyMatchingText(final boolean highlightOnlyMatchingText) {
 		this.highlightOnlyMatchingText = highlightOnlyMatchingText;
 		return this;
+	}
+
+	public boolean isShowCountInConsole() {
+		return showCountInConsole;
+	}
+
+	public void setShowCountInConsole(boolean showCountInConsole) {
+		this.showCountInConsole = showCountInConsole;
+	}
+
+	public boolean isShowCountInStatusBar() {
+		return showCountInStatusBar;
+	}
+
+	public void setShowCountInStatusBar(boolean showCountInStatusBar) {
+		this.showCountInStatusBar = showCountInStatusBar;
 	}
 
 	public boolean isContinueMatching() {

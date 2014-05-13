@@ -38,6 +38,8 @@ public class SettingsDialog {
 	private JCheckBox encodeText;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
+	private JCheckBox showStatsInConsoleByDefault;
+	private JCheckBox showStatsInStatusBarByDefault;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
@@ -135,8 +137,9 @@ public class SettingsDialog {
 			private JMenuItem getConvertAction() {
 				final GrepExpressionItem item = model.getItem(selectedRow);
 				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
-				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line":"Convert to words only" );
-			
+				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
+						: "Convert to words only");
+
 				convert.addActionListener(new ActionListener() {
 					@Override
 					public void actionPerformed(ActionEvent e) {
@@ -147,7 +150,8 @@ public class SettingsDialog {
 								item.grepExpression(item.getGrepExpression().substring(2));
 							}
 							if (item.getGrepExpression().endsWith(".*")) {
-								item.grepExpression(item.getGrepExpression().substring(0, item.getGrepExpression().length() - 2));
+								item.grepExpression(item.getGrepExpression().substring(0,
+										item.getGrepExpression().length() - 2));
 							}
 						} else {
 							model.getItem(selectedRow).setHighlightOnlyMatchingText(false);
@@ -241,9 +245,12 @@ public class SettingsDialog {
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic", "style.italic"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching").tooltipText("If not checked, the first match will end highlighting"));
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text",
 				"highlightOnlyMatchingText"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("StatusBar count",
+				"showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)"));
 		columns.add(new SoundColumn("Sound", this));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
@@ -265,6 +272,8 @@ public class SettingsDialog {
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		multilineOutput.setSelected(data.isMultiLineOutput());
+		showStatsInConsoleByDefault.setSelected(data.isShowStatsInConsoleByDefault());
+		showStatsInStatusBarByDefault.setSelected(data.isShowStatsInStatusBarByDefault());
 	}
 
 	public void getData(Profile data) {
@@ -276,6 +285,8 @@ public class SettingsDialog {
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setMultiLineOutput(multilineOutput.isSelected());
+		data.setShowStatsInConsoleByDefault(showStatsInConsoleByDefault.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBarByDefault.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
@@ -295,6 +306,10 @@ public class SettingsDialog {
 		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
 			return true;
 		if (multilineOutput.isSelected() != data.isMultiLineOutput())
+			return true;
+		if (showStatsInConsoleByDefault.isSelected() != data.isShowStatsInConsoleByDefault())
+			return true;
+		if (showStatsInStatusBarByDefault.isSelected() != data.isShowStatsInStatusBarByDefault())
 			return true;
 		return false;
 	}
