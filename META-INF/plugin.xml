@@ -24,8 +24,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>4.0 (2014-05-14)
-        <br>- statistics
+        <br>4.0 (2014-05-13)
+        <br>- count of highlighters can be shown in status bar or console
         <br>3.9 (2014-05-04)
         <br>- enable Apply button in settings immediately after color change 
         <br>- memory leak fix
