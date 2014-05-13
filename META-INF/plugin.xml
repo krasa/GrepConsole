@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.0.134.1007</version>
+	<version>4.1.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -24,6 +24,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>4.1 (2014-05-13)
+        <br>- console statistics bar fix
         <br>4.0 (2014-05-13)
         <br>- count of highlighters can be shown in status bar or console
         <br>3.9 (2014-05-04)
