@@ -18,7 +18,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 /**
  * @author Vojtech Krasa
  */
-public class OpenFileInConsole extends DumbAwareAction {
+public class OpenFileInConsoleAction extends DumbAwareAction {
 
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
@@ -45,7 +45,7 @@ public class OpenFileInConsole extends DumbAwareAction {
 				openFileInConsole(project, path);
 			}
 		});
-		executor.withTitle(path);
+		executor.withTitle(new File(path).getName());
 		executor.run();
 	}
 
