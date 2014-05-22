@@ -3,12 +3,12 @@ package krasa.grepconsole.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
-import krasa.grepconsole.model.DomainObject;
-import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.*;
 
 public class PluginState extends DomainObject implements Cloneable {
 
 	private List<Profile> profiles = new ArrayList<Profile>();
+	private TailSettings tailSettings;
 	private boolean enabled;
 
 	public Profile getDefaultProfile() {
@@ -38,6 +38,17 @@ public class PluginState extends DomainObject implements Cloneable {
 			result = getDefaultProfile();
 		}
 		return result;
+	}
+
+	public TailSettings getTailSettings() {
+		if (tailSettings == null) {
+			tailSettings = new TailSettings();
+		}
+		return tailSettings;
+	}
+
+	public void setTailSettings(TailSettings tailSettings) {
+		this.tailSettings = tailSettings;
 	}
 
 	public void setProfiles(List<Profile> profiles) {

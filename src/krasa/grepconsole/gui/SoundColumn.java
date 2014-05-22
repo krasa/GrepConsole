@@ -40,13 +40,9 @@ public class SoundColumn extends ButtonColumnInfo<GrepExpressionItem> {
 		soundSettingsForm.setData(item.getSound());
 		boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
 		if (isOk) {
-			apply(item);
+			soundSettingsForm.getData(item.getSound());
 		}
 		return isOk;
-	}
-
-	private void apply(GrepExpressionItem item) {
-		soundSettingsForm.getData(item.getSound());
 	}
 
 	@Override

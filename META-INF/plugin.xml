@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.2.134.1007</version>
+	<version>4.3.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -15,15 +15,20 @@
 	 		<br>
 	 		Additional Features:<br>
 	 		ANSI colouring<br>
-	 		File tailing: Main menu | Tools | Open File in Console<br>
+	 		File Tailing:<br>
+	 		- Main menu | Tools | Open File in Console<br>
+	 		- Drag&Drop "Tail File" panel in main toolbar<br>
+	 		- http and Windows context menu integration<br>
 	 		<br>
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
-			and <a href="http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/">Ansi Console plugin for Eclipse</a>.
-			
-			 
+			and <a href="http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/">Ansi Console plugin for Eclipse</a>.<br>
+			Used <a href="http://plugins.jetbrains.com/plugin/6027?pr=idea">Remote call plugin</a> implementation for http integration.<br>
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>4.3 (2014-05-22)
+        <br>- http and Windows context menu integration for File Tailing
+        <br>- closing File Tailing without confirmation dialog
         <br>4.2 (2014-05-19)
         <br>- drag&drop main toolbar panel for tailing
         <br>4.1 (2014-05-13)
@@ -34,7 +39,7 @@
         <br>- enable Apply button in settings immediately after color change 
         <br>- memory leak fix
         <br>3.8 (2014-04-24)
-        <br>- PhpStorm tail file fix
+        <br>- PhpStorm File Tailing fix
         <br>- moved editor context actions into Tools
         <br>3.7 (2014-04-22)
         <br>- usability improvements
@@ -50,24 +55,6 @@
         <br>- improved color chooser
         <br>3.3 (2014-03-21)
         <br>- Match only first N characters on each line fixed for 1000+
-        <br>3.2 (2014-02-10)
-        <br>- API change
-        <br>3.1 (2013-12-30)
-        <br>- new action for tailing currently opened file - Main menu | Tools | Open Current File in Console
-        <br>3.0 (2013-12-29)
-        <br>- new action for tailing files - Main menu | Tools | Open File in Console
-        <br>2.9 (2013-12-13)
-        <br>- fixed settings table drag&drop
-        <br>2.8 (2013-08-21)
-        <br>- new option to continue matching - multiple styles can be combined for a single line
-        <br>2.7 (2013-07-01)
-        <br>- import/export of settings
-        <br>2.6.1 (2013-06-25)
-        <br>- minor settings improvements
-        <br>2.6 (2013-04-05)
-        <br>- ANSI bugfix
-        <br>2.5 (2013-04-03)
-        <br>- table drag&drop
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
@@ -84,6 +71,9 @@
 		<!-- Add your application components here -->
 		<component>
 			<implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
+		</component>
+		<component>
+			<implementation-class>krasa.grepconsole.remotecall.GrepConsoleRemoteCallComponent</implementation-class>
 		</component>
 	</application-components>
 
