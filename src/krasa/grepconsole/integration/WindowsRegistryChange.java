@@ -44,7 +44,7 @@ public class WindowsRegistryChange {
 	}
 
 	public static String getCommand(String jarPath, int port) {
-		return "javaw -jar \"" + jarPath + "\" " + port + " %1";
+		return "javaw -jar \"" + jarPath + "\" " + port + " \"%1\"";
 	}
 
 	public static boolean isSetupped(String jarPath, final int port) {

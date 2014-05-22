@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.3.134.1007</version>
+	<version>4.3.134.1007.1</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -26,6 +26,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>4.3.x.1 (2014-05-22)
+        <br>- file path encoding fix
         <br>4.3 (2014-05-22)
         <br>- http and Windows context menu integration for File Tailing
         <br>- closing File Tailing without confirmation dialog

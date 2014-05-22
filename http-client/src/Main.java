@@ -1,20 +1,24 @@
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.*;
 import java.util.Arrays;
 
 /**
  * @author Vojtech Krasa
  */
 public class Main {
-	public static void main(String args[]) throws InterruptedException {
+	public static void main(String args[]) throws InterruptedException, UnsupportedEncodingException {
 		System.out.println(Arrays.toString(args));
 		if (args != null && args.length == 2) {
 			final String port = args[0];
 			final String file = args[1];
-			Main c = new Main();
-			c.get("http://localhost:" + port + "?message=" + file);
+			send(port, file);
 		}
+	}
+
+	public static void send(String port, String file) throws UnsupportedEncodingException {
+		String encodedFile = URLEncoder.encode(file, "UTF-8");
+		Main c = new Main();
+		c.get("http://localhost:" + port + "?message=" + encodedFile);
 	}
 
 	public String get(String urlToRead) {
