@@ -116,6 +116,8 @@
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<executor implementation="krasa.grepconsole.integration.TailRunExecutor" id="tail"/>
+
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
 		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>

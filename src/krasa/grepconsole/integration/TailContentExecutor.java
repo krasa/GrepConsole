@@ -1,8 +1,15 @@
 package krasa.grepconsole.integration;
 
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
-import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.filters.*;
 import com.intellij.execution.process.*;
 import com.intellij.execution.ui.ConsoleView;
@@ -17,21 +24,14 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
-import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Runs a process and prints the output in a content tab within the Run toolwindow.
  *
  * @author yole
  */
-public class RunContentExecutor implements Disposable {
+public class TailContentExecutor implements Disposable {
 	private final Project myProject;
 	private final ProcessHandler myProcess;
 	private final List<Filter> myFilterList = new ArrayList<Filter>();
@@ -43,43 +43,43 @@ public class RunContentExecutor implements Disposable {
 	private String myHelpId = null;
 	private boolean myActivateToolWindow = true;
 
-	public RunContentExecutor(@NotNull Project project, @NotNull ProcessHandler process) {
+	public TailContentExecutor(@NotNull Project project, @NotNull ProcessHandler process) {
 		myProject = project;
 		myProcess = process;
 	}
 
-	public RunContentExecutor withFilter(Filter filter) {
+	public TailContentExecutor withFilter(Filter filter) {
 		myFilterList.add(filter);
 		return this;
 	}
 
-	public RunContentExecutor withTitle(String title) {
+	public TailContentExecutor withTitle(String title) {
 		myTitle = title;
 		return this;
 	}
 
-	public RunContentExecutor withRerun(Runnable rerun) {
+	public TailContentExecutor withRerun(Runnable rerun) {
 		myRerunAction = rerun;
 		return this;
 	}
 
-	public RunContentExecutor withStop(@NotNull Runnable stop, @NotNull Computable<Boolean> stopEnabled) {
+	public TailContentExecutor withStop(@NotNull Runnable stop, @NotNull Computable<Boolean> stopEnabled) {
 		myStopAction = stop;
 		myStopEnabled = stopEnabled;
 		return this;
 	}
 
-	public RunContentExecutor withAfterCompletion(Runnable afterCompletion) {
+	public TailContentExecutor withAfterCompletion(Runnable afterCompletion) {
 		myAfterCompletion = afterCompletion;
 		return this;
 	}
 
-	public RunContentExecutor withHelpId(String helpId) {
+	public TailContentExecutor withHelpId(String helpId) {
 		myHelpId = helpId;
 		return this;
 	}
 
-	public RunContentExecutor withActivateToolWindow(boolean activateToolWindow) {
+	public TailContentExecutor withActivateToolWindow(boolean activateToolWindow) {
 		myActivateToolWindow = activateToolWindow;
 		return this;
 	}
@@ -100,7 +100,7 @@ public class RunContentExecutor implements Disposable {
 		if (myHelpId != null) {
 			view.setHelpId(myHelpId);
 		}
-		Executor executor = DefaultRunExecutor.getRunExecutorInstance();
+		Executor executor = TailRunExecutor.getRunExecutorInstance();
 		DefaultActionGroup actions = new DefaultActionGroup();
 
 		final JComponent consolePanel = createConsolePanel(view, actions);
@@ -137,7 +137,7 @@ public class RunContentExecutor implements Disposable {
 		ApplicationManager.getApplication().invokeLater(new Runnable() {
 			@Override
 			public void run() {
-				ToolWindowManager.getInstance(myProject).getToolWindow(ToolWindowId.RUN).activate(null);
+				ToolWindowManager.getInstance(myProject).getToolWindow(TailRunExecutor.TOOLWINDOWS_ID).activate(null);
 			}
 		});
 	}

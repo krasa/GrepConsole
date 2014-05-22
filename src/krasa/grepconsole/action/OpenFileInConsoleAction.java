@@ -3,8 +3,9 @@ package krasa.grepconsole.action;
 import java.io.*;
 import java.nio.charset.Charset;
 
-import krasa.grepconsole.integration.RunContentExecutor;
+import krasa.grepconsole.integration.TailContentExecutor;
 
+import com.intellij.execution.impl.ConsoleBuffer;
 import com.intellij.execution.process.BaseOSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.BrowseFilesListener;
@@ -41,7 +42,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 				return true;
 			}
 		};
-		final RunContentExecutor executor = new RunContentExecutor(project, osProcessHandler);
+		final TailContentExecutor executor = new TailContentExecutor(project, osProcessHandler);
 		executor.withRerun(new Runnable() {
 			@Override
 			public void run() {
@@ -53,14 +54,16 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		executor.withTitle(new File(path).getName());
 		executor.run();
 	}
-
 	private class MyProcess extends Process {
 		protected volatile boolean running = true;
-		protected InputStream inputStream;
+		protected FileInputStream inputStream;
 
 		private MyProcess(final String path) {
 			try {
 				inputStream = new FileInputStream(new File(path));
+				long size = inputStream.getChannel().size();
+				// close enough, it does not work for binary files very well, but i hope it does at least for text
+				inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
