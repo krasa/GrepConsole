@@ -1,4 +1,4 @@
-package krasa.grepconsole.integration;
+package krasa.grepconsole.tail;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import com.intellij.openapi.wm.ToolWindowManager;
 
 /**
  * Runs a process and prints the output in a content tab within the Run toolwindow.
- *
+ * 
  * @author yole
  */
 public class TailContentExecutor implements Disposable {
@@ -151,7 +151,8 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	private static JComponent createToolbar(ActionGroup actions) {
-		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions, false);
+		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions,
+				false);
 		return actionToolbar.getComponent();
 	}
 
@@ -162,8 +163,7 @@ public class TailContentExecutor implements Disposable {
 
 	private class RerunAction extends AnAction implements DumbAware {
 		public RerunAction(JComponent consolePanel) {
-			super("Rerun", "Rerun",
-					AllIcons.Actions.Restart);
+			super("Rerun", "Rerun", AllIcons.Actions.Restart);
 			registerCustomShortcutSet(CommonShortcuts.getRerun(), consolePanel);
 		}
 
@@ -180,8 +180,7 @@ public class TailContentExecutor implements Disposable {
 
 	private class StopAction extends AnAction implements DumbAware {
 		public StopAction() {
-			super("Stop", "Stop",
-					AllIcons.Actions.Suspend);
+			super("Stop", "Stop", AllIcons.Actions.Suspend);
 		}
 
 		@Override

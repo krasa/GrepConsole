@@ -1,4 +1,4 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.tail;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,9 +8,8 @@ import java.util.Arrays;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 
-import krasa.grepconsole.integration.WindowsRegistryChange;
 import krasa.grepconsole.model.TailSettings;
-import krasa.grepconsole.remotecall.GrepConsoleRemoteCallComponent;
+import krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -19,8 +18,8 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.PathUtil;
 
-public class IntegrationForm {
-	private final Logger log = Logger.getInstance(IntegrationForm.class);
+public class TailIntegrationForm {
+	private final Logger log = Logger.getInstance(TailIntegrationForm.class);
 	private JPanel contentPane;
 	private JTextField port;
 	private JCheckBox listenOnPortCheckBox;
@@ -29,7 +28,7 @@ public class IntegrationForm {
 	private JTextArea openFileInConsoleTextArea;
 	private JButton bindButton;
 
-	public IntegrationForm() {
+	public TailIntegrationForm() {
 		for (JToggleButton button : Arrays.asList(listenOnPortCheckBox)) {
 			button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {

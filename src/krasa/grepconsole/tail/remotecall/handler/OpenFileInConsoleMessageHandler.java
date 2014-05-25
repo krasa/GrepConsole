@@ -1,4 +1,4 @@
-package krasa.grepconsole.remotecall.handler;
+package krasa.grepconsole.tail.remotecall.handler;
 
 import java.awt.*;
 import java.util.*;

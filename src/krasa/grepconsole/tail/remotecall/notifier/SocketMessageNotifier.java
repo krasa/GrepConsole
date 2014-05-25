@@ -1,4 +1,4 @@
-package krasa.grepconsole.remotecall.notifier;
+package krasa.grepconsole.tail.remotecall.notifier;
 
 import static java.net.URLDecoder.decode;
 
@@ -7,7 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 
-import krasa.grepconsole.remotecall.handler.MessageHandler;
+import krasa.grepconsole.tail.remotecall.handler.MessageHandler;
 
 import com.google.common.io.Closeables;
 import com.intellij.openapi.diagnostic.Logger;

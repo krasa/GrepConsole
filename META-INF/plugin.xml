@@ -75,7 +75,8 @@
 			<implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
 		</component>
 		<component>
-			<implementation-class>krasa.grepconsole.remotecall.GrepConsoleRemoteCallComponent</implementation-class>
+			<implementation-class>krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent
+			</implementation-class>
 		</component>
 	</application-components>
 
@@ -116,7 +117,7 @@
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<executor implementation="krasa.grepconsole.integration.TailRunExecutor" id="tail"/>
+		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="tail"/>
 
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>

@@ -1,4 +1,4 @@
-package krasa.grepconsole.remotecall;
+package krasa.grepconsole.tail.remotecall;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -6,9 +6,9 @@ import java.net.ServerSocket;
 
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.remotecall.handler.OpenFileInConsoleMessageHandler;
-import krasa.grepconsole.remotecall.notifier.MessageNotifier;
-import krasa.grepconsole.remotecall.notifier.SocketMessageNotifier;
+import krasa.grepconsole.tail.remotecall.handler.OpenFileInConsoleMessageHandler;
+import krasa.grepconsole.tail.remotecall.notifier.MessageNotifier;
+import krasa.grepconsole.tail.remotecall.notifier.SocketMessageNotifier;
 
 import org.jetbrains.annotations.NotNull;
 

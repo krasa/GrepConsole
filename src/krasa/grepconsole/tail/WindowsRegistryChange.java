@@ -1,4 +1,4 @@
-package krasa.grepconsole.integration;
+package krasa.grepconsole.tail;
 
 import com.intellij.openapi.application.ApplicationNamesInfo;
 import com.intellij.openapi.diagnostic.Logger;

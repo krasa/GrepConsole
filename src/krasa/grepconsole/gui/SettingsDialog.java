@@ -13,6 +13,7 @@ import javax.swing.text.NumberFormatter;
 
 import krasa.grepconsole.model.*;
 import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.tail.TailIntegrationForm;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.openapi.diagnostic.Logger;
@@ -184,7 +185,7 @@ public class SettingsDialog {
 		fileTailSettings.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				final IntegrationForm form = new IntegrationForm();
+				final TailIntegrationForm form = new TailIntegrationForm();
 				form.setData(getTailSettings());
 
 				DialogBuilder builder = new DialogBuilder(SettingsDialog.this.getRootComponent());

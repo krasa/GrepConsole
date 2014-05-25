@@ -3,7 +3,7 @@ package krasa.grepconsole.action;
 import java.io.*;
 import java.nio.charset.Charset;
 
-import krasa.grepconsole.integration.TailContentExecutor;
+import krasa.grepconsole.tail.TailContentExecutor;
 
 import com.intellij.execution.impl.ConsoleBuffer;
 import com.intellij.execution.process.BaseOSProcessHandler;

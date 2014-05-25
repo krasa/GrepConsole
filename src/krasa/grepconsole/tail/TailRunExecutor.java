@@ -1,4 +1,4 @@
-package krasa.grepconsole.integration;
+package krasa.grepconsole.tail;
 
 import javax.swing.*;
 
@@ -13,7 +13,7 @@ import com.intellij.openapi.util.IconLoader;
  * @author Vojtech Krasa
  */
 public class TailRunExecutor extends Executor {
-	public static final Icon ToolWindowRun = IconLoader.getIcon("/krasa/grepconsole/integration/tail.png"); // 13x13
+	public static final Icon ToolWindowRun = IconLoader.getIcon("/krasa/grepconsole/tail/tail.png"); // 13x13
 
 	public static final String TOOLWINDOWS_ID = "Tail";
 	@NonNls
