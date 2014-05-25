@@ -15,6 +15,15 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAwareAction;
 
 public abstract class HighlightManipulationAction extends DumbAwareAction {
+
+	public static final Filter FILTER = new Filter() {
+		@Nullable
+		@Override
+		public Result applyFilter(String s, int i) {
+			return null;
+		}
+	};
+
 	public HighlightManipulationAction() {
 	}
 
@@ -36,9 +45,14 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 	}
 
 	private void reset(ConsoleViewImpl consoleViewImpl) {
+		Editor editor = consoleViewImpl.getEditor();
+		removeAllHighlighters(editor);
+		highlight(consoleViewImpl, editor);
+		StatisticsManager.resetStatisticsPanels(consoleViewImpl);
+	}
+
+	private void highlight(ConsoleViewImpl consoleViewImpl, Editor editor) {
 		try {
-			Editor editor = consoleViewImpl.getEditor();
-			removeAllHighlighters(editor);
 			Filter myCustomFilter = (Filter) ReflectionUtils.getPropertyValue(consoleViewImpl, "myCustomFilter");
 			Filter myPredefinedMessageFilter = (Filter) ReflectionUtils.getPropertyValue(consoleViewImpl,
 					"myPredefinedMessageFilter");
@@ -49,9 +63,21 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 						lineCount - 1);
 			}
 		} catch (NoSuchFieldException e) {
-			throw new RuntimeException("IJ API was probably changed, update the plugin", e);
+			highlightWithNewAPI(consoleViewImpl, editor);
 		}
-		StatisticsManager.resetStatisticsPanels(consoleViewImpl);
+	}
+
+	private void highlightWithNewAPI(ConsoleViewImpl consoleViewImpl, Editor editor) {
+		try {
+			Filter myCustomFilter = (Filter) ReflectionUtils.getPropertyValue(consoleViewImpl, "myFilters");
+
+			int lineCount = editor.getDocument().getLineCount();
+			if (lineCount > 0) {
+				consoleViewImpl.getHyperlinks().highlightHyperlinks(myCustomFilter, FILTER, 0, lineCount - 1);
+			}
+		} catch (NoSuchFieldException e1) {
+			throw new RuntimeException("IJ API was probably changed, update the plugin", e1);
+		}
 	}
 
 	protected void removeAllHighlighters(Editor editor) {
