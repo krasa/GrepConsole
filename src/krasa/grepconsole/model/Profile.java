@@ -8,7 +8,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import com.intellij.util.xmlb.annotations.Transient;
 
 public class Profile extends DomainObject {
-	public static final String DEFAULT = "60";
+	public static final String DEFAULT = "120";
 
 	private long id;
 	private boolean defaultProfile;
