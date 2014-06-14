@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.awt.*;
 
+import static com.intellij.util.ObjectUtils.assertNotNull;
 import static junit.framework.Assert.assertEquals;
 
 public class GrepProcessorTest {
@@ -28,7 +29,7 @@ public class GrepProcessorTest {
 		FilterState process = grepProcessor.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepProcessor.process(new FilterState(LINE));
+		process = grepProcessor.process(new FilterState(LINE, -1));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -46,11 +47,25 @@ public class GrepProcessorTest {
 	}
 
 	@Test
+	public void testHighlightOnlyMatchingText() throws Exception {
+		GrepExpressionItem grepExpressionItem = new GrepExpressionItem().style(new GrepStyle().backgroundColor(new GrepColor(true, Color.RED))).grepExpression(
+				"ERROR").highlightOnlyMatchingText(true);
+
+		GrepProcessor grepProcessor = new GrepProcessor(grepExpressionItem);
+		// matched
+		FilterState process = grepProcessor.process(getInput("foo [ERROR] [WARN] [ERROR]"));
+		assertEquals(Operation.EXIT, process.getNextOperation());
+		assertEquals(null, process.getConsoleViewContentType());
+		assertNotNull(process.getResultItemList());
+		assertEquals(2, process.getResultItemList().size());
+	}
+
+	@Test
 	public void testMatchesUnless() throws Exception {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		GrepProcessor grepProcessor = new GrepProcessor(grepExpressionItem);
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, -1));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -62,7 +77,7 @@ public class GrepProcessorTest {
 	public void testNoGrepExpression() throws Exception {
 
 		GrepProcessor grepProcessor = new GrepProcessor(new GrepExpressionItem());
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, -1));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -83,7 +98,7 @@ public class GrepProcessorTest {
 	}
 
 	private FilterState getInput(String line) {
-		return new FilterState(line);
+		return new FilterState(line, -1);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {

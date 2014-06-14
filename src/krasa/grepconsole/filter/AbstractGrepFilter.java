@@ -1,13 +1,16 @@
 package krasa.grepconsole.filter;
 
-import com.intellij.openapi.project.Project;
+import java.util.ArrayList;
+import java.util.List;
+
 import krasa.grepconsole.grep.FilterState;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.*;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
+import com.intellij.openapi.project.Project;
 
 public abstract class AbstractGrepFilter extends AbstractFilter {
 
@@ -23,13 +26,14 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		this.grepProcessors = grepProcessors;
 	}
 
-	protected FilterState filter(String text) {
+	protected FilterState filter(@Nullable String text, int offset) {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
-			FilterState state = new FilterState(getSubstring(text));
+			FilterState state = new FilterState(getSubstring(text), offset);
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				state = grepProcessor.process(state);
-				if (!continueFiltering(state)) return state;
+				if (!continueFiltering(state))
+					return state;
 			}
 			return state;
 		}
@@ -59,6 +63,10 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 				grepProcessors.add(grepExpressionItem.createProcessor());
 			}
 		}
+	}
+
+	public List<GrepProcessor> getGrepProcessors() {
+		return grepProcessors;
 	}
 
 	abstract protected boolean shouldAdd(GrepExpressionItem item);

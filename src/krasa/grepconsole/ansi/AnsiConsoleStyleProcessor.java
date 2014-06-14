@@ -1,22 +1,17 @@
 package krasa.grepconsole.ansi;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import krasa.grepconsole.filter.support.ConsoleListener;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.utils.Utils;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.util.Pair;
+import krasa.grepconsole.filter.support.ConsoleListener;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.utils.Utils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AnsiConsoleStyleProcessor {
 
@@ -69,15 +64,15 @@ public class AnsiConsoleStyleProcessor {
 			}
 
 			// add previous text if there is any
-			addTextOnFirstMatchCase(currentText, consoleViewContentType, ranges, matcher, previousRangeEnd);
+			addTextBeforeFirstMatchCase(currentText, consoleViewContentType, ranges, matcher, previousRangeEnd);
 
 			consoleAttributes = interpretAsciCommand(currentText, ranges, matcher, consoleAttributes);
 
 			printAsciCommandIfEnabled(currentText, ranges, matcher);
 
 			// we do it in the second+ round, so that we know where the end of text to highlight is.
-			addRangeIfNotFirstMatch(currentText, consoleViewContentType, ranges, previousRangeEnd, matcher);
-			// set it after print!
+			addTextAheadOfNextCommand(currentText, consoleViewContentType, ranges, previousRangeEnd, matcher);
+			// set it after printing!
 			lastConsoleAttributes = consoleAttributes;
 			previousRangeEnd = matcher.end();
 		}
@@ -129,8 +124,8 @@ public class AnsiConsoleStyleProcessor {
 		return false;
 	}
 
-	private void addRangeIfNotFirstMatch(String currentText, ConsoleViewContentType consoleViewContentType,
-			List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
+	private void addTextAheadOfNextCommand(String currentText, ConsoleViewContentType consoleViewContentType,
+										   List<Pair<String, ConsoleViewContentType>> ranges, int previousRangeEnd, Matcher matcher) {
 		if (!isFirstMatch(previousRangeEnd, matcher.start()) && previousRangeEnd != matcher.start()) {
 			String substring = currentText.substring(previousRangeEnd, matcher.start());
 			addRange(ranges, substring, getContentType(lastConsoleAttributes, consoleViewContentType));
@@ -150,8 +145,8 @@ public class AnsiConsoleStyleProcessor {
 		ranges.add(new Pair<String, ConsoleViewContentType>(substring, contentType));
 	}
 
-	private void addTextOnFirstMatchCase(String currentText, ConsoleViewContentType consoleViewContentType,
-			List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, int previousRangeEnd) {
+	private void addTextBeforeFirstMatchCase(String currentText, ConsoleViewContentType consoleViewContentType,
+											 List<Pair<String, ConsoleViewContentType>> ranges, Matcher matcher, int previousRangeEnd) {
 		int start = matcher.start();
 		if (isFirstMatch(previousRangeEnd, start)) {
 			ConsoleViewContentType lastType = getContentType(lastConsoleAttributes, consoleViewContentType);

@@ -1,6 +1,12 @@
 package krasa.grepconsole.action;
 
-import com.intellij.execution.process.DefaultJavaProcessHandler;
+import java.io.*;
+import java.nio.charset.Charset;
+
+import krasa.grepconsole.tail.TailContentExecutor;
+
+import com.intellij.execution.impl.ConsoleBuffer;
+import com.intellij.execution.process.BaseOSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -9,15 +15,11 @@ import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import krasa.grepconsole.integration.RunContentExecutor;
-
-import java.io.*;
-import java.nio.charset.Charset;
 
 /**
  * @author Vojtech Krasa
  */
-public class OpenFileInConsole extends DumbAwareAction {
+public class OpenFileInConsoleAction extends DumbAwareAction {
 
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
@@ -32,10 +34,15 @@ public class OpenFileInConsole extends DumbAwareAction {
 		}
 	}
 
-	protected void openFileInConsole(final Project project, final String path) {
+	public void openFileInConsole(final Project project, final String path) {
 		final Process process = new MyProcess(path);
-		final ProcessHandler osProcessHandler = new DefaultJavaProcessHandler(process, null, Charset.defaultCharset());
-		final RunContentExecutor executor = new RunContentExecutor(project, osProcessHandler);
+		final ProcessHandler osProcessHandler = new BaseOSProcessHandler(process, null, Charset.defaultCharset()) {
+			@Override
+			public boolean isSilentlyDestroyOnClose() {
+				return true;
+			}
+		};
+		final TailContentExecutor executor = new TailContentExecutor(project, osProcessHandler);
 		executor.withRerun(new Runnable() {
 			@Override
 			public void run() {
@@ -44,17 +51,19 @@ public class OpenFileInConsole extends DumbAwareAction {
 				openFileInConsole(project, path);
 			}
 		});
-		executor.withTitle(path);
+		executor.withTitle(new File(path).getName());
 		executor.run();
 	}
-
 	private class MyProcess extends Process {
 		protected volatile boolean running = true;
-		protected InputStream inputStream;
+		protected FileInputStream inputStream;
 
 		private MyProcess(final String path) {
 			try {
 				inputStream = new FileInputStream(new File(path));
+				long size = inputStream.getChannel().size();
+				// close enough, it does not work for binary files very well, but i hope it does at least for text
+				inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -105,8 +114,9 @@ public class OpenFileInConsole extends DumbAwareAction {
 				inputStream.close();
 			} catch (IOException e) {
 				// who cares
+			}finally {
+				running = false;
 			}
-			running = false;
 		}
 	}
 

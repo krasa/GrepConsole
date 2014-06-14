@@ -1,19 +1,27 @@
 package krasa.grepconsole.grep;
 
+import com.intellij.execution.filters.Filter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import krasa.grepconsole.model.Operation;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FilterState {
 
 	private String text;
+	private int offset;
 	private Operation nextOperation = Operation.CONTINUE_MATCHING;
 	protected ConsoleViewContentType consoleViewContentType;
+	protected List<Filter.ResultItem> resultItemList;
 	private boolean exclude;
 	private boolean matchesSomething;
 
-	public FilterState(String text) {
+	public FilterState(String text, int offset) {
 		this.text = text;
+		this.offset = offset;
 	}
 
 	public Operation getNextOperation() {
@@ -63,5 +71,21 @@ public class FilterState {
 
 	public boolean isMatchesSomething() {
 		return matchesSomething;
+	}
+
+	public boolean add(Filter.ResultItem resultItem) {
+		if (resultItemList == null) {
+			resultItemList = new ArrayList<Filter.ResultItem>();
+		}
+		return resultItemList.add(resultItem);
+	}
+
+	@Nullable
+	public List<Filter.ResultItem> getResultItemList() {
+		return resultItemList;
+	}
+
+	public int getOffset() {
+		return offset;
 	}
 }

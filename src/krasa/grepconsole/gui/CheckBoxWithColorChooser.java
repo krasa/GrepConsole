@@ -15,13 +15,14 @@
  */
 package krasa.grepconsole.gui;
 
-import com.intellij.openapi.util.SystemInfo;
-import com.intellij.ui.ColorChooser;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.*;
+
+import com.intellij.openapi.util.SystemInfo;
+import com.intellij.ui.ColorChooser;
 
 /**
  * @author Konstantin Bulenkov
@@ -102,10 +103,12 @@ public class CheckBoxWithColorChooser extends JPanel {
 							myCheckbox.setSelected(true);
 						}
 						myColor = color;
+						onColorChanged();
 					}
 				}
 			};
 			addMouseListener(mouseAdapter);
+			;
 		}
 
 		@Override
@@ -127,5 +130,9 @@ public class CheckBoxWithColorChooser extends JPanel {
 		public Dimension getPreferredSize() {
 			return new Dimension(12, 12);
 		}
+	}
+
+	public void onColorChanged() {
+
 	}
 }

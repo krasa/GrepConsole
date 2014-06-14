@@ -1,8 +1,9 @@
 package krasa.grepconsole.filter;
 
-import com.intellij.openapi.project.Project;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+
+import com.intellij.openapi.project.Project;
 
 public abstract class AbstractFilter {
 
@@ -21,6 +22,10 @@ public abstract class AbstractFilter {
 	protected void refreshProfile() {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 		profile = applicationComponent.getState().getProfile(profile);
+	}
+
+	public Project getProject() {
+		return project;
 	}
 
 	public void onChange() {

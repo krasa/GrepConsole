@@ -11,7 +11,7 @@ import com.intellij.psi.PsiFile;
 /**
  * @author Vojtech Krasa
  */
-public class OpenCurrentFileInConsole extends OpenFileInConsole {
+public class OpenCurrentFileInConsoleAction extends OpenFileInConsoleAction {
 
 	public void actionPerformed(AnActionEvent e) {
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);

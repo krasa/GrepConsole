@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="krasa.grepconsole.gui.SettingsDialog">
-  <grid id="27dc6" binding="rootComponent" layout-manager="GridLayoutManager" row-count="7" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="rootComponent" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="800" height="400"/>
+      <xy x="20" y="20" width="1036" height="395"/>
     </constraints>
     <properties>
-      <minimumSize width="800" height="200"/>
+      <minimumSize width="1000" height="200"/>
       <opaque value="false"/>
-      <preferredSize width="800" height="474"/>
+      <preferredSize width="1000" height="474"/>
     </properties>
     <border type="none"/>
     <children>
       <scrollpane id="44bf4">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="4" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -25,59 +25,12 @@
           </component>
         </children>
       </scrollpane>
-      <component id="a3358" class="javax.swing.JButton" binding="addNewButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Add new"/>
-        </properties>
-      </component>
-      <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
-        <constraints>
-          <grid row="3" column="1" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="150" height="-1"/>
-          </grid>
-        </constraints>
-        <properties>
-          <text value=""/>
-        </properties>
-      </component>
-      <vspacer id="38ff7">
-        <constraints>
-          <grid row="6" column="2" row-span="1" col-span="2" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
-      <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Reset to default"/>
-        </properties>
-      </component>
       <component id="f941c" class="javax.swing.JCheckBox" binding="enableMaxLength">
         <constraints>
-          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="Match only first N characters on each line:"/>
-        </properties>
-      </component>
-      <component id="4270c" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Delete"/>
-        </properties>
-      </component>
-      <component id="e5987" class="javax.swing.JButton" binding="copyButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Copy"/>
         </properties>
       </component>
       <component id="479f2" class="javax.swing.JCheckBox" binding="ansi">
@@ -86,14 +39,6 @@
         </constraints>
         <properties>
           <text value="Enable ANSI coloring"/>
-        </properties>
-      </component>
-      <component id="b84dc" class="javax.swing.JCheckBox" binding="hideAnsiCharacters">
-        <constraints>
-          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Hide ANSI commands"/>
         </properties>
       </component>
       <component id="ed352" class="javax.swing.JCheckBox" binding="encodeText">
@@ -122,7 +67,7 @@
       </component>
       <component id="21ce1" class="javax.swing.JSeparator">
         <constraints>
-          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="6" anchor="1" fill="1" indent="0" use-parent-layout="false">
+          <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="6" anchor="1" fill="1" indent="0" use-parent-layout="false">
             <maximum-size width="-1" height="5"/>
           </grid>
         </constraints>
@@ -134,6 +79,96 @@
         </constraints>
         <properties>
           <text value="Enable multiline output"/>
+          <toolTipText value="The style is applied for all following lines until another match occurs"/>
+        </properties>
+      </component>
+      <component id="a3358" class="javax.swing.JButton" binding="addNewButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Add new"/>
+        </properties>
+      </component>
+      <component id="e5987" class="javax.swing.JButton" binding="copyButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Copy"/>
+        </properties>
+      </component>
+      <component id="4270c" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Delete"/>
+        </properties>
+      </component>
+      <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBarByDefault">
+        <constraints>
+          <grid row="2" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Show statistics panel in Status Bar by default"/>
+          <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+        </properties>
+      </component>
+      <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsoleByDefault">
+        <constraints>
+          <grid row="3" column="3" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="false"/>
+          <text value="Show statistics panel in Console by default"/>
+          <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+        </properties>
+      </component>
+      <component id="71707" class="javax.swing.JButton" binding="DONATEButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <background color="-2697514"/>
+          <font/>
+          <hideActionText value="false"/>
+          <horizontalTextPosition value="0"/>
+          <icon value="krasa/grepconsole/gui/btn_donate_LG.gif"/>
+          <text value=""/>
+          <toolTipText value="Donate via PayPal"/>
+        </properties>
+      </component>
+      <component id="b84dc" class="javax.swing.JCheckBox" binding="hideAnsiCharacters">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Hide ANSI commands"/>
+        </properties>
+      </component>
+      <component id="14c68" class="javax.swing.JButton" binding="fileTailSettings">
+        <constraints>
+          <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Tail File integration"/>
+        </properties>
+      </component>
+      <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
+        <constraints>
+          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Reset to default"/>
+        </properties>
+      </component>
+      <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
+        <constraints>
+          <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value=""/>
         </properties>
       </component>
     </children>

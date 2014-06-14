@@ -15,6 +15,9 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	private boolean enabled = true;
+	/**
+	 * filter out text if matches
+	 */
 	private boolean inputFilter = false;
 	private String grepExpression;
 	private String unlessGrepExpression;
@@ -26,7 +29,11 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private transient Pattern unlessPattern;
 
 	private Operation operationOnMatch = Operation.EXIT;
+	private boolean highlightOnlyMatchingText = false;
 	private ItemType itemType = ItemType.REGEXP;
+
+	private boolean showCountInConsole = false;
+	private boolean showCountInStatusBar = false;
 
 	public GrepExpressionItem() {
 		this(null);
@@ -252,6 +259,35 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem operationOnMatch(final Operation operationOnMatch) {
 		this.operationOnMatch = operationOnMatch;
 		return this;
+	}
+
+	public boolean isHighlightOnlyMatchingText() {
+		return highlightOnlyMatchingText;
+	}
+
+	public void setHighlightOnlyMatchingText(boolean highlightOnlyMatchingText) {
+		this.highlightOnlyMatchingText = highlightOnlyMatchingText;
+	}
+
+	public GrepExpressionItem highlightOnlyMatchingText(final boolean highlightOnlyMatchingText) {
+		this.highlightOnlyMatchingText = highlightOnlyMatchingText;
+		return this;
+	}
+
+	public boolean isShowCountInConsole() {
+		return showCountInConsole;
+	}
+
+	public void setShowCountInConsole(boolean showCountInConsole) {
+		this.showCountInConsole = showCountInConsole;
+	}
+
+	public boolean isShowCountInStatusBar() {
+		return showCountInStatusBar;
+	}
+
+	public void setShowCountInStatusBar(boolean showCountInStatusBar) {
+		this.showCountInStatusBar = showCountInStatusBar;
 	}
 
 	public boolean isContinueMatching() {

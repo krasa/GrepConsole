@@ -16,7 +16,9 @@ public class CheckBoxJavaBeanColumnInfo<T, Boolean> extends JavaBeanColumnInfo {
 	@Nullable
 	@Override
 	public TableCellRenderer getRenderer(Object o) {
-		return new BooleanTableCellRenderer();
+		final BooleanTableCellRenderer booleanTableCellRenderer = new BooleanTableCellRenderer();
+		booleanTableCellRenderer.setToolTipText(getTooltipText());
+		return booleanTableCellRenderer;
 	}
 
 	@Nullable

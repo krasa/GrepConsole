@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>3.5.128.55</version>
+	<version>4.3.134.1007.1</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -9,20 +9,46 @@
 
 
 	<description><![CDATA[
-			Allows you to define a series of regular expressions which will be tested against the console output or currently opened file. 
+			Allows you to define a series of regular expressions which will be tested against the console output or file. 
 			Each expression matching a line will affect the style of the entire line, or play a sound. 
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
 	 		Additional Features:<br>
-	 		File tailing - Main menu | Tools | Open File in Console<br>
+	 		ANSI colouring<br>
+	 		File Tailing:<br>
+	 		- Main menu | Tools | Open File in Console<br>
+	 		- Drag&Drop "Tail File" panel in main toolbar<br>
+	 		- http and Windows context menu integration<br>
 	 		<br>
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
-			and <a href="http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/">Ansi Console plugin for Eclipse</a>.
-			
-			 
+			and <a href="http://mihai-nita.net/2013/06/03/eclipse-plugin-ansi-in-console/">Ansi Console plugin for Eclipse</a>.<br>
+			Used <a href="http://plugins.jetbrains.com/plugin/6027?pr=idea">Remote call plugin</a> implementation for http integration.<br>
       ]]></description>
 
-	<change-notes><![CDATA[
+	<change-notes><![CDATA[        
+        <br>4.3.x.1 (2014-05-22)
+        <br>- file path encoding fix
+        <br>4.3 (2014-05-22)
+        <br>- http and Windows context menu integration for File Tailing
+        <br>- closing File Tailing without confirmation dialog
+        <br>4.2 (2014-05-19)
+        <br>- drag&drop main toolbar panel for tailing
+        <br>4.1 (2014-05-13)
+        <br>- console statistics bar fix
+        <br>4.0 (2014-05-13)
+        <br>- count of highlighters can be shown in status bar or console
+        <br>3.9 (2014-05-04)
+        <br>- enable Apply button in settings immediately after color change 
+        <br>- memory leak fix
+        <br>3.8 (2014-04-24)
+        <br>- PhpStorm File Tailing fix
+        <br>- moved editor context actions into Tools
+        <br>3.7 (2014-04-22)
+        <br>- usability improvements
+        <br>3.6 (2014-04-19)
+        <br>- new feature: colorization of single words, not whole lines
+        <br>- tooltips for settings table, right click menu 
+        <br>- donation button
         <br>3.5 (2014-04-19)
         <br>- added console buttons for file tailing
         <br>3.4 (2014-04-19)
@@ -31,30 +57,13 @@
         <br>- improved color chooser
         <br>3.3 (2014-03-21)
         <br>- Match only first N characters on each line fixed for 1000+
-        <br>3.2 (2014-02-10)
-        <br>- API change
-        <br>3.1 (2013-12-30)
-        <br>- new action for tailing currently opened file - Main menu | Tools | Open Current File in Console
-        <br>3.0 (2013-12-29)
-        <br>- new action for tailing files - Main menu | Tools | Open File in Console
-        <br>2.9 (2013-12-13)
-        <br>- fixed settings table drag&drop
-        <br>2.8 (2013-08-21)
-        <br>- new option to continue matching - multiple styles can be combined for a single line
-        <br>2.7 (2013-07-01)
-        <br>- import/export of settings
-        <br>2.6.1 (2013-06-25)
-        <br>- minor settings improvements
-        <br>2.6 (2013-04-05)
-        <br>- ANSI bugfix
-        <br>2.5 (2013-04-03)
-        <br>- table drag&drop
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
 	</change-notes>
 
-	<idea-version since-build="128.55" until-build="134.1007"/>
+	<!--<idea-version since-build="128.55" until-build="134.000"/>-->
+	<idea-version since-build="134.1007"/>
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
@@ -64,6 +73,10 @@
 		<!-- Add your application components here -->
 		<component>
 			<implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
+		</component>
+		<component>
+			<implementation-class>krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent
+			</implementation-class>
 		</component>
 	</application-components>
 
@@ -75,34 +88,37 @@
 	</project-components>
 
 	<actions>
-		<action id="ConsoleView.OpenConsoleSettingsAction" class="krasa.grepconsole.action.AddHighlightAction"
-				text="Add highlight"
-				description="Add highlight for this selected text">
-			<add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
-		</action>
-
 		<action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
-				text="Clear Grep Highlight"
-				description="Clear Highlight">
-			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+				text="Clear Grep Highlights in Editor"
+				description="Clear Highlights in Editor">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<!-- Add your actions here -->
-		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight"
-				icon="highlight.gif" description="Grep Highlight">
-			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight Editor"
+				icon="highlight.gif" description="Grep Highlight Editor">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
-		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsole" text="Open File in Console"
+		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsoleAction"
+				text="Open File in Console"
 				description="Open File in Console">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
-		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsole"
+		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
 				text="Open Current File in Console"
 				description="Open Current Editor File in Console">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
+		<action id="OpenFileInConsoleToolbarAction"
+				class="krasa.grepconsole.action.OpenFileInConsoleToolbarAction"
+				text="Tail File"
+				description="Drag and drop to open in console">
+			<add-to-group group-id="MainToolBar" anchor="last"/>
+		</action>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="tail"/>
+
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
 		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>

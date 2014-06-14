@@ -9,8 +9,7 @@ import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
@@ -25,7 +24,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 																  ConsoleViewContentType consoleViewContentType) {
-		FilterState state = super.filter(s);
+		FilterState state = super.filter(s, -1);
 		return prepareResult(state);
 	}
 
@@ -49,7 +48,25 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	}
 
 	@Override
-	protected boolean shouldAdd(GrepExpressionItem grepExpressionItem) {
-		return profile.isEnabledInputFiltering();
+	protected void initProcessors() {
+		grepProcessors = new ArrayList<GrepProcessor>();
+		if (profile.isEnabledInputFiltering()) {
+			boolean inputFilterExists = false;
+			for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
+				grepProcessors.add(grepExpressionItem.createProcessor());
+				if (grepExpressionItem.isInputFilter()) {
+					inputFilterExists = true;
+				}
+			}
+			if (!inputFilterExists) {
+				grepProcessors.clear();
+			}
+		}
 	}
+
+	@Override
+	protected boolean shouldAdd(GrepExpressionItem item) {
+		throw new UnsupportedOperationException();
+	}
+
 }

@@ -1,25 +1,30 @@
 package krasa.grepconsole.gui;
 
-import com.intellij.ui.table.TableView;
-import com.intellij.util.ui.ColumnInfo;
-import com.intellij.util.ui.ListTableModel;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.DefaultState;
-import krasa.grepconsole.plugin.PluginState;
+import static krasa.grepconsole.Cloner.deepClone;
+
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
-import static krasa.grepconsole.Cloner.deepClone;
+import krasa.grepconsole.model.*;
+import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.tail.TailIntegrationForm;
+
+import com.centerkey.utils.BareBonesBrowserLaunch;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.*;
+import com.intellij.ui.table.TableView;
+import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.ui.ListTableModel;
 
 public class SettingsDialog {
+	private static final Logger log = Logger.getInstance(SettingsDialog.class);
+
 	private JPanel rootComponent;
 	private JTable table;
 	private JButton addNewButton;
@@ -34,12 +39,24 @@ public class SettingsDialog {
 	private JCheckBox hideAnsiCharacters;
 	private JCheckBox encodeText;
 	private JCheckBox multilineOutput;
+	private JButton DONATEButton;
+	private JCheckBox showStatsInConsoleByDefault;
+	private JCheckBox showStatsInStatusBarByDefault;
+	private JButton fileTailSettings;
 	private PluginState settings;
 	protected ListTableModel<GrepExpressionItem> model;
 	protected Integer selectedRow;
 
 	public SettingsDialog(PluginState settings) {
 		this.settings = settings;
+		DONATEButton.setBorder(BorderFactory.createEmptyBorder());
+		DONATEButton.setContentAreaFilled(false);
+		DONATEButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
+			}
+		});
 		addNewButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -62,21 +79,13 @@ public class SettingsDialog {
 		copyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				GrepExpressionItem expressionItem = deepClone((GrepExpressionItem) model.getItem(selectedRow));
-				expressionItem.generateNewId();
-				model.addRow(expressionItem);
+				copyRow();
 			}
 		});
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (selectedRow < model.getRowCount()) {
-					model.removeRow(selectedRow);
-					table.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
-					if (model.getRowCount() == 0) {
-						disableCopyDeleteButton();
-					}
-				}
+				delete();
 
 			}
 		});
@@ -91,6 +100,78 @@ public class SettingsDialog {
 				}
 			}
 		});
+		table.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (SwingUtilities.isLeftMouseButton(e)) {
+				} else if (SwingUtilities.isRightMouseButton(e)) {
+					if (selectedRow == null) {
+						return;
+					}
+					JPopupMenu popup = new JBPopupMenu();
+					popup.add(getConvertAction());
+					popup.add(getCopyAction());
+					popup.add(getDeleteAction());
+					popup.show(e.getComponent(), e.getX(), e.getY());
+				}
+			}
+
+			private JMenuItem getCopyAction() {
+				final JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						copyRow();
+					}
+				});
+				return copy;
+			}
+
+			private JMenuItem getDeleteAction() {
+				final JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						delete();
+					}
+				});
+				return delete;
+			}
+
+			private JMenuItem getConvertAction() {
+				final GrepExpressionItem item = model.getItem(selectedRow);
+				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
+				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
+						: "Convert to words only");
+
+				convert.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						if (!highlightOnlyMatchingText) {
+							model.getItem(selectedRow).setHighlightOnlyMatchingText(true);
+							model.getItem(selectedRow).setContinueMatching(true);
+							if (item.getGrepExpression().startsWith(".*")) {
+								item.grepExpression(item.getGrepExpression().substring(2));
+							}
+							if (item.getGrepExpression().endsWith(".*")) {
+								item.grepExpression(item.getGrepExpression().substring(0,
+										item.getGrepExpression().length() - 2));
+							}
+						} else {
+							model.getItem(selectedRow).setHighlightOnlyMatchingText(false);
+							model.getItem(selectedRow).setContinueMatching(false);
+							if (!item.getGrepExpression().startsWith(".*")) {
+								item.grepExpression(".*" + item.getGrepExpression());
+							}
+							if (!item.getGrepExpression().endsWith(".*")) {
+								item.grepExpression(item.getGrepExpression() + ".*");
+							}
+						}
+						model.fireTableRowsUpdated(selectedRow, selectedRow);
+					}
+				});
+				return convert;
+			}
+		});
 		disableCopyDeleteButton();
 		ansi.addActionListener(new ActionListener() {
 			@Override
@@ -100,6 +181,49 @@ public class SettingsDialog {
 				}
 			}
 		});
+
+		fileTailSettings.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				final TailIntegrationForm form = new TailIntegrationForm();
+				form.setData(getTailSettings());
+
+				DialogBuilder builder = new DialogBuilder(SettingsDialog.this.getRootComponent());
+				builder.setCenterPanel(form.getRoot());
+				builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
+				builder.setTitle("Tail File settings");
+				builder.removeAllActions();
+				builder.addOkAction();
+				builder.addCancelAction();
+
+				boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+				if (isOk) {
+					form.getData(getTailSettings());
+					GrepConsoleApplicationComponent.getInstance().getState().setTailSettings(getTailSettings());
+					form.rebind(getTailSettings());
+				}
+			}
+		});
+	}
+
+	private TailSettings getTailSettings() {
+		return settings.getTailSettings();
+	}
+
+	private void delete() {
+		if (selectedRow < model.getRowCount()) {
+			model.removeRow(selectedRow);
+			table.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
+			if (model.getRowCount() == 0) {
+				disableCopyDeleteButton();
+			}
+		}
+	}
+
+	private void copyRow() {
+		GrepExpressionItem expressionItem = deepClone(model.getItem(selectedRow));
+		expressionItem.generateNewId();
+		model.insertRow(selectedRow, expressionItem);
 	}
 
 	private void disableCopyDeleteButton() {
@@ -138,6 +262,7 @@ public class SettingsDialog {
 	}
 
 	private void createUIComponents() {
+		fileTailSettings = new JButton();
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
@@ -151,8 +276,13 @@ public class SettingsDialog {
 		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic", "style.italic"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
 		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching").tooltipText("If not checked, the first match will end highlighting"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text",
+				"highlightOnlyMatchingText"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("StatusBar count",
+				"showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)"));
+		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)"));
 		columns.add(new SoundColumn("Sound", this));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching"));
 
 		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
 		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),
@@ -173,6 +303,8 @@ public class SettingsDialog {
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		multilineOutput.setSelected(data.isMultiLineOutput());
+		showStatsInConsoleByDefault.setSelected(data.isShowStatsInConsoleByDefault());
+		showStatsInStatusBarByDefault.setSelected(data.isShowStatsInStatusBarByDefault());
 	}
 
 	public void getData(Profile data) {
@@ -184,18 +316,32 @@ public class SettingsDialog {
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setMultiLineOutput(multilineOutput.isSelected());
+		data.setShowStatsInConsoleByDefault(showStatsInConsoleByDefault.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBarByDefault.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch()) : data.getMaxLengthToMatch() != null)
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
+				: data.getMaxLengthToMatch() != null)
 			return true;
-		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit()) return true;
-		if (ansi.isSelected() != data.isEnableAnsiColoring()) return true;
-		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands()) return true;
-		if (encodeText.isSelected() != data.isEncodeText()) return true;
-		if (enableFiltering.isSelected() != data.isEnabledInputFiltering()) return true;
-		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting()) return true;
-		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
+		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
+			return true;
+		if (ansi.isSelected() != data.isEnableAnsiColoring())
+			return true;
+		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
+			return true;
+		if (encodeText.isSelected() != data.isEncodeText())
+			return true;
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
+			return true;
+		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
+			return true;
+		if (multilineOutput.isSelected() != data.isMultiLineOutput())
+			return true;
+		if (showStatsInConsoleByDefault.isSelected() != data.isShowStatsInConsoleByDefault())
+			return true;
+		if (showStatsInStatusBarByDefault.isSelected() != data.isShowStatsInStatusBarByDefault())
+			return true;
 		return false;
 	}
 }

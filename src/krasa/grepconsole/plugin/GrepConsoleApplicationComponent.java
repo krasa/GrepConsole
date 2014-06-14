@@ -1,22 +1,25 @@
 package krasa.grepconsole.plugin;
 
+import java.io.File;
+
+import javax.swing.*;
+
+import krasa.grepconsole.action.HighlightManipulationAction;
+import krasa.grepconsole.filter.support.SoundMode;
+import krasa.grepconsole.gui.SettingsDialog;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.Sound;
+
+import org.jetbrains.annotations.*;
+
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.action.HighlightManipulationAction;
-import krasa.grepconsole.filter.support.SoundMode;
-import krasa.grepconsole.gui.SettingsDialog;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.model.Sound;
-import org.jetbrains.annotations.*;
 
-import javax.swing.*;
-import java.io.File;
-
-@State(name = "GrepConsole", storages = {@Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml")})
+@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
 public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
 
@@ -83,7 +86,6 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		Sound.soundMode = SoundMode.ENABLED;
 	}
 
-
 	public void reset() {
 		if (form != null) {
 			form.importFrom(settings.clone());
@@ -118,7 +120,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	@NotNull
 	@Override
 	public File[] getExportFiles() {
-		return new File[]{PathManager.getOptionsFile("grepConsole")};
+		return new File[] { PathManager.getOptionsFile("grepConsole") };
 	}
 
 	@NotNull
