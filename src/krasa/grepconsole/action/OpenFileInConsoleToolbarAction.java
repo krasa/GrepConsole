@@ -43,7 +43,7 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 				final List<File> fileList = FileCopyPasteUtil.getFileList(t);
 				if (fileList != null) {
 					DataContext context = DataManager.getInstance().getDataContext(comp);
-					final Project data = CommonDataKeys.PROJECT.getData(context);
+					final Project data = PlatformDataKeys.PROJECT.getData(context);
 					for (File file : fileList) {
 						if (!file.isDirectory()) {
 							openFileInConsole(data, file.getPath());
@@ -61,7 +61,7 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 		}
 
 		public boolean canHandleDrop(DataFlavor[] transferFlavors) {
-			return transferFlavors != null && FileCopyPasteUtil.isFileListFlavorAvailable(transferFlavors);
+			return transferFlavors != null && FileCopyPasteUtil.isFileListFlavorSupported(transferFlavors);
 		}
 	}
 }

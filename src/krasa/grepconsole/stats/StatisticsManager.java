@@ -4,6 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import com.intellij.openapi.wm.impl.status.IdeStatusBarImpl;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.Profile;
@@ -114,10 +115,13 @@ public class StatisticsManager {
 	@Nullable
 	public static GrepConsoleStatusBarWidget getStatusBarPanel(@NotNull ConsoleViewImpl consoleView) {
 		final Project project = consoleView.getProject();
-		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
-
-		StatusBarWidget widget = statusBar.getWidget(GrepConsoleStatusBarWidget.createId(consoleView));
-		return (GrepConsoleStatusBarWidget) widget;
+		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
+		if (ideFrame instanceof IdeStatusBarImpl) {
+			final IdeStatusBarImpl statusBar = (IdeStatusBarImpl) ideFrame.getStatusBar();
+			StatusBarWidget widget = statusBar.getWidget(GrepConsoleStatusBarWidget.createId(consoleView));
+			return (GrepConsoleStatusBarWidget) widget;
+		}
+		return null;
 	}
 
 	@Nullable

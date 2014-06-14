@@ -36,7 +36,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 					return;
 				GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
 				Color color = ColorPicker.showDialog(rootComponent(getEventProject(e)), "Background color", Color.CYAN,
-						true, null, true);
+						true, null);
 				if (color == null) {
 					return;
 				}

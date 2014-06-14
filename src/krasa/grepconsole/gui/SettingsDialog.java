@@ -138,7 +138,7 @@ public class SettingsDialog {
 			}
 
 			private JMenuItem getConvertAction() {
-				final GrepExpressionItem item = model.getItem(selectedRow);
+				final GrepExpressionItem item = getGrepExpressionItem();
 				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
 				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
 						: "Convert to words only");
@@ -147,8 +147,8 @@ public class SettingsDialog {
 					@Override
 					public void actionPerformed(ActionEvent e) {
 						if (!highlightOnlyMatchingText) {
-							model.getItem(selectedRow).setHighlightOnlyMatchingText(true);
-							model.getItem(selectedRow).setContinueMatching(true);
+							getGrepExpressionItem().setHighlightOnlyMatchingText(true);
+							getGrepExpressionItem().setContinueMatching(true);
 							if (item.getGrepExpression().startsWith(".*")) {
 								item.grepExpression(item.getGrepExpression().substring(2));
 							}
@@ -157,8 +157,8 @@ public class SettingsDialog {
 										item.getGrepExpression().length() - 2));
 							}
 						} else {
-							model.getItem(selectedRow).setHighlightOnlyMatchingText(false);
-							model.getItem(selectedRow).setContinueMatching(false);
+							getGrepExpressionItem().setHighlightOnlyMatchingText(false);
+							getGrepExpressionItem().setContinueMatching(false);
 							if (!item.getGrepExpression().startsWith(".*")) {
 								item.grepExpression(".*" + item.getGrepExpression());
 							}
@@ -171,6 +171,7 @@ public class SettingsDialog {
 				});
 				return convert;
 			}
+
 		});
 		disableCopyDeleteButton();
 		ansi.addActionListener(new ActionListener() {
@@ -210,6 +211,9 @@ public class SettingsDialog {
 		return settings.getTailSettings();
 	}
 
+	private GrepExpressionItem getGrepExpressionItem() {
+		return (GrepExpressionItem) model.getItem(selectedRow);
+	}
 	private void delete() {
 		if (selectedRow < model.getRowCount()) {
 			model.removeRow(selectedRow);
@@ -221,7 +225,7 @@ public class SettingsDialog {
 	}
 
 	private void copyRow() {
-		GrepExpressionItem expressionItem = deepClone(model.getItem(selectedRow));
+		GrepExpressionItem expressionItem = deepClone(getGrepExpressionItem());
 		expressionItem.generateNewId();
 		model.insertRow(selectedRow, expressionItem);
 	}

@@ -18,12 +18,13 @@ import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.*;
+import org.jetbrains.annotations.Nullable;
 
 public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProcessor {
 
 	@NotNull
 	@Override
-	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
+	public AnAction[] postProcess(@NotNull final ConsoleView console, @NotNull AnAction[] actions) {
 		AnsiInputFilter lastAnsi = ServiceManager.getInstance().getLastAnsi();
 		if (lastAnsi != null) {
 			lastAnsi.setConsole(console);
@@ -35,7 +36,17 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 		}
 
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
-		anActions.add(new OpenConsoleSettingsAction(console));
+		ActionGroup e = new ActionGroup("Console statistics", true ) {
+			@NotNull
+			@Override
+			public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
+				return new AnAction[]{new OpenConsoleSettingsAction(console),
+						new ShowHideStatisticsStatusBarPanelAction(console),
+						new ShowHideStatisticsConsolePanelAction(console)};
+			}
+		};
+		e.getTemplatePresentation().setIcon(OpenConsoleSettingsAction.ICON);
+		anActions.add(e);
 		anActions.addAll(Arrays.asList(actions));
 
 		replaceClearAction(anActions);
@@ -47,18 +58,6 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 		if (lastGrepHighlightFilter != null) {
 			ServiceManager.getInstance().register(console, lastGrepHighlightFilter);
 		}
-	}
-
-	@NotNull
-	@Override
-	public AnAction[] postProcessPopupActions(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
-		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
-		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", null));
-		anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
-		anActions.add(new ShowHideStatisticsConsolePanelAction(console));
-		anActions.addAll(Arrays.asList(super.postProcessPopupActions(console, actions)));
-		replaceClearAction(anActions);
-		return anActions.toArray(new AnAction[anActions.size()]);
 	}
 
 	private void replaceClearAction(ArrayList<AnAction> anActions) {

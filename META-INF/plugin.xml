@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.3.134.1007.1</version>
+	<version>4.3.128.55</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -62,8 +62,8 @@
 			]]>
 	</change-notes>
 
-	<!--<idea-version since-build="128.55" until-build="134.000"/>-->
-	<idea-version since-build="134.1007"/>
+	<idea-version since-build="128.55" until-build="134.000"/>
+	<!--<idea-version since-build="134.1007"/>-->
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
