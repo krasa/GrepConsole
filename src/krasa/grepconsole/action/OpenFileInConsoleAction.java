@@ -134,8 +134,9 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 				inputStream.close();
 			} catch (IOException e) {
 				// who cares
+			}finally {
+				running = false;
 			}
-			running = false;
 		}
 	}
 
