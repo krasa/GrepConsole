@@ -1,15 +1,16 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table;
 
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.ui.ListTableModel;
-
-import javax.activation.ActivationDataFlavor;
-import javax.activation.DataHandler;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DragSource;
+
+import javax.activation.ActivationDataFlavor;
+import javax.activation.DataHandler;
+import javax.swing.*;
+
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.util.ui.ListTableModel;
 
 public class TableRowTransferHandler extends TransferHandler {
 	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class.getName());

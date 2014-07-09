@@ -2,31 +2,38 @@ package krasa.grepconsole.gui;
 
 import static krasa.grepconsole.Cloner.deepClone;
 
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
 
-import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.gui.table.CheckboxTreeTable;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.TailSettings;
+import krasa.grepconsole.plugin.DefaultState;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.tail.TailIntegrationForm;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.*;
-import com.intellij.ui.table.TableView;
-import com.intellij.util.ui.ColumnInfo;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.util.ui.ListTableModel;
 
 public class SettingsDialog {
 	private static final Logger log = Logger.getInstance(SettingsDialog.class);
-
+	protected ListTableModel<GrepExpressionItem> model;
+	protected Integer selectedRow;
 	private JPanel rootComponent;
-	private JTable table;
+	private CheckboxTreeTable table;
 	private JButton addNewButton;
 	private JButton resetToDefaultButton;
 	private JCheckBox enableHighlightingCheckBox;
@@ -44,11 +51,10 @@ public class SettingsDialog {
 	private JCheckBox showStatsInStatusBarByDefault;
 	private JButton fileTailSettings;
 	private PluginState settings;
-	protected ListTableModel<GrepExpressionItem> model;
-	protected Integer selectedRow;
 
 	public SettingsDialog(PluginState settings) {
 		this.settings = settings;
+        model=new ListTableModel<GrepExpressionItem>();//TODO
 		DONATEButton.setBorder(BorderFactory.createEmptyBorder());
 		DONATEButton.setContentAreaFilled(false);
 		DONATEButton.addActionListener(new ActionListener() {
@@ -214,6 +220,7 @@ public class SettingsDialog {
 	private GrepExpressionItem getGrepExpressionItem() {
 		return (GrepExpressionItem) model.getItem(selectedRow);
 	}
+
 	private void delete() {
 		if (selectedRow < model.getRowCount()) {
 			model.removeRow(selectedRow);
@@ -250,7 +257,7 @@ public class SettingsDialog {
 		return settings;
 	}
 
-	private Profile getProfile() {
+	public Profile getProfile() {
 		return settings.getDefaultProfile();
 	}
 
@@ -270,32 +277,7 @@ public class SettingsDialog {
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
-		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Enabled", "enabled"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Filter out", "inputFilter"));
-		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression", "grepExpression").preferedStringValue("_____________________________________________"));
-		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression", "unlessGrepExpression").preferedStringValue("___________________________"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Case insensitive", "caseInsensitive"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Bold", "style.bold"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic", "style.italic"));
-		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
-		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching").tooltipText("If not checked, the first match will end highlighting"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text",
-				"highlightOnlyMatchingText"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("StatusBar count",
-				"showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)"));
-		columns.add(new SoundColumn("Sound", this));
-
-		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
-		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),
-				grepExpressionItems, 0);
-		table = new TableView<GrepExpressionItem>(model);
-		table.setDragEnabled(true);
-		table.setDropMode(DropMode.INSERT_ROWS);
-		table.setTransferHandler(new TableRowTransferHandler(table));
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table = new SettingsTableBuilder(this).getTable();
 	}
 
 	public void setData(Profile data) {
@@ -348,4 +330,5 @@ public class SettingsDialog {
 			return true;
 		return false;
 	}
+
 }

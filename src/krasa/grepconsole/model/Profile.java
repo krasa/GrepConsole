@@ -11,7 +11,9 @@ public class Profile extends DomainObject {
 	public static final String DEFAULT = "120";
 
 	private long id;
-	private boolean defaultProfile;
+    private boolean defaultProfile;
+    private  List<GrepExpressionGroup> grepExpressionGroups = new ArrayList<GrepExpressionGroup>();
+    @Deprecated
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
@@ -47,15 +49,30 @@ public class Profile extends DomainObject {
 		this.defaultProfile = defaultProfile;
 	}
 
-	public List<GrepExpressionItem> getGrepExpressionItems() {
-		return grepExpressionItems;
-	}
+    public List<GrepExpressionItem> getGrepExpressionItems() {
+        List<GrepExpressionItem> items = new ArrayList<GrepExpressionItem>();
+        for (GrepExpressionGroup group : grepExpressionGroups) {
+            items.addAll(group.getGrepExpressionItems());
+        }
+        return items;
+    }
 
 	public void setGrepExpressionItems(List<GrepExpressionItem> grepExpressionItems) {
-		this.grepExpressionItems = grepExpressionItems;
+        this.grepExpressionItems = grepExpressionItems;
 	}
 
-	public boolean isEnabledHighlighting() {
+	public List<GrepExpressionGroup> getGrepExpressionGroups() {
+		if (grepExpressionGroups.isEmpty()) {
+            grepExpressionGroups.add(new GrepExpressionGroup("default", grepExpressionItems));
+		}
+		return grepExpressionGroups;
+	}
+
+    public void setGrepExpressionGroups(List<GrepExpressionGroup> grepExpressionGroups) {
+        this.grepExpressionGroups = grepExpressionGroups;
+    }
+
+    public boolean isEnabledHighlighting() {
 		return enabledHighlighting;
 	}
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table.column;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -63,7 +63,6 @@ public class CheckBoxWithColorChooser extends JPanel {
 		myCheckbox.setSelected(selected);
 	}
 
-
 	public boolean isSelected() {
 		return myCheckbox.isSelected();
 	}
@@ -80,24 +79,26 @@ public class CheckBoxWithColorChooser extends JPanel {
 				putClientProperty("JButton.buttonType", "square");
 			}
 
-//			final ClickListener clickListener = new ClickListener() {
-//				@Override
-//				public boolean onClick(@NotNull MouseEvent e, int clickCount) {
-//					final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color", CheckBoxWithColorChooser.this.myColor);
-//					if (color != null) {
-//						if (!myCheckbox.isSelected()) {
-//							myCheckbox.setSelected(true);
-//						}
-//						myColor = color;
-//					}
-//					return true;
-//				}
-//			};
-//			clickListener.installOn(this);
+			// final ClickListener clickListener = new ClickListener() {
+			// @Override
+			// public boolean onClick(@NotNull MouseEvent e, int clickCount) {
+			// final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color",
+			// CheckBoxWithColorChooser.this.myColor);
+			// if (color != null) {
+			// if (!myCheckbox.isSelected()) {
+			// myCheckbox.setSelected(true);
+			// }
+			// myColor = color;
+			// }
+			// return true;
+			// }
+			// };
+			// clickListener.installOn(this);
 			mouseAdapter = new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color", CheckBoxWithColorChooser.this.myColor);
+					final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color",
+							CheckBoxWithColorChooser.this.myColor);
 					if (color != null) {
 						if (!myCheckbox.isSelected()) {
 							myCheckbox.setSelected(true);

@@ -1,9 +1,11 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table.column;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import krasa.grepconsole.gui.SettingsDialog;
+import krasa.grepconsole.gui.SoundSettingsForm;
 import krasa.grepconsole.model.GrepExpressionItem;
 
 import org.jetbrains.annotations.Nullable;
