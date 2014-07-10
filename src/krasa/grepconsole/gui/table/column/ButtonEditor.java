@@ -1,4 +1,4 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table.column;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;

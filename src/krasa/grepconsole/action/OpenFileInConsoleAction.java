@@ -1,8 +1,11 @@
 package krasa.grepconsole.action;
 
+import com.intellij.openapi.util.Disposer;
 import java.io.*;
+import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
 
+import java.util.concurrent.atomic.AtomicReference;
 import krasa.grepconsole.tail.TailContentExecutor;
 
 import com.intellij.execution.impl.ConsoleBuffer;
@@ -36,13 +39,30 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 
 	public void openFileInConsole(final Project project, final String path) {
 		final Process process = new MyProcess(path);
+
+		final AtomicReference<WeakReference<TailContentExecutor>> atomicReference = new AtomicReference<WeakReference<TailContentExecutor>>();
 		final ProcessHandler osProcessHandler = new BaseOSProcessHandler(process, null, Charset.defaultCharset()) {
 			@Override
 			public boolean isSilentlyDestroyOnClose() {
 				return true;
 			}
+
+			@Override
+			public void destroyProcess() {
+				super.destroyProcess();
+				WeakReference<TailContentExecutor> tailContentExecutorWeakReference = atomicReference.get();
+				if (tailContentExecutorWeakReference != null) {
+					TailContentExecutor disposable = tailContentExecutorWeakReference.get();
+					if (disposable != null) {
+						disposable.dispose();
+					}
+				}
+			}
 		};
 		final TailContentExecutor executor = new TailContentExecutor(project, osProcessHandler);
+		final WeakReference<TailContentExecutor> weakReference = new WeakReference<TailContentExecutor>(executor);
+		atomicReference.set(weakReference);
+
 		executor.withRerun(new Runnable() {
 			@Override
 			public void run() {
@@ -54,6 +74,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		executor.withTitle(new File(path).getName());
 		executor.run();
 	}
+
 	private class MyProcess extends Process {
 		protected volatile boolean running = true;
 		protected FileInputStream inputStream;
@@ -114,7 +135,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 				inputStream.close();
 			} catch (IOException e) {
 				// who cares
-			}finally {
+			} finally {
 				running = false;
 			}
 		}

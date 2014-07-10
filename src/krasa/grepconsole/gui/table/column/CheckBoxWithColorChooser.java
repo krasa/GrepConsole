@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table.column;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -28,9 +28,9 @@ import com.intellij.ui.ColorChooser;
  * @author Konstantin Bulenkov
  */
 public class CheckBoxWithColorChooser extends JPanel {
-	private Color myColor;
 	private final JCheckBox myCheckbox;
 	protected MyColorButton myColorButton;
+	private Color myColor;
 
 	public CheckBoxWithColorChooser(String text, boolean selected, Color color) {
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -59,13 +59,16 @@ public class CheckBoxWithColorChooser extends JPanel {
 		myColor = color;
 	}
 
+	public boolean isSelected() {
+		return myCheckbox.isSelected();
+	}
+
 	public void setSelected(boolean selected) {
 		myCheckbox.setSelected(selected);
 	}
 
+	public void onColorChanged() {
 
-	public boolean isSelected() {
-		return myCheckbox.isSelected();
 	}
 
 	private class MyColorButton extends JButton {
@@ -80,24 +83,26 @@ public class CheckBoxWithColorChooser extends JPanel {
 				putClientProperty("JButton.buttonType", "square");
 			}
 
-//			final ClickListener clickListener = new ClickListener() {
-//				@Override
-//				public boolean onClick(@NotNull MouseEvent e, int clickCount) {
-//					final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color", CheckBoxWithColorChooser.this.myColor);
-//					if (color != null) {
-//						if (!myCheckbox.isSelected()) {
-//							myCheckbox.setSelected(true);
-//						}
-//						myColor = color;
-//					}
-//					return true;
-//				}
-//			};
-//			clickListener.installOn(this);
+			// final ClickListener clickListener = new ClickListener() {
+			// @Override
+			// public boolean onClick(@NotNull MouseEvent e, int clickCount) {
+			// final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color",
+			// CheckBoxWithColorChooser.this.myColor);
+			// if (color != null) {
+			// if (!myCheckbox.isSelected()) {
+			// myCheckbox.setSelected(true);
+			// }
+			// myColor = color;
+			// }
+			// return true;
+			// }
+			// };
+			// clickListener.installOn(this);
 			mouseAdapter = new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color", CheckBoxWithColorChooser.this.myColor);
+					final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color",
+							CheckBoxWithColorChooser.this.myColor);
 					if (color != null) {
 						if (!myCheckbox.isSelected()) {
 							myCheckbox.setSelected(true);
@@ -130,9 +135,5 @@ public class CheckBoxWithColorChooser extends JPanel {
 		public Dimension getPreferredSize() {
 			return new Dimension(12, 12);
 		}
-	}
-
-	public void onColorChanged() {
-
 	}
 }

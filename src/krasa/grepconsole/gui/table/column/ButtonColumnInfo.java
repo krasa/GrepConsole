@@ -1,4 +1,4 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table.column;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;

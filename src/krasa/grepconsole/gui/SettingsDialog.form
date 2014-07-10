@@ -19,7 +19,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="1e8d0" class="javax.swing.JTable" binding="table" custom-create="true" default-binding="true">
+          <component id="1e8d0" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="table" custom-create="true" default-binding="true">
             <constraints/>
             <properties/>
           </component>
