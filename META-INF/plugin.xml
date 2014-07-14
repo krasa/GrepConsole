@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.4.128.55</version>
+	<version>4.4.128.55.1</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -117,12 +117,12 @@
 				description="Open Current Editor File in Console">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
-		<action id="OpenFileInConsoleToolbarAction"
-				class="krasa.grepconsole.action.OpenFileInConsoleToolbarAction"
-				text="Tail File"
-				description="Drag and drop to open in console">
-			<add-to-group group-id="MainToolBar" anchor="last"/>
-		</action>
+		<!--<action id="OpenFileInConsoleToolbarAction"-->
+		<!--class="krasa.grepconsole.action.OpenFileInConsoleToolbarAction"-->
+		<!--text="Tail File"-->
+		<!--description="Drag and drop to open in console">-->
+		<!--<add-to-group group-id="MainToolBar" anchor="last"/>-->
+		<!--</action>-->
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
