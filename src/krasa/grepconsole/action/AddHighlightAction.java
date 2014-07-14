@@ -1,7 +1,9 @@
 package krasa.grepconsole.action;
 
 import java.awt.*;
-import java.awt.datatransfer.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
 import javax.swing.*;
@@ -24,6 +26,17 @@ import com.intellij.ui.ColorPicker;
 public class AddHighlightAction extends HighlightManipulationAction {
 	public AddHighlightAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
 		super(text, description, icon);
+	}
+
+	private static JComponent rootComponent(Project project) {
+		if (project != null) {
+			IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
+			if (frame != null)
+				return frame.getComponent();
+		}
+
+		JFrame frame = WindowManager.getInstance().findVisibleFrame();
+		return frame != null ? frame.getRootPane() : null;
 	}
 
 	@Override
@@ -52,22 +65,13 @@ public class AddHighlightAction extends HighlightManipulationAction {
 		}
 	}
 
-	private static JComponent rootComponent(Project project) {
-		if (project != null) {
-			IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
-			if (frame != null)
-				return frame.getComponent();
-		}
-
-		JFrame frame = WindowManager.getInstance().findVisibleFrame();
-		return frame != null ? frame.getRootPane() : null;
-	}
-
 	private void addExpressionItem(String string, Color color, final Profile profile) {
 		GrepStyle style = new GrepStyle();
 		style.setForegroundColor(new GrepColor(Color.BLACK));
 		style.setBackgroundColor(new GrepColor(color));
-		profile.getGrepExpressionItems().add(
+		java.util.List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
+		GrepExpressionGroup group = grepExpressionGroups.get(0);
+		group.getGrepExpressionItems().add(
 				0,
 				new GrepExpressionItem().grepExpression(string).style(style).highlightOnlyMatchingText(true).operationOnMatch(
 						Operation.CONTINUE_MATCHING));

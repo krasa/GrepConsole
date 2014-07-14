@@ -1,15 +1,13 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.ui.JBColor;
-import com.intellij.util.ui.UIUtil;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
-import krasa.grepconsole.model.Profile;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import krasa.grepconsole.model.*;
+
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
 
 public class DefaultState {
 	public static List<Profile> createDefault() {
@@ -17,7 +15,8 @@ public class DefaultState {
 		Profile profile = new Profile();
 		profile.setDefaultProfile(true);
 		profiles.add(profile);
-		profile.setGrepExpressionItems(createDefaultItems());
+		profile.getGrepExpressionGroups().add(new GrepExpressionGroup("default", createDefaultItems()));
+		profile.getGrepExpressionItems().clear();
 		return profiles;
 	}
 

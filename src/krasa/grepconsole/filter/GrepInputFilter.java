@@ -1,15 +1,18 @@
 package krasa.grepconsole.filter;
 
-import com.intellij.execution.filters.InputFilter;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import krasa.grepconsole.grep.FilterState;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 
-import java.util.*;
+import com.intellij.execution.filters.InputFilter;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Pair;
 
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
@@ -23,7 +26,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
-																  ConsoleViewContentType consoleViewContentType) {
+			ConsoleViewContentType consoleViewContentType) {
 		FilterState state = super.filter(s, -1);
 		return prepareResult(state);
 	}
@@ -52,7 +55,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		grepProcessors = new ArrayList<GrepProcessor>();
 		if (profile.isEnabledInputFiltering()) {
 			boolean inputFilterExists = false;
-			for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
+			for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {
 				grepProcessors.add(grepExpressionItem.createProcessor());
 				if (grepExpressionItem.isInputFilter()) {
 					inputFilterExists = true;

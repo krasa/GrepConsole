@@ -2,31 +2,47 @@ package krasa.grepconsole.gui;
 
 import static krasa.grepconsole.Cloner.deepClone;
 
-import java.awt.event.*;
-import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
 
-import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.gui.table.CheckboxTreeTable;
+import krasa.grepconsole.gui.table.GrepExpressionGroupTreeNode;
+import krasa.grepconsole.gui.table.GrepExpressionItemTreeNode;
+import krasa.grepconsole.gui.table.TableUtils;
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionGroup;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.DefaultState;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.tail.TailIntegrationForm;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.*;
-import com.intellij.ui.table.TableView;
-import com.intellij.util.ui.ColumnInfo;
-import com.intellij.util.ui.ListTableModel;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.ui.CheckedTreeNode;
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.tree.TreeUtil;
 
 public class SettingsDialog {
 	private static final Logger log = Logger.getInstance(SettingsDialog.class);
-
 	private JPanel rootComponent;
-	private JTable table;
+	private CheckboxTreeTable table;
 	private JButton addNewButton;
 	private JButton resetToDefaultButton;
 	private JCheckBox enableHighlightingCheckBox;
@@ -43,9 +59,9 @@ public class SettingsDialog {
 	private JCheckBox showStatsInConsoleByDefault;
 	private JCheckBox showStatsInStatusBarByDefault;
 	private JButton fileTailSettings;
+	private JButton reddit;
+	private JButton addNewGroup;
 	private PluginState settings;
-	protected ListTableModel<GrepExpressionItem> model;
-	protected Integer selectedRow;
 
 	public SettingsDialog(PluginState settings) {
 		this.settings = settings;
@@ -57,38 +73,19 @@ public class SettingsDialog {
 				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
 			}
 		});
-		addNewButton.addActionListener(new ActionListener() {
+		reddit.setBorder(BorderFactory.createEmptyBorder(0, 50, 0, 50));
+		reddit.setContentAreaFilled(false);
+		reddit.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				boolean selectNewRow = model.getRowCount() == 0;
-				model.addRow(new GrepExpressionItem());
-				if (selectNewRow) {
-					table.getSelectionModel().setSelectionInterval(0, 0);
-				}
+				BareBonesBrowserLaunch.openURL("http://www.reddit.com/r/IntelliJIDEA/");
 			}
 		});
-		resetToDefaultButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				SettingsDialog.this.settings.setProfiles(DefaultState.createDefault());
-				model.setItems(getProfile().getGrepExpressionItems());
-				disableCopyDeleteButton();
-				setData(getProfile());
-			}
-		});
-		copyButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				copyRow();
-			}
-		});
-		deleteButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				delete();
-
-			}
-		});
+		addNewButton.addActionListener(new AddNewItemAction());
+		addNewGroup.addActionListener(new AddNewGroupAction());
+		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
+		copyButton.addActionListener(new CopyAction());
+		deleteButton.addActionListener(new DeleteAction());
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
@@ -100,79 +97,7 @@ public class SettingsDialog {
 				}
 			}
 		});
-		table.addMouseListener(new MouseAdapter() {
-			public void mousePressed(MouseEvent e) {
-				if (SwingUtilities.isLeftMouseButton(e)) {
-				} else if (SwingUtilities.isRightMouseButton(e)) {
-					if (selectedRow == null) {
-						return;
-					}
-					JPopupMenu popup = new JBPopupMenu();
-					popup.add(getConvertAction());
-					popup.add(getCopyAction());
-					popup.add(getDeleteAction());
-					popup.show(e.getComponent(), e.getX(), e.getY());
-				}
-			}
-
-			private JMenuItem getCopyAction() {
-				final JMenuItem copy = new JMenuItem("Copy");
-				copy.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						copyRow();
-					}
-				});
-				return copy;
-			}
-
-			private JMenuItem getDeleteAction() {
-				final JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						delete();
-					}
-				});
-				return delete;
-			}
-
-			private JMenuItem getConvertAction() {
-				final GrepExpressionItem item = getGrepExpressionItem();
-				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
-				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
-						: "Convert to words only");
-
-				convert.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (!highlightOnlyMatchingText) {
-							getGrepExpressionItem().setHighlightOnlyMatchingText(true);
-							getGrepExpressionItem().setContinueMatching(true);
-							if (item.getGrepExpression().startsWith(".*")) {
-								item.grepExpression(item.getGrepExpression().substring(2));
-							}
-							if (item.getGrepExpression().endsWith(".*")) {
-								item.grepExpression(item.getGrepExpression().substring(0,
-										item.getGrepExpression().length() - 2));
-							}
-						} else {
-							getGrepExpressionItem().setHighlightOnlyMatchingText(false);
-							getGrepExpressionItem().setContinueMatching(false);
-							if (!item.getGrepExpression().startsWith(".*")) {
-								item.grepExpression(".*" + item.getGrepExpression());
-							}
-							if (!item.getGrepExpression().endsWith(".*")) {
-								item.grepExpression(item.getGrepExpression() + ".*");
-							}
-						}
-						model.fireTableRowsUpdated(selectedRow, selectedRow);
-					}
-				});
-				return convert;
-			}
-
-		});
+		table.addMouseListener(rightClickMenu());
 		disableCopyDeleteButton();
 		ansi.addActionListener(new ActionListener() {
 			@Override
@@ -183,51 +108,92 @@ public class SettingsDialog {
 			}
 		});
 
-		fileTailSettings.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				final TailIntegrationForm form = new TailIntegrationForm();
-				form.setData(getTailSettings());
+		fileTailSettings.addActionListener(new FileTailSettings());
+	}
 
-				DialogBuilder builder = new DialogBuilder(SettingsDialog.this.getRootComponent());
-				builder.setCenterPanel(form.getRoot());
-				builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
-				builder.setTitle("Tail File settings");
-				builder.removeAllActions();
-				builder.addOkAction();
-				builder.addCancelAction();
-
-				boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
-				if (isOk) {
-					form.getData(getTailSettings());
-					GrepConsoleApplicationComponent.getInstance().getState().setTailSettings(getTailSettings());
-					form.rebind(getTailSettings());
+	public MouseAdapter rightClickMenu() {
+		return new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (SwingUtilities.isLeftMouseButton(e)) {
+				} else if (SwingUtilities.isRightMouseButton(e)) {
+					if (getSelectedNode() == null) {
+						return;
+					}
+					JPopupMenu popup = new JBPopupMenu();
+					GrepExpressionItem selectedGrepExpressionItem = getSelectedGrepExpressionItem();
+					if (selectedGrepExpressionItem != null) {
+						popup.add(getConvertAction(selectedGrepExpressionItem));
+					}
+					popup.add(newMenuItem("Add New Item", new AddNewItemAction()));
+					popup.add(newMenuItem("Copy", new CopyAction()));
+					popup.add(newMenuItem("Delete", new DeleteAction()));
+					popup.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
-		});
-	}
 
-	private TailSettings getTailSettings() {
-		return settings.getTailSettings();
-	}
-
-	private GrepExpressionItem getGrepExpressionItem() {
-		return (GrepExpressionItem) model.getItem(selectedRow);
-	}
-	private void delete() {
-		if (selectedRow < model.getRowCount()) {
-			model.removeRow(selectedRow);
-			table.getSelectionModel().setSelectionInterval(selectedRow, selectedRow);
-			if (model.getRowCount() == 0) {
-				disableCopyDeleteButton();
+			private JMenuItem newMenuItem(String name, ActionListener l) {
+				final JMenuItem item = new JMenuItem(name);
+				item.addActionListener(l);
+				return item;
 			}
-		}
+
+			private JMenuItem getConvertAction(final GrepExpressionItem item) {
+				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
+				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
+						: "Convert to words only");
+
+				try {
+					convert.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							if (!highlightOnlyMatchingText) {
+								getSelectedGrepExpressionItem().setHighlightOnlyMatchingText(true);
+								getSelectedGrepExpressionItem().setContinueMatching(true);
+								if (item.getGrepExpression().startsWith(".*")) {
+									item.grepExpression(item.getGrepExpression().substring(2));
+								}
+								if (item.getGrepExpression().endsWith(".*")) {
+									item.grepExpression(item.getGrepExpression().substring(0,
+											item.getGrepExpression().length() - 2));
+								}
+							} else {
+								getSelectedGrepExpressionItem().setHighlightOnlyMatchingText(false);
+								getSelectedGrepExpressionItem().setContinueMatching(false);
+								if (!item.getGrepExpression().startsWith(".*")) {
+									item.grepExpression(".*" + item.getGrepExpression());
+								}
+								if (!item.getGrepExpression().endsWith(".*")) {
+									item.grepExpression(item.getGrepExpression() + ".*");
+								}
+							}
+							reloadNode(SettingsDialog.this.getSelectedNode());
+						}
+
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return convert;
+			}
+		};
 	}
 
-	private void copyRow() {
-		GrepExpressionItem expressionItem = deepClone(getGrepExpressionItem());
-		expressionItem.generateNewId();
-		model.insertRow(selectedRow, expressionItem);
+	private void reloadNode(final DefaultMutableTreeNode selectedNode) {
+		DefaultTreeModel model = (DefaultTreeModel) table.getTree().getModel();
+		model.nodeChanged(selectedNode);
+	}
+
+	private GrepExpressionItem getSelectedGrepExpressionItem() {
+		DefaultMutableTreeNode selectedNode = getSelectedNode();
+		GrepExpressionItem item = null;
+		if (selectedNode instanceof GrepExpressionItemTreeNode) {
+			item = (GrepExpressionItem) selectedNode.getUserObject();
+		}
+		return item;
+	}
+
+	public DefaultMutableTreeNode getSelectedNode() {
+		return (DefaultMutableTreeNode) table.getTree().getLastSelectedPathComponent();
 	}
 
 	private void disableCopyDeleteButton() {
@@ -236,9 +202,8 @@ public class SettingsDialog {
 	}
 
 	private void setSelectedRow(Integer selectedRow) {
-		deleteButton.setEnabled(selectedRow != null);
-		copyButton.setEnabled(selectedRow != null);
-		this.selectedRow = selectedRow;
+		deleteButton.setEnabled(selectedRow != null && selectedRow >= 0);
+		copyButton.setEnabled(selectedRow != null && selectedRow >= 0);
 	}
 
 	public JPanel getRootComponent() {
@@ -250,14 +215,28 @@ public class SettingsDialog {
 		return settings;
 	}
 
-	private Profile getProfile() {
+	public Profile getProfile() {
 		return settings.getDefaultProfile();
 	}
 
 	public void importFrom(PluginState settings) {
 		this.settings = settings;
-		model.setItems(getProfile().getGrepExpressionItems());
 		setData(settings.getDefaultProfile());
+		resetTreeModel();
+	}
+
+	private void resetTreeModel() {
+		CheckedTreeNode root = (CheckedTreeNode) table.getTree().getModel().getRoot();
+		root.removeAllChildren();
+		for (GrepExpressionGroup group : getProfile().getGrepExpressionGroups()) {
+			GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
+			for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
+				newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
+			}
+			root.add(newChild);
+		}
+		TableUtils.reloadTree(table);
+		TreeUtil.expandAll(table.getTree());
 	}
 
 	public boolean isSettingsModified(PluginState data) {
@@ -270,32 +249,7 @@ public class SettingsDialog {
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
-		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Enabled", "enabled"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Filter out", "inputFilter"));
-		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression", "grepExpression").preferedStringValue("_____________________________________________"));
-		columns.add(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression", "unlessGrepExpression").preferedStringValue("___________________________"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Case insensitive", "caseInsensitive"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Bold", "style.bold"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic", "style.italic"));
-		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background", "style.backgroundColor"));
-		columns.add(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground", "style.foregroundColor"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching").tooltipText("If not checked, the first match will end highlighting"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Highlight only matching text",
-				"highlightOnlyMatchingText"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("StatusBar count",
-				"showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)"));
-		columns.add(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)"));
-		columns.add(new SoundColumn("Sound", this));
-
-		List<GrepExpressionItem> grepExpressionItems = getProfile().getGrepExpressionItems();
-		model = new ListTableModel<GrepExpressionItem>(columns.toArray(new ColumnInfo[columns.size()]),
-				grepExpressionItems, 0);
-		table = new TableView<GrepExpressionItem>(model);
-		table.setDragEnabled(true);
-		table.setDropMode(DropMode.INSERT_ROWS);
-		table.setTransferHandler(new TableRowTransferHandler(table));
-		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table = new SettingsTableBuilder(this).getTable();
 	}
 
 	public void setData(Profile data) {
@@ -347,5 +301,190 @@ public class SettingsDialog {
 		if (showStatsInStatusBarByDefault.isSelected() != data.isShowStatsInStatusBarByDefault())
 			return true;
 		return false;
+	}
+
+	private GrepExpressionItem newItem() {
+		GrepExpressionItem item = new GrepExpressionItem();
+		item.setGrepExpression("foo");
+		item.setEnabled(true);
+		item.setContinueMatching(true);
+		item.setHighlightOnlyMatchingText(true);
+		item.getStyle().setBackgroundColor(new GrepColor(true, JBColor.CYAN));
+		return item;
+	}
+
+	private GrepExpressionGroup getGrepExpressionGroup(DefaultMutableTreeNode selectedNode) {
+		return (GrepExpressionGroup) selectedNode.getUserObject();
+	}
+
+	private GrepExpressionItem getSelectedGrepExpressionItem(DefaultMutableTreeNode selectedNode) {
+		return (GrepExpressionItem) selectedNode.getUserObject();
+	}
+
+	public void rebuildProfile() {
+		List<GrepExpressionGroup> grepExpressionGroups = getProfile().getGrepExpressionGroups();
+		grepExpressionGroups.clear();
+
+		DefaultMutableTreeNode model = (DefaultMutableTreeNode) table.getTree().getModel().getRoot();
+		Enumeration children = model.children();
+		while (children.hasMoreElements()) {
+			DefaultMutableTreeNode o = (DefaultMutableTreeNode) children.nextElement();
+			if (o instanceof GrepExpressionGroupTreeNode) {
+				GrepExpressionGroup grepExpressionGroup = ((GrepExpressionGroupTreeNode) o).getGrepExpressionGroup();
+				grepExpressionGroup.getGrepExpressionItems().clear();
+				Enumeration children1 = o.children();
+				while (children1.hasMoreElements()) {
+					Object o1 = children1.nextElement();
+					if (o1 instanceof GrepExpressionItemTreeNode) {
+						GrepExpressionItem grepExpressionItem = ((GrepExpressionItemTreeNode) o1).getGrepExpressionItem();
+						grepExpressionGroup.add(grepExpressionItem);
+					} else {
+						throw new IllegalStateException("unexpected tree node" + o1);
+					}
+				}
+				grepExpressionGroups.add(grepExpressionGroup);
+			} else {
+				throw new IllegalStateException("unexpected tree node" + o);
+			}
+		}
+	}
+
+	private class AddNewItemAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DefaultMutableTreeNode selectedNode = getSelectedNode();
+			CheckedTreeNode newChild;
+			if (selectedNode == null) {
+				DefaultMutableTreeNode root = (DefaultMutableTreeNode) table.getTree().getModel().getRoot();
+				GrepExpressionGroupTreeNode aNew = new GrepExpressionGroupTreeNode(new GrepExpressionGroup("new"));
+				newChild = new GrepExpressionItemTreeNode(newItem());
+				aNew.add(newChild);
+				root.add(aNew);
+			} else if (selectedNode.getUserObject() instanceof GrepExpressionGroup) {
+				newChild = new GrepExpressionItemTreeNode(newItem());
+				selectedNode.add(newChild);
+			} else {
+				GrepExpressionGroupTreeNode parent = (GrepExpressionGroupTreeNode) selectedNode.getParent();
+				newChild = new GrepExpressionItemTreeNode(newItem());
+				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
+			}
+			rebuildProfile();
+			TableUtils.reloadTree(table);
+			TableUtils.selectNode(newChild, table);
+		}
+	}
+
+	private class AddNewGroupAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) table.getTree().getModel().getRoot();
+			GrepExpressionGroupTreeNode aNew = new GrepExpressionGroupTreeNode(new GrepExpressionGroup("new"));
+			root.add(aNew);
+			rebuildProfile();
+			TableUtils.reloadTree(table);
+			TableUtils.selectNode(aNew, table);
+		}
+	}
+
+	private class ResetToDefaultAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			SettingsDialog.this.settings.setProfiles(DefaultState.createDefault());
+			disableCopyDeleteButton();
+			importFrom(SettingsDialog.this.settings);
+		}
+	}
+
+	private class CopyAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DefaultMutableTreeNode selectedNode = getSelectedNode();
+			if (selectedNode instanceof GrepExpressionItemTreeNode) {
+				GrepExpressionItemTreeNode newChild = new GrepExpressionItemTreeNode(copy(selectedNode));
+				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
+				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
+
+				TableUtils.reloadTree(SettingsDialog.this.table);
+				TableUtils.selectNode(newChild, SettingsDialog.this.table);
+			} else if (selectedNode instanceof GrepExpressionGroupTreeNode) {
+				GrepExpressionGroup group = copy((GrepExpressionGroup) selectedNode.getUserObject());
+				GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
+				for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
+					newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
+				}
+				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
+				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
+
+				TableUtils.reloadTree(SettingsDialog.this.table);
+				TableUtils.expand(newChild, SettingsDialog.this.table);
+				TableUtils.selectNode(newChild, SettingsDialog.this.table);
+			}
+			rebuildProfile();
+		}
+
+		private GrepExpressionGroup copy(final GrepExpressionGroup grepExpressionGroup) {
+			GrepExpressionGroup group = deepClone(grepExpressionGroup);
+			for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
+				grepExpressionItem.generateNewId();
+			}
+			return group;
+		}
+
+		private GrepExpressionItem copy(DefaultMutableTreeNode selectedNode) {
+			GrepExpressionItem expressionItem = deepClone((GrepExpressionItem) selectedNode.getUserObject());
+			expressionItem.generateNewId();
+			return expressionItem;
+		}
+	}
+
+	private class DeleteAction implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			DefaultMutableTreeNode selectedNode = getSelectedNode();
+			if (selectedNode != null) {
+				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
+				int index = parent.getIndex(selectedNode);
+				TreeNode selectNode = null;
+				if (index + 1 < parent.getChildCount()) {
+					selectNode = parent.getChildAt(index + 1);
+				} else if (index > 0) {
+					selectNode = parent.getChildAt(index - 1);
+				} else {
+					selectNode = parent;
+				}
+				parent.remove(selectedNode);
+				rebuildProfile();
+				TableUtils.reloadTree(SettingsDialog.this.table);
+				TableUtils.selectNode((DefaultMutableTreeNode) selectNode, table);
+
+			}
+			DefaultMutableTreeNode root = (DefaultMutableTreeNode) table.getTree().getModel().getRoot();
+			if (root.getChildCount() == 0) {
+				disableCopyDeleteButton();
+			}
+		}
+	}
+
+	private class FileTailSettings implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final TailIntegrationForm form = new TailIntegrationForm();
+			form.setData(settings.getTailSettings());
+
+			DialogBuilder builder = new DialogBuilder(SettingsDialog.this.getRootComponent());
+			builder.setCenterPanel(form.getRoot());
+			builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
+			builder.setTitle("Tail File settings");
+			builder.removeAllActions();
+			builder.addOkAction();
+			builder.addCancelAction();
+
+			boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+			if (isOk) {
+				form.getData(settings.getTailSettings());
+				GrepConsoleApplicationComponent.getInstance().getState().setTailSettings(settings.getTailSettings());
+				form.rebind(settings.getTailSettings());
+			}
+		}
 	}
 }

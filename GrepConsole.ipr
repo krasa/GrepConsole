@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="ArtifactManager">
-    <artifact type="jar" build-on-make="true" name="GrepConsole-http-client:jar">
-      <output-path>$PROJECT_DIR$/lib</output-path>
-      <root id="archive" name="GrepConsole-http-client.jar">
-        <element id="module-output" name="http-client" />
-      </root>
-    </artifact>
-  </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Eclipse" />
     <resourceExtensions />
@@ -40,14 +32,11 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="false">
     <file url="file://$PROJECT_DIR$/lib/cloning-1.8.5.jar" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/lib/commons-beanutils.jar" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/lib/jna-4.1.0.jar" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/lib/jna-platform-4.1.0.jar" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/test/formatSettings.xml" charset="UTF-8" />
   </component>
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
-  <component name="IdProvider" IDEtalkID="29023F573E16279D36068D772912E465" />
   <component name="IntelliCalc">
     <mode value="0" />
     <system value="10" />
@@ -197,10 +186,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GrepConsole.iml" filepath="$PROJECT_DIR$/GrepConsole.iml" />
-      <module fileurl="file://$PROJECT_DIR$/http-client/http-client.iml" filepath="$PROJECT_DIR$/http-client/http-client.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IU-135.689" project-jdk-type="IDEA JDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="IDEA IC-129.1359" project-jdk-type="IDEA JDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="VcsDirectoryMappings">
@@ -233,8 +221,11 @@
         <root url="file://$PROJECT_DIR$/lib" />
       </CLASSES>
       <JAVADOC />
-      <SOURCES />
+      <SOURCES>
+        <root url="file://$PROJECT_DIR$/lib/src" />
+      </SOURCES>
       <jarDirectory url="file://$PROJECT_DIR$/lib" recursive="false" />
+      <jarDirectory url="file://$PROJECT_DIR$/lib/src" recursive="false" type="SOURCES" />
     </library>
     <library name="src">
       <CLASSES />
