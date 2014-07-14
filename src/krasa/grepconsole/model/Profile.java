@@ -65,7 +65,7 @@ public class Profile extends DomainObject {
 	}
 
 	public List<GrepExpressionGroup> getGrepExpressionGroups() {
-		if (grepExpressionGroups.isEmpty()) {
+		if (grepExpressionGroups.isEmpty() && grepExpressionItems != null && !grepExpressionItems.isEmpty()) {
 			GrepExpressionGroup expressionGroup = new GrepExpressionGroup("default");
 			expressionGroup.getGrepExpressionItems().addAll(grepExpressionItems);
 			grepExpressionItems.clear();

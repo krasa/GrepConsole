@@ -48,7 +48,7 @@ public class SettingsDialog {
 	private JCheckBox enableHighlightingCheckBox;
 	private JFormattedTextField maxLengthToMatch;
 	private JCheckBox enableMaxLength;
-	private JButton copyButton;
+	private JButton duplicateButton;
 	private JButton deleteButton;
 	private JCheckBox enableFiltering;
 	private JCheckBox ansi;
@@ -84,7 +84,7 @@ public class SettingsDialog {
 		addNewButton.addActionListener(new AddNewItemAction());
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
-		copyButton.addActionListener(new CopyAction());
+		duplicateButton.addActionListener(new DuplicateAction());
 		deleteButton.addActionListener(new DeleteAction());
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -125,7 +125,7 @@ public class SettingsDialog {
 						popup.add(getConvertAction(selectedGrepExpressionItem));
 					}
 					popup.add(newMenuItem("Add New Item", new AddNewItemAction()));
-					popup.add(newMenuItem("Copy", new CopyAction()));
+					popup.add(newMenuItem("Duplicate", new DuplicateAction()));
 					popup.add(newMenuItem("Delete", new DeleteAction()));
 					popup.show(e.getComponent(), e.getX(), e.getY());
 				}
@@ -198,12 +198,12 @@ public class SettingsDialog {
 
 	private void disableCopyDeleteButton() {
 		deleteButton.setEnabled(false);
-		copyButton.setEnabled(false);
+		duplicateButton.setEnabled(false);
 	}
 
 	private void setSelectedRow(Integer selectedRow) {
 		deleteButton.setEnabled(selectedRow != null && selectedRow >= 0);
-		copyButton.setEnabled(selectedRow != null && selectedRow >= 0);
+		duplicateButton.setEnabled(selectedRow != null && selectedRow >= 0);
 	}
 
 	public JPanel getRootComponent() {
@@ -395,7 +395,7 @@ public class SettingsDialog {
 		}
 	}
 
-	private class CopyAction implements ActionListener {
+	private class DuplicateAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			DefaultMutableTreeNode selectedNode = getSelectedNode();
