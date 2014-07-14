@@ -1,4 +1,4 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table.column;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -37,10 +37,9 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 	public TableCellRenderer getRenderer(final Item o) {
 		return new TableCellRenderer() {
 
-
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-														   boolean hasFocus, int row, int column) {
+					boolean hasFocus, int row, int column) {
 				return getCheckBoxWithColorChooser((GrepColor) value, null);
 			}
 		};
@@ -65,7 +64,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 
 			@Override
 			public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
-														 int column) {
+					int column) {
 				return checkBoxWithColorChooser = getCheckBoxWithColorChooser((GrepColor) value, this);
 			}
 		};
@@ -73,7 +72,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 	}
 
 	private CheckBoxWithColorChooser getCheckBoxWithColorChooser(GrepColor color,
-																 final AbstractTableCellEditor abstractTableCellEditor) {
+			final AbstractTableCellEditor abstractTableCellEditor) {
 		if (color == null) {
 			color = new GrepColor();
 		}

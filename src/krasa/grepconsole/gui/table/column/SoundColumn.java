@@ -1,9 +1,11 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table.column;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import krasa.grepconsole.gui.SettingsDialog;
+import krasa.grepconsole.gui.SoundSettingsForm;
 import krasa.grepconsole.model.GrepExpressionItem;
 
 import org.jetbrains.annotations.Nullable;
@@ -16,11 +18,10 @@ import com.intellij.openapi.util.IconLoader;
  * @author Vojtech Krasa
  */
 public class SoundColumn extends ButtonColumnInfo<GrepExpressionItem> {
-	private final SettingsDialog settingsDialog;
-	protected SoundSettingsForm soundSettingsForm;
-
 	public static final Icon SOUND_OFF = IconLoader.getIcon("soundOff.gif", SoundColumn.class);
 	public static final Icon SOUND_ON = IconLoader.getIcon("soundOn.gif", SoundColumn.class);
+	private final SettingsDialog settingsDialog;
+	protected SoundSettingsForm soundSettingsForm;
 
 	public SoundColumn(String sound, SettingsDialog settingsDialog) {
 		super(sound);
