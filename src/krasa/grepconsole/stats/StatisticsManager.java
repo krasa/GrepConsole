@@ -116,12 +116,9 @@ public class StatisticsManager {
 	public static GrepConsoleStatusBarWidget getStatusBarPanel(@NotNull ConsoleViewImpl consoleView) {
 		final Project project = consoleView.getProject();
 		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
-		if (ideFrame instanceof IdeStatusBarImpl) {
-			final IdeStatusBarImpl statusBar = (IdeStatusBarImpl) ideFrame.getStatusBar();
-			StatusBarWidget widget = statusBar.getWidget(GrepConsoleStatusBarWidget.createId(consoleView));
-			return (GrepConsoleStatusBarWidget) widget;
-		}
-		return null;
+		final IdeStatusBarImpl statusBar = (IdeStatusBarImpl) ideFrame.getStatusBar();
+		StatusBarWidget widget = statusBar.getWidget(GrepConsoleStatusBarWidget.createId(consoleView));
+		return (GrepConsoleStatusBarWidget) widget;
 	}
 
 	@Nullable
