@@ -3,7 +3,6 @@ package krasa.grepconsole.integration;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import krasa.grepconsole.action.AddHighlightAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.AnsiInputFilter;
 import krasa.grepconsole.filter.GrepHighlightFilter;
