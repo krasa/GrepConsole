@@ -10,6 +10,7 @@ import javax.swing.*;
 
 public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	public static final Icon ICON = IconLoader.getIcon("highlight.gif", OpenConsoleSettingsAction.class);
+	public static final Icon STATS = IconLoader.getIcon("stats.gif", OpenConsoleSettingsAction.class);
 	private ConsoleView console;
 
 	public OpenConsoleSettingsAction() {

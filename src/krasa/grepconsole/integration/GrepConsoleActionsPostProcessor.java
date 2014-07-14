@@ -40,12 +40,12 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 			@NotNull
 			@Override
 			public AnAction[] getChildren(@Nullable AnActionEvent anActionEvent) {
-				return new AnAction[]{new OpenConsoleSettingsAction(console),
-						new ShowHideStatisticsStatusBarPanelAction(console),
+				return new AnAction[] { new ShowHideStatisticsStatusBarPanelAction(console),
 						new ShowHideStatisticsConsolePanelAction(console)};
 			}
 		};
-		e.getTemplatePresentation().setIcon(OpenConsoleSettingsAction.ICON);
+		e.getTemplatePresentation().setIcon(OpenConsoleSettingsAction.STATS);
+		anActions.add(new OpenConsoleSettingsAction(console));
 		anActions.add(e);
 		anActions.addAll(Arrays.asList(actions));
 
