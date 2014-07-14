@@ -19,7 +19,12 @@ public class GrepConsoleStatusBarWidget implements CustomStatusBarWidget {
 	protected StatisticsStatusBarPanel statisticsPanel;
 
 	public GrepConsoleStatusBarWidget(ConsoleViewImpl console, GrepHighlightFilter lastGrepHighlightFilter) {
-		statisticsPanel = new StatisticsStatusBarPanel(console, lastGrepHighlightFilter);
+		statisticsPanel = new StatisticsStatusBarPanel(console, lastGrepHighlightFilter) {
+			@Override
+			protected void hideStatusBar() {
+				dispose();
+			}
+		};
 		id = createId(console);
 		project = console.getProject();
 	}

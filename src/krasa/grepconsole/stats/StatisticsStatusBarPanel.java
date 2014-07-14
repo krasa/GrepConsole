@@ -3,8 +3,9 @@ package krasa.grepconsole.stats;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.*;
 
@@ -17,23 +18,30 @@ import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.ui.*;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.ui.*;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.PopupHandler;
+import com.intellij.ui.SeparatorComponent;
 import com.intellij.ui.content.ContentManager;
 
 /**
  * @author Vojtech Krasa
  */
-public class StatisticsStatusBarPanel extends JPanel {
+public abstract class StatisticsStatusBarPanel extends JPanel {
+	private final JPanel jPanel;
 	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<Pair<JLabel, GrepProcessor>>();
 	private java.util.Timer timer;
-	private final JPanel jPanel;
 	private WeakReference<ConsoleView> consoleView;
 	private GrepHighlightFilter grepHighlightFilter;
 
@@ -72,12 +80,7 @@ public class StatisticsStatusBarPanel extends JPanel {
 			@NotNull
 			@Override
 			public AnAction[] getChildren(@Nullable AnActionEvent e) {
-				return new AnAction[] { new DumbAwareAction("Reset count") {
-					@Override
-					public void actionPerformed(AnActionEvent e) {
-						StatisticsManager.clearCount(consoleView.get());
-					}
-				} };
+				return new AnAction[] { new ResetCountAction(), new HideAction() };
 			}
 		};
 		ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
@@ -209,4 +212,29 @@ public class StatisticsStatusBarPanel extends JPanel {
 			timer = null;
 		}
 	}
+
+	protected abstract void hideStatusBar();
+
+	private class ResetCountAction extends DumbAwareAction {
+		public ResetCountAction() {
+			super("Reset count");
+		}
+
+		@Override
+		public void actionPerformed(AnActionEvent e) {
+			StatisticsManager.clearCount(consoleView.get());
+		}
+	}
+
+	private class HideAction extends DumbAwareAction {
+		public HideAction() {
+			super("Hide");
+		}
+
+		@Override
+		public void actionPerformed(AnActionEvent e) {
+			hideStatusBar();
+		}
+	}
+
 }
