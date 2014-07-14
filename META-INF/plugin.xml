@@ -91,6 +91,12 @@
 	</project-components>
 
 	<actions>
+		<action id="ConsoleView.OpenConsoleSettingsAction" class="krasa.grepconsole.action.AddHighlightAction"
+				text="Add highlight"
+				description="Add highlight for this selected text">
+			<add-to-group group-id="ConsoleEditorPopupMenu" anchor="first"/>
+		</action>
+
 		<action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
 				text="Clear Grep Highlights in Editor"
 				description="Clear Highlights in Editor">
