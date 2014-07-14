@@ -2,7 +2,10 @@ package krasa.grepconsole.tail.remotecall.notifier;
 
 import static java.net.URLDecoder.decode;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -15,13 +18,27 @@ import com.intellij.openapi.diagnostic.Logger;
 public class SocketMessageNotifier implements MessageNotifier {
 
 	private static final Logger log = Logger.getInstance(SocketMessageNotifier.class);
-	private final Collection<MessageHandler> messageHandlers = new HashSet<MessageHandler>();
-	private final ServerSocket serverSocket;
 	private static final String CRLF = "\r\n";
 	private static final String NL = "\n";
+	private final Collection<MessageHandler> messageHandlers = new HashSet<MessageHandler>();
+	private final ServerSocket serverSocket;
 
 	public SocketMessageNotifier(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
+	}
+
+	private static Map<String, String> getParametersFromUrl(String url) {
+		String parametersString = url.substring(url.indexOf('?') + 1);
+		Map<String, String> parameters = new HashMap<String, String>();
+		StringTokenizer tokenizer = new StringTokenizer(parametersString, "&");
+		while (tokenizer.hasMoreElements()) {
+			String[] parametersPair = tokenizer.nextToken().split("=", 2);
+			if (parametersPair.length > 1) {
+				parameters.put(parametersPair[0], parametersPair[1]);
+			}
+		}
+
+		return parameters;
 	}
 
 	public void addMessageHandler(MessageHandler handler) {
@@ -84,20 +101,6 @@ public class SocketMessageNotifier implements MessageNotifier {
 				}
 			}
 		}
-	}
-
-	private static Map<String, String> getParametersFromUrl(String url) {
-		String parametersString = url.substring(url.indexOf('?') + 1);
-		Map<String, String> parameters = new HashMap<String, String>();
-		StringTokenizer tokenizer = new StringTokenizer(parametersString, "&");
-		while (tokenizer.hasMoreElements()) {
-			String[] parametersPair = tokenizer.nextToken().split("=", 2);
-			if (parametersPair.length > 1) {
-				parameters.put(parametersPair[0], parametersPair[1]);
-			}
-		}
-
-		return parameters;
 	}
 
 	private void handleMessage(String message) {

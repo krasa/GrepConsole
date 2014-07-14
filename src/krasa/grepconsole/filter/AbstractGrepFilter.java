@@ -5,7 +5,9 @@ import java.util.List;
 
 import krasa.grepconsole.grep.FilterState;
 import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.*;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Operation;
+import krasa.grepconsole.model.Profile;
 
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -58,7 +60,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 
 	protected void initProcessors() {
 		grepProcessors = new ArrayList<GrepProcessor>();
-		for (GrepExpressionItem grepExpressionItem : profile.getGrepExpressionItems()) {
+		for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {
 			if (shouldAdd(grepExpressionItem)) {
 				grepProcessors.add(grepExpressionItem.createProcessor());
 			}

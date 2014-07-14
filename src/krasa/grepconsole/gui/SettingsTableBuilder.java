@@ -1,15 +1,18 @@
 package krasa.grepconsole.gui;
 
-import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
 
-import krasa.grepconsole.gui.table.*;
+import krasa.grepconsole.gui.table.CheckboxTreeCellRendererBase;
+import krasa.grepconsole.gui.table.CheckboxTreeTable;
+import krasa.grepconsole.gui.table.TableRowTransferHandler;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ui.CheckedTreeNode;
@@ -23,12 +26,21 @@ import com.intellij.util.ui.ColumnInfo;
  */
 public class SettingsTableBuilder {
 	private CheckboxTreeTable table;
-	private SettingsDialog settingsDialog;
 
 	public SettingsTableBuilder(SettingsDialog settingsDialog) {
-		this.settingsDialog = settingsDialog;
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
-		columns.add(new TreeColumnInfo(""));
+		columns.add(new TreeColumnInfo("") {
+			@Nullable
+			@Override
+			public String getPreferredStringValue() {
+				return "________________";
+			}
+
+			@Override
+			public int getWidth(JTable table) {
+				return 60;
+			}
+		});
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
 				"grepExpression").preferedStringValue("___________________________________")));
 		columns.add(new FolderColumnInfoWrapper(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression",
@@ -74,7 +86,7 @@ public class SettingsTableBuilder {
 		table = new CheckboxTreeTable(createRoot(), renderer, columns.toArray(new ColumnInfo[columns.size()]));
 		table.setDragEnabled(true);
 		table.setDropMode(DropMode.INSERT_ROWS);
-		table.setTransferHandler(new TableRowTransferHandler(table));
+		table.setTransferHandler(new TableRowTransferHandler(table, settingsDialog));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(table.getTree());
 		treeExpander.expandAll();
@@ -82,13 +94,7 @@ public class SettingsTableBuilder {
 
 	private CheckedTreeNode createRoot() {
 		CheckedTreeNode root = new CheckedTreeNode(null);
-		for (GrepExpressionGroup group : settingsDialog.getProfile().getGrepExpressionGroups()) {
-			GroupTreeNode newChild = new GroupTreeNode(group);
-			for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
-				newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
-			}
-			root.add(newChild);
-		}
+
 		return root;
 	}
 

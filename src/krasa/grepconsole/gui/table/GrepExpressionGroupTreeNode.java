@@ -7,9 +7,9 @@ import com.intellij.ui.CheckedTreeNode;
 /**
  * @author Vojtech Krasa
  */
-public class GroupTreeNode extends CheckedTreeNode {
+public class GrepExpressionGroupTreeNode extends CheckedTreeNode {
 
-	public GroupTreeNode(GrepExpressionGroup userObject) {
+	public GrepExpressionGroupTreeNode(GrepExpressionGroup userObject) {
 		super(userObject);
 		setEnabled(true);
 	}

@@ -5,6 +5,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DragSource;
 import java.util.*;
+import java.util.List;
 
 import javax.activation.ActivationDataFlavor;
 import javax.activation.DataHandler;
@@ -13,24 +14,26 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import com.intellij.ui.treeStructure.treetable.TreeTableTree;
-import com.intellij.util.ArrayUtil;
+import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.GrepExpressionGroup;
-import krasa.grepconsole.model.GrepExpressionItem;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.treeStructure.treetable.TreeTableModelAdapter;
+import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+import com.intellij.util.ArrayUtil;
 
 public class TableRowTransferHandler extends TransferHandler {
 	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class.getName());
 
-	/* this is useless */
+	/* this seems useless */
 	private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class,
 			DataFlavor.javaJVMLocalObjectMimeType, "Integer Row Index");
 	private CheckboxTreeTable table = null;
+	private SettingsDialog settingsDialog;
 
-	public TableRowTransferHandler(CheckboxTreeTable table) {
-	this.table = table;
+	public TableRowTransferHandler(CheckboxTreeTable table, SettingsDialog settingsDialog) {
+		this.table = table;
+		this.settingsDialog = settingsDialog;
 	}
 
 	@Override
@@ -51,6 +54,7 @@ public class TableRowTransferHandler extends TransferHandler {
 		return TransferHandler.COPY_OR_MOVE;
 	}
 
+	/** this sucks, we all know it */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean importData(TransferHandler.TransferSupport info) {
@@ -59,63 +63,124 @@ public class TableRowTransferHandler extends TransferHandler {
 			JTable target = (JTable) info.getComponent();
 			JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
 			int rowTo = dl.getRow();
+			int indexOffset = 0;
 			DefaultMutableTreeNode destinationNode = (DefaultMutableTreeNode) model.getValueAt(rowTo, 0);
 			if (destinationNode == null) {
-				destinationNode = (DefaultMutableTreeNode) model.getValueAt(rowTo - 1, 0);
-				if (destinationNode instanceof GrepExpressionItemTreeNode) {
-					destinationNode = (DefaultMutableTreeNode) destinationNode.getParent();
-		}
+				destinationNode = (DefaultMutableTreeNode) table.getTree().getModel().getRoot();
 			}
 			TreeTableTree tree = table.getTree();
 
 			int[] selectionRows = tree.getSelectionRows();
 			Arrays.sort(selectionRows);
 			selectionRows = ArrayUtil.reverseArray(selectionRows);
+
+			java.util.List<DefaultMutableTreeNode> nodesToSelect = new ArrayList<DefaultMutableTreeNode>();
+			java.util.List<DefaultMutableTreeNode> nodesToExpand = new ArrayList<DefaultMutableTreeNode>();
 			java.util.List<DefaultMutableTreeNode> selectedNodes = new ArrayList<DefaultMutableTreeNode>();
 			for (int selectionRow : selectionRows) {
 				TreePath treePath = tree.getPathForRow(selectionRow);
 				selectedNodes.add((DefaultMutableTreeNode) treePath.getLastPathComponent());
 			}
-
-			if (destinationNode instanceof GroupTreeNode) {
+			if (destinationNode instanceof GrepExpressionGroupTreeNode) {
+				// reverse it back
+				Collections.reverse(selectedNodes);
 				for (DefaultMutableTreeNode nodeToMove : selectedNodes) {
-					if (nodeToMove instanceof GroupTreeNode) {
-						Enumeration children = nodeToMove.children();
-						while (children.hasMoreElements()) {
-							DefaultMutableTreeNode o = (DefaultMutableTreeNode) children.nextElement();
-							destinationNode.add(o);
+					if (nodeToMove instanceof GrepExpressionGroupTreeNode) {
+						if (destinationNode == nodeToMove) {
+							continue;
 						}
-					} else if (nodeToMove instanceof GrepExpressionItemTreeNode) {
-						destinationNode.add(nodeToMove);
-					}
-				}
-			} else {
-				GroupTreeNode parent = (GroupTreeNode) destinationNode.getParent();
-				int index = parent.getIndex(destinationNode);
-				for (DefaultMutableTreeNode nodeToMove : selectedNodes) {
-					if (nodeToMove instanceof GroupTreeNode) {
-						Enumeration children = nodeToMove.children();
-						while (children.hasMoreElements()) {
-							DefaultMutableTreeNode o = (DefaultMutableTreeNode) children.nextElement();
-							parent.add(o);
-						}
-					} else if (nodeToMove instanceof GrepExpressionItemTreeNode) {
-						TreeNode parent1 = nodeToMove.getParent();
-						if (parent1 == parent && index > parent1.getIndex(nodeToMove)) {
+						DefaultMutableTreeNode parent = (DefaultMutableTreeNode) destinationNode.getParent();
+						int index = parent.getIndex(destinationNode);
+						int nodeToMoveIndex = parent.getIndex(nodeToMove);
+						if (nodeToMoveIndex < index) {
 							index--;
 						}
 						parent.insert(nodeToMove, index);
+					} else if (nodeToMove instanceof GrepExpressionItemTreeNode) {
+						TreeNode parent = destinationNode.getParent();
+						int index = parent.getIndex(destinationNode);
+						if (index > 0) {
+							DefaultMutableTreeNode destinationNode1 = (DefaultMutableTreeNode) parent.getChildAt(index - 1);
+							destinationNode1.add(nodeToMove);
+						} else {
+							destinationNode.add(nodeToMove);
+						}
+						nodesToExpand.add(nodeToMove);
+					}
+					nodesToSelect.add(nodeToMove);
+				}
+			} else if (destinationNode instanceof GrepExpressionItemTreeNode) {
+				GrepExpressionGroupTreeNode destination = (GrepExpressionGroupTreeNode) destinationNode.getParent();
+				int index = destination.getIndex(destinationNode) + indexOffset;
+				for (DefaultMutableTreeNode nodeToMove : selectedNodes) {
+					if (nodeToMove instanceof GrepExpressionGroupTreeNode) {
+						if (destination == nodeToMove) {
+							continue;
+						}
+						List<DefaultMutableTreeNode> children = getChildren(nodeToMove);
+						nodesToSelect.addAll(children);
+						for (DefaultMutableTreeNode node : children) {
+							destination.insert(node, index);
+							index++;
+						}
+					} else if (nodeToMove instanceof GrepExpressionItemTreeNode) {
+						TreeNode parent = nodeToMove.getParent();
+						if (parent == destination && index > parent.getIndex(nodeToMove)) {
+							index--;
+						}
+						destination.insert(nodeToMove, index);
+
+						nodesToSelect.add(nodeToMove);
+						nodesToExpand.add(nodeToMove);
+					}
+				}
+			} else {
+				GrepExpressionGroupTreeNode newChild = null;
+				// reverse it back
+				Collections.reverse(selectedNodes);
+				for (DefaultMutableTreeNode nodeToMove : selectedNodes) {
+					if (nodeToMove instanceof GrepExpressionGroupTreeNode) {
+						destinationNode.add(nodeToMove);
+						nodesToSelect.add(nodeToMove);
+					} else if (nodeToMove instanceof GrepExpressionItemTreeNode) {
+						if (newChild == null) {
+							GrepExpressionGroup newGroup = new GrepExpressionGroup("new");
+							newChild = new GrepExpressionGroupTreeNode(newGroup);
+							settingsDialog.getProfile().getGrepExpressionGroups().add(newGroup);
+							newChild.add(nodeToMove);
+							destinationNode.add(newChild);
+
+							nodesToSelect.add(nodeToMove);
+							nodesToExpand.add(nodeToMove);
+						} else {
+							newChild.add(nodeToMove);
+
+							nodesToSelect.add(nodeToMove);
+						}
 					}
 				}
 			}
-			TableUtils.reloadTree(table);
-			TableUtils.selectNodes(selectedNodes, table);
 
+			TableUtils.reloadTree(table);
+			TableUtils.expand(nodesToExpand, table);
+			TableUtils.selectNodes(nodesToSelect, table);
+
+			settingsDialog.rebuildProfile();
 			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		} catch (Exception e) {
 			log.error(e);
 		}
 		return false;
+	}
+
+	public List<DefaultMutableTreeNode> getChildren(DefaultMutableTreeNode parent) {
+		Enumeration children = parent.children();
+		List<DefaultMutableTreeNode> list = new ArrayList<DefaultMutableTreeNode>();
+		while (children.hasMoreElements()) {
+			DefaultMutableTreeNode o = (DefaultMutableTreeNode) children.nextElement();
+			list.add(o);
+		}
+		return list;
 	}
 
 	@Override

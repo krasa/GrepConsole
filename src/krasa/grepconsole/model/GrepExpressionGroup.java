@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * @author Vojtech Krasa
  */
-public class GrepExpressionGroup {
+public class GrepExpressionGroup extends DomainObject {
 	private boolean enabled;
 	private String name;
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
@@ -17,6 +17,10 @@ public class GrepExpressionGroup {
 	public GrepExpressionGroup(String name, List<GrepExpressionItem> grepExpressionItems) {
 		this.name = name;
 		this.grepExpressionItems = grepExpressionItems;
+	}
+
+	public GrepExpressionGroup(String name) {
+		this.name = name;
 	}
 
 	public boolean isEnabled() {

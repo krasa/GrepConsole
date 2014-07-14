@@ -48,12 +48,16 @@ public class Profile extends DomainObject {
 		this.defaultProfile = defaultProfile;
 	}
 
-	public List<GrepExpressionItem> getGrepExpressionItems() {
+	public List<GrepExpressionItem> getAllGrepExpressionItems() {
 		List<GrepExpressionItem> items = new ArrayList<GrepExpressionItem>();
 		for (GrepExpressionGroup group : grepExpressionGroups) {
 			items.addAll(group.getGrepExpressionItems());
 		}
 		return items;
+	}
+
+	public List<GrepExpressionItem> getGrepExpressionItems() {
+		return grepExpressionItems;
 	}
 
 	public void setGrepExpressionItems(List<GrepExpressionItem> grepExpressionItems) {
@@ -62,7 +66,10 @@ public class Profile extends DomainObject {
 
 	public List<GrepExpressionGroup> getGrepExpressionGroups() {
 		if (grepExpressionGroups.isEmpty()) {
-			grepExpressionGroups.add(new GrepExpressionGroup("default", grepExpressionItems));
+			GrepExpressionGroup expressionGroup = new GrepExpressionGroup("default");
+			expressionGroup.getGrepExpressionItems().addAll(grepExpressionItems);
+			grepExpressionItems.clear();
+			grepExpressionGroups.add(expressionGroup);
 		}
 		return grepExpressionGroups;
 	}
