@@ -5,6 +5,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.swing.*;
 
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.ide.CopyProvider;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFrame;
@@ -24,6 +26,8 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.ColorPicker;
 
 public class AddHighlightAction extends HighlightManipulationAction {
+	private static final Logger log = Logger.getInstance(AddHighlightAction.class.getName());
+
 	public AddHighlightAction() {
 	}
 
@@ -51,8 +55,21 @@ public class AddHighlightAction extends HighlightManipulationAction {
 				if (string == null)
 					return;
 				GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
-				Color color = ColorPicker.showDialog(rootComponent(getEventProject(e)), "Background color", Color.CYAN,
-						true, null);
+				Color color = null;
+
+				Method method = findMethod();
+				try {
+					color = (Color) method.invoke(color, rootComponent(getEventProject(e)), "Background color",
+							Color.CYAN, true, null, false);
+				} catch (Exception e1) {
+					log.warn(e1);
+					try {
+						color = (Color) method.invoke(color, rootComponent(getEventProject(e)), "Background color",
+								Color.CYAN, true, null);
+					} catch (Exception e2) {
+						throw new RuntimeException("Please report this", e2);
+					}
+				}
 				if (color == null) {
 					return;
 				}
@@ -66,6 +83,20 @@ public class AddHighlightAction extends HighlightManipulationAction {
 				return;
 			}
 		}
+	}
+
+	private Method findMethod() {
+		Method method = null;
+		Method[] methods = ColorPicker.class.getMethods();
+		for (Method m : methods) {
+			if ("showDialog".equals(m.getName())) {
+				method = m;
+			}
+		}
+		if (method == null) {
+			throw new RuntimeException("showDialog method not found. Please report this.");
+		}
+		return method;
 	}
 
 	private void addExpressionItem(String string, Color color, final Profile profile) {
