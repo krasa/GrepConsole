@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.4.134.1007.1</version>
+	<version>4.5.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -26,6 +26,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>4.4 (2014-08-11)
+        <br>- settings improvements
         <br>4.4 (2014-07-15)
         <br>- organizing entries in groups
         <br>- added link to IntelliJ IDEA Reddit group

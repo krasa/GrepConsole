@@ -1,5 +1,8 @@
 package krasa.grepconsole.gui.table.column;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.*;
 
 import org.apache.commons.beanutils.PropertyUtils;
@@ -14,6 +17,7 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	private int additionalWidth = 0;
 	private String propertyName;
 	private int width = -1;
+	private List<ValueChangedListener<Value>> valueChangedListeners;
 
 	public JavaBeanColumnInfo(String name, String propertyName) {
 		super(name);
@@ -65,6 +69,11 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	@Override
 	public void setValue(Item item, Value value) {
 		setPropertyValue(item, value);
+		if (valueChangedListeners != null) {
+			for (ValueChangedListener<Value> lister : valueChangedListeners) {
+				lister.onValueChanged(value);
+			}
+		}
 	}
 
 	@Override
@@ -116,5 +125,19 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	@Override
 	public String toString() {
 		return "JavaBeanColumnInfo{" + "tooltipText='" + tooltipText + '\'' + "} " + super.toString();
+	}
+
+	public boolean addListener(ValueChangedListener<Value> listener) {
+		if (valueChangedListeners == null) {
+			valueChangedListeners = new ArrayList<ValueChangedListener<Value>>();
+		}
+		return valueChangedListeners.add(listener);
+	}
+
+	public boolean removeListener(ValueChangedListener<Value> o) {
+		if (valueChangedListeners != null) {
+			return valueChangedListeners.remove(o);
+		}
+		return false;
 	}
 }
