@@ -58,8 +58,8 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
 		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", null));
 		if (manager.isRegistered(console)) {
-			anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
 			anActions.add(new ShowHideStatisticsConsolePanelAction(console));
+			anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
 		} else {
 			anActions.add(new OpenConsoleSettingsAction(console));
 		}

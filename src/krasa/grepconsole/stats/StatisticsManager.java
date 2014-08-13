@@ -95,10 +95,14 @@ public class StatisticsManager {
 
 	public static void createConsolePanel(@NotNull ConsoleViewImpl consoleView,
 			@NotNull GrepHighlightFilter highlightFilter) {
-		StatisticsConsolePanel statisticsConsolePanel = new StatisticsConsolePanel(highlightFilter);
-		consoleView.add(statisticsConsolePanel, BorderLayout.SOUTH);
-		consoleView.revalidate();
-		Disposer.register(consoleView, statisticsConsolePanel);
+		StatisticsConsolePanel statisticsConsolePanel = new StatisticsConsolePanel(highlightFilter, consoleView);
+		if (statisticsConsolePanel.hasItems()) {
+			consoleView.add(statisticsConsolePanel, BorderLayout.SOUTH);
+			consoleView.revalidate();
+			Disposer.register(consoleView, statisticsConsolePanel);
+		} else {
+			statisticsConsolePanel.dispose();
+		}
 	}
 
 	@Nullable

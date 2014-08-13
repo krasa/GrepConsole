@@ -41,6 +41,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 
 public class SettingsDialog {
 	private static final Logger log = Logger.getInstance(SettingsDialog.class);
+	private final SettingsContext settingsContext;
 	private JPanel rootComponent;
 	private CheckboxTreeTable table;
 	private JButton addNewButton;
@@ -64,6 +65,11 @@ public class SettingsDialog {
 	private PluginState settings;
 
 	public SettingsDialog(PluginState settings) {
+		this(settings, SettingsContext.NONE);
+	}
+
+	public SettingsDialog(PluginState settings, SettingsContext settingsContext) {
+		this.settingsContext = settingsContext;
 		this.settings = settings;
 		DONATEButton.setBorder(BorderFactory.createEmptyBorder());
 		DONATEButton.setContentAreaFilled(false);

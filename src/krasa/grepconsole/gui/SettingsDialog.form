@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="krasa.grepconsole.gui.SettingsDialog">
-  <grid id="27dc6" binding="rootComponent" layout-manager="GridLayoutManager" row-count="6" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+  <grid id="27dc6" binding="rootComponent" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
       <xy x="20" y="20" width="1036" height="395"/>
@@ -8,199 +8,215 @@
     <properties>
       <minimumSize width="700" height="200"/>
       <opaque value="false"/>
-      <preferredSize width="700" height="474"/>
     </properties>
     <border type="none"/>
     <children>
-      <scrollpane id="44bf4">
+      <scrollpane id="25447">
         <constraints>
-          <grid row="4" column="0" row-span="1" col-span="8" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
         <children>
-          <component id="1e8d0" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="table" custom-create="true" default-binding="true">
+          <grid id="cef91" layout-manager="GridLayoutManager" row-count="6" column-count="8" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
-            <properties>
-              <autoResizeMode value="2"/>
-              <preferredScrollableViewportSize width="450" height="400"/>
-            </properties>
-          </component>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="44bf4">
+                <constraints>
+                  <grid row="4" column="0" row-span="1" col-span="8" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="1e8d0" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="table" custom-create="true" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <autoResizeMode value="2"/>
+                      <preferredScrollableViewportSize width="-1" height="100"/>
+                    </properties>
+                  </component>
+                </children>
+              </scrollpane>
+              <component id="f941c" class="javax.swing.JCheckBox" binding="enableMaxLength">
+                <constraints>
+                  <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Match only first N characters on each line:"/>
+                </properties>
+              </component>
+              <component id="479f2" class="javax.swing.JCheckBox" binding="ansi">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Enable ANSI coloring"/>
+                </properties>
+              </component>
+              <component id="ed352" class="javax.swing.JCheckBox" binding="encodeText">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Print Base64 of every line"/>
+                </properties>
+              </component>
+              <component id="ac111" class="javax.swing.JCheckBox" binding="enableFiltering">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Enable filtering out"/>
+                </properties>
+              </component>
+              <component id="9c3fa" class="javax.swing.JCheckBox" binding="enableHighlightingCheckBox" default-binding="true">
+                <constraints>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Enable highlighting"/>
+                </properties>
+              </component>
+              <component id="21ce1" class="javax.swing.JSeparator">
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="6" anchor="1" fill="1" indent="0" use-parent-layout="false">
+                    <maximum-size width="-1" height="5"/>
+                  </grid>
+                </constraints>
+                <properties/>
+              </component>
+              <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
+                <constraints>
+                  <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Enable multiline output"/>
+                  <toolTipText value="The style is applied for all following lines until another match occurs"/>
+                </properties>
+              </component>
+              <component id="a3358" class="javax.swing.JButton" binding="addNewButton" default-binding="true">
+                <constraints>
+                  <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Add new item"/>
+                </properties>
+              </component>
+              <component id="e5987" class="javax.swing.JButton" binding="duplicateButton" default-binding="true">
+                <constraints>
+                  <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Duplicate"/>
+                </properties>
+              </component>
+              <component id="4270c" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
+                <constraints>
+                  <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Delete"/>
+                </properties>
+              </component>
+              <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBarByDefault">
+                <constraints>
+                  <grid row="2" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Show statistics panel in Status Bar by default"/>
+                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+                </properties>
+              </component>
+              <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsoleByDefault">
+                <constraints>
+                  <grid row="3" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <selected value="false"/>
+                  <text value="Show statistics panel in Console by default"/>
+                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+                </properties>
+              </component>
+              <component id="71707" class="javax.swing.JButton" binding="DONATEButton" default-binding="true">
+                <constraints>
+                  <grid row="0" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-2697514"/>
+                  <font/>
+                  <hideActionText value="false"/>
+                  <horizontalTextPosition value="0"/>
+                  <icon value="krasa/grepconsole/gui/btn_donate_LG.gif"/>
+                  <text value=""/>
+                  <toolTipText value="Donate via PayPal"/>
+                </properties>
+              </component>
+              <component id="b84dc" class="javax.swing.JCheckBox" binding="hideAnsiCharacters">
+                <constraints>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Hide ANSI commands"/>
+                </properties>
+              </component>
+              <component id="14c68" class="javax.swing.JButton" binding="fileTailSettings">
+                <constraints>
+                  <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Tail File integration"/>
+                </properties>
+              </component>
+              <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
+                <constraints>
+                  <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Reset to default"/>
+                </properties>
+              </component>
+              <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
+                <constraints>
+                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="b873a" class="javax.swing.JButton" binding="reddit">
+                <constraints>
+                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <background color="-2697514"/>
+                  <font/>
+                  <hideActionText value="false"/>
+                  <horizontalTextPosition value="0"/>
+                  <icon value="krasa/grepconsole/gui/reddit.png"/>
+                  <text value=""/>
+                  <toolTipText value="Join Reddit IntelliJ Community"/>
+                </properties>
+              </component>
+              <hspacer id="3e37d">
+                <constraints>
+                  <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+              </hspacer>
+              <component id="dd534" class="javax.swing.JButton" binding="addNewGroup">
+                <constraints>
+                  <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Add new group"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
         </children>
       </scrollpane>
-      <component id="f941c" class="javax.swing.JCheckBox" binding="enableMaxLength">
-        <constraints>
-          <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Match only first N characters on each line:"/>
-        </properties>
-      </component>
-      <component id="479f2" class="javax.swing.JCheckBox" binding="ansi">
-        <constraints>
-          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Enable ANSI coloring"/>
-        </properties>
-      </component>
-      <component id="ed352" class="javax.swing.JCheckBox" binding="encodeText">
-        <constraints>
-          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Print Base64 of every line"/>
-        </properties>
-      </component>
-      <component id="ac111" class="javax.swing.JCheckBox" binding="enableFiltering">
-        <constraints>
-          <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Enable filtering out"/>
-        </properties>
-      </component>
-      <component id="9c3fa" class="javax.swing.JCheckBox" binding="enableHighlightingCheckBox" default-binding="true">
-        <constraints>
-          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Enable highlighting"/>
-        </properties>
-      </component>
-      <component id="21ce1" class="javax.swing.JSeparator">
-        <constraints>
-          <grid row="1" column="0" row-span="1" col-span="8" vsize-policy="0" hsize-policy="6" anchor="1" fill="1" indent="0" use-parent-layout="false">
-            <maximum-size width="-1" height="5"/>
-          </grid>
-        </constraints>
-        <properties/>
-      </component>
-      <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
-        <constraints>
-          <grid row="2" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Enable multiline output"/>
-          <toolTipText value="The style is applied for all following lines until another match occurs"/>
-        </properties>
-      </component>
-      <component id="a3358" class="javax.swing.JButton" binding="addNewButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Add new item"/>
-        </properties>
-      </component>
-      <component id="e5987" class="javax.swing.JButton" binding="duplicateButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Duplicate"/>
-        </properties>
-      </component>
-      <component id="4270c" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Delete"/>
-        </properties>
-      </component>
-      <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBarByDefault">
-        <constraints>
-          <grid row="2" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Show statistics panel in Status Bar by default"/>
-          <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
-        </properties>
-      </component>
-      <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsoleByDefault">
-        <constraints>
-          <grid row="3" column="4" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <selected value="false"/>
-          <text value="Show statistics panel in Console by default"/>
-          <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
-        </properties>
-      </component>
-      <component id="71707" class="javax.swing.JButton" binding="DONATEButton" default-binding="true">
-        <constraints>
-          <grid row="0" column="5" row-span="1" col-span="2" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <background color="-2697514"/>
-          <font/>
-          <hideActionText value="false"/>
-          <horizontalTextPosition value="0"/>
-          <icon value="krasa/grepconsole/gui/btn_donate_LG.gif"/>
-          <text value=""/>
-          <toolTipText value="Donate via PayPal"/>
-        </properties>
-      </component>
-      <component id="b84dc" class="javax.swing.JCheckBox" binding="hideAnsiCharacters">
-        <constraints>
-          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Hide ANSI commands"/>
-        </properties>
-      </component>
-      <component id="14c68" class="javax.swing.JButton" binding="fileTailSettings">
-        <constraints>
-          <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Tail File integration"/>
-        </properties>
-      </component>
-      <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
-        <constraints>
-          <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Reset to default"/>
-        </properties>
-      </component>
-      <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
-        <constraints>
-          <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value=""/>
-        </properties>
-      </component>
-      <component id="b873a" class="javax.swing.JButton" binding="reddit">
-        <constraints>
-          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <background color="-2697514"/>
-          <font/>
-          <hideActionText value="false"/>
-          <horizontalTextPosition value="0"/>
-          <icon value="krasa/grepconsole/gui/reddit.png"/>
-          <text value=""/>
-          <toolTipText value="Join Reddit IntelliJ Community"/>
-        </properties>
-      </component>
-      <hspacer id="3e37d">
-        <constraints>
-          <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </hspacer>
-      <component id="dd534" class="javax.swing.JButton" binding="addNewGroup">
-        <constraints>
-          <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-        </constraints>
-        <properties>
-          <text value="Add new group"/>
-        </properties>
-      </component>
     </children>
   </grid>
 </form>
