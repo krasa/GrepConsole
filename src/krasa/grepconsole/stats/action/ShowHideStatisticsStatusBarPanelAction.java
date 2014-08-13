@@ -7,6 +7,8 @@ import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.GrepConsoleStatusBarWidget;
 import krasa.grepconsole.stats.StatisticsManager;
 
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -41,7 +43,7 @@ public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
 		}
 	}
 
-	public boolean hasStatusBarItems(GrepHighlightFilter highlightFilter) {
+	public boolean hasStatusBarItems(@NotNull GrepHighlightFilter highlightFilter) {
 		boolean showCountInStatusBar = false;
 		for (GrepProcessor grepProcessor : highlightFilter.getGrepProcessors()) {
 			showCountInStatusBar = grepProcessor.getGrepExpressionItem().isShowCountInStatusBar();

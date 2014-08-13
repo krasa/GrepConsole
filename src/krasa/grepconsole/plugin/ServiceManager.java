@@ -3,7 +3,10 @@ package krasa.grepconsole.plugin;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-import krasa.grepconsole.filter.*;
+import krasa.grepconsole.filter.AbstractFilter;
+import krasa.grepconsole.filter.AnsiInputFilter;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.GrepInputFilter;
 import krasa.grepconsole.grep.Cache;
 
 import org.jetbrains.annotations.NotNull;
@@ -92,20 +95,41 @@ public class ServiceManager {
 		}
 	}
 
-	@Nullable
+	@NotNull
 	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
-		return weakHashMap.get(console);
+		GrepHighlightFilter grepHighlightFilter = weakHashMap.get(console);
+		if (grepHighlightFilter == null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Something is wrong. GrepHighlightFilter not found for ").append(console.hashCode()).append("-").append(
+					console);
+			sb.append(". Registered: [");
+			boolean i = false;
+			for (Map.Entry<ConsoleView, GrepHighlightFilter> consoleViewGrepHighlightFilterEntry : weakHashMap.entrySet()) {
+				if (i) {
+					sb.append(",");
+				}
+				sb.append(console.hashCode()).append("-").append(consoleViewGrepHighlightFilterEntry.getKey());
+				i = true;
+			}
+			sb.append("]");
+			throw new IllegalStateException(sb.toString());
+		}
+		return grepHighlightFilter;
+	}
+
+	public boolean isRegistered(@NotNull ConsoleView console) {
+		return weakHashMap.containsKey(console);
 	}
 
 	public void register(@NotNull ConsoleView console, @NotNull GrepHighlightFilter lastGrepHighlightFilter) {
 		weakHashMap.put(console, lastGrepHighlightFilter);
 	}
 
-	public void setLastExecutionId(long lastExecutionId) {
-		this.lastExecutionId = lastExecutionId;
-	}
-
 	public long getLastExecutionId() {
 		return lastExecutionId;
+	}
+
+	public void setLastExecutionId(long lastExecutionId) {
+		this.lastExecutionId = lastExecutionId;
 	}
 }

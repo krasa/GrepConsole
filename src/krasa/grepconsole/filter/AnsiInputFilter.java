@@ -85,4 +85,8 @@ public class AnsiInputFilter extends AbstractFilter implements InputFilter, Cons
 			console.clear();
 		}
 	}
+
+	public boolean isRegistered() {
+		return console != null;
+	}
 }
