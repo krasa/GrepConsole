@@ -56,11 +56,13 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 	public AnAction[] postProcessPopupActions(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
 		ServiceManager manager = ServiceManager.getInstance();
 		ArrayList<AnAction> anActions = new ArrayList<AnAction>();
+		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", null));
 		if (manager.isRegistered(console)) {
 			anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
 			anActions.add(new ShowHideStatisticsConsolePanelAction(console));
+		} else {
+			anActions.add(new OpenConsoleSettingsAction(console));
 		}
-		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", null));
 		anActions.addAll(Arrays.asList(super.postProcessPopupActions(console, actions)));
 		replaceClearAction(anActions);
 		return anActions.toArray(new AnAction[anActions.size()]);
