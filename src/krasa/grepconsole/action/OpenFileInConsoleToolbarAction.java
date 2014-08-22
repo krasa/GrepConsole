@@ -46,7 +46,7 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 					final Project data = CommonDataKeys.PROJECT.getData(context);
 					for (File file : fileList) {
 						if (!file.isDirectory()) {
-							openFileInConsole(data, file.getPath());
+							openFileInConsole(data, file);
 						}
 					}
 				}

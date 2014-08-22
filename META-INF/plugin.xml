@@ -123,6 +123,10 @@
 				description="Drag and drop to open in console">
 			<add-to-group group-id="MainToolBar" anchor="last"/>
 		</action>
+		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog" text="Tail Log in Console"
+				description="Tail Log in Console - by Grep Console">
+			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
+		</action>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
