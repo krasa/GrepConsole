@@ -1,7 +1,6 @@
 package krasa.grepconsole.stats;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
@@ -9,12 +8,9 @@ import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.MouseInputAdapter;
 
-import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.model.GrepColor;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -66,7 +62,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 	private void init() {
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
-		MyMouseInputAdapter mouseInputAdapter = new MyMouseInputAdapter();
+		OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter = new OpenConsoleSettingsActionMouseInputAdapter(   consoleView, getProject());
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInConsole()) {
 				add(grepProcessor, mouseInputAdapter);
@@ -91,11 +87,11 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		}));
 	}
 
-	public void add(GrepProcessor processor, final MyMouseInputAdapter mouseInputAdapter) {
+	public void add(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
 		jPanel.add(createCounterPanel(processor, mouseInputAdapter));
 	}
 
-	private JPanel createCounterPanel(GrepProcessor processor, final MyMouseInputAdapter mouseInputAdapter) {
+	private JPanel createCounterPanel(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
 		GrepColor backgroundColor = processor.getGrepExpressionItem().getStyle().getBackgroundColor();
 		GrepColor foregroundColor = processor.getGrepExpressionItem().getStyle().getForegroundColor();
 		final JPanel panel = new JPanel(new FlowLayout());
@@ -178,12 +174,4 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		}
 	}
 
-	private class MyMouseInputAdapter extends MouseInputAdapter {
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1) {
-				new OpenConsoleSettingsAction(consoleView).actionPerformed(getProject(), SettingsContext.CONSOLE);
-			}
-		}
-	}
 }
