@@ -5,6 +5,7 @@ import javax.swing.*;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.StatisticsConsolePanel;
 import krasa.grepconsole.stats.StatisticsManager;
@@ -34,7 +35,7 @@ public class ShowHideStatisticsConsolePanelAction extends DumbAwareAction {
 		if (statisticsConsolePanel == null) {
 
 			if (!hasStatusItems(highlightFilter)) {
-				new OpenConsoleSettingsAction(console).actionPerformed(anActionEvent);
+				new OpenConsoleSettingsAction(console).actionPerformed(getEventProject(anActionEvent), SettingsContext.CONSOLE);
 			}
 			if (!hasStatusItems(highlightFilter)) {
 				return;

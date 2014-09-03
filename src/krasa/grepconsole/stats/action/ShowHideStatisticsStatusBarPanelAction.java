@@ -3,6 +3,7 @@ package krasa.grepconsole.stats.action;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.GrepConsoleStatusBarWidget;
 import krasa.grepconsole.stats.StatisticsManager;
@@ -31,7 +32,7 @@ public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
 			GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
 
 			if (!hasStatusBarItems(highlightFilter)) {
-				new OpenConsoleSettingsAction(console).actionPerformed(anActionEvent);
+                new OpenConsoleSettingsAction(console).actionPerformed(getEventProject(anActionEvent), SettingsContext.STATUS_BAR);
 			}
 			if (!hasStatusBarItems(highlightFilter)) {
 				return;

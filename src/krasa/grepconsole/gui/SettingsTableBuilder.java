@@ -25,7 +25,9 @@ import com.intellij.util.ui.ColumnInfo;
  * @author Vojtech Krasa
  */
 public class SettingsTableBuilder {
-	private CheckboxTreeTable table;
+    public static final String STATUS_BAR_COUNT = "StatusBar count";
+    public static final String CONSOLE_COUNT = "Console count";
+    private CheckboxTreeTable table;
 
 	public SettingsTableBuilder(final SettingsDialog settingsDialog) {
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
@@ -72,9 +74,9 @@ public class SettingsTableBuilder {
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
 				"Highlight only matching text", "highlightOnlyMatchingText")));
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("StatusBar count", "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Console count", "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", settingsDialog)));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {

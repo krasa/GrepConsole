@@ -62,7 +62,8 @@ public class SettingsDialog {
 	private JButton fileTailSettings;
 	private JButton reddit;
 	private JButton addNewGroup;
-	private PluginState settings;
+    private JLabel contextSpecificText;
+    private PluginState settings;
 
 	public SettingsDialog(PluginState settings) {
 		this(settings, SettingsContext.NONE);
@@ -115,7 +116,15 @@ public class SettingsDialog {
 		});
 
 		fileTailSettings.addActionListener(new FileTailSettings());
-	}
+
+        if (settingsContext == SettingsContext.CONSOLE ) {
+            contextSpecificText.setText("Select items for which statistics should be displayed ('"+ SettingsTableBuilder.CONSOLE_COUNT+"' column)");
+        } else  if (settingsContext == SettingsContext.STATUS_BAR) {
+            contextSpecificText.setText("Select items for which statistics should be displayed ('"+ SettingsTableBuilder.STATUS_BAR_COUNT+"' column)");
+        } else {
+            contextSpecificText.setVisible(false);
+        } 
+    }
 
 	public MouseAdapter rightClickMenu() {
 		return new MouseAdapter() {
