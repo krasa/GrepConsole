@@ -71,26 +71,6 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		return grepProcessors;
 	}
 
-	public boolean hasGrepProcessorsForStatusBar() {
-		final List<GrepProcessor> grepProcessors = getGrepProcessors();
-		for (GrepProcessor grepProcessor : grepProcessors) {
-			if (grepProcessor.getGrepExpressionItem().isShowCountInStatusBar()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean hasGrepProcessorsForConsolePanel() {
-		final List<GrepProcessor> grepProcessors = getGrepProcessors();
-		for (GrepProcessor grepProcessor : grepProcessors) {
-			if (grepProcessor.getGrepExpressionItem().isShowCountInConsole()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	abstract protected boolean shouldAdd(GrepExpressionItem item);
 
 	public void onChange() {
