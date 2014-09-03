@@ -51,11 +51,9 @@ public class AnsiInputFilter extends AbstractFilter implements InputFilter, Cons
 			for (Pair<String, ConsoleViewContentType> stringConsoleViewContentTypePair : list) {
 				stringBuilder.append(stringConsoleViewContentTypePair.first);
 			}
-			list.add(new Pair<String, ConsoleViewContentType>("\n>>>input:"
-					+ Base64.encodeBase64URLSafeString(s.getBytes()), consoleViewContentType));
-			list.add(new Pair<String, ConsoleViewContentType>("\n>>>result:"
-					+ Base64.encodeBase64URLSafeString(stringBuilder.toString().getBytes()) + "\n",
-					consoleViewContentType));
+			list.add(Pair.create(">>>input:" + Base64.encodeBase64URLSafeString(s.getBytes()), consoleViewContentType));
+			list.add(Pair.create("\n>>>result:" + Base64.encodeBase64URLSafeString(stringBuilder.toString().getBytes())
+					+ "\n\n", consoleViewContentType));
 		}
 
 		if (list == null || list.isEmpty()) {
