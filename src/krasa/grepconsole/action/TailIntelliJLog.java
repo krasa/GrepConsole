@@ -1,18 +1,18 @@
 package krasa.grepconsole.action;
 
-import com.intellij.openapi.actionSystem.AnAction;
+import java.io.File;
+
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.PathManager;
-
-import java.io.File;
+import com.intellij.openapi.project.DumbAwareAction;
 
 /**
  * @author Vojtech Krasa
  */
-public class TailIntelliJLog extends AnAction {
-    public void actionPerformed(AnActionEvent e) {
-        final File logFile = new File(PathManager.getLogPath(), "idea.log");
-        new OpenFileInConsoleAction().openFileInConsole(getEventProject(e), logFile);
-        
-    }
+public class TailIntelliJLog extends DumbAwareAction {
+	public void actionPerformed(AnActionEvent e) {
+		final File logFile = new File(PathManager.getLogPath(), "idea.log");
+		new OpenFileInConsoleAction().openFileInConsole(getEventProject(e), logFile);
+
+	}
 }
