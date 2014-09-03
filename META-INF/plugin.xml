@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.7.134.1007</version>
+	<version>4.8.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -17,6 +17,7 @@
 	 		ANSI colouring<br>
 	 		File Tailing:<br>
 	 		- Main menu | Tools | Open File in Console<br>
+	 		- Main Menu | Help | Tail (IntelliJ) Log in Console<br>
 	 		- Drag&Drop "Tail File" panel in main toolbar<br>
 	 		- http and Windows context menu integration<br>
 	 		<br>
@@ -26,8 +27,11 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>4.8 (2014-09-04)
+	  	<br>- added Main Menu | Help | Tail IntelliJ Log in Console action
+	  	<br>- various usability improvements
         <br>4.7 (2014-08-13)
-	  	<br>- added settings action into console context menu, when there is no buttons bar
+	  	<br>- added Open Settings action into a console context menu, when there is no buttons bar
         <br>4.6 (2014-08-13)
         <br>- disabled statistics actions for incompatible consoles
         <br>4.5 (2014-08-11)

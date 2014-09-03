@@ -13,6 +13,5 @@ public class TailIntelliJLog extends DumbAwareAction {
 	public void actionPerformed(AnActionEvent e) {
 		final File logFile = new File(PathManager.getLogPath(), "idea.log");
 		new OpenFileInConsoleAction().openFileInConsole(getEventProject(e), logFile);
-
 	}
 }
