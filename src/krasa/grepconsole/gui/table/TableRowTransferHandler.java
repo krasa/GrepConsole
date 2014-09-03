@@ -135,28 +135,16 @@ public class TableRowTransferHandler extends TransferHandler {
 					}
 				}
 			} else {
-				GrepExpressionGroupTreeNode newChild = null;
-				// reverse it back
+                //destinationNode is root
 				Collections.reverse(selectedNodes);
 				for (DefaultMutableTreeNode nodeToMove : selectedNodes) {
 					if (nodeToMove instanceof GrepExpressionGroupTreeNode) {
 						destinationNode.add(nodeToMove);
 						nodesToSelect.add(nodeToMove);
 					} else if (nodeToMove instanceof GrepExpressionItemTreeNode) {
-						if (newChild == null) {
-							GrepExpressionGroup newGroup = new GrepExpressionGroup("new");
-							newChild = new GrepExpressionGroupTreeNode(newGroup);
-							settingsDialog.getProfile().getGrepExpressionGroups().add(newGroup);
-							newChild.add(nodeToMove);
-							destinationNode.add(newChild);
-
-							nodesToSelect.add(nodeToMove);
-							nodesToExpand.add(nodeToMove);
-						} else {
-							newChild.add(nodeToMove);
-
-							nodesToSelect.add(nodeToMove);
-						}
+                        GrepExpressionGroupTreeNode lastChild = (GrepExpressionGroupTreeNode) destinationNode.getLastChild();
+                        lastChild.add(nodeToMove);
+                        nodesToSelect.add(nodeToMove);
 					}
 				}
 			}
