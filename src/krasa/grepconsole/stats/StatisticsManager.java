@@ -67,13 +67,16 @@ public class StatisticsManager {
 
 	public static void createStatusBarPanel(@NotNull ConsoleViewImpl consoleView,
 			@NotNull GrepHighlightFilter highlightFilter) {
-		final Project project = consoleView.getProject();
-		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
-		final GrepConsoleStatusBarWidget statusBarWidget = new GrepConsoleStatusBarWidget(consoleView, highlightFilter);
-		statusBar.addWidget(statusBarWidget);
-		statusBar.getComponent().revalidate();
-		Disposer.register(consoleView, statusBarWidget);
-	}
+        if (!highlightFilter.hasGrepProcessorsForStatusBar()) {
+            return;
+        }
+        final Project project = consoleView.getProject();
+        final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
+        final GrepConsoleStatusBarWidget statusBarWidget = new GrepConsoleStatusBarWidget(consoleView, highlightFilter);
+        statusBar.addWidget(statusBarWidget);
+        statusBar.getComponent().revalidate();
+        Disposer.register(consoleView, statusBarWidget);
+    }
 
 	public static void resetConsolePanel(ConsoleViewImpl consoleView) {
 		GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(consoleView);
@@ -95,15 +98,18 @@ public class StatisticsManager {
 
 	public static void createConsolePanel(@NotNull ConsoleViewImpl consoleView,
 			@NotNull GrepHighlightFilter highlightFilter) {
-		StatisticsConsolePanel statisticsConsolePanel = new StatisticsConsolePanel(highlightFilter, consoleView);
-		if (statisticsConsolePanel.hasItems()) {
-			consoleView.add(statisticsConsolePanel, BorderLayout.SOUTH);
-			consoleView.revalidate();
-			Disposer.register(consoleView, statisticsConsolePanel);
-		} else {
-			statisticsConsolePanel.dispose();
-		}
-	}
+        if (!highlightFilter.hasGrepProcessorsForConsolePanel()) {
+            return;
+        }
+        StatisticsConsolePanel statisticsConsolePanel = new StatisticsConsolePanel(highlightFilter, consoleView);
+        if (statisticsConsolePanel.hasItems()) {
+            consoleView.add(statisticsConsolePanel, BorderLayout.SOUTH);
+            consoleView.revalidate();
+            Disposer.register(consoleView, statisticsConsolePanel);
+        } else {
+            statisticsConsolePanel.dispose();
+        }
+    }
 
 	@Nullable
 	public static GrepConsoleStatusBarWidget getStatusBarPanel(@NotNull ConsoleViewImpl consoleView) {
