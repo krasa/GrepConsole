@@ -4,6 +4,7 @@ import java.awt.*;
 
 import javax.swing.*;
 
+import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.impl.status.IdeStatusBarImpl;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
