@@ -84,8 +84,12 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 				super.actionPerformed(e);
 				final ConsoleView consoleView = e.getData(LangDataKeys.CONSOLE_VIEW);
 				if (consoleView != null) {
-					StatisticsManager.clearCount(consoleView);
-				}
+                    try {
+                        StatisticsManager.clearCount(consoleView);
+                    } catch (Exception e1) {
+                        //tough luck
+                    }
+                }
 			}
 		};
 	}

@@ -97,10 +97,10 @@ public class ServiceManager {
 
 	@NotNull
 	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
-		GrepHighlightFilter grepHighlightFilter = weakHashMap.get(console);
+        GrepHighlightFilter grepHighlightFilter = weakHashMap.get(console);
 		if (grepHighlightFilter == null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Something is wrong. GrepHighlightFilter not found for ").append(console.hashCode()).append("-").append(
+			sb.append("Something is wrong. GrepHighlightFilter not found for ").append(System.identityHashCode(console)).append("-").append(
 					console);
 			sb.append(". Registered: [");
 			boolean i = false;
@@ -108,7 +108,7 @@ public class ServiceManager {
 				if (i) {
 					sb.append(",");
 				}
-				sb.append(console.hashCode()).append("-").append(consoleViewGrepHighlightFilterEntry.getKey());
+				sb.append(System.identityHashCode(console)).append("-").append(consoleViewGrepHighlightFilterEntry.getKey());
 				i = true;
 			}
 			sb.append("]");
