@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.4.128.55.1</version>
+	<version>4.9.128.55.</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -17,6 +17,7 @@
 	 		ANSI colouring<br>
 	 		File Tailing:<br>
 	 		- Main menu | Tools | Open File in Console<br>
+	 		- Main Menu | Help | Tail (IntelliJ) Log in Console<br>
 	 		- Drag&Drop "Tail File" panel in main toolbar<br>
 	 		- http and Windows context menu integration<br>
 	 		<br>
@@ -26,6 +27,17 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>4.9 (2014-09-11)
+	  	<br>- IllegalStateException fix
+        <br>4.8 (2014-09-04)
+	  	<br>- added Main Menu | Help | Tail IntelliJ Log in Console action
+	  	<br>- various usability improvements
+        <br>4.7 (2014-08-13)
+	  	<br>- added Open Settings action into a console context menu, when there is no buttons bar
+        <br>4.6 (2014-08-13)
+        <br>- disabled statistics actions for incompatible consoles
+        <br>4.5 (2014-08-11)
+        <br>- settings improvements
         <br>4.4 (2014-07-15)
         <br>- organizing entries in groups
         <br>- added link to IntelliJ IDEA Reddit group
@@ -122,7 +134,11 @@
 		<!--text="Tail File"-->
 		<!--description="Drag and drop to open in console">-->
 		<!--<add-to-group group-id="MainToolBar" anchor="last"/>-->
-		<!--</action>-->
+		<!--</action>-->		
+		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog" text="Tail Log in Console"
+				description="Tail Log in Console - by Grep Console">
+			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
+		</action>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">

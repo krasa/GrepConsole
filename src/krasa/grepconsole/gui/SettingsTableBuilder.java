@@ -25,9 +25,11 @@ import com.intellij.util.ui.ColumnInfo;
  * @author Vojtech Krasa
  */
 public class SettingsTableBuilder {
-	private CheckboxTreeTable table;
+    public static final String STATUS_BAR_COUNT = "StatusBar count";
+    public static final String CONSOLE_COUNT = "Console count";
+    private CheckboxTreeTable table;
 
-	public SettingsTableBuilder(SettingsDialog settingsDialog) {
+	public SettingsTableBuilder(final SettingsDialog settingsDialog) {
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
 		columns.add(new TreeColumnInfo("") {
 			@Nullable
@@ -45,26 +47,36 @@ public class SettingsTableBuilder {
 				"grepExpression").preferedStringValue("___________________________________")));
 		columns.add(new FolderColumnInfoWrapper(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression",
 				"unlessGrepExpression").preferedStringValue("______________")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>(
-				"Filter out", "inputFilter")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>(
-				"Case insensitive", "caseInsensitive")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Bold",
-				"style.bold")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Italic",
+		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> inputFilter = new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+				"Filter out", "inputFilter");
+		inputFilter.addListener(new ValueChangedListener<Boolean>() {
+			@Override
+			public void onValueChanged(Boolean newValue) {
+				if (newValue && !settingsDialog.getProfile().isEnabledInputFiltering()) {
+					settingsDialog.getProfile().setEnabledInputFiltering(true);
+					settingsDialog.setData(settingsDialog.getProfile());
+				}
+			}
+		});
+		columns.add(new FolderColumnInfoWrapper(inputFilter));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
+				"caseInsensitive")));
+		columns.add(new FolderColumnInfoWrapper(
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Bold", "style.bold")));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Italic",
 				"style.italic")));
 		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background",
 				"style.backgroundColor")));
 		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground",
 				"style.foregroundColor")));
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Continue matching", "continueMatching").tooltipText("If not checked, the first match will end highlighting")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>(
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match the line against next configured items to apply multiple styles")));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
 				"Highlight only matching text", "highlightOnlyMatchingText")));
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("StatusBar count", "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem, String>("Console count", "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", settingsDialog)));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {

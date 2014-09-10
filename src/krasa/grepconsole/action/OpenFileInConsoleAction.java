@@ -1,11 +1,10 @@
 package krasa.grepconsole.action;
 
-import com.intellij.openapi.util.Disposer;
 import java.io.*;
 import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
-
 import java.util.concurrent.atomic.AtomicReference;
+
 import krasa.grepconsole.tail.TailContentExecutor;
 
 import com.intellij.execution.impl.ConsoleBuffer;
@@ -33,13 +32,13 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		if (choose.length > 0) {
 			final VirtualFile virtualFile = choose[0];
 			final String path1 = virtualFile.getPath();
-			openFileInConsole(project, path1);
+			openFileInConsole(project, new File(path1));
 		}
 	}
 
-	public void openFileInConsole(final Project project, final String path) {
-		final Process process = new MyProcess(path);
-		
+	public void openFileInConsole(final Project project, final File file) {
+		final Process process = new MyProcess(file);
+
 		final AtomicReference<WeakReference<TailContentExecutor>> atomicReference = new AtomicReference<WeakReference<TailContentExecutor>>();
 		final ProcessHandler osProcessHandler = new BaseOSProcessHandler(process, null, Charset.defaultCharset()) {
 			@Override
@@ -62,25 +61,26 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		final TailContentExecutor executor = new TailContentExecutor(project, osProcessHandler);
 		final WeakReference<TailContentExecutor> weakReference = new WeakReference<TailContentExecutor>(executor);
 		atomicReference.set(weakReference);
-		
+
 		executor.withRerun(new Runnable() {
 			@Override
 			public void run() {
 				osProcessHandler.destroyProcess();
 				osProcessHandler.waitFor(2000L);
-				openFileInConsole(project, path);
+				openFileInConsole(project, file);
 			}
 		});
-		executor.withTitle(new File(path).getName());
+		executor.withTitle(file.getName());
 		executor.run();
 	}
+
 	private class MyProcess extends Process {
 		protected volatile boolean running = true;
 		protected FileInputStream inputStream;
 
-		private MyProcess(final String path) {
+		private MyProcess(final File file) {
 			try {
-				inputStream = new FileInputStream(new File(path));
+				inputStream = new FileInputStream(file);
 				long size = inputStream.getChannel().size();
 				// close enough, it does not work for binary files very well, but i hope it does at least for text
 				inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
@@ -134,7 +134,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 				inputStream.close();
 			} catch (IOException e) {
 				// who cares
-			}finally {
+			} finally {
 				running = false;
 			}
 		}

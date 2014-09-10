@@ -41,6 +41,7 @@ import com.intellij.util.ui.tree.TreeUtil;
 
 public class SettingsDialog {
 	private static final Logger log = Logger.getInstance(SettingsDialog.class);
+	private final SettingsContext settingsContext;
 	private JPanel rootComponent;
 	private CheckboxTreeTable table;
 	private JButton addNewButton;
@@ -61,9 +62,15 @@ public class SettingsDialog {
 	private JButton fileTailSettings;
 	private JButton reddit;
 	private JButton addNewGroup;
-	private PluginState settings;
+    private JLabel contextSpecificText;
+    private PluginState settings;
 
 	public SettingsDialog(PluginState settings) {
+		this(settings, SettingsContext.NONE);
+	}
+
+	public SettingsDialog(PluginState settings, SettingsContext settingsContext) {
+		this.settingsContext = settingsContext;
 		this.settings = settings;
 		DONATEButton.setBorder(BorderFactory.createEmptyBorder());
 		DONATEButton.setContentAreaFilled(false);
@@ -109,7 +116,15 @@ public class SettingsDialog {
 		});
 
 		fileTailSettings.addActionListener(new FileTailSettings());
-	}
+
+        if (settingsContext == SettingsContext.CONSOLE ) {
+            contextSpecificText.setText("Select items for which statistics should be displayed ('"+ SettingsTableBuilder.CONSOLE_COUNT+"' column)");
+        } else  if (settingsContext == SettingsContext.STATUS_BAR) {
+            contextSpecificText.setText("Select items for which statistics should be displayed ('"+ SettingsTableBuilder.STATUS_BAR_COUNT+"' column)");
+        } else {
+            contextSpecificText.setVisible(false);
+        } 
+    }
 
 	public MouseAdapter rightClickMenu() {
 		return new MouseAdapter() {

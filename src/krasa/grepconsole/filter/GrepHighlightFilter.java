@@ -17,6 +17,7 @@ import com.intellij.openapi.project.Project;
 public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	private long executionId;
+	private TextAttributes lastTextAttributes = null;
 
 	public GrepHighlightFilter(Project project) {
 		super(project);
@@ -25,8 +26,6 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 	public GrepHighlightFilter(Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile, grepProcessors);
 	}
-
-	private TextAttributes lastTextAttributes = null;
 
 	@Nullable
 	@Override
@@ -85,11 +84,32 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 				&& !(profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter());
 	}
 
+	public long getExecutionId() {
+		return executionId;
+	}
+
 	public void setExecutionId(long executionId) {
 		this.executionId = executionId;
 	}
 
-	public long getExecutionId() {
-		return executionId;
+	public boolean hasGrepProcessorsForStatusBar() {
+		final List<GrepProcessor> grepProcessors = getGrepProcessors();
+		for (GrepProcessor grepProcessor : grepProcessors) {
+			if (grepProcessor.getGrepExpressionItem().isShowCountInStatusBar()) {
+				return true;
+			}
+		}
+		return false;
 	}
+
+	public boolean hasGrepProcessorsForConsolePanel() {
+		final List<GrepProcessor> grepProcessors = getGrepProcessors();
+		for (GrepProcessor grepProcessor : grepProcessors) {
+			if (grepProcessor.getGrepExpressionItem().isShowCountInConsole()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

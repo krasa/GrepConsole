@@ -6,11 +6,15 @@ import javax.swing.*;
 
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.support.SoundMode;
+import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.Sound;
 
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
@@ -66,10 +70,14 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	}
 
 	public JComponent createComponent() {
-		// if (form == null) {
-		form = new SettingsDialog(getState().clone());
-		// }
+		if (form == null) {
+			form = new SettingsDialog(getState().clone());
+		}
 		return form.getRootComponent();
+	}
+
+	public void prepareForm(SettingsContext settingsContext) {
+		form = new SettingsDialog(getState().clone(), settingsContext);
 	}
 
 	public boolean isModified() {

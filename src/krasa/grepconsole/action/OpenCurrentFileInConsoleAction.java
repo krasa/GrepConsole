@@ -8,6 +8,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 
+import java.io.File;
+
 /**
  * @author Vojtech Krasa
  */
@@ -22,7 +24,7 @@ public class OpenCurrentFileInConsoleAction extends OpenFileInConsoleAction {
 			if (psiFile != null) {
 				final VirtualFile virtualFile = psiFile.getVirtualFile();
 				final String path = virtualFile.getPath();
-				openFileInConsole(project, path);
+				openFileInConsole(project, new File(path));
 			}
 		}
 	}

@@ -18,6 +18,9 @@ import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.*;
 import org.jetbrains.annotations.Nullable;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 
 public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProcessor {
 
@@ -52,12 +55,18 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 		return anActions.toArray(new AnAction[anActions.size()]);
 	}
 
-	public void registerConsole(ConsoleView console) {
-		GrepHighlightFilter lastGrepHighlightFilter = ServiceManager.getInstance().getLastGrepHighlightFilter();
+	private void registerConsole(ConsoleView console) {
+		ServiceManager manager = ServiceManager.getInstance();
+		GrepHighlightFilter lastGrepHighlightFilter = manager.getLastGrepHighlightFilter();
 		if (lastGrepHighlightFilter != null) {
-			ServiceManager.getInstance().register(console, lastGrepHighlightFilter);
+			manager.register(console, lastGrepHighlightFilter);
+		}
+		AnsiInputFilter lastAnsi = manager.getLastAnsi();
+		if (lastAnsi != null && !lastAnsi.isRegistered()) {
+			lastAnsi.setConsole(console);
 		}
 	}
+
 
 	private void replaceClearAction(ArrayList<AnAction> anActions) {
 		for (int i = 0; i < anActions.size(); i++) {
@@ -75,8 +84,12 @@ public class GrepConsoleActionsPostProcessor implements ConsoleActionsPostProces
 				super.actionPerformed(e);
 				final ConsoleView consoleView = e.getData(LangDataKeys.CONSOLE_VIEW);
 				if (consoleView != null) {
-					StatisticsManager.clearCount(consoleView);
-				}
+                    try {
+                        StatisticsManager.clearCount(consoleView);
+                    } catch (Exception e1) {
+                        //tough luck
+                    }
+                }
 			}
 		};
 	}

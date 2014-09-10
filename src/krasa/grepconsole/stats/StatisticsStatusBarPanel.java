@@ -12,6 +12,7 @@ import javax.swing.*;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.stats.common.ColorPanel;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,10 +87,15 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 		ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
 	}
 
-	private JPanel createItem(GrepProcessor processor) {
+	private JPanel createItem(GrepProcessor processor,
+			final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
 		final JPanel panel = getItemPanel();
-		panel.add(getColorPanel(processor));
-		panel.add(getLabel(processor));
+		ColorPanel colorPanel = getColorPanel(processor);
+		JLabel label = getLabel(processor);
+		colorPanel.addMouseListener(mouseInputAdapter);
+		label.addMouseListener(mouseInputAdapter);
+		panel.add(colorPanel);
+		panel.add(label);
 		return panel;
 	}
 
@@ -160,16 +166,18 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	}
 
 	private void initComponents() {
+		OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter = new OpenConsoleSettingsActionMouseInputAdapter(
+				consoleView.get(), getProject());
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInStatusBar()) {
-				add(grepProcessor);
+				add(grepProcessor, mouseInputAdapter);
 			}
 		}
 	}
 
-	public void add(GrepProcessor processor) {
-		jPanel.add(createItem(processor));
+	public void add(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
+		jPanel.add(createItem(processor, mouseInputAdapter));
 	}
 
 	public boolean hasItems() {

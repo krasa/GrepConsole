@@ -1,8 +1,9 @@
 package krasa.grepconsole.stats;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -12,13 +13,16 @@ import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
 
+import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.*;
+import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 
 /**
@@ -29,10 +33,12 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 	private java.util.Timer timer;
 	private final JPanel jPanel;
 	private GrepHighlightFilter grepHighlightFilter;
+	private ConsoleViewImpl consoleView;
 
-	public StatisticsConsolePanel(GrepHighlightFilter filter) {
+	public StatisticsConsolePanel(GrepHighlightFilter filter, ConsoleViewImpl consoleView) {
 		super(new BorderLayout());
 		this.grepHighlightFilter = filter;
+		this.consoleView = consoleView;
 		setBorder(new EmptyBorder(0, 0, 0, 0));
 		final FlowLayout layout = new FlowLayout();
 		layout.setVgap(-4);
@@ -56,9 +62,10 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 	private void init() {
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
+		OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter = new OpenConsoleSettingsActionMouseInputAdapter(   consoleView, getProject());
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInConsole()) {
-				add(grepProcessor);
+				add(grepProcessor, mouseInputAdapter);
 			}
 		}
 		addButtons();
@@ -80,11 +87,11 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		}));
 	}
 
-	public void add(GrepProcessor processor) {
-		jPanel.add(createCounterPanel(processor));
+	public void add(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
+		jPanel.add(createCounterPanel(processor, mouseInputAdapter));
 	}
 
-	private JPanel createCounterPanel(GrepProcessor processor) {
+	private JPanel createCounterPanel(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
 		GrepColor backgroundColor = processor.getGrepExpressionItem().getStyle().getBackgroundColor();
 		GrepColor foregroundColor = processor.getGrepExpressionItem().getStyle().getForegroundColor();
 		final JPanel panel = new JPanel(new FlowLayout());
@@ -99,6 +106,8 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		color.setSelectedColor(backgroundColor.getColorAsAWT());
 		color.setBorderColor(foregroundColor.getColorAsAWT());
 		color.setBackground(getBackground());
+		color.addMouseListener(mouseInputAdapter);
+		panel.addMouseListener(mouseInputAdapter);
 		panel.add(color);
 		panel.add(label);
 		return panel;
@@ -155,6 +164,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 	@Override
 	public void dispose() {
 		cancelTimer();
+		consoleView = null;
 		Container parent = getParent();
 		if (parent != null) {
 			parent.remove(this);
@@ -163,4 +173,5 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 			}
 		}
 	}
+
 }

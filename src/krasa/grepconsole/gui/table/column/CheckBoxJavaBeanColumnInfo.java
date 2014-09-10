@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import com.intellij.ui.BooleanTableCellEditor;
 import com.intellij.ui.BooleanTableCellRenderer;
 
-public class CheckBoxJavaBeanColumnInfo<T, Boolean> extends JavaBeanColumnInfo {
+public class CheckBoxJavaBeanColumnInfo<T> extends JavaBeanColumnInfo<T, Boolean> {
 	public CheckBoxJavaBeanColumnInfo(String name, String propertyName) {
 		super(name, propertyName);
 	}

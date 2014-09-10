@@ -1,6 +1,7 @@
 package krasa.grepconsole.tail.remotecall.handler;
 
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class OpenFileInConsoleMessageHandler implements MessageHandler {
 						lastProjectSet = new Date();
 						Project project = getProject(allProjectFrames, selectedProject);
 						if (project != null) {
-							new OpenFileInConsoleAction().openFileInConsole(project, message);
+							new OpenFileInConsoleAction().openFileInConsole(project, new File(message));
 						}
 					}
 				}
