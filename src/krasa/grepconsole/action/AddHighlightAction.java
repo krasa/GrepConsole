@@ -1,16 +1,14 @@
 package krasa.grepconsole.action;
 
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.*;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
 import javax.swing.*;
 
 import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.plugin.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -19,8 +17,7 @@ import com.intellij.ide.CopyProvider;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.*;
 import com.intellij.ui.ColorPicker;
 
 public class AddHighlightAction extends HighlightManipulationAction {
@@ -48,8 +45,25 @@ public class AddHighlightAction extends HighlightManipulationAction {
 				if (string == null)
 					return;
 				GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
-				Color color = ColorPicker.showDialog(rootComponent(getEventProject(e)), "Background color", Color.CYAN,
-						true, null, true);
+
+				Method[] methods = ColorPicker.class.getMethods();
+				Color color = null;
+				boolean found = false;
+				// Color color = ColorPicker.showDialog(rootComponent(getEventProject(e)), "Background color",
+				// Color.CYAN,
+				// true, null, true);
+				for (Method method : methods) {
+					if (method.getName().equals("showDialog")) {
+						color = (Color) method.invoke(null, rootComponent(getEventProject(e)), "Background color",
+								Color.CYAN, true, null, true);
+						found = true;
+						break;
+					}
+				}
+				if (!found) {
+					throw new IllegalStateException("plugin is broken, please report this");
+				}
+
 				if (color == null) {
 					return;
 				}

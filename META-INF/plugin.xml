@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.9.134.1007</version>
+	<version>5.0.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>5.0 (2014-09-12)
+	  	<br>- IJ 14 api update
         <br>4.9 (2014-09-11)
 	  	<br>- IllegalStateException fix
         <br>4.8 (2014-09-04)
