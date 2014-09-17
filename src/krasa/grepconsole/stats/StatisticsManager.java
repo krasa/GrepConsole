@@ -7,20 +7,16 @@ import javax.swing.*;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.grep.GrepProcessor;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.plugin.*;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.*;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.StatusBarWidget;
-import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.*;
 
 /**
  * @author Vojtech Krasa
@@ -114,8 +110,11 @@ public class StatisticsManager {
 	@Nullable
 	public static GrepConsoleStatusBarWidget getStatusBarPanel(@NotNull ConsoleViewImpl consoleView) {
 		final Project project = consoleView.getProject();
-		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
-
+		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
+		if (ideFrame == null) {
+			return null;
+		}
+		StatusBar statusBar = ideFrame.getStatusBar();
 		StatusBarWidget widget = statusBar.getWidget(GrepConsoleStatusBarWidget.createId(consoleView));
 		return (GrepConsoleStatusBarWidget) widget;
 	}
