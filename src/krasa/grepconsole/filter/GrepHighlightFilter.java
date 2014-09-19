@@ -1,12 +1,9 @@
 package krasa.grepconsole.filter;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import krasa.grepconsole.grep.FilterState;
-import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.grep.*;
+import krasa.grepconsole.model.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -14,6 +11,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
 
+/** must be executed in single thread, see #createProcessor */
 public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	private long executionId;
@@ -112,4 +110,8 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 		return false;
 	}
 
+	@Override
+	protected GrepProcessor createProcessor(GrepExpressionItem grepExpressionItem) {
+		return grepExpressionItem.createThreadUnsafeProcessor();
+	}
 }

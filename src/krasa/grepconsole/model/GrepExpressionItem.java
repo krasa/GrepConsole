@@ -1,11 +1,9 @@
 package krasa.grepconsole.model;
 
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+import java.util.regex.*;
 
-import krasa.grepconsole.grep.Cache;
-import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.grep.*;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -19,6 +17,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	 * filter out text if matches
 	 */
 	private boolean inputFilter = false;
+	private boolean fold = false;
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
@@ -42,6 +41,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem(String id) {
 		super(id);
 
+	}
+
+	public boolean isFold() {
+		return fold;
+	}
+
+	public void setFold(boolean fold) {
+		this.fold = fold;
 	}
 
 	public ItemType getItemType() {
@@ -163,7 +170,12 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	}
 
 	public GrepProcessor createProcessor() {
-		return new GrepProcessor(this);
+		return new GrepProcessorImpl(this);
+	}
+
+	/** do not use in input filters */
+	public GrepProcessor createThreadUnsafeProcessor() {
+		return new ThreadUnsafeGrepProcessor(this);
 	}
 
 	public GrepExpressionItem grepExpression(final String grepExpression) {

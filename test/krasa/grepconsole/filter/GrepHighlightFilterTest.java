@@ -1,7 +1,7 @@
 package krasa.grepconsole.filter;
 
 import com.intellij.execution.filters.Filter;
-import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.grep.*;
 import krasa.grepconsole.model.*;
 import org.junit.Test;
 
@@ -86,13 +86,13 @@ public class GrepHighlightFilterTest {
 	private GrepProcessor getFilterB(String grepExpression, Color red, Operation exit) {
 		final GrepExpressionItem grepExpressionItem = getGrepExpressionItem(grepExpression, exit).style(
 				new GrepStyle().backgroundColor(new GrepColor(red)));
-		return new GrepProcessor(grepExpressionItem);
+		return new GrepProcessorImpl(grepExpressionItem);
 	}
 
 	private GrepProcessor getFilterF(String grepExpression, Color red, Operation exit) {
 		final GrepExpressionItem grepExpressionItem = getGrepExpressionItem(grepExpression, exit).style(
 				new GrepStyle().foregroundColor(new GrepColor(red)));
-		return new GrepProcessor(grepExpressionItem);
+		return new GrepProcessorImpl(grepExpressionItem);
 	}
 
 	private GrepExpressionItem getGrepExpressionItem(String grepExpression, Operation exit) {

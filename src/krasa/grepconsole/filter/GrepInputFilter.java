@@ -1,13 +1,9 @@
 package krasa.grepconsole.filter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-import krasa.grepconsole.grep.FilterState;
-import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.grep.*;
+import krasa.grepconsole.model.*;
 
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -56,7 +52,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		if (profile.isEnabledInputFiltering()) {
 			boolean inputFilterExists = false;
 			for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {
-				grepProcessors.add(grepExpressionItem.createProcessor());
+				grepProcessors.add(createProcessor(grepExpressionItem));
 				if (grepExpressionItem.isInputFilter()) {
 					inputFilterExists = true;
 				}

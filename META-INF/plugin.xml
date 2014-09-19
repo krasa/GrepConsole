@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>5.0.134.1007</version>
+	<version>5.1.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>5.1 (2014-09-19)
+	  	<br>- foldings
+	  	<br>- little performance improvements
         <br>5.0 (2014-09-12)
 	  	<br>- IJ 14 api update
         <br>4.9 (2014-09-11)
@@ -143,6 +146,7 @@
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
 		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
+		<console.folding implementation="krasa.grepconsole.folding.GrepConsoleFolding"/>
 
 		<!-- Add your extensions here -->
 	</extensions>
