@@ -1,22 +1,23 @@
 package krasa.grepconsole.action;
 
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.plugin.*;
+
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.impl.EditorHyperlinkSupport;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.ServiceManager;
-import org.jetbrains.annotations.Nullable;
 
 public class EditorHighlightAction extends HighlightManipulationAction {
 
 	protected Editor editor;
 	protected Project project;
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		editor = e.getData(PlatformDataKeys.EDITOR);
 		project = e.getProject();

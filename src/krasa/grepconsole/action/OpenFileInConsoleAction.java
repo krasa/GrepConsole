@@ -8,14 +8,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import krasa.grepconsole.tail.TailContentExecutor;
 
 import com.intellij.execution.impl.ConsoleBuffer;
-import com.intellij.execution.process.BaseOSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.*;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.fileChooser.FileChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.fileChooser.*;
+import com.intellij.openapi.project.*;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**
@@ -23,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
  */
 public class OpenFileInConsoleAction extends DumbAwareAction {
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
 		final FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(

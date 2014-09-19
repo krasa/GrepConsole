@@ -1,14 +1,12 @@
 package krasa.grepconsole.tail.remotecall;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
+import java.net.*;
 
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.tail.remotecall.handler.OpenFileInConsoleMessageHandler;
-import krasa.grepconsole.tail.remotecall.notifier.MessageNotifier;
-import krasa.grepconsole.tail.remotecall.notifier.SocketMessageNotifier;
+import krasa.grepconsole.tail.remotecall.notifier.*;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -23,6 +21,7 @@ public class GrepConsoleRemoteCallComponent implements ApplicationComponent {
 	private ServerSocket serverSocket;
 	private Thread listenerThread;
 
+	@Override
 	public void initComponent() {
 		final TailSettings tailSettings = GrepConsoleApplicationComponent.getInstance().getState().getTailSettings();
 		rebind(tailSettings);
@@ -40,6 +39,7 @@ public class GrepConsoleRemoteCallComponent implements ApplicationComponent {
 			log.info("Listening " + port);
 		} catch (final Exception e) {
 			ApplicationManager.getApplication().invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					Messages.showMessageDialog(
 							"Can't bind port " + tailSettings.getPort()
@@ -58,6 +58,7 @@ public class GrepConsoleRemoteCallComponent implements ApplicationComponent {
 		return true;
 	}
 
+	@Override
 	public void disposeComponent() {
 		try {
 			if (listenerThread != null) {
@@ -73,6 +74,7 @@ public class GrepConsoleRemoteCallComponent implements ApplicationComponent {
 		}
 	}
 
+	@Override
 	@NotNull
 	public String getComponentName() {
 		return "GrepConsoleRemoteCallComponent";

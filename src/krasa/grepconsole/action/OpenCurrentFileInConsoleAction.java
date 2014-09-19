@@ -1,20 +1,19 @@
 package krasa.grepconsole.action;
 
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import java.io.File;
+
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiFile;
-
-import java.io.File;
+import com.intellij.psi.*;
 
 /**
  * @author Vojtech Krasa
  */
 public class OpenCurrentFileInConsoleAction extends OpenFileInConsoleAction {
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		if (editor != null) {

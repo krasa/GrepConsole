@@ -2,8 +2,7 @@ package krasa.grepconsole.plugin;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.execution.ExecutionAdapter;
-import com.intellij.execution.ExecutionManager;
+import com.intellij.execution.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.project.Project;
@@ -16,6 +15,7 @@ public class GrepProjectComponent implements ProjectComponent {
 		this.project = project;
 	}
 
+	@Override
 	public void initComponent() {
 		final MessageBusConnection conn = project.getMessageBus().connect();
 
@@ -27,19 +27,23 @@ public class GrepProjectComponent implements ProjectComponent {
 		});
 	}
 
+	@Override
 	public void disposeComponent() {
 		// TODO: insert component disposal logic here
 	}
 
+	@Override
 	@NotNull
 	public String getComponentName() {
 		return "GrepProjectComponent";
 	}
 
+	@Override
 	public void projectOpened() {
 		// called when project is opened
 	}
 
+	@Override
 	public void projectClosed() {
 	}
 }
