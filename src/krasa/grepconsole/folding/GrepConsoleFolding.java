@@ -22,12 +22,15 @@ public class GrepConsoleFolding extends ConsoleFolding {
 
 	@Override
 	public boolean shouldFoldLine(String line) {
-		List<GrepExpressionItem> foldings = grepConsoleApplicationComponent.getFoldingItems();
+		List<GrepExpressionItem> foldings = grepConsoleApplicationComponent.getCachedFoldingItems();
+		int cachedMaxLengthToMatch = grepConsoleApplicationComponent.getCachedMaxLengthToMatch();
+		line = line.substring(0, Math.min(line.length(), cachedMaxLengthToMatch));
+		
 		for (int i = 0; i < foldings.size(); i++) {
 			GrepExpressionItem grepExpressionItem = foldings.get(i);
 			Pattern unlessPattern = grepExpressionItem.getUnlessPattern();
 			if (unlessPattern != null && unlessPattern.matcher(line).matches()) {
-				return false;
+				continue;
 			}
 			Pattern pattern = grepExpressionItem.getPattern();
 			if (pattern != null && pattern.matcher(line).matches()) {

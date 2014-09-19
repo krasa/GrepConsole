@@ -26,6 +26,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	private PluginState settings;
 	private HighlightManipulationAction currentAction;
 	private ServiceManager serviceManager = ServiceManager.getInstance();
+	protected int cachedMaxLengthToMatch = Integer.MAX_VALUE;
 
 	public GrepConsoleApplicationComponent() {
 	}
@@ -33,21 +34,31 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public static GrepConsoleApplicationComponent getInstance() {
 		return ApplicationManager.getApplication().getComponent(GrepConsoleApplicationComponent.class);
 	}
+	public int getCachedMaxLengthToMatch() {
+		return cachedMaxLengthToMatch;
+	}
 
-	public List<GrepExpressionItem> getFoldingItems() {
+	public List<GrepExpressionItem> getCachedFoldingItems() {
 		if (foldingsCache == null) {
 			synchronized (this) {
 				if (foldingsCache == null) {
-					initFoldingItems();
+					initFoldingCache();
 				}
 			}
 		}
 		return foldingsCache;
 	}
 
-	private void initFoldingItems() {
+	private void initFoldingCache() {
 		List<GrepExpressionItem> list = new ArrayList<GrepExpressionItem>();
 		Profile profile = getInstance().getState().getDefaultProfile();
+		
+		if (profile.isEnableMaxLengthLimit()) {
+			cachedMaxLengthToMatch = profile.getMaxLengthToMatchAsInt();
+		} else {
+			cachedMaxLengthToMatch = Integer.MAX_VALUE;
+		} 
+		
 		List<GrepExpressionItem> grepExpressionItems = profile.getAllGrepExpressionItems();
 		for (GrepExpressionItem grepExpressionItem : grepExpressionItems) {
 			if (profile.isEnableFoldings() && grepExpressionItem.isFold()
@@ -112,7 +123,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public void apply() throws ConfigurationException {
 		settings = form.getSettings().clone();
 		serviceManager.resetSettings();
-		initFoldingItems();
+		initFoldingCache();
 		Sound.soundMode = SoundMode.DISABLED;
 		if (currentAction != null) {
 			currentAction.applySettings();
@@ -166,4 +177,5 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 	public String getPresentableName() {
 		return "Grep Console";
 	}
+
 }
