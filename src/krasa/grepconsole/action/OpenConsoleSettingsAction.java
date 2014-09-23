@@ -34,10 +34,10 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 		instance.setCurrentAction(this);
 		instance.prepareForm(console);
 		try {
-			//IJ 14
+			// IJ 14
 			ShowSettingsUtil.getInstance().editConfigurable(project, "GrepConsoleSettings", instance, true);
-		} catch (Throwable e) {
-			//IJ 13- api
+		} catch (NoSuchMethodError e) {
+			// IJ 13
 			ShowSettingsUtil.getInstance().editConfigurable(project, "GrepConsoleSettings", instance);
 		}
 		instance.setCurrentAction(null);

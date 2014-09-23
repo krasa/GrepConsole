@@ -116,12 +116,13 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 
 	@Override
 	public boolean isModified() {
-		return form.isSettingsModified(settings);
+		return form !=null && form.isSettingsModified(settings);
 	}
 
 	@Override
 	public void apply() throws ConfigurationException {
-		settings = form.getSettings().clone();
+		PluginState formSettings = form.getSettings();
+		settings = formSettings.clone();
 		serviceManager.resetSettings();
 		initFoldingCache();
 		Sound.soundMode = SoundMode.DISABLED;
