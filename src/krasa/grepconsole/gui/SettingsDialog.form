@@ -150,22 +150,22 @@
                   <text value="Enable filtering out"/>
                 </properties>
               </component>
-              <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBarByDefault">
+              <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBar">
                 <constraints>
                   <grid row="3" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Show statistics panel in Status Bar by default"/>
+                  <text value="Always show statistics panel in Status Bar"/>
                   <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
                 </properties>
               </component>
-              <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsoleByDefault">
+              <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsole">
                 <constraints>
                   <grid row="4" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <selected value="false"/>
-                  <text value="Show statistics panel in Console by default"/>
+                  <text value="Always show statistics panel in Console"/>
                   <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
                 </properties>
               </component>

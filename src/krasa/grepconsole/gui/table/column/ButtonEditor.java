@@ -16,6 +16,7 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 	public ButtonEditor(JCheckBox checkBox) {
 		super(checkBox);
 		button = new JButton();
+		button.setBorder(null);
 		button.setOpaque(true);
 		button.addActionListener(new ActionListener() {
 			@Override

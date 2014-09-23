@@ -8,6 +8,7 @@ import javax.swing.table.TableCellRenderer;
 public class ButtonRenderer extends JButton implements TableCellRenderer {
 
 	public ButtonRenderer() {
+		setBorder(null);
 		setOpaque(true);
 	}
 
