@@ -1,8 +1,7 @@
 package krasa.grepconsole.gui.table;
 
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.*;
 import java.awt.dnd.DragSource;
 import java.util.*;
 import java.util.List;
@@ -15,7 +14,6 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import krasa.grepconsole.gui.SettingsDialog;
-import krasa.grepconsole.model.GrepExpressionGroup;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.treeStructure.treetable.TreeTableModelAdapter;
@@ -50,6 +48,11 @@ public class TableRowTransferHandler extends TransferHandler {
 	}
 
 	@Override
+	public void exportToClipboard(JComponent comp, Clipboard clip, int action) throws IllegalStateException {
+		return;
+	}
+	
+	@Override
 	public int getSourceActions(JComponent c) {
 		return TransferHandler.COPY_OR_MOVE;
 	}
@@ -61,6 +64,9 @@ public class TableRowTransferHandler extends TransferHandler {
 		try {
 			final TreeTableModelAdapter model = (TreeTableModelAdapter) table.getModel();
 			JTable target = (JTable) info.getComponent();
+			if (!info.isDrop()) {
+				return false;
+			}
 			JTable.DropLocation dl = (JTable.DropLocation) info.getDropLocation();
 			int rowTo = dl.getRow();
 			int indexOffset = 0;
