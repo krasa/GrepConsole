@@ -29,7 +29,7 @@
 	<change-notes><![CDATA[        
         <br>5.2 (2014-09-24)
 	  	<br>- added Delete key handling
-	  	<br>- rare NPE fix   
+	  	<br>- fixed NPE when settings dialog is opened more than once
         <br>5.1 (2014-09-19)
 	  	<br>- foldings
 	  	<br>- little performance improvements
