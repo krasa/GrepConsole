@@ -15,6 +15,10 @@ public class GrepProjectComponent implements ProjectComponent {
 		this.project = project;
 	}
 
+	public Project getProject() {
+		return project;
+	}
+
 	@Override
 	public void initComponent() {
 		final MessageBusConnection conn = project.getMessageBus().connect();
