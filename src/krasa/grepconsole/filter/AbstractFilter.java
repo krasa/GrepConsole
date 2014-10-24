@@ -1,11 +1,10 @@
 package krasa.grepconsole.filter;
 
+import com.intellij.openapi.project.*;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
-import com.intellij.openapi.project.Project;
-
-public abstract class AbstractFilter {
+public abstract class AbstractFilter implements DumbAware {
 
 	protected Project project;
 	protected Profile profile;
