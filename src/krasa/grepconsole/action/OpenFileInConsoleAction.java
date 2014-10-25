@@ -3,6 +3,7 @@ package krasa.grepconsole.action;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import com.intellij.compiler.server.BuildManager;
 import krasa.grepconsole.tail.TailContentExecutor;
 
 import com.intellij.execution.impl.ConsoleBuffer;
@@ -42,6 +43,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 				return true;
 			}
 		};
+		osProcessHandler.putUserDataIfAbsent(BuildManager.ALLOW_AUTOMAKE, true);
 		final TailContentExecutor executor = new TailContentExecutor(project, osProcessHandler);
 		Disposer.register(project, executor);
 		executor.withRerun(new Runnable() {
