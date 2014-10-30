@@ -1,14 +1,13 @@
 package krasa.grepconsole.model;
 
-import java.util.Set;
-import java.util.regex.*;
-
-import krasa.grepconsole.grep.*;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.util.xmlb.annotations.Transient;
+import krasa.grepconsole.grep.*;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Set;
+import java.util.regex.*;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -43,6 +42,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	}
 
+	@Transient
 	public boolean isWholeLine() {
 		return !highlightOnlyMatchingText;
 	}
@@ -140,7 +140,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Compiles the specified grep expression. Swallows exceptions caused by invalid expressions.
-	 * 
+	 *
 	 * @param expression
 	 * @return The compiled pattern, or <code>null</code> if an error occurs.
 	 */
@@ -158,7 +158,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Computes flags for the regular expression pattern.
-	 * 
+	 *
 	 * @return Flags.
 	 */
 	private int computeFlags() {
@@ -181,7 +181,9 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		return new GrepProcessorImpl(this);
 	}
 
-	/** do not use in input filters */
+	/**
+	 * do not use in input filters
+	 */
 	public GrepProcessor createThreadUnsafeProcessor() {
 		return new ThreadUnsafeGrepProcessor(this);
 	}
