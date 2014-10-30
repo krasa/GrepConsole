@@ -68,7 +68,7 @@ public class SettingsTableBuilder {
 		});
 		columns.add(new FolderColumnInfoWrapper(fold));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
-						"Whole line", "wholeLine").tooltipText("Highlights a whole line or finds a matching substring (slower). Only for highlighting")));
+						"Whole line", "wholeLine").tooltipText("Highlights a whole line if it matches, or only matching substrings. Only for highlighting.")));
 		columns.add(new FolderColumnInfoWrapper(
 						new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against next configured items to apply multiple styles")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",

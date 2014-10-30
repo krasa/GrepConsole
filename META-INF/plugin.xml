@@ -30,6 +30,8 @@
         <br>5.5 (2014-10-xx)
 	  	<br>- allow automake while tailing
 	  	<br>- foldings respect Enabled column
+	  	<br>- npe fix for Mocha tests
+	  	<br>- hopefully more clear settings
         <br>5.4 (2014-10-24)
 	  	<br>- usable during indexing
 		<br>5.3 (2014-10-21) 
