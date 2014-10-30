@@ -61,12 +61,19 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		
 		List<GrepExpressionItem> grepExpressionItems = profile.getAllGrepExpressionItems();
 		for (GrepExpressionItem grepExpressionItem : grepExpressionItems) {
-			if (profile.isEnableFoldings() && grepExpressionItem.isFold()
-					&& !(profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter())) {
+			boolean enableFoldings = profile.isEnableFoldings();
+			boolean enabled = grepExpressionItem.isEnabled();
+			boolean fold = grepExpressionItem.isFold();
+			boolean enabledInputFilter = isEnabledInputFilter(profile, grepExpressionItem);
+			if (enableFoldings && enabled && fold && !enabledInputFilter) {
 				list.add(grepExpressionItem);
 			}
 		}
 		foldingsCache = list;
+	}
+
+	private boolean isEnabledInputFilter(Profile profile, GrepExpressionItem grepExpressionItem) {
+		return profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter();
 	}
 
 	@Override

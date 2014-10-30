@@ -43,6 +43,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	}
 
+	public boolean isWholeLine() {
+		return !highlightOnlyMatchingText;
+	}
+
+	public void setWholeLine(boolean wholeLine) {
+		this.highlightOnlyMatchingText = !wholeLine;
+	}
+
 	public boolean isFold() {
 		return fold;
 	}

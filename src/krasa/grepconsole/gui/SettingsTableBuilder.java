@@ -36,7 +36,7 @@ public class SettingsTableBuilder {
 
 			@Override
 			public int getWidth(JTable table) {
-				return 60;
+				return 64;
 			}
 		});
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
@@ -67,6 +67,10 @@ public class SettingsTableBuilder {
 			}
 		});
 		columns.add(new FolderColumnInfoWrapper(fold));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+						"Whole line", "wholeLine").tooltipText("Highlights a whole line or finds a matching substring (slower). Only for highlighting")));
+		columns.add(new FolderColumnInfoWrapper(
+						new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against next configured items to apply multiple styles")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
 				"caseInsensitive")));
 		columns.add(new FolderColumnInfoWrapper(
@@ -77,10 +81,6 @@ public class SettingsTableBuilder {
 				"style.backgroundColor")));
 		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground",
 				"style.foregroundColor")));
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match the line against next configured items to apply multiple styles")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
-				"Highlight only matching text", "highlightOnlyMatchingText")));
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(
