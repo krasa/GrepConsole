@@ -3,6 +3,7 @@ package krasa.grepconsole.plugin;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
+import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.filter.AbstractFilter;
 import krasa.grepconsole.filter.AnsiInputFilter;
 import krasa.grepconsole.filter.GrepHighlightFilter;
@@ -19,6 +20,7 @@ import com.intellij.openapi.project.Project;
  * @author Vojtech Krasa
  */
 public class ServiceManager {
+	private static final Logger log = Logger.getInstance(ServiceManager.class.getName());
 
 	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
 
@@ -95,7 +97,7 @@ public class ServiceManager {
 		}
 	}
 
-	@NotNull
+	@Nullable
 	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
         GrepHighlightFilter grepHighlightFilter = weakHashMap.get(console);
 		if (grepHighlightFilter == null) {
@@ -112,7 +114,8 @@ public class ServiceManager {
 				i = true;
 			}
 			sb.append("]");
-			throw new IllegalStateException(sb.toString());
+			log.warn(sb.toString());
+			return null;
 		}
 		return grepHighlightFilter;
 	}

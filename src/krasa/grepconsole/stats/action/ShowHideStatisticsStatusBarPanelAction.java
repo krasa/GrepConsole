@@ -30,7 +30,9 @@ public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
 
 		if (statusBarPanel == null) {
 			GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
-
+			if (highlightFilter == null) {
+				return;
+			}
 			if (!hasStatusBarItems(highlightFilter)) {
                 new OpenConsoleSettingsAction(console).actionPerformed(getEventProject(anActionEvent), SettingsContext.STATUS_BAR);
 			}

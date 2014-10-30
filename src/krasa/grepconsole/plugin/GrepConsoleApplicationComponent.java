@@ -166,7 +166,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		this.settings = state;
 	}
 
-	public Profile getProfile(Project project) {
+	public Profile getProfile() {
 		return getState().getDefaultProfile();
 	}
 

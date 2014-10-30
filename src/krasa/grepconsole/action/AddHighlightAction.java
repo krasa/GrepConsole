@@ -68,7 +68,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 					return;
 				}
 
-				addExpressionItem(string, color, instance.getProfile(e.getProject()));
+				addExpressionItem(string, color, instance.getProfile());
 				ServiceManager.getInstance().resetSettings();
 				resetHighlights(consoleView);
 
