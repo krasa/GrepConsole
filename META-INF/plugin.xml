@@ -27,7 +27,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>5.5 (2014-10-xx)
+        <br>5.5 (2014-10-31)
 	  	<br>- allow automake while tailing
 	  	<br>- foldings respect Enabled column
 	  	<br>- npe fix for Mocha tests
