@@ -43,7 +43,11 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 				return true;
 			}
 		};
-		osProcessHandler.putUserDataIfAbsent(BuildManager.ALLOW_AUTOMAKE, true);
+		try {
+			osProcessHandler.putUserDataIfAbsent(BuildManager.ALLOW_AUTOMAKE, true);
+		} catch (NoClassDefFoundError e) {
+			//phpstorm does not have it
+		}
 		final TailContentExecutor executor = new TailContentExecutor(project, osProcessHandler);
 		Disposer.register(project, executor);
 		executor.withRerun(new Runnable() {

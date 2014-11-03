@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>5.5.134.1007</version>
+	<version>5.6.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>5.6 (2014-11-3)
+	  	<br>- tailing for PhpStorm fixed
         <br>5.5 (2014-10-31)
 	  	<br>- allow automake while tailing
 	  	<br>- foldings respect Enabled column
