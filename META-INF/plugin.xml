@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>5.6.134.1007</version>
+	<version>5.7.134.1007</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>5.7 (2014-12-25)
+	  	<br>- Run action duplicated on a toolbar and in menu
         <br>5.6 (2014-11-3)
 	  	<br>- tailing for PhpStorm fixed
         <br>5.5 (2014-10-31)
@@ -152,10 +154,12 @@
 				description="Tail Log in Console - by Grep Console">
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>
+		<action id="GrepConsoleTail" class="krasa.grepconsole.action.GrepConsoleTailDummyAction" text="GrepConsoleTailDummyAction">
+		</action>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="tail"/>
+		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
 
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>

@@ -17,12 +17,12 @@ public class TailRunExecutor extends Executor {
 
 	public static final String TOOLWINDOWS_ID = "Tail";
 	@NonNls
-	public static final String EXECUTOR_ID = TOOLWINDOWS_ID;
+	public static final String EXECUTOR_ID = "GrepConsoleTail";
 
 	@Override
 	@NotNull
 	public String getStartActionText() {
-		return ExecutionBundle.message("default.runner.start.action.text");
+		return "Tail";
 	}
 
 	@Override
