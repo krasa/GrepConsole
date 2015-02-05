@@ -125,4 +125,17 @@ public class ColorTest {
 		test16matrix();
 		test256();
 	}
+
+	/**
+     * @author Vojtech Krasa
+     */
+	static class Prefix {
+        int val;
+        String desc;
+    
+        Prefix(int value, String description) {
+            val = value;
+            desc = description;
+        }
+    }
 }
