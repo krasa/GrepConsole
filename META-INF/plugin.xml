@@ -143,13 +143,13 @@
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsoleAction"
-				text="Open File in Console"
-				description="Open File in Console">
+				text="Open File in Console - Tail"
+				description="Open File in Console - Tail">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
-				text="Open Current File in Console"
-				description="Open Current Editor File in Console">
+				text="Open Current File in Console - Tail"
+				description="Open Current Editor File in Console - Tail">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<!--<action id="OpenFileInConsoleToolbarAction"-->
