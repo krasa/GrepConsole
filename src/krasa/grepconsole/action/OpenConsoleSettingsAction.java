@@ -34,13 +34,7 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 		GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
 		instance.setCurrentAction(this);
 		instance.prepareForm(console);
-		try {
-			// IJ 14
-			ShowSettingsUtil.getInstance().editConfigurable(project, "GrepConsoleSettings", instance, true);
-		} catch (NoSuchMethodError e) {
-			// IJ 13
-			ShowSettingsUtil.getInstance().editConfigurable(project, "GrepConsoleSettings", instance);
-		}
+		ShowSettingsUtil.getInstance().editConfigurable(project, "GrepConsoleSettings", instance);
 		instance.setCurrentAction(null);
 	}
 
