@@ -30,7 +30,9 @@ public class ShowHideStatisticsConsolePanelAction extends DumbAwareAction {
 	@Override
 	public void actionPerformed(AnActionEvent anActionEvent) {
 		GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
-
+		if (highlightFilter == null) {
+			return;
+		}
 		StatisticsConsolePanel statisticsConsolePanel = StatisticsManager.getConsolePanel((JPanel) console);
 		if (statisticsConsolePanel == null) {
 

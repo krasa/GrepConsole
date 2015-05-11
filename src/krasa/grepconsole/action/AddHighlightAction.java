@@ -1,17 +1,14 @@
 package krasa.grepconsole.action;
 
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.datatransfer.*;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
 import javax.swing.*;
 
 import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.plugin.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +18,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.*;
 import com.intellij.ui.ColorPicker;
 
 public class AddHighlightAction extends HighlightManipulationAction {
@@ -74,7 +70,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 					return;
 				}
 
-				addExpressionItem(string, color, instance.getProfile(e.getProject()));
+				addExpressionItem(string, color, instance.getProfile());
 				ServiceManager.getInstance().resetSettings();
 				resetHighlights(consoleView);
 

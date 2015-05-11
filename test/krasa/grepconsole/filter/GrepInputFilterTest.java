@@ -6,7 +6,7 @@ import static junit.framework.Assert.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-import krasa.grepconsole.grep.GrepProcessor;
+import krasa.grepconsole.grep.*;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
@@ -71,6 +71,6 @@ public class GrepInputFilterTest {
 		GrepStyle style1 = new GrepStyle().backgroundColor(new GrepColor(red));
 		GrepExpressionItem item = new GrepExpressionItem().grepExpression(grepExpression).style(style1).inputFilter(
 				true);
-		return new GrepProcessor(item);
+		return new GrepProcessorImpl(item);
 	}
 }

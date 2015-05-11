@@ -5,11 +5,9 @@ import static com.intellij.ui.CheckboxTreeBase.NodeState;
 import java.awt.*;
 
 import javax.swing.*;
-import javax.swing.tree.TreeCellRenderer;
-import javax.swing.tree.TreeNode;
+import javax.swing.tree.*;
 
-import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.*;
 import com.intellij.util.ui.UIUtil;
 
 public class CheckboxTreeCellRendererBase extends JPanel implements TreeCellRenderer {
@@ -26,6 +24,7 @@ public class CheckboxTreeCellRendererBase extends JPanel implements TreeCellRend
 		myUsePartialStatusForParentNodes = usePartialStatusForParentNodes;
 		myCheckbox = new JCheckBox();
 		myTextRenderer = new ColoredTreeCellRenderer() {
+			@Override
 			public void customizeCellRenderer(JTree tree, Object value, boolean selected, boolean expanded,
 					boolean leaf, int row, boolean hasFocus) {
 			}
@@ -40,6 +39,7 @@ public class CheckboxTreeCellRendererBase extends JPanel implements TreeCellRend
 		this(true);
 	}
 
+	@Override
 	public final Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded,
 			boolean leaf, int row, boolean hasFocus) {
 		invalidate();

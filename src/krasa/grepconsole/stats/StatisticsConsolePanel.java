@@ -1,9 +1,8 @@
 package krasa.grepconsole.stats;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.TimerTask;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -16,13 +15,10 @@ import krasa.grepconsole.model.GrepColor;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.ui.HyperlinkLabel;
-import com.intellij.ui.JBColor;
+import com.intellij.ui.*;
 import com.intellij.util.ui.UIUtil;
 
 /**
@@ -62,7 +58,8 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 	private void init() {
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
-		OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter = new OpenConsoleSettingsActionMouseInputAdapter(   consoleView, getProject());
+		OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter = new OpenConsoleSettingsActionMouseInputAdapter(
+				consoleView, getProject());
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInConsole()) {
 				add(grepProcessor, mouseInputAdapter);
@@ -91,7 +88,8 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		jPanel.add(createCounterPanel(processor, mouseInputAdapter));
 	}
 
-	private JPanel createCounterPanel(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
+	private JPanel createCounterPanel(GrepProcessor processor,
+			final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
 		GrepColor backgroundColor = processor.getGrepExpressionItem().getStyle().getBackgroundColor();
 		GrepColor foregroundColor = processor.getGrepExpressionItem().getStyle().getForegroundColor();
 		final JPanel panel = new JPanel(new FlowLayout());

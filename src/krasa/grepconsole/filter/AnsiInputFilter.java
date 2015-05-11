@@ -1,8 +1,7 @@
 package krasa.grepconsole.filter;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import krasa.grepconsole.ansi.AnsiConsoleStyleProcessor;
 import krasa.grepconsole.filter.support.ConsoleListener;
@@ -11,8 +10,7 @@ import krasa.grepconsole.model.Profile;
 import org.apache.commons.net.util.Base64;
 
 import com.intellij.execution.filters.InputFilter;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.execution.ui.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 
@@ -66,6 +64,7 @@ public class AnsiInputFilter extends AbstractFilter implements InputFilter, Cons
 		ansiConsoleStyleProcessor.setProfile(profile);
 	}
 
+	@Override
 	public void onChange() {
 		super.onChange();
 

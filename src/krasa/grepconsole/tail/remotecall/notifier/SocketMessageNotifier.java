@@ -2,12 +2,8 @@ package krasa.grepconsole.tail.remotecall.notifier;
 
 import static java.net.URLDecoder.decode;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.util.*;
 
 import krasa.grepconsole.tail.remotecall.handler.MessageHandler;
@@ -41,10 +37,12 @@ public class SocketMessageNotifier implements MessageNotifier {
 		return parameters;
 	}
 
+	@Override
 	public void addMessageHandler(MessageHandler handler) {
 		messageHandlers.add(handler);
 	}
 
+	@Override
 	public void run() {
 		while (true) {
 			Socket clientSocket;

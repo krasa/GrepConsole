@@ -1,13 +1,9 @@
 package krasa.grepconsole.filter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import krasa.grepconsole.grep.FilterState;
-import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Operation;
-import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.grep.*;
+import krasa.grepconsole.model.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -62,9 +58,13 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		grepProcessors = new ArrayList<GrepProcessor>();
 		for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {
 			if (shouldAdd(grepExpressionItem)) {
-				grepProcessors.add(grepExpressionItem.createProcessor());
+				grepProcessors.add(createProcessor(grepExpressionItem));
 			}
 		}
+	}
+
+	protected GrepProcessor createProcessor(GrepExpressionItem grepExpressionItem) {
+		return grepExpressionItem.createProcessor();
 	}
 
 	public List<GrepProcessor> getGrepProcessors() {
@@ -73,6 +73,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 
 	abstract protected boolean shouldAdd(GrepExpressionItem item);
 
+	@Override
 	public void onChange() {
 		super.onChange();
 		initProcessors();

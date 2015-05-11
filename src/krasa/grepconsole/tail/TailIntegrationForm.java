@@ -1,7 +1,6 @@
 package krasa.grepconsole.tail;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.File;
 import java.util.Arrays;
 
@@ -31,6 +30,7 @@ public class TailIntegrationForm {
 	public TailIntegrationForm() {
 		for (JToggleButton button : Arrays.asList(listenOnPortCheckBox)) {
 			button.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					updateComponents();
 				}
@@ -39,6 +39,7 @@ public class TailIntegrationForm {
 
 		for (JTextField field : Arrays.asList(port)) {
 			field.getDocument().addDocumentListener(new DocumentAdapter() {
+				@Override
 				protected void textChanged(DocumentEvent e) {
 					updateComponents();
 				}
@@ -61,6 +62,7 @@ public class TailIntegrationForm {
 					}
 				} catch (final Exception e1) {
 					ApplicationManager.getApplication().invokeLater(new Runnable() {
+						@Override
 						public void run() {
 							Messages.showMessageDialog("Windows integration error: " + e1.toString(),
 									"GrepConsole Plugin Error", Messages.getErrorIcon());

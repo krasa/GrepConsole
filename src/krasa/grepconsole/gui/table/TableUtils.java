@@ -25,7 +25,9 @@ public class TableUtils {
 	}
 
 	public static void selectNode(DefaultMutableTreeNode newChild, final CheckboxTreeTable table) {
-		table.getTree().setSelectionPath(new TreePath(newChild.getPath()));
+		if (newChild != null) {
+			table.getTree().setSelectionPath(new TreePath(newChild.getPath()));
+		}
 	}
 
 	public static void selectNodes(List<DefaultMutableTreeNode> selectedNodes, CheckboxTreeTable table) {

@@ -1,7 +1,6 @@
 package krasa.grepconsole.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -27,6 +26,7 @@ public class Profile extends DomainObject {
 
 	private boolean showStatsInConsoleByDefault;
 	private boolean showStatsInStatusBarByDefault;
+	private boolean enableFoldings;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -56,10 +56,12 @@ public class Profile extends DomainObject {
 		return items;
 	}
 
+	@Deprecated
 	public List<GrepExpressionItem> getGrepExpressionItems() {
 		return grepExpressionItems;
 	}
 
+	@Deprecated
 	public void setGrepExpressionItems(List<GrepExpressionItem> grepExpressionItems) {
 		this.grepExpressionItems = grepExpressionItems;
 	}
@@ -171,5 +173,13 @@ public class Profile extends DomainObject {
 
 	public void setShowStatsInConsoleByDefault(boolean showStatsInConsoleByDefault) {
 		this.showStatsInConsoleByDefault = showStatsInConsoleByDefault;
+	}
+
+	public boolean isEnableFoldings() {
+		return enableFoldings;
+	}
+
+	public void setEnableFoldings(final boolean enableFoldings) {
+		this.enableFoldings = enableFoldings;
 	}
 }

@@ -1,16 +1,13 @@
 package krasa.grepconsole.model;
 
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import krasa.grepconsole.grep.Cache;
-import krasa.grepconsole.grep.GrepProcessor;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.util.xmlb.annotations.Transient;
+import krasa.grepconsole.grep.*;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Set;
+import java.util.regex.*;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -19,6 +16,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	 * filter out text if matches
 	 */
 	private boolean inputFilter = false;
+	private boolean fold = false;
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
@@ -42,6 +40,23 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem(String id) {
 		super(id);
 
+	}
+
+	@Transient
+	public boolean isWholeLine() {
+		return !highlightOnlyMatchingText;
+	}
+
+	public void setWholeLine(boolean wholeLine) {
+		this.highlightOnlyMatchingText = !wholeLine;
+	}
+
+	public boolean isFold() {
+		return fold;
+	}
+
+	public void setFold(boolean fold) {
+		this.fold = fold;
 	}
 
 	public ItemType getItemType() {
@@ -125,7 +140,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Compiles the specified grep expression. Swallows exceptions caused by invalid expressions.
-	 * 
+	 *
 	 * @param expression
 	 * @return The compiled pattern, or <code>null</code> if an error occurs.
 	 */
@@ -143,7 +158,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	/**
 	 * Computes flags for the regular expression pattern.
-	 * 
+	 *
 	 * @return Flags.
 	 */
 	private int computeFlags() {
@@ -163,7 +178,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	}
 
 	public GrepProcessor createProcessor() {
-		return new GrepProcessor(this);
+		return new GrepProcessorImpl(this);
+	}
+
+	/**
+	 * do not use in input filters
+	 */
+	public GrepProcessor createThreadUnsafeProcessor() {
+		return new ThreadUnsafeGrepProcessor(this);
 	}
 
 	public GrepExpressionItem grepExpression(final String grepExpression) {

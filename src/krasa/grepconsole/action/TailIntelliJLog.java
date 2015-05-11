@@ -10,6 +10,7 @@ import com.intellij.openapi.project.DumbAwareAction;
  * @author Vojtech Krasa
  */
 public class TailIntelliJLog extends DumbAwareAction {
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final File logFile = new File(PathManager.getLogPath(), "idea.log");
 		new OpenFileInConsoleAction().openFileInConsole(getEventProject(e), logFile);

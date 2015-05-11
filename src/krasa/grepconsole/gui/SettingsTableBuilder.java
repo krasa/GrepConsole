@@ -1,22 +1,18 @@
 package krasa.grepconsole.gui;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import javax.swing.*;
 
-import krasa.grepconsole.gui.table.CheckboxTreeCellRendererBase;
+import krasa.grepconsole.gui.table.*;
 import krasa.grepconsole.gui.table.CheckboxTreeTable;
-import krasa.grepconsole.gui.table.TableRowTransferHandler;
 import krasa.grepconsole.gui.table.column.*;
-import krasa.grepconsole.model.GrepExpressionGroup;
-import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.*;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.ide.DefaultTreeExpander;
-import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.*;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.ColumnInfo;
@@ -25,9 +21,9 @@ import com.intellij.util.ui.ColumnInfo;
  * @author Vojtech Krasa
  */
 public class SettingsTableBuilder {
-    public static final String STATUS_BAR_COUNT = "StatusBar count";
-    public static final String CONSOLE_COUNT = "Console count";
-    private CheckboxTreeTable table;
+	public static final String STATUS_BAR_COUNT = "StatusBar count";
+	public static final String CONSOLE_COUNT = "Console count";
+	private CheckboxTreeTable table;
 
 	public SettingsTableBuilder(final SettingsDialog settingsDialog) {
 		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
@@ -40,7 +36,7 @@ public class SettingsTableBuilder {
 
 			@Override
 			public int getWidth(JTable table) {
-				return 60;
+				return 64;
 			}
 		});
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
@@ -59,6 +55,22 @@ public class SettingsTableBuilder {
 			}
 		});
 		columns.add(new FolderColumnInfoWrapper(inputFilter));
+		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> fold = new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+				"Fold", "fold");
+		fold.addListener(new ValueChangedListener<Boolean>() {
+			@Override
+			public void onValueChanged(Boolean newValue) {
+				if (newValue && !settingsDialog.getProfile().isEnableFoldings()) {
+					settingsDialog.getProfile().setEnableFoldings(true);
+					settingsDialog.setData(settingsDialog.getProfile());
+				}
+			}
+		});
+		columns.add(new FolderColumnInfoWrapper(fold));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+						"Whole line", "wholeLine").tooltipText("Highlights a whole line if it matches, or only matching substrings. Only for highlighting.")));
+		columns.add(new FolderColumnInfoWrapper(
+						new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against next configured items to apply multiple styles")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
 				"caseInsensitive")));
 		columns.add(new FolderColumnInfoWrapper(
@@ -69,10 +81,6 @@ public class SettingsTableBuilder {
 				"style.backgroundColor")));
 		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground",
 				"style.foregroundColor")));
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match the line against next configured items to apply multiple styles")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
-				"Highlight only matching text", "highlightOnlyMatchingText")));
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(

@@ -12,8 +12,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
+import com.intellij.openapi.wm.*;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
 
@@ -26,12 +25,14 @@ public class OpenFileInConsoleMessageHandler implements MessageHandler {
 	protected String lastProject;
 	protected Date lastProjectSet;
 
+	@Override
 	public void handleMessage(final String message) {
 		if (message != null && !message.isEmpty()) {
 			log.info("Opening file=" + message);
 			final Date date = new Date();
 
 			ApplicationManager.getApplication().invokeLater(new Runnable() {
+				@Override
 				public void run() {
 					IdeFrame[] allProjectFrames = WindowManager.getInstance().getAllProjectFrames();
 					List<String> values = getValues(allProjectFrames);

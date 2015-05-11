@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>4.9.128.55</version>
+	<version>5.8.128.55</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,29 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>5.8 (2015-05-12)
+	  	<br>- less bright icon
+        <br>5.7 (2014-12-25)
+	  	<br>- Run action duplicated on a toolbar and in menu
+        <br>5.6 (2014-11-3)
+	  	<br>- tailing for PhpStorm fixed
+        <br>5.5 (2014-10-31)
+	  	<br>- allow automake while tailing
+	  	<br>- foldings respect Enabled column
+	  	<br>- npe fix for Mocha tests
+	  	<br>- hopefully more clear settings
+        <br>5.4 (2014-10-24)
+	  	<br>- usable during indexing
+		<br>5.3 (2014-10-21) 
+		<br>- file tail Rerun fix for IJ 14 
+        <br>5.2 (2014-09-24)
+	  	<br>- added Delete key handling
+	  	<br>- fixed NPE when settings dialog is opened more than once
+        <br>5.1 (2014-09-19)
+	  	<br>- foldings
+	  	<br>- little performance improvements
+        <br>5.0 (2014-09-12)
+	  	<br>- IJ 14 API update
         <br>4.9 (2014-09-11)
 	  	<br>- IllegalStateException fix
         <br>4.8 (2014-09-04)
@@ -139,14 +162,17 @@
 				description="Tail Log in Console - by Grep Console">
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>
+		<action id="GrepConsoleTail" class="krasa.grepconsole.action.GrepConsoleTailDummyAction" text="GrepConsoleTailDummyAction">
+		</action>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
-		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="tail"/>
+		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
 
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
 		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
+		<console.folding implementation="krasa.grepconsole.folding.GrepConsoleFolding"/>
 
 		<!-- Add your extensions here -->
 	</extensions>

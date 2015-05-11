@@ -1,8 +1,7 @@
 package krasa.grepconsole.gui.table.column;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 import javax.swing.*;
 
@@ -17,14 +16,17 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 	public ButtonEditor(JCheckBox checkBox) {
 		super(checkBox);
 		button = new JButton();
+		button.setBorder(null);
 		button.setOpaque(true);
 		button.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				fireEditingStopped();
 			}
 		});
 	}
 
+	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
 		item = (Item) value;
 		if (isSelected) {
@@ -48,6 +50,7 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 		return (value == null) ? "" : value.toString();
 	}
 
+	@Override
 	public Object getCellEditorValue() {
 		if (isPushed) {
 
@@ -60,11 +63,13 @@ public class ButtonEditor<Item> extends DefaultCellEditor {
 		JOptionPane.showMessageDialog(button, label + ": Ouch!");
 	}
 
+	@Override
 	public boolean stopCellEditing() {
 		isPushed = false;
 		return super.stopCellEditing();
 	}
 
+	@Override
 	protected void fireEditingStopped() {
 		super.fireEditingStopped();
 		onButtonClicked(item);

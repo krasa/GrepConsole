@@ -1,21 +1,18 @@
 package krasa.grepconsole.action;
 
 import java.io.*;
-import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
-import java.util.concurrent.atomic.AtomicReference;
 
+import com.intellij.compiler.server.BuildManager;
 import krasa.grepconsole.tail.TailContentExecutor;
 
 import com.intellij.execution.impl.ConsoleBuffer;
-import com.intellij.execution.process.BaseOSProcessHandler;
-import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.*;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.fileChooser.FileChooserDialog;
-import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.project.DumbAwareAction;
-import com.intellij.openapi.project.Project;
+import com.intellij.openapi.fileChooser.*;
+import com.intellij.openapi.project.*;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 
 /**
@@ -23,6 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile;
  */
 public class OpenFileInConsoleAction extends DumbAwareAction {
 
+	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
 		final FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(
@@ -39,29 +37,19 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 	public void openFileInConsole(final Project project, final File file) {
 		final Process process = new MyProcess(file);
 
-		final AtomicReference<WeakReference<TailContentExecutor>> atomicReference = new AtomicReference<WeakReference<TailContentExecutor>>();
 		final ProcessHandler osProcessHandler = new BaseOSProcessHandler(process, null, Charset.defaultCharset()) {
 			@Override
 			public boolean isSilentlyDestroyOnClose() {
 				return true;
 			}
-
-			@Override
-			public void destroyProcess() {
-				super.destroyProcess();
-				WeakReference<TailContentExecutor> tailContentExecutorWeakReference = atomicReference.get();
-				if (tailContentExecutorWeakReference != null) {
-					TailContentExecutor disposable = tailContentExecutorWeakReference.get();
-					if (disposable != null) {
-						disposable.dispose();
-					}
-				}
-			}
 		};
+		try {
+			osProcessHandler.putUserDataIfAbsent(BuildManager.ALLOW_AUTOMAKE, true);
+		} catch (NoClassDefFoundError e) {
+			//phpstorm does not have it
+		}
 		final TailContentExecutor executor = new TailContentExecutor(project, osProcessHandler);
-		final WeakReference<TailContentExecutor> weakReference = new WeakReference<TailContentExecutor>(executor);
-		atomicReference.set(weakReference);
-
+		Disposer.register(project, executor);
 		executor.withRerun(new Runnable() {
 			@Override
 			public void run() {
