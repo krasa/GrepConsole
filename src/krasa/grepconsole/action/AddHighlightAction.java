@@ -58,7 +58,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 					color = (Color) method.invoke(color, rootComponent(getEventProject(e)), "Background color",
 							Color.CYAN, true, null, false);
 				} catch (Exception e1) {
-					log.warn(e1);
+					log.debug(e1);
 					try {
 						color = (Color) method.invoke(color, rootComponent(getEventProject(e)), "Background color",
 								Color.CYAN, true, null);
