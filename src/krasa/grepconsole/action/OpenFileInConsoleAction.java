@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 
 import com.intellij.compiler.server.BuildManager;
+import krasa.grepconsole.tail.MyProcessHandler;
 import krasa.grepconsole.tail.TailContentExecutor;
 
 import com.intellij.execution.impl.ConsoleBuffer;
@@ -37,7 +38,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 	public void openFileInConsole(final Project project, final File file) {
 		final Process process = new MyProcess(file);
 
-		final ProcessHandler osProcessHandler = new BaseOSProcessHandler(process, null, Charset.defaultCharset()) {
+		final ProcessHandler osProcessHandler = new MyProcessHandler(process, null, Charset.defaultCharset()) {
 			@Override
 			public boolean isSilentlyDestroyOnClose() {
 				return true;

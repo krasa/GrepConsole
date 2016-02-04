@@ -186,4 +186,12 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		return "Grep Console";
 	}
 
+	public static class MyConfigurableProvider extends ConfigurableProvider {
+
+		@Nullable
+		@Override
+		public Configurable createConfigurable() {
+			return GrepConsoleApplicationComponent.getInstance();
+		}
+	}
 }

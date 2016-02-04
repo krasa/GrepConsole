@@ -27,6 +27,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
 
 /**
+ * Copy of com.intellij.execution.RunContentExecutor
  * Runs a process and prints the output in a content tab within the Run toolwindow.
  * 
  * @author yole
