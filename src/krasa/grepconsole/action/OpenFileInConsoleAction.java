@@ -38,7 +38,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 	public void openFileInConsole(final Project project, final File file) {
 		final Process process = new MyProcess(file);
 
-		final ProcessHandler osProcessHandler = new MyProcessHandler(process, null, Charset.defaultCharset()) {
+		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), Charset.defaultCharset()) {
 			@Override
 			public boolean isSilentlyDestroyOnClose() {
 				return true;

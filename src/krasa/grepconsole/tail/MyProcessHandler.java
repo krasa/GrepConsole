@@ -48,7 +48,6 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
   private static final Logger LOG = Logger.getInstance(MyProcessHandler.class);
 
   protected final Process myProcess;
-  protected final String myCommandLine;
   protected final Charset myCharset;
   protected final String myPresentableName;
   protected final ProcessWaitFor myWaitFor;
@@ -58,10 +57,9 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
    */
   public MyProcessHandler(@NotNull Process process, /*@NotNull*/ String commandLine, @Nullable Charset charset) {
     myProcess = process;
-    myCommandLine = commandLine;
     myCharset = charset;
-    myPresentableName = CommandLineUtil.extractPresentableName(StringUtil.notNullize(commandLine));
-    myWaitFor = new ProcessWaitFor(process, this, myPresentableName);
+    myPresentableName = commandLine;
+    myWaitFor = new ProcessWaitFor(process, this);
   }
 
   /**
@@ -104,10 +102,6 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 
   @Override
   public void startNotify() {
-    if (myCommandLine != null) {
-      notifyTextAvailable(myCommandLine + '\n', ProcessOutputTypes.SYSTEM);
-    }
-
     addProcessListener(new ProcessAdapter() {
       @Override
       public void startNotified(final ProcessEvent event) {
@@ -243,11 +237,6 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
     return myProcess.getOutputStream();
   }
 
-  /*@NotNull*/
-  public String getCommandLine() {
-    return myCommandLine;
-  }
-
   @Nullable
   public Charset getCharset() {
     return myCharset;
@@ -270,19 +259,13 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
     return ExecutorServiceHolder.ourThreadExecutorsService.submit(task);
   }
 
-  @TestOnly
-  public static void awaitQuiescence(long timeout, @NotNull TimeUnit unit) {
-    ThreadPoolExecutor executor = ExecutorServiceHolder.ourThreadExecutorsService;
-    ConcurrencyUtil.awaitQuiescence(executor, timeout, unit);
-  }
-
   private class SimpleOutputReader extends BaseOutputReader {
     private final Key myProcessOutputType;
 
     private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
       super(reader, sleepingPolicy);
       myProcessOutputType = processOutputType;
-      start(presentableName);
+      start();
     }
 
     @NotNull
@@ -299,6 +282,6 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 
   @Override
   public String toString() {
-    return myCommandLine;
+    return myPresentableName;
   }
 }
