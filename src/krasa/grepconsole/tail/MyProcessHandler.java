@@ -15,13 +15,11 @@
  */
 package krasa.grepconsole.tail;
 
-import com.intellij.execution.CommandLineUtil;
 import com.intellij.execution.TaskExecutor;
 import com.intellij.execution.process.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.io.BaseDataReader;
@@ -29,7 +27,6 @@ import com.intellij.util.io.BaseInputStreamReader;
 import com.intellij.util.io.BaseOutputReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -265,7 +262,14 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
     private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
       super(reader, sleepingPolicy);
       myProcessOutputType = processOutputType;
-      start(presentableName);
+      try {
+        java.lang.reflect.Method method;
+        method = BaseDataReader.class.getDeclaredMethod("start", String.class);
+        method.invoke(this, presentableName);
+      } catch (Exception e) {
+        //IJ 14,15
+        start();
+      }
     }
 
     @NotNull
