@@ -1,31 +1,25 @@
 package krasa.grepconsole.plugin;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.*;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
 
-import krasa.grepconsole.action.HighlightManipulationAction;
-import krasa.grepconsole.filter.support.SoundMode;
-import krasa.grepconsole.gui.*;
-import krasa.grepconsole.model.*;
+import org.jetbrains.annotations.NotNull;
 
-import org.jetbrains.annotations.*;
-
-import com.intellij.openapi.application.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.*;
-import com.intellij.openapi.options.*;
-import com.intellij.openapi.project.Project;
 
 @State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
-public class GrepConsoleApplicationComponent implements ApplicationComponent, Configurable,
+public class GrepConsoleApplicationComponent
+		implements ApplicationComponent,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
 
 	protected List<GrepExpressionItem> foldingsCache;
-	private SettingsDialog form;
 	private PluginState settings;
-	private HighlightManipulationAction currentAction;
-	private ServiceManager serviceManager = ServiceManager.getInstance();
 	protected int cachedMaxLengthToMatch = Integer.MAX_VALUE;
 
 	public GrepConsoleApplicationComponent() {
@@ -49,7 +43,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		return foldingsCache;
 	}
 
-	private void initFoldingCache() {
+	void initFoldingCache() {
 		List<GrepExpressionItem> list = new ArrayList<GrepExpressionItem>();
 		Profile profile = getInstance().getState().getDefaultProfile();
 		
@@ -91,65 +85,7 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		return "GrepConsole";
 	}
 
-	@Nls
-	@Override
-	public String getDisplayName() {
-		return "Grep Console";
-	}
 
-	@Nullable
-	public Icon getIcon() {
-		return null;
-	}
-
-	@Override
-	@Nullable
-	@NonNls
-	public String getHelpTopic() {
-		return null;
-	}
-
-	@Override
-	public JComponent createComponent() {
-		if (form == null) {
-			form = new SettingsDialog(getState().clone());
-		}
-		return form.getRootComponent();
-	}
-
-	public void prepareForm(SettingsContext settingsContext) {
-		form = new SettingsDialog(getState().clone(), settingsContext);
-	}
-
-	@Override
-	public boolean isModified() {
-		return form !=null && form.isSettingsModified(settings);
-	}
-
-	@Override
-	public void apply() throws ConfigurationException {
-		PluginState formSettings = form.getSettings();
-		settings = formSettings.clone();
-		serviceManager.resetSettings();
-		initFoldingCache();
-		Sound.soundMode = SoundMode.DISABLED;
-		if (currentAction != null) {
-			currentAction.applySettings();
-		}
-		Sound.soundMode = SoundMode.ENABLED;
-	}
-
-	@Override
-	public void reset() {
-		if (form != null) {
-			form.importFrom(settings.clone());
-		}
-	}
-
-	@Override
-	public void disposeUIResources() {
-		form = null;
-	}
 
 	@Override
 	@NotNull
@@ -170,10 +106,6 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		return getState().getDefaultProfile();
 	}
 
-	public void setCurrentAction(HighlightManipulationAction currentEditor) {
-		this.currentAction = currentEditor;
-	}
-
 	@NotNull
 	@Override
 	public File[] getExportFiles() {
@@ -186,12 +118,4 @@ public class GrepConsoleApplicationComponent implements ApplicationComponent, Co
 		return "Grep Console";
 	}
 
-	public static class MyConfigurableProvider extends ConfigurableProvider {
-
-		@Nullable
-		@Override
-		public Configurable createConfigurable() {
-			return GrepConsoleApplicationComponent.getInstance();
-		}
-	}
 }

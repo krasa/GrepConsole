@@ -3,7 +3,7 @@ package krasa.grepconsole.action;
 import javax.swing.*;
 
 import krasa.grepconsole.gui.SettingsContext;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.MyConfigurable;
 
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -30,7 +30,7 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	}
 
 	public void actionPerformed(Project project, SettingsContext console) {
-		GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
+		MyConfigurable instance = new MyConfigurable();
 		instance.setCurrentAction(this);
 		instance.prepareForm(console);
 		try {
