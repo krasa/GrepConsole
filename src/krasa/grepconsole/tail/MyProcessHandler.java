@@ -265,7 +265,7 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
     private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
       super(reader, sleepingPolicy);
       myProcessOutputType = processOutputType;
-      start();
+      start(presentableName);
     }
 
     @NotNull
