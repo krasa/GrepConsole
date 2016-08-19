@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>5.9.141.000</version>
+	<version>5.10.141.000</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>5.10 (2016-08-19)
+        <br>- added Tail action to project tool view context menu
         <br>5.9 (2016-02-26)
 	  	<br>- new IJ 15, 16 compatibility
         <br>5.8 (2015-05-12)
@@ -151,6 +153,11 @@
 				text="Open File in Console - Tail"
 				description="Open File in Console - Tail">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
+		</action>
+		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.OpenFileInConsoleProjectViewAction"
+                text="Tail in Console"
+                description="Tail in Console">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="RevealIn"/>
 		</action>
 		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
 				text="Open Current File in Console - Tail"
