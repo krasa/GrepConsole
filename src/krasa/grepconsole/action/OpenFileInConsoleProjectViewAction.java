@@ -15,12 +15,14 @@ public class OpenFileInConsoleProjectViewAction extends OpenFileInConsoleAction 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		VirtualFile[] data = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
-		for (int i = 0; i < data.length; i++) {
-			VirtualFile virtualFile = data[i];
-			if (virtualFile != null && !virtualFile.isDirectory()) {
-				final Project project = getEventProject(e);
-				final String path = virtualFile.getPath();
-				openFileInConsole(project, new File(path));
+		if (data != null) {
+			for (int i = 0; i < data.length; i++) {
+				VirtualFile virtualFile = data[i];
+				if (virtualFile != null && !virtualFile.isDirectory()) {
+					final Project project = getEventProject(e);
+					final String path = virtualFile.getPath();
+					openFileInConsole(project, new File(path));
+				}
 			}
 		}
 	}
@@ -30,10 +32,12 @@ public class OpenFileInConsoleProjectViewAction extends OpenFileInConsoleAction 
 		super.update(e);
 		boolean show = false;
 		VirtualFile[] data = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
-		for (int i = 0; i < data.length; i++) {
-			VirtualFile virtualFile = data[i];
-			if (virtualFile != null && !virtualFile.isDirectory()) {
-				show = true;
+		if (data != null) {
+			for (int i = 0; i < data.length; i++) {
+				VirtualFile virtualFile = data[i];
+				if (virtualFile != null && !virtualFile.isDirectory()) {
+					show = true;
+				}
 			}
 		}
 		e.getPresentation().setVisible(show);
