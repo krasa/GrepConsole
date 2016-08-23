@@ -5,27 +5,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.ui.HyperlinkAdapter;
-import com.intellij.ui.HyperlinkLabel;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.TextFieldWithStoredHistory;
-import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
-import com.intellij.util.ui.JBUI;
 
 public class GrepPanel extends JPanel implements Disposable {
+
+	public static final NotificationGroup GROUP_DISPLAY_ID_ERROR = new NotificationGroup("Grep Console error",
+			NotificationDisplayType.BALLOON, true);
+
 	@Nullable
 	private ConsoleViewImpl originalConsole;
 	private final ConsoleViewImpl newConsole;
@@ -33,58 +32,44 @@ public class GrepPanel extends JPanel implements Disposable {
 	private final RunnerLayoutUi runnerLayoutUi;
 	private TextFieldWithStoredHistory expression;
 	private TextFieldWithStoredHistory unlessExpression;
+	private JCheckBox caseSensitiveCheckBox;
+	private JButton applyButton;
+	private JButton reloadButton;
+	private JButton sourceButton;
+	private JPanel rootComponent;
 	private OpenGrepConsoleAction.ApplyCallback applyCallback;
-	private JBCheckBox caseSensitive;
-	private JButton reload;
-	private JButton source;
-	private JButton apply;
 
-	public GrepPanel(ConsoleViewImpl originalConsole, ConsoleViewImpl newConsole, GrepCopyingListener copyingListener,
-			String expression, RunnerLayoutUi runnerLayoutUi) {
+	public JPanel getRootComponent() {
+		return rootComponent;
+	}
+
+	private void createUIComponents() {
+		this.expression = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-expression");
+		// this.expression.setBorder(JBUI.Borders.empty());
+		this.expression.setMinimumAndPreferredWidth(300);
+		unlessExpression = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-unlessExpression");
+		unlessExpression.setMinimumAndPreferredWidth(150);
+		// this.unlessExpression.setBorder(JBUI.Borders.empty());
+	}
+
+	public GrepPanel(final ConsoleViewImpl originalConsole, final ConsoleViewImpl newConsole,
+			final GrepCopyingListener copyingListener, final String expression, final RunnerLayoutUi runnerLayoutUi) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
 		this.copyingListener = copyingListener;
 		this.runnerLayoutUi = runnerLayoutUi;
-		setBorder(new EmptyBorder(0, 0, 0, 0));
-		final FlowLayout layout = new FlowLayout();
-		layout.setVgap(0);
-		layout.setAlignment(FlowLayout.LEFT);
-		layout.setHgap(2);
-		setLayout(layout);
-		init(expression);
-	}
-
-	public void reset() {
-		init(".*");
-	}
-
-	private void init(String expression) {
-		add(new JLabel("Expression: "));
-		this.expression = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-expression");
 		this.expression.setText(expression);
-		this.expression.setBorder(JBUI.Borders.empty());
-		this.expression.setMinimumAndPreferredWidth(300);
-		add(this.expression);
-		add(new JLabel("Unless: "));
-		unlessExpression = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-unlessExpression");
-		unlessExpression.setMinimumAndPreferredWidth(150);
-		this.unlessExpression.setBorder(JBUI.Borders.empty());
-		add(unlessExpression);
-		caseSensitive = new JBCheckBox("Case Sensitive", false);
-		add(caseSensitive);
-		addButtons();
+		buttons(copyingListener);
 	}
 
-	public void addButtons() {
-		apply = newButton("Apply", new ActionListener() {
+	protected void buttons(final GrepCopyingListener copyingListener) {
+		applyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				apply(expression.getText(), unlessExpression.getText());
-
 			}
 		});
-		add(apply);
-		reload = newButton("Reload", new ActionListener() {
+		reloadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				apply(expression.getText(), unlessExpression.getText());
@@ -97,10 +82,10 @@ public class GrepPanel extends JPanel implements Disposable {
 						copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
 					}
 				}
+
 			}
 		});
-		add(reload);
-		source = newButton("Source", new ActionListener() {
+		sourceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Content[] contents = runnerLayoutUi.getContents();
@@ -108,57 +93,57 @@ public class GrepPanel extends JPanel implements Disposable {
 					JComponent component = content.getComponent();
 					if (component == originalConsole) {
 						runnerLayoutUi.selectAndFocus(content, true, true);
-					} else if (component.getClass() == OpenGrepConsoleAction.MyJPanel.class) {
-						JPanel s = (JPanel) component;
-						if (s.getComponentZOrder(originalConsole) != -1) {
-							runnerLayoutUi.selectAndFocus(content, true, true);
-						}
-
+					} else if (isChild(component, originalConsole)) {
+						runnerLayoutUi.selectAndFocus(content, true, true);
 					}
 				}
 
 			}
+
+			private boolean isChild(JComponent component, ConsoleViewImpl originalConsole) {
+				return component.getComponentZOrder(originalConsole) != -1;
+			}
 		});
-		add(source);
+		buttonSize(sourceButton);
+		buttonSize(reloadButton);
+		buttonSize(applyButton);
 	}
 
-	protected JButton newButton(String s, ActionListener l) {
-		JButton jButton = new JButton(s);
-		Dimension oldSize = jButton.getPreferredSize();
+	private void buttonSize(JButton sourceButton) {
+		Dimension oldSize = sourceButton.getPreferredSize();
 		JBDimension newSize = new JBDimension(oldSize.width, oldSize.height - 5);
-		jButton.setPreferredSize(newSize);
-		jButton.addActionListener(l);
-		return jButton;
+		sourceButton.setPreferredSize(newSize);
+	}
+
+	public void reset() {
+		this.expression.setText(".*");
 	}
 
 	public void apply(String text, String unlessExpressionText) {
 		if (applyCallback != null) {
-			if (applyCallback.apply(caseSensitive.isSelected(), text, unlessExpressionText)) {
+			if (applyCallback.apply(caseSensitiveCheckBox.isSelected(), text, unlessExpressionText)) {
 				expression.addCurrentTextToHistory();
 				unlessExpression.addCurrentTextToHistory();
+			} else {
+				final Notification notification = GROUP_DISPLAY_ID_ERROR.createNotification(
+						"Grep: Failed to apply RegExp", NotificationType.ERROR);
+				ApplicationManager.getApplication().invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						Notifications.Bus.notify(notification, newConsole.getProject());
+					}
+				});
 			}
 		}
 
 	}
 
-	private HyperlinkLabel createActionLabel(final String text, final Runnable action) {
-		HyperlinkLabel label = new HyperlinkLabel(text, JBColor.BLACK, getBackground(), JBColor.BLUE);
-		label.addHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			protected void hyperlinkActivated(HyperlinkEvent e) {
-				action.run();
-			}
-		});
-
-		return label;
-	}
-
 	@Override
 	public void dispose() {
 		originalConsole = null;
-		apply.setEnabled(false);
-		reload.setEnabled(false);
-		source.setEnabled(false);
+		applyButton.setEnabled(false);
+		reloadButton.setEnabled(false);
+		sourceButton.setEnabled(false);
 	}
 
 	public void setApplyCallback(OpenGrepConsoleAction.ApplyCallback applyCallback) {

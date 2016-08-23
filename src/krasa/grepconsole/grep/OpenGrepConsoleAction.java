@@ -192,7 +192,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			GrepPanel comp) {
 		MyJPanel panel = new MyJPanel(runnerLayoutUi);
 		panel.setLayout(new BorderLayout());
-		panel.add(comp, BorderLayout.NORTH);
+		panel.add(comp.getRootComponent(), BorderLayout.NORTH);
 		panel.add(view.getComponent(), BorderLayout.CENTER);
 		panel.add(createToolbar(actions), BorderLayout.WEST);
 		return panel;
