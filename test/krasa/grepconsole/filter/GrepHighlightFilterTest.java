@@ -1,14 +1,17 @@
 package krasa.grepconsole.filter;
 
-import com.intellij.execution.filters.Filter;
-import krasa.grepconsole.grep.*;
-import krasa.grepconsole.model.*;
-import org.junit.Test;
+import static junit.framework.Assert.*;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import static junit.framework.Assert.*;
+import org.junit.Test;
+
+import com.intellij.execution.filters.Filter;
+
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.filter.support.GrepProcessorImpl;
+import krasa.grepconsole.model.*;
 
 public class GrepHighlightFilterTest {
 

@@ -223,7 +223,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		Project eventProject = getEventProject(e);
 		ConsoleViewImpl originalConsoleView = (ConsoleViewImpl) getConsoleView(e);
 		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(originalConsoleView);
-		if (copyingFilter != null) {
+		if (eventProject != null && copyingFilter != null) {
 			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView);
 			enabled = runnerLayoutUi != null;
 		}

@@ -1,14 +1,22 @@
 package krasa.grepconsole.grep;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-import krasa.grepconsole.model.*;
-import org.junit.Before;
-import org.junit.Test;
+import static com.intellij.util.ObjectUtils.assertNotNull;
+import static junit.framework.Assert.assertEquals;
 
 import java.awt.*;
 
-import static com.intellij.util.ObjectUtils.assertNotNull;
-import static junit.framework.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
+
+import krasa.grepconsole.filter.support.Cache;
+import krasa.grepconsole.filter.support.FilterState;
+import krasa.grepconsole.filter.support.GrepProcessorImpl;
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.GrepStyle;
+import krasa.grepconsole.model.Operation;
 
 public class GrepProcessorImplTest {
 

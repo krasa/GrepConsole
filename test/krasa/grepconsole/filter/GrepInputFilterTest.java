@@ -1,16 +1,11 @@
 package krasa.grepconsole.filter;
 
-import static com.intellij.execution.ui.ConsoleViewContentType.*;
-import static junit.framework.Assert.*;
+import static com.intellij.execution.ui.ConsoleViewContentType.NORMAL_OUTPUT;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
 import java.awt.*;
 import java.util.ArrayList;
-
-import krasa.grepconsole.grep.*;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.GrepStyle;
-import krasa.grepconsole.model.Profile;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,6 +13,13 @@ import org.junit.Test;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.Pair;
+
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.filter.support.GrepProcessorImpl;
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.GrepStyle;
+import krasa.grepconsole.model.Profile;
 
 public class GrepInputFilterTest {
 
