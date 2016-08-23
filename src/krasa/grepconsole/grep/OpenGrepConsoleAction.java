@@ -93,7 +93,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		copyingFilter.addListener(copyingListener);
 
 		Disposer.register(tab, consolePanel);
-		Disposer.register(consolePanel, newConsole);
+		Disposer.register(tab, newConsole);
 		Disposer.register(consolePanel, quickFilterPanel);
 		Disposer.register(newConsole, new Disposable() {
 			@Override

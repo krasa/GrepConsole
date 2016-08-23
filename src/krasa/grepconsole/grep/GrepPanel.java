@@ -49,7 +49,7 @@ public class GrepPanel extends JPanel implements Disposable {
 		final FlowLayout layout = new FlowLayout();
 		layout.setVgap(0);
 		layout.setAlignment(FlowLayout.LEFT);
-		// layout.setHgap(0);
+		layout.setHgap(2);
 		setLayout(layout);
 		init(expression);
 	}
