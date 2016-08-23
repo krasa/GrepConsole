@@ -119,7 +119,7 @@ public class TailContentExecutor implements Disposable {
 
 		// Create runner UI layout
 		final RunnerLayoutUi.Factory factory = RunnerLayoutUi.Factory.getInstance(myProject);
-		final RunnerLayoutUi layoutUi = factory.create("", "", "Tail", myProject);
+		final RunnerLayoutUi layoutUi = factory.create("Tail", "Tail", "Tail", myProject);
 
 		final JComponent consolePanel = createConsolePanel(view, actions);
 		RunContentDescriptor descriptor = new RunContentDescriptor(new RunProfile() {
@@ -142,17 +142,17 @@ public class TailContentExecutor implements Disposable {
 			}
 		}, new DefaultExecutionResult(view, myProcess), layoutUi);
 
-		final Content console = layoutUi.createContent("Tail", consolePanel, myTitle, null, null);
+		final Content console = layoutUi.createContent("ConsoleContent", consolePanel, myTitle,
+				AllIcons.Debugger.Console, consolePanel);
 		layoutUi.addContent(console, 0, PlaceInGrid.right, false);
+		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, layoutUi, descriptor, executor),
+				"RunnerToolbar");
 
 		Disposer.register(this, descriptor);
 
 		for (AnAction action : view.createConsoleActions()) {
 			actions.add(action);
 		}
-		actions.add(new RerunAction(consolePanel));
-		actions.add(new StopAction());
-		actions.add(new CloseAction(executor, descriptor, myProject));
 
 		ExecutionManager.getInstance(myProject).getContentManager().showRunContent(executor, descriptor);
 
@@ -172,6 +172,16 @@ public class TailContentExecutor implements Disposable {
 		myProcess.startNotify();
 	}
 
+	@NotNull
+	private ActionGroup createActionToolbar(JComponent consolePanel, @NotNull final RunnerLayoutUi myUi,
+			RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
+		final DefaultActionGroup actionGroup = new DefaultActionGroup();
+		actionGroup.add(new RerunAction(consolePanel));
+		actionGroup.add(new StopAction());
+		actionGroup.add(myUi.getOptions().getLayoutActions());
+		actionGroup.add(new CloseAction(runExecutorInstance, contentDescriptor, myProject));
+		return actionGroup;
+	}
 	public void activateToolWindow() {
 		ApplicationManager.getApplication().invokeLater(new Runnable() {
 			@Override

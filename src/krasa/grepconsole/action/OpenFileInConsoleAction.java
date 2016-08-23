@@ -4,17 +4,20 @@ import java.io.*;
 import java.nio.charset.Charset;
 
 import com.intellij.compiler.server.BuildManager;
-import krasa.grepconsole.tail.MyProcessHandler;
-import krasa.grepconsole.tail.TailContentExecutor;
-
 import com.intellij.execution.impl.ConsoleBuffer;
-import com.intellij.execution.process.*;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.fileChooser.*;
-import com.intellij.openapi.project.*;
+import com.intellij.openapi.fileChooser.FileChooserDialog;
+import com.intellij.openapi.fileChooser.FileChooserFactory;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+
+import krasa.grepconsole.tail.MyProcessHandler;
+import krasa.grepconsole.tail.TailContentExecutor;
 
 /**
  * @author Vojtech Krasa
@@ -60,6 +63,17 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 			}
 		});
 		executor.withTitle(file.getName());
+		executor.withStop(new Runnable() {
+			@Override
+			public void run() {
+				osProcessHandler.destroyProcess();
+			}
+		}, new Computable<Boolean>() {
+			@Override
+			public Boolean compute() {
+				return !osProcessHandler.isProcessTerminated();
+			}
+		});
 		executor.run();
 	}
 
