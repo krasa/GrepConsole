@@ -7,18 +7,26 @@ import java.util.List;
 import javax.swing.*;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import com.intellij.execution.DefaultExecutionResult;
+import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
+import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.actions.CloseAction;
+import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
@@ -29,11 +37,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.ui.content.Content;
 
 /**
  * Copy of com.intellij.execution.RunContentExecutor Runs a process and prints the output in a content tab within the
  * Run toolwindow.
- * 
+ *
  * @author yole
  */
 public class TailContentExecutor implements Disposable {
@@ -108,8 +117,33 @@ public class TailContentExecutor implements Disposable {
 		Executor executor = TailRunExecutor.getRunExecutorInstance();
 		DefaultActionGroup actions = new DefaultActionGroup();
 
+		// Create runner UI layout
+		final RunnerLayoutUi.Factory factory = RunnerLayoutUi.Factory.getInstance(myProject);
+		final RunnerLayoutUi layoutUi = factory.create("", "", "Tail", myProject);
+
 		final JComponent consolePanel = createConsolePanel(view, actions);
-		RunContentDescriptor descriptor = new RunContentDescriptor(view, myProcess, consolePanel, myTitle);
+		RunContentDescriptor descriptor = new RunContentDescriptor(new RunProfile() {
+			@Nullable
+			@Override
+			public RunProfileState getState(@NotNull Executor executor,
+					@NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
+				return null;
+			}
+
+			@Override
+			public String getName() {
+				return myTitle;
+			}
+
+			@Nullable
+			@Override
+			public Icon getIcon() {
+				return null;
+			}
+		}, new DefaultExecutionResult(view, myProcess), layoutUi);
+
+		final Content console = layoutUi.createContent("Tail", consolePanel, myTitle, null, null);
+		layoutUi.addContent(console, 0, PlaceInGrid.right, false);
 
 		Disposer.register(this, descriptor);
 
