@@ -1,13 +1,5 @@
 package krasa.grepconsole.stats.action;
 
-import krasa.grepconsole.action.OpenConsoleSettingsAction;
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.gui.SettingsContext;
-import krasa.grepconsole.plugin.ServiceManager;
-import krasa.grepconsole.stats.GrepConsoleStatusBarWidget;
-import krasa.grepconsole.stats.StatisticsManager;
-
 import org.jetbrains.annotations.NotNull;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -16,6 +8,14 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
+
+import krasa.grepconsole.action.OpenConsoleSettingsAction;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.gui.SettingsContext;
+import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.stats.GrepConsoleStatusBarWidget;
+import krasa.grepconsole.stats.StatisticsManager;
 
 public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
 	private final ConsoleView console;
@@ -26,7 +26,8 @@ public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent anActionEvent) {
-		GrepConsoleStatusBarWidget statusBarPanel = StatisticsManager.getStatusBarPanel((com.intellij.execution.impl.ConsoleViewImpl) console);
+		GrepConsoleStatusBarWidget statusBarPanel = StatisticsManager.getStatusBarPanel(
+				(com.intellij.execution.impl.ConsoleViewImpl) console);
 
 		if (statusBarPanel == null) {
 			GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
@@ -34,14 +35,16 @@ public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
 				return;
 			}
 			if (!hasStatusBarItems(highlightFilter)) {
-                new OpenConsoleSettingsAction(console).actionPerformed(getEventProject(anActionEvent), SettingsContext.STATUS_BAR);
+				new OpenConsoleSettingsAction(console).actionPerformed(getEventProject(anActionEvent),
+						SettingsContext.STATUS_BAR);
 			}
 			if (!hasStatusBarItems(highlightFilter)) {
 				return;
 			}
 			StatisticsManager.createStatusBarPanel((ConsoleViewImpl) console, highlightFilter);
 		} else {
-			final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(getEventProject(anActionEvent)).getStatusBar();
+			final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(
+					getEventProject(anActionEvent)).getStatusBar();
 			statusBar.removeWidget(statusBarPanel.ID());
 		}
 	}
@@ -61,7 +64,8 @@ public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
 	public void update(AnActionEvent e) {
 		super.update(e);
 		if (console instanceof ConsoleViewImpl) {
-			GrepConsoleStatusBarWidget statusBarPanel = StatisticsManager.getStatusBarPanel((com.intellij.execution.impl.ConsoleViewImpl) console);
+			GrepConsoleStatusBarWidget statusBarPanel = StatisticsManager.getStatusBarPanel(
+					(com.intellij.execution.impl.ConsoleViewImpl) console);
 			if (statusBarPanel != null) {
 				e.getPresentation().setText("Hide Grep Console Statistics in StatusBar");
 			}

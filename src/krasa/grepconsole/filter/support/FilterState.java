@@ -1,13 +1,15 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.filter.support;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import krasa.grepconsole.model.Operation;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import krasa.grepconsole.model.Operation;
 
 public class FilterState {
 
@@ -63,7 +65,6 @@ public class FilterState {
 	public boolean isExclude() {
 		return exclude;
 	}
-
 
 	public void setMatchesSomething(boolean matchesSomething) {
 		this.matchesSomething = matchesSomething;

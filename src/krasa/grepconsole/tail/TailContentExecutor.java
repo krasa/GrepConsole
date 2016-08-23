@@ -10,8 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
-import com.intellij.execution.filters.*;
-import com.intellij.execution.process.*;
+import com.intellij.execution.filters.Filter;
+import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.process.ProcessAdapter;
+import com.intellij.execution.process.ProcessEvent;
+import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.actions.CloseAction;
@@ -27,8 +31,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
 
 /**
- * Copy of com.intellij.execution.RunContentExecutor
- * Runs a process and prints the output in a content tab within the Run toolwindow.
+ * Copy of com.intellij.execution.RunContentExecutor Runs a process and prints the output in a content tab within the
+ * Run toolwindow.
  * 
  * @author yole
  */

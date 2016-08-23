@@ -1,4 +1,4 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.filter.support;
 
 import krasa.grepconsole.model.GrepExpressionItem;
 

@@ -3,18 +3,19 @@ package krasa.grepconsole.plugin;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-import com.intellij.openapi.diagnostic.Logger;
-import krasa.grepconsole.filter.AbstractFilter;
-import krasa.grepconsole.filter.AnsiInputFilter;
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.filter.GrepInputFilter;
-import krasa.grepconsole.grep.Cache;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+
+import krasa.grepconsole.filter.AbstractFilter;
+import krasa.grepconsole.filter.AnsiInputFilter;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.GrepInputFilter;
+import krasa.grepconsole.filter.support.Cache;
+import krasa.grepconsole.grep.GrepCopyingFilter;
 
 /**
  * @author Vojtech Krasa
@@ -24,13 +25,20 @@ public class ServiceManager {
 
 	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
 
+	/** for tracking settings change */
 	private List<WeakReference<GrepHighlightFilter>> highlightFilters = new ArrayList<WeakReference<GrepHighlightFilter>>();
 	private List<WeakReference<GrepInputFilter>> inputFilters = new ArrayList<WeakReference<GrepInputFilter>>();
 	private List<WeakReference<AnsiInputFilter>> ansiFilters = new ArrayList<WeakReference<AnsiInputFilter>>();
+
+	/** to couple console with filters */
 	private WeakReference<AnsiInputFilter> lastAnsi;
-	private WeakReference<GrepHighlightFilter> lastGrepHighlightFilter;
-	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHashMap = new WeakHashMap<ConsoleView, GrepHighlightFilter>();
+	private WeakReference<GrepCopyingFilter> lastCopier;
+	private WeakReference<GrepHighlightFilter> lastQuickFilter;
 	private long lastExecutionId;
+
+	/** for providing attached filters for certain console */
+	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<ConsoleView, GrepHighlightFilter>();
+	private WeakHashMap<ConsoleView, GrepCopyingFilter> weakCopiersMap = new WeakHashMap<ConsoleView, GrepCopyingFilter>();
 
 	public static ServiceManager getInstance() {
 		return SERVICE_MANAGER;
@@ -71,46 +79,48 @@ public class ServiceManager {
 		return service;
 	}
 
-	public GrepHighlightFilter createHighlightFilter(Project project) {
+	public GrepHighlightFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		final GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project);
 		grepHighlightFilter.setExecutionId(getLastExecutionId());
 		highlightFilters.add(new WeakReference<GrepHighlightFilter>(grepHighlightFilter));
-		lastGrepHighlightFilter = new WeakReference<GrepHighlightFilter>(grepHighlightFilter);
+		if (consoleView != null) {
+			weakHighlightersMap.put(consoleView, grepHighlightFilter);
+		}
 		return grepHighlightFilter;
 	}
 
-	@Nullable
-	public AnsiInputFilter getLastAnsi() {
-		if (lastAnsi != null) {
-			return lastAnsi.get();
-		} else {
-			return null;
-		}
-	}
-
-	@Nullable
-	public GrepHighlightFilter getLastGrepHighlightFilter() {
-		if (lastGrepHighlightFilter != null) {
-			return lastGrepHighlightFilter.get();
-		} else {
-			return null;
-		}
+	public GrepCopyingFilter createCopyingFilter(@NotNull Project project) {
+		final GrepCopyingFilter grepInputFilter = new GrepCopyingFilter(project);
+		lastCopier = new WeakReference<GrepCopyingFilter>(grepInputFilter);
+		return grepInputFilter;
 	}
 
 	@Nullable
 	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
-        GrepHighlightFilter grepHighlightFilter = weakHashMap.get(console);
+		return getGrepHighlightFilter(console, weakHighlightersMap, "GrepHighlightFilter");
+	}
+
+	@Nullable
+	public GrepCopyingFilter getCopyingFilter(@NotNull ConsoleView console) {
+		return weakCopiersMap.get(console);
+	}
+
+	@Nullable
+	private GrepHighlightFilter getGrepHighlightFilter(@NotNull ConsoleView console,
+			WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap, final String grepHighlightFilter1) {
+		GrepHighlightFilter grepHighlightFilter = weakHighlightersMap.get(console);
 		if (grepHighlightFilter == null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Something is wrong. GrepHighlightFilter not found for ").append(System.identityHashCode(console)).append("-").append(
-					console);
+			sb.append("Something is wrong. " + grepHighlightFilter1 + " not found for ").append(
+					System.identityHashCode(console)).append("-").append(console);
 			sb.append(". Registered: [");
 			boolean i = false;
-			for (Map.Entry<ConsoleView, GrepHighlightFilter> consoleViewGrepHighlightFilterEntry : weakHashMap.entrySet()) {
+			for (Map.Entry<ConsoleView, GrepHighlightFilter> consoleViewGrepHighlightFilterEntry : weakHighlightersMap.entrySet()) {
 				if (i) {
 					sb.append(",");
 				}
-				sb.append(System.identityHashCode(console)).append("-").append(consoleViewGrepHighlightFilterEntry.getKey());
+				sb.append(System.identityHashCode(console)).append("-").append(
+						consoleViewGrepHighlightFilterEntry.getKey());
 				i = true;
 			}
 			sb.append("]");
@@ -121,11 +131,7 @@ public class ServiceManager {
 	}
 
 	public boolean isRegistered(@NotNull ConsoleView console) {
-		return weakHashMap.containsKey(console);
-	}
-
-	public void register(@NotNull ConsoleView console, @NotNull GrepHighlightFilter lastGrepHighlightFilter) {
-		weakHashMap.put(console, lastGrepHighlightFilter);
+		return weakHighlightersMap.containsKey(console);
 	}
 
 	public long getLastExecutionId() {
@@ -135,4 +141,36 @@ public class ServiceManager {
 	public void setLastExecutionId(long lastExecutionId) {
 		this.lastExecutionId = lastExecutionId;
 	}
+
+	public void registerConsole(ConsoleView console) {
+		AnsiInputFilter lastAnsi = getLastAnsi();
+		if (lastAnsi != null && !lastAnsi.isRegistered()) {
+			lastAnsi.setConsole(console);
+			this.lastAnsi = null;
+		}
+		GrepCopyingFilter lastCopier = getLastCopier();
+		if (lastCopier != null) {
+			weakCopiersMap.put(console, lastCopier);
+			this.lastCopier = null;
+		}
+	}
+
+	@Nullable
+	private AnsiInputFilter getLastAnsi() {
+		if (lastAnsi != null) {
+			return lastAnsi.get();
+		} else {
+			return null;
+		}
+	}
+
+	@Nullable
+	private GrepCopyingFilter getLastCopier() {
+		if (lastCopier != null) {
+			return lastCopier.get();
+		} else {
+			return null;
+		}
+	}
+
 }

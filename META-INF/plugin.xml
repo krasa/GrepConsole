@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>5.11.141.000</version>
+	<version>6.0.141.000</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -14,10 +14,12 @@
 			For example, error messages could be set to show up with a red background.<br>
 	 		<br>
 	 		Additional Features:<br>
+	 		Filter/grep the console output into a new console tab<br>
 	 		ANSI colouring<br>
 	 		File Tailing:<br>
 	 		- Main menu | Tools | Open File in Console<br>
 	 		- Main Menu | Help | Tail (IntelliJ) Log in Console<br>
+	 		- Project View ToolWindow | right click context menu | Tail<br>
 	 		- Drag&Drop "Tail File" panel in main toolbar<br>
 	 		- http and Windows context menu integration<br>
 	 		<br>
@@ -27,6 +29,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>6.0 (2016-08-23)
+		<br>- ability to filter/grep the console output into a new console tab
         <br>5.10 (2016-08-19)
         <br>- added Tail action to project tool view context menu
         <br>5.9 (2016-02-26)
@@ -110,12 +114,12 @@
 	<!--branch 135 - IntelliJ IDEA 13.1, WebStorm 8-->
 	<!--branch 133 - IntelliJ IDEA 13, PyCharm 3.1, WebStorm 7, PhpStorm 7-->
 	<!--branch 131 - WebStorm 7, PyCharm 3.0, PhpStorm 7-->
-	
-	
+
+
 	<!--141.3056.4 = 14.1.6-->
-	<idea-version since-build="141.000"/> 
-	
-	
+	<idea-version since-build="141.000"/>
+
+
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
 	<depends>com.intellij.modules.lang</depends>
@@ -155,9 +159,9 @@
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.OpenFileInConsoleProjectViewAction"
-                text="Tail in Console"
-                description="Tail in Console">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="RevealIn"/>
+				text="Tail in Console"
+				description="Tail in Console">
+			<add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="RevealIn"/>
 		</action>
 		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
 				text="Open Current File in Console - Tail"
@@ -174,7 +178,8 @@
 				description="Tail Log in Console - by Grep Console">
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>
-		<action id="GrepConsoleTail" class="krasa.grepconsole.action.GrepConsoleTailDummyAction" text="GrepConsoleTailDummyAction">
+		<action id="GrepConsoleTail" class="krasa.grepconsole.action.GrepConsoleTailDummyAction"
+				text="GrepConsoleTailDummyAction">
 		</action>
 	</actions>
 
@@ -185,7 +190,8 @@
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
 		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
 		<console.folding implementation="krasa.grepconsole.folding.GrepConsoleFolding"/>
-		<applicationConfigurable id="GrepConsole" displayName="Grep Console" instance="krasa.grepconsole.plugin.MyConfigurable"/>
+		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
+								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
 
 		<!-- Add your extensions here -->
 	</extensions>

@@ -1,25 +1,29 @@
 package krasa.grepconsole.stats;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.GrepColor;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.colors.*;
+import com.intellij.openapi.editor.colors.EditorColors;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.*;
+import com.intellij.ui.HyperlinkAdapter;
+import com.intellij.ui.HyperlinkLabel;
+import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
+
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.model.GrepColor;
 
 /**
  * @author Vojtech Krasa
@@ -113,7 +117,8 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 	@Override
 	public Color getBackground() {
-		Color color = EditorColorsManager.getInstance().getGlobalScheme().getColor(EditorColors.NOTIFICATION_BACKGROUND);
+		Color color = EditorColorsManager.getInstance().getGlobalScheme().getColor(
+				EditorColors.NOTIFICATION_BACKGROUND);
 		return color == null ? UIUtil.getToolTipBackground() : color;
 	}
 

@@ -1,9 +1,5 @@
 package krasa.grepconsole.action;
 
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.plugin.MyConfigurable;
-import krasa.grepconsole.plugin.ServiceManager;
-
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.filters.Filter;
@@ -13,6 +9,10 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.plugin.MyConfigurable;
+import krasa.grepconsole.plugin.ServiceManager;
 
 public class EditorHighlightAction extends HighlightManipulationAction {
 
@@ -43,7 +43,7 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 	}
 
 	private GrepHighlightFilter getGrepFilter(Project project) {
-		return ServiceManager.getInstance().createHighlightFilter(project);
+		return ServiceManager.getInstance().createHighlightFilter(project, null);
 	}
 
 	private Filter getPredefinedMessageFilter() {

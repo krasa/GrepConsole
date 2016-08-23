@@ -1,13 +1,15 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.filter.support;
 
-import java.util.regex.*;
-
-import krasa.grepconsole.model.GrepExpressionItem;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
+
+import krasa.grepconsole.model.GrepExpressionItem;
 
 public class GrepProcessorImpl implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(GrepProcessorImpl.class.getName());
@@ -41,7 +43,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
 				Pattern pattern = grepExpressionItem.getPattern();
 				if (pattern != null) {
-					final Matcher matcher = pattern.matcher(matchedLine);
+					final Matcher matcher = pattern.matcher(StringUtil.newBombedCharSequence(matchedLine, 1000));
 					while (matcher.find()) {
 						matches++;
 						final int start = matcher.start();
@@ -56,7 +58,8 @@ public class GrepProcessorImpl implements GrepProcessor {
 			} else if (matches(matchedLine) && !matchesUnless(matchedLine)) {
 				matches++;
 				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
-				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
+				state.setConsoleViewContentType(
+						grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
 				state.setExclude(grepExpressionItem.isInputFilter());
 				state.setMatchesSomething(true);
 				if (grepExpressionItem.getSound().isEnabled()) {

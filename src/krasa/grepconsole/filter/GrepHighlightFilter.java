@@ -1,15 +1,18 @@
 package krasa.grepconsole.filter;
 
-import java.util.*;
-
-import krasa.grepconsole.grep.*;
-import krasa.grepconsole.model.*;
+import java.util.Collections;
+import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.Project;
+
+import krasa.grepconsole.filter.support.FilterState;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
 
 /** must be executed in single thread, see #createProcessor */
 public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {

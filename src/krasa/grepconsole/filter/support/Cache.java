@@ -1,4 +1,4 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.filter.support;
 
 import java.util.HashMap;
 import java.util.Map;

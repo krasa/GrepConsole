@@ -3,28 +3,38 @@ package krasa.grepconsole.stats;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import javax.swing.*;
 
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.grep.GrepProcessor;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.stats.common.ColorPanel;
-
-import org.jetbrains.annotations.*;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.ui.*;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunContentManager;
+import com.intellij.openapi.actionSystem.ActionGroup;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.*;
+import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.ui.*;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.PopupHandler;
+import com.intellij.ui.SeparatorComponent;
 import com.intellij.ui.content.ContentManager;
+
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.stats.common.ColorPanel;
 
 /**
  * @author Vojtech Krasa

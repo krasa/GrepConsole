@@ -1,13 +1,15 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.filter.support;
 
-import java.util.regex.*;
-
-import krasa.grepconsole.model.GrepExpressionItem;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
+
+import krasa.grepconsole.model.GrepExpressionItem;
 
 public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(ThreadUnsafeGrepProcessor.class.getName());
@@ -47,9 +49,10 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
 			String matchedLine = state.getText();
+			CharSequence input = StringUtil.newBombedCharSequence(matchedLine, 10000);
 			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
 				if (patternMatcher != null) {
-					patternMatcher.reset(matchedLine);
+					patternMatcher.reset(input);
 					while (patternMatcher.find()) {
 						matches++;
 						final int start = patternMatcher.start();
@@ -61,10 +64,11 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 								grepExpressionItem.getConsoleViewContentType(null).getAttributes()));
 					}
 				}
-			} else if (matches(matchedLine) && !matchesUnless(matchedLine)) {
+			} else if (matches(input) && !matchesUnless(input)) {
 				matches++;
 				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
-				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
+				state.setConsoleViewContentType(
+						grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
 				state.setExclude(grepExpressionItem.isInputFilter());
 				state.setMatchesSomething(true);
 				if (grepExpressionItem.getSound().isEnabled()) {
@@ -75,7 +79,7 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 		return state;
 	}
 
-	private boolean matches(String matchedLine) {
+	private boolean matches(CharSequence matchedLine) {
 		boolean matches = false;
 		if (patternMatcher != null) {
 			matches = patternMatcher.reset(matchedLine).matches();
@@ -83,7 +87,7 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 		return matches;
 	}
 
-	private boolean matchesUnless(String matchedLine) {
+	private boolean matchesUnless(CharSequence matchedLine) {
 		boolean matchUnless = false;
 		if (unlessMatcher != null) {
 			matchUnless = unlessMatcher.reset(matchedLine).matches();

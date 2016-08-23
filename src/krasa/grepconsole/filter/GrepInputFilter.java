@@ -1,14 +1,18 @@
 package krasa.grepconsole.filter;
 
-import java.util.*;
-
-import com.intellij.openapi.project.*;
-import krasa.grepconsole.grep.*;
-import krasa.grepconsole.model.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+
+import krasa.grepconsole.filter.support.FilterState;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
 
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
