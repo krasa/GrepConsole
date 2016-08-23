@@ -50,6 +50,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		String string = Utils.getString(e);
 		if (string == null)
 			string = "";
+		if (string.endsWith("\n")) {
+			string = string.substring(0, string.length() - 1);
+		}
 		String expression = ".*" + string + ".*";
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView);
 
