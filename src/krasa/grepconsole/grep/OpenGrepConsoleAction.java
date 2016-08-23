@@ -178,7 +178,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		@Override
 		public boolean detachIsDefault() {
-			return true;
+			return false;
 		}
 
 		@Override
