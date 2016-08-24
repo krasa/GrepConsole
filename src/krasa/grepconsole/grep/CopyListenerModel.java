@@ -20,7 +20,7 @@ public class CopyListenerModel {
 		this.regex = regex;
 	}
 
-	public MyMatcher matcher() {
+	public Matcher matcher() {
 		Pattern unlessExpressionPattern = null;
 		Pattern expressionPattern = null;
 		if (!StringUtils.isBlank(expression)) {
@@ -29,7 +29,7 @@ public class CopyListenerModel {
 		if (!StringUtils.isBlank(unlessExpression)) {
 			unlessExpressionPattern = Pattern.compile(unlessExpression, computeFlags());
 		}
-		return new MyMatcher(expressionPattern, unlessExpressionPattern, wholeLine);
+		return new Matcher(expressionPattern, unlessExpressionPattern, wholeLine);
 	}
 
 	public String getExpression() {
@@ -42,4 +42,40 @@ public class CopyListenerModel {
 		return i | j;
 	}
 
+	public static class Matcher {
+		private final Pattern expressionPattern;
+		private final Pattern unlessExpressionPattern;
+		private final boolean wholeLine;
+
+		public Matcher(Pattern expressionPattern, Pattern unlessExpressionPattern, boolean wholeLine) {
+			this.expressionPattern = expressionPattern;
+			this.unlessExpressionPattern = unlessExpressionPattern;
+			this.wholeLine = wholeLine;
+		}
+
+		public boolean matches(String s) {
+			if (!StringUtils.isEmpty(s)) {
+				if (matchesPattern(expressionPattern, s) && !matchesPattern(unlessExpressionPattern, s)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		private boolean matchesPattern(Pattern pattern, String matchedLine) {
+			boolean matches = false;
+			if (pattern != null) {
+				if (matchedLine.endsWith("\n")) {
+					matchedLine = matchedLine.substring(0, matchedLine.length() - 1);
+				}
+				if (wholeLine) {
+					matches = pattern.matcher(matchedLine).matches();
+				} else {
+					matches = pattern.matcher(matchedLine).find();
+				}
+			}
+			return matches;
+		}
+
+	}
 }

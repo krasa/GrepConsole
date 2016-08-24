@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class CopyListenerModelTest {
-	private MyMatcher matcher;
+	private CopyListenerModel.Matcher matcher;
 
 	@Test
 	public void matchTest() throws Exception {

@@ -6,7 +6,7 @@ import com.intellij.openapi.util.Key;
 
 public abstract class GrepCopyingListener {
 
-	private MyMatcher matcher;
+	private CopyListenerModel.Matcher matcher;
 
 	public GrepCopyingListener(CopyListenerModel copyListenerModel) {
 		matcher = copyListenerModel.matcher();
