@@ -146,7 +146,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 		Key<RunContentDescriptor> descriptorKey = (Key<RunContentDescriptor>) Key.findKeyByName("Descriptor");
 		final RunContentDescriptor runContentDescriptor = selectedContent.getUserData(descriptorKey);
-
+		if (runContentDescriptor == null) {
+			return null;
+		}
 		RunnerLayoutUi runnerLayoutUi = runContentDescriptor.getRunnerLayoutUi();
 		if (runnerLayoutUi == null) {
 			XDebugSession debugSession = XDebuggerManager.getInstance(eventProject).getDebugSession(
