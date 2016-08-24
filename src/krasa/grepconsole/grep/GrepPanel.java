@@ -19,6 +19,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.ui.TextFieldWithStoredHistory;
+import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
 
@@ -34,13 +35,13 @@ public class GrepPanel extends JPanel implements Disposable {
 	private final RunnerLayoutUi runnerLayoutUi;
 	private TextFieldWithStoredHistory expressionTextField;
 	private TextFieldWithStoredHistory unlessExpressionTextField;
-	private JCheckBox caseSensitiveCheckBox;
+	private JBCheckBox matchCase;
 	private JButton applyButton;
 	private JButton reloadButton;
 	private JButton sourceButton;
 	private JPanel rootComponent;
-	private JCheckBox wholeLine;
-	private JCheckBox regex;
+	private JBCheckBox wholeLine;
+	private JBCheckBox regex;
 	private OpenGrepConsoleAction.ApplyCallback applyCallback;
 
 	public JPanel getRootComponent() {
@@ -138,7 +139,7 @@ public class GrepPanel extends JPanel implements Disposable {
 
 	protected void apply() {
 		if (applyCallback != null) {
-			CopyListenerModel copyListenerModel = new CopyListenerModel(caseSensitiveCheckBox.isSelected(),
+			CopyListenerModel copyListenerModel = new CopyListenerModel(matchCase.isSelected(),
 					wholeLine.isSelected(), regex.isSelected(), expressionTextField.getText(),
 					unlessExpressionTextField.getText());
 

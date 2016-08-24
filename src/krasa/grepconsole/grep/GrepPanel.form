@@ -52,12 +52,14 @@
           <text value="Unless:"/>
         </properties>
       </component>
-      <component id="fc5d" class="javax.swing.JCheckBox" binding="caseSensitiveCheckBox" default-binding="true">
+      <component id="b02aa" class="com.intellij.ui.components.JBCheckBox" binding="matchCase">
         <constraints>
           <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Match Case"/>
+          <focusable value="false"/>
+          <requestFocusEnabled value="true"/>
+          <text value="Match &amp;Case"/>
         </properties>
       </component>
       <hspacer id="5fdd2">
@@ -115,20 +117,22 @@
           </component>
         </children>
       </grid>
-      <component id="a628f" class="javax.swing.JCheckBox" binding="wholeLine">
+      <component id="44c8e" class="com.intellij.ui.components.JBCheckBox" binding="wholeLine">
         <constraints>
           <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Line Match"/>
+          <focusable value="false"/>
+          <text value="&amp;Line Match"/>
         </properties>
       </component>
-      <component id="b18fd" class="javax.swing.JCheckBox" binding="regex">
+      <component id="6575b" class="com.intellij.ui.components.JBCheckBox" binding="regex">
         <constraints>
           <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <text value="Regex"/>
+          <focusable value="false"/>
+          <text value="Re&amp;gex"/>
         </properties>
       </component>
     </children>
