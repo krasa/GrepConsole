@@ -12,7 +12,6 @@ import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -53,26 +52,21 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (string.endsWith("\n")) {
 			string = string.substring(0, string.length() - 1);
 		}
-		String expression = ".*" + string + ".*";
+		String expression = string;
+		CopyListenerModel copyListenerModel = new CopyListenerModel(false, false, false, expression, null);
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView);
 
 		final LightProcessHandler myProcessHandler = new LightProcessHandler();
 		final ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(eventProject, myProcessHandler);
 		DefaultActionGroup actions = new DefaultActionGroup();
 
-		final GrepCopyingListener copyingListener = new GrepCopyingListener(expression) {
+		final GrepCopyingListener copyingListener = new GrepCopyingListener(copyListenerModel) {
+
 			@Override
-			public void process(String s, ConsoleViewContentType type) {
-				Key stdout = ProcessOutputTypes.STDOUT;
-				if (type == ConsoleViewContentType.ERROR_OUTPUT) {
-					stdout = ProcessOutputTypes.STDERR;
-				} else if (type == ConsoleViewContentType.SYSTEM_OUTPUT) {
-					stdout = ProcessOutputTypes.SYSTEM;
-				}
-				if (matches(s)) {
-					myProcessHandler.notifyTextAvailable(s, stdout);
-				}
+			protected void onMatch(String s, Key key) {
+				myProcessHandler.notifyTextAvailable(s, key);
 			}
+
 		};
 
 		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, expression,
@@ -104,11 +98,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		Disposable inactiveTitleDisposer;
 		Container parent = originalConsoleView.getParent();
-		if (parent instanceof MyJPanel) {
+		if (parent instanceof MyJPanel && !Disposer.isDisposed((MyJPanel) parent)) {
 			inactiveTitleDisposer = (MyJPanel) parent;
 		} else {
 			inactiveTitleDisposer = originalConsoleView;
 		}
+
 		Disposer.register(inactiveTitleDisposer, new Disposable() {
 			@Override
 			public void dispose() {
@@ -120,10 +115,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		quickFilterPanel.setApplyCallback(new ApplyCallback() {
 			@Override
-			public boolean apply(boolean caseSensitive, String expression1, String unlessExpression) {
-				boolean set = copyingListener.set(caseSensitive, expression1, unlessExpression);
-				updateTitle(tab, consolePanel.disposed, expression1);
-				return set;
+			public void apply(CopyListenerModel copyListenerModel) {
+				copyingListener.set(copyListenerModel);
+				updateTitle(tab, consolePanel.disposed, copyListenerModel.getExpression());
 			}
 
 		});
@@ -135,15 +129,21 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	interface ApplyCallback {
 
-		boolean apply(boolean caseSensitive, String text, String unlessExpressionText);
+		void apply(CopyListenerModel copyListenerModel);
 	}
 
 	@Nullable
 	private RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl originalConsoleView) {
 		String activeToolWindowId = ToolWindowManager.getInstance(eventProject).getActiveToolWindowId();
 		ToolWindow toolWindow = ToolWindowManager.getInstance(eventProject).getToolWindow(activeToolWindowId);
+		if (toolWindow == null) {
+			return null;
+		}
 		ContentManager contentManager = toolWindow.getContentManager();
 		Content selectedContent = contentManager.getSelectedContent();
+		if (selectedContent == null) {
+			return null;
+		}
 		Key<RunContentDescriptor> descriptorKey = (Key<RunContentDescriptor>) Key.findKeyByName("Descriptor");
 		final RunContentDescriptor runContentDescriptor = selectedContent.getUserData(descriptorKey);
 
@@ -153,6 +153,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 					originalConsoleView);
 			if (debugSession != null) {
 				runnerLayoutUi = debugSession.getUI();
+			}
+			if (debugSession == null) {
+				XDebugSession currentSession = XDebuggerManager.getInstance(eventProject).getCurrentSession();
+				if (currentSession != null) {
+					runnerLayoutUi = currentSession.getUI();
+				}
 			}
 		}
 
@@ -227,6 +233,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView);
 			enabled = runnerLayoutUi != null;
 		}
+
 		presentation.setEnabled(enabled);
 
 	}

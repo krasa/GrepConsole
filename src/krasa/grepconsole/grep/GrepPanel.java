@@ -3,6 +3,8 @@ package krasa.grepconsole.grep;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.*;
 
@@ -23,20 +25,22 @@ import com.intellij.util.ui.JBDimension;
 public class GrepPanel extends JPanel implements Disposable {
 
 	public static final NotificationGroup GROUP_DISPLAY_ID_ERROR = new NotificationGroup("Grep Console error",
-			NotificationDisplayType.BALLOON, true);
+			NotificationDisplayType.BALLOON, false);
 
 	@Nullable
 	private ConsoleViewImpl originalConsole;
 	private final ConsoleViewImpl newConsole;
 	private final GrepCopyingListener copyingListener;
 	private final RunnerLayoutUi runnerLayoutUi;
-	private TextFieldWithStoredHistory expression;
-	private TextFieldWithStoredHistory unlessExpression;
+	private TextFieldWithStoredHistory expressionTextField;
+	private TextFieldWithStoredHistory unlessExpressionTextField;
 	private JCheckBox caseSensitiveCheckBox;
 	private JButton applyButton;
 	private JButton reloadButton;
 	private JButton sourceButton;
 	private JPanel rootComponent;
+	private JCheckBox wholeLine;
+	private JCheckBox regex;
 	private OpenGrepConsoleAction.ApplyCallback applyCallback;
 
 	public JPanel getRootComponent() {
@@ -44,45 +48,55 @@ public class GrepPanel extends JPanel implements Disposable {
 	}
 
 	private void createUIComponents() {
-		this.expression = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-expression");
-		// this.expression.setBorder(JBUI.Borders.empty());
-		this.expression.setMinimumAndPreferredWidth(300);
-		unlessExpression = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-unlessExpression");
-		unlessExpression.setMinimumAndPreferredWidth(150);
+		expressionTextField = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-expression");
+		expressionTextField.setHistorySize(20);
+		// expression.setBorder(JBUI.Borders.empty());
+		expressionTextField.setMinimumAndPreferredWidth(300);
+		unlessExpressionTextField = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-unlessExpression");
+		unlessExpressionTextField.setMinimumAndPreferredWidth(150);
+		unlessExpressionTextField.setHistorySize(20);
 		// this.unlessExpression.setBorder(JBUI.Borders.empty());
 	}
 
 	public GrepPanel(final ConsoleViewImpl originalConsole, final ConsoleViewImpl newConsole,
-			final GrepCopyingListener copyingListener, final String expression, final RunnerLayoutUi runnerLayoutUi) {
+			final GrepCopyingListener copyingListener, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
 		this.copyingListener = copyingListener;
 		this.runnerLayoutUi = runnerLayoutUi;
-		this.expression.setText(expression);
-		buttons(copyingListener);
+		this.expressionTextField.setText(pattern);
+		actions();
+		buttons();
 	}
 
-	protected void buttons(final GrepCopyingListener copyingListener) {
+	protected void actions() {
+		KeyAdapter reload = new KeyAdapter() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				final int keyCode = e.getKeyCode();
+				if (keyCode == KeyEvent.VK_ENTER && e.isAltDown()) {
+					reload();
+				} else if (keyCode == KeyEvent.VK_ENTER) {
+					apply();
+				}
+			}
+		};
+		expressionTextField.addKeyboardListener(reload);
+		unlessExpressionTextField.addKeyboardListener(reload);
+	}
+
+	protected void buttons() {
 		applyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				apply(expression.getText(), unlessExpression.getText());
+				apply();
 			}
 		});
 		reloadButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				apply(expression.getText(), unlessExpression.getText());
-				newConsole.clear();
-				if (originalConsole != null) {
-					Editor editor = originalConsole.getEditor();
-					Document document = editor.getDocument();
-					String text = document.getText();
-					for (String s : text.split("\n")) {
-						copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
-					}
-				}
-
+				reload();
 			}
 		});
 		sourceButton.addActionListener(new ActionListener() {
@@ -109,24 +123,32 @@ public class GrepPanel extends JPanel implements Disposable {
 		buttonSize(applyButton);
 	}
 
-	private void buttonSize(JButton sourceButton) {
-		Dimension oldSize = sourceButton.getPreferredSize();
-		JBDimension newSize = new JBDimension(oldSize.width, oldSize.height - 5);
-		sourceButton.setPreferredSize(newSize);
+	protected void reload() {
+		apply();
+		newConsole.clear();
+		if (originalConsole != null) {
+			Editor editor = originalConsole.getEditor();
+			Document document = editor.getDocument();
+			String text = document.getText();
+			for (String s : text.split("\n")) {
+				copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
+			}
+		}
 	}
 
-	public void reset() {
-		this.expression.setText(".*");
-	}
-
-	public void apply(String text, String unlessExpressionText) {
+	protected void apply() {
 		if (applyCallback != null) {
-			if (applyCallback.apply(caseSensitiveCheckBox.isSelected(), text, unlessExpressionText)) {
-				expression.addCurrentTextToHistory();
-				unlessExpression.addCurrentTextToHistory();
-			} else {
+			CopyListenerModel copyListenerModel = new CopyListenerModel(caseSensitiveCheckBox.isSelected(),
+					wholeLine.isSelected(), regex.isSelected(), expressionTextField.getText(),
+					unlessExpressionTextField.getText());
+
+			try {
+				applyCallback.apply(copyListenerModel);
+				expressionTextField.addCurrentTextToHistory();
+				unlessExpressionTextField.addCurrentTextToHistory();
+			} catch (Exception e) {
 				final Notification notification = GROUP_DISPLAY_ID_ERROR.createNotification(
-						"Grep: Failed to apply RegExp", NotificationType.ERROR);
+						"Grep: Failed to apply RegExp", NotificationType.WARNING);
 				ApplicationManager.getApplication().invokeLater(new Runnable() {
 					@Override
 					public void run() {
@@ -136,6 +158,12 @@ public class GrepPanel extends JPanel implements Disposable {
 			}
 		}
 
+	}
+
+	private void buttonSize(JButton sourceButton) {
+		Dimension oldSize = sourceButton.getPreferredSize();
+		JBDimension newSize = new JBDimension(oldSize.width, oldSize.height - 5);
+		sourceButton.setPreferredSize(newSize);
 	}
 
 	@Override

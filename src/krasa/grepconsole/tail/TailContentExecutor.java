@@ -109,10 +109,10 @@ public class TailContentExecutor implements Disposable {
 	public void run() {
 		FileDocumentManager.getInstance().saveAllDocuments();
 
-		ConsoleView view = createConsole(myProject, myProcess);
+		ConsoleView consoleView = createConsole(myProject, myProcess);
 
 		if (myHelpId != null) {
-			view.setHelpId(myHelpId);
+			consoleView.setHelpId(myHelpId);
 		}
 		Executor executor = TailRunExecutor.getRunExecutorInstance();
 		DefaultActionGroup actions = new DefaultActionGroup();
@@ -121,7 +121,7 @@ public class TailContentExecutor implements Disposable {
 		final RunnerLayoutUi.Factory factory = RunnerLayoutUi.Factory.getInstance(myProject);
 		final RunnerLayoutUi layoutUi = factory.create("Tail", "Tail", "Tail", myProject);
 
-		final JComponent consolePanel = createConsolePanel(view, actions);
+		final JComponent consolePanel = createConsolePanel(consoleView, actions);
 		RunContentDescriptor descriptor = new RunContentDescriptor(new RunProfile() {
 			@Nullable
 			@Override
@@ -140,17 +140,27 @@ public class TailContentExecutor implements Disposable {
 			public Icon getIcon() {
 				return null;
 			}
-		}, new DefaultExecutionResult(view, myProcess), layoutUi);
+		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 
-		final Content console = layoutUi.createContent("ConsoleContent", consolePanel, myTitle,
+		final Content content = layoutUi.createContent("ConsoleContent", consolePanel, myTitle,
 				AllIcons.Debugger.Console, consolePanel);
-		layoutUi.addContent(console, 0, PlaceInGrid.right, false);
-		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, layoutUi, descriptor, executor),
+		layoutUi.addContent(content, 0, PlaceInGrid.right, false);
+		layoutUi.getOptions().setLeftToolbar(
+				createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor),
 				"RunnerToolbar");
 
 		Disposer.register(this, descriptor);
+		Disposer.register(content, consoleView);
+		if (myStopAction != null) {
+			Disposer.register(consoleView, new Disposable() {
+				@Override
+				public void dispose() {
+					myStopAction.run();
+				}
+			});
+		}
 
-		for (AnAction action : view.createConsoleActions()) {
+		for (AnAction action : consoleView.createConsoleActions()) {
 			actions.add(action);
 		}
 
@@ -173,10 +183,10 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	@NotNull
-	private ActionGroup createActionToolbar(JComponent consolePanel, @NotNull final RunnerLayoutUi myUi,
-			RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
+	private ActionGroup createActionToolbar(JComponent consolePanel, ConsoleView consoleView,
+			@NotNull final RunnerLayoutUi myUi, RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
 		final DefaultActionGroup actionGroup = new DefaultActionGroup();
-		actionGroup.add(new RerunAction(consolePanel));
+		actionGroup.add(new RerunAction(consolePanel, consoleView));
 		actionGroup.add(new StopAction());
 		actionGroup.add(myUi.getOptions().getLayoutActions());
 		actionGroup.add(new CloseAction(runExecutorInstance, contentDescriptor, myProject));
@@ -211,13 +221,17 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	private class RerunAction extends AnAction implements DumbAware {
-		public RerunAction(JComponent consolePanel) {
+		private final ConsoleView consoleView;
+
+		public RerunAction(JComponent consolePanel, ConsoleView consoleView) {
 			super("Rerun", "Rerun", AllIcons.Actions.Restart);
+			this.consoleView = consoleView;
 			registerCustomShortcutSet(CommonShortcuts.getRerun(), consolePanel);
 		}
 
 		@Override
 		public void actionPerformed(AnActionEvent e) {
+			Disposer.dispose(consoleView);
 			myRerunAction.run();
 		}
 

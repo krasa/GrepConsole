@@ -1,57 +1,33 @@
 package krasa.grepconsole.grep;
 
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.apache.commons.lang.StringUtils;
-
+import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.util.Key;
 
 public abstract class GrepCopyingListener {
 
-	private Pattern expression;
-	private Pattern unlessExpression;
+	private MyMatcher matcher;
 
-	public GrepCopyingListener(String expression) {
-		try {
-			this.expression = Pattern.compile(expression, computeFlags(false));
-		} catch (PatternSyntaxException ex) {
+	public GrepCopyingListener(CopyListenerModel copyListenerModel) {
+		matcher = copyListenerModel.matcher();
+	}
+
+	public void process(String s, ConsoleViewContentType type) {
+		Key stdout = ProcessOutputTypes.STDOUT;
+		if (type == ConsoleViewContentType.ERROR_OUTPUT) {
+			stdout = ProcessOutputTypes.STDERR;
+		} else if (type == ConsoleViewContentType.SYSTEM_OUTPUT) {
+			stdout = ProcessOutputTypes.SYSTEM;
+		}
+		if (matcher.matches(s)) {
+			onMatch(s, stdout);
 		}
 	}
 
-	abstract public void process(String s, ConsoleViewContentType entireLength);
+	protected abstract void onMatch(String s, Key key);
 
-	public boolean set(boolean caseSensitive, String expression, String unlessExpression) {
-		try {
-			this.expression = Pattern.compile(expression, computeFlags(caseSensitive));
-			this.unlessExpression = Pattern.compile(unlessExpression, computeFlags(caseSensitive));
-		} catch (PatternSyntaxException ex) {
-			return false;
-		}
-		return true;
+	public void set(CopyListenerModel copyListenerModel) {
+		matcher = copyListenerModel.matcher();
 	}
 
-	public boolean matches(String s) {
-		if (!StringUtils.isEmpty(s)) {
-			if (matchesPattern(expression, s) && !matchesPattern(unlessExpression, s)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean matchesPattern(Pattern pattern, String matchedLine) {
-		boolean matches = false;
-		if (pattern != null) {
-			if (matchedLine.endsWith("\n")) {
-				matchedLine = matchedLine.substring(0, matchedLine.length() - 1);
-			}
-			matches = pattern.matcher(matchedLine).matches();
-		}
-		return matches;
-	}
-
-	private int computeFlags(boolean caseInsensitive) {
-		return caseInsensitive ? 0 : Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
-	}
 }
