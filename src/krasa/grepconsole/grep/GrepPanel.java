@@ -42,6 +42,8 @@ public class GrepPanel extends JPanel implements Disposable {
 	private JPanel rootComponent;
 	private JBCheckBox wholeLine;
 	private JBCheckBox regex;
+	private JLabel expLabel;
+	private JLabel unlessLabel;
 	private OpenGrepConsoleAction.ApplyCallback applyCallback;
 
 	public JPanel getRootComponent() {
@@ -66,6 +68,8 @@ public class GrepPanel extends JPanel implements Disposable {
 		this.copyingListener = copyingListener;
 		this.runnerLayoutUi = runnerLayoutUi;
 		this.expressionTextField.setText(pattern);
+		expLabel.setLabelFor(expressionTextField);
+		unlessLabel.setLabelFor(unlessExpressionTextField);
 		actions();
 		buttons();
 	}
