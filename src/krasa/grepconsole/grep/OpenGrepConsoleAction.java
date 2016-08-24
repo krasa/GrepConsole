@@ -5,25 +5,23 @@ import java.io.OutputStream;
 
 import javax.swing.*;
 
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.*;
+import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
-import com.intellij.openapi.wm.ToolWindow;
-import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.xdebugger.XDebugSession;
@@ -46,15 +44,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (copyingFilter == null) {
 			throw new IllegalStateException("Console not supported: " + originalConsoleView);
 		}
-		String string = Utils.getString(e);
-		if (string == null)
-			string = "";
-		if (string.endsWith("\n")) {
-			string = string.substring(0, string.length() - 1);
-		}
-		String expression = string;
+		String expression = getExpression(e);
 		CopyListenerModel copyListenerModel = new CopyListenerModel(false, false, false, expression, null);
-		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView);
+		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
 
 		final LightProcessHandler myProcessHandler = new LightProcessHandler();
 		final ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(eventProject, myProcessHandler);
@@ -76,7 +68,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			actions.add(action);
 		}
 
-		final Content tab = runnerLayoutUi.createContent("ConsoleContent", consolePanel, expression,
+		final Content tab = runnerLayoutUi.createContent(getContentType(runnerLayoutUi), consolePanel, title(expression),
 				getTemplatePresentation().getSelectedIcon(), consolePanel);
 		runnerLayoutUi.addContent(tab);
 		runnerLayoutUi.selectAndFocus(tab, true, true);
@@ -95,6 +87,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				copyingFilter.removeListener(copyingListener);
 			}
 		});
+
 
 		Disposable inactiveTitleDisposer;
 		Container parent = originalConsoleView.getParent();
@@ -123,8 +116,29 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		});
 	}
 
+	protected String title(String expression) {
+		return StringUtils.substring(expression, 0, 20);
+	}
+
+	@NotNull
+	protected String getExpression(AnActionEvent e) {
+		String s = Utils.getString(e);
+		if (s == null)
+			s = "";
+		if (s.endsWith("\n")) {
+			s = s.substring(0, s.length() - 1);
+		}
+		return s;
+	}
+
+	protected String getContentType(RunnerLayoutUi runnerLayoutUi) {
+		ContentManager contentManager = runnerLayoutUi.getContentManager();
+		Content selectedContent = contentManager.getSelectedContent();
+		return RunnerLayoutUiImpl.CONTENT_TYPE.get(selectedContent);
+	}
+
 	protected void updateTitle(Content logContent, boolean disposed, String s) {
-		logContent.setDisplayName(s + (disposed ? " (Inactive)" : ""));
+		logContent.setDisplayName(title(s) + (disposed ? " (Inactive)" : ""));
 	}
 
 	interface ApplyCallback {
@@ -133,26 +147,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	@Nullable
-	private RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl originalConsoleView) {
-		String activeToolWindowId = ToolWindowManager.getInstance(eventProject).getActiveToolWindowId();
-		ToolWindow toolWindow = ToolWindowManager.getInstance(eventProject).getToolWindow(activeToolWindowId);
-		if (toolWindow == null) {
-			return null;
-		}
-		ContentManager contentManager = toolWindow.getContentManager();
-		Content selectedContent = contentManager.getSelectedContent();
-		if (selectedContent == null) {
-			return null;
-		}
-
+	private RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl originalConsoleView, DataContext dataContext) {
 		RunnerLayoutUi runnerLayoutUi = null;
 
-		Key<RunContentDescriptor> descriptorKey = (Key<RunContentDescriptor>) Key.findKeyByName("Descriptor");
-		if (descriptorKey != null) {
-			final RunContentDescriptor runContentDescriptor = selectedContent.getUserData(descriptorKey);
-			if (runContentDescriptor != null) {
-				runnerLayoutUi = runContentDescriptor.getRunnerLayoutUi();
-			}
+		RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
+		final RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+		if (selectedContent != null) {
+			runnerLayoutUi = selectedContent.getRunnerLayoutUi();
 		}
 
 		if (runnerLayoutUi == null) {
@@ -202,7 +203,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	private static MyJPanel createConsolePanel(RunnerLayoutUi runnerLayoutUi, ConsoleView view, ActionGroup actions,
-			GrepPanel comp) {
+											   GrepPanel comp) {
 		MyJPanel panel = new MyJPanel(runnerLayoutUi);
 		panel.setLayout(new BorderLayout());
 		panel.add(comp.getRootComponent(), BorderLayout.NORTH);
@@ -237,7 +238,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		ConsoleViewImpl originalConsoleView = (ConsoleViewImpl) getConsoleView(e);
 		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(originalConsoleView);
 		if (eventProject != null && copyingFilter != null) {
-			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView);
+			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
 			enabled = runnerLayoutUi != null;
 		}
 
