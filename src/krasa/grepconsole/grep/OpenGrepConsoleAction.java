@@ -144,12 +144,17 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (selectedContent == null) {
 			return null;
 		}
+
+		RunnerLayoutUi runnerLayoutUi = null;
+
 		Key<RunContentDescriptor> descriptorKey = (Key<RunContentDescriptor>) Key.findKeyByName("Descriptor");
-		final RunContentDescriptor runContentDescriptor = selectedContent.getUserData(descriptorKey);
-		if (runContentDescriptor == null) {
-			return null;
+		if (descriptorKey != null) {
+			final RunContentDescriptor runContentDescriptor = selectedContent.getUserData(descriptorKey);
+			if (runContentDescriptor != null) {
+				runnerLayoutUi = runContentDescriptor.getRunnerLayoutUi();
+			}
 		}
-		RunnerLayoutUi runnerLayoutUi = runContentDescriptor.getRunnerLayoutUi();
+
 		if (runnerLayoutUi == null) {
 			XDebugSession debugSession = XDebuggerManager.getInstance(eventProject).getDebugSession(
 					originalConsoleView);
