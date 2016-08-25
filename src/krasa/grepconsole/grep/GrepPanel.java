@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.regex.PatternSyntaxException;
 
 import javax.swing.*;
 
@@ -81,9 +82,9 @@ public class GrepPanel extends JPanel implements Disposable {
 			public void keyPressed(KeyEvent e) {
 				final int keyCode = e.getKeyCode();
 				if (keyCode == KeyEvent.VK_ENTER && e.isAltDown()) {
-					reload();
+					reloadButton.doClick();
 				} else if (keyCode == KeyEvent.VK_ENTER) {
-					apply();
+					applyButton.doClick();
 				}
 			}
 		};
@@ -151,9 +152,9 @@ public class GrepPanel extends JPanel implements Disposable {
 				applyCallback.apply(copyListenerModel);
 				expressionTextField.addCurrentTextToHistory();
 				unlessExpressionTextField.addCurrentTextToHistory();
-			} catch (Exception e) {
+			} catch (PatternSyntaxException e) {
 				final Notification notification = GROUP_DISPLAY_ID_ERROR.createNotification(
-						"Grep: Failed to apply RegExp", NotificationType.WARNING);
+						"Grep: invalid regexp", NotificationType.WARNING);
 				ApplicationManager.getApplication().invokeLater(new Runnable() {
 					@Override
 					public void run() {
