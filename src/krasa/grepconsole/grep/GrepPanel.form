@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="krasa.grepconsole.grep.GrepPanel">
-  <grid id="27dc6" binding="rootComponent" layout-manager="GridLayoutManager" row-count="2" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="3" vgap="-1">
+  <grid id="27dc6" binding="rootComponent" layout-manager="GridLayoutManager" row-count="1" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="3" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="793" height="400"/>
+      <xy x="20" y="20" width="745" height="43"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -11,23 +11,19 @@
       <grid id="f523d" class="com.intellij.ui.TextFieldWithStoredHistory" binding="expressionTextField" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
-            <preferred-size width="100" height="-1"/>
+          <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <minimum-size width="50" height="-1"/>
+            <preferred-size width="200" height="-1"/>
           </grid>
         </constraints>
         <properties/>
         <border type="none"/>
         <children/>
       </grid>
-      <vspacer id="5904c">
-        <constraints>
-          <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
-        </constraints>
-      </vspacer>
       <grid id="60e76" class="com.intellij.ui.TextFieldWithStoredHistory" binding="unlessExpressionTextField" custom-create="true" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <minimum-size width="50" height="-1"/>
             <preferred-size width="50" height="-1"/>
           </grid>
@@ -47,7 +43,7 @@
       </component>
       <component id="6c649" class="javax.swing.JLabel" binding="unlessLabel">
         <constraints>
-          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <text value="&amp;Unless:"/>
@@ -55,7 +51,7 @@
       </component>
       <component id="b02aa" class="com.intellij.ui.components.JBCheckBox" binding="matchCase">
         <constraints>
-          <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <focusable value="false"/>
@@ -73,13 +69,13 @@
       </hspacer>
       <hspacer id="24ab1">
         <constraints>
-          <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
       </hspacer>
       <grid id="39c87" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
         <margin top="0" left="0" bottom="0" right="0"/>
         <constraints>
-          <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
         <border type="none"/>
@@ -94,6 +90,7 @@
               <iconTextGap value="4"/>
               <margin top="0" left="0" bottom="0" right="0"/>
               <text value="Apply"/>
+              <toolTipText value="[Enter] - with the focus in the textfield"/>
             </properties>
           </component>
           <component id="e205f" class="javax.swing.JButton" binding="reloadButton">
@@ -104,6 +101,7 @@
             </constraints>
             <properties>
               <text value="Reload"/>
+              <toolTipText value="[Alt+Enter] - with the focus in the textfield. Processes the whole source with new the settings"/>
             </properties>
           </component>
           <component id="7f91a" class="javax.swing.JButton" binding="sourceButton">
@@ -114,13 +112,14 @@
             </constraints>
             <properties>
               <text value="Source"/>
+              <toolTipText value="Navigate to source console"/>
             </properties>
           </component>
         </children>
       </grid>
       <component id="44c8e" class="com.intellij.ui.components.JBCheckBox" binding="wholeLine">
         <constraints>
-          <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <focusable value="false"/>
@@ -129,7 +128,7 @@
       </component>
       <component id="6575b" class="com.intellij.ui.components.JBCheckBox" binding="regex">
         <constraints>
-          <grid row="0" column="7" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+          <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
           <focusable value="false"/>
