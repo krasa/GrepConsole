@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.2.141.000</version>
+	<version>6.3.141.000</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -29,8 +29,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>6.2 (2016-08-24)
-		<br>- grep improvements
+        <br>6.3 (2016-08-26)
+		<br>- grep improvements    
         <br>6.0 (2016-08-23)
 		<br>- ability to filter/grep the console output into a new console tab
         <br>5.10 (2016-08-19)
@@ -172,8 +172,8 @@
 		</action>
 		<action id="OpenFileInConsoleToolbarAction"
 				class="krasa.grepconsole.action.OpenFileInConsoleToolbarAction"
-				text="Tail File"
-				description="Drag and drop to open in console">
+				text="Tail"
+				description="Drag and drop to open file in console">
 			<add-to-group group-id="MainToolBar" anchor="last"/>
 		</action>
 		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog" text="Tail Log in Console"
