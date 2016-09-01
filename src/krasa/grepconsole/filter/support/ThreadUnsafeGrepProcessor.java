@@ -62,6 +62,9 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 						state.setMatchesSomething(true);
 						state.add(new Filter.ResultItem(state.getOffset() + start, state.getOffset() + end, null,
 								grepExpressionItem.getConsoleViewContentType(null).getAttributes()));
+						if (grepExpressionItem.getSound().isEnabled()) {
+							grepExpressionItem.getSound().play();
+						}
 					}
 				}
 			} else if (matches(input) && !matchesUnless(input)) {

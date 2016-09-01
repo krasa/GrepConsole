@@ -43,7 +43,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
 				Pattern pattern = grepExpressionItem.getPattern();
 				if (pattern != null) {
-					final Matcher matcher = pattern.matcher(StringUtil.newBombedCharSequence(matchedLine, 1000));
+					final Matcher matcher = pattern.matcher(StringUtil.newBombedCharSequence(matchedLine, 10000));
 					while (matcher.find()) {
 						matches++;
 						final int start = matcher.start();
@@ -53,6 +53,9 @@ public class GrepProcessorImpl implements GrepProcessor {
 						state.setMatchesSomething(true);
 						state.add(new Filter.ResultItem(state.getOffset() + start, state.getOffset() + end, null,
 								grepExpressionItem.getConsoleViewContentType(null).getAttributes()));
+						if (grepExpressionItem.getSound().isEnabled()) {
+							grepExpressionItem.getSound().play();
+						}
 					}
 				}
 			} else if (matches(matchedLine) && !matchesUnless(matchedLine)) {
