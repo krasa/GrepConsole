@@ -74,7 +74,6 @@ public class ServiceManager {
 		lastAnsi = new WeakReference<AnsiInputFilter>(service);
 		return service;
 	}
-`
 
 	public GrepHighlightingInputFilter createHighlightInputFilter(Project project) {
 		GrepHighlightingInputFilter grepHighlightFilter = new GrepHighlightingInputFilter(project);
