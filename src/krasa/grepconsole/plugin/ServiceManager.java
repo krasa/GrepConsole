@@ -1,21 +1,16 @@
 package krasa.grepconsole.plugin;
 
-import java.lang.ref.WeakReference;
-import java.util.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-
-import krasa.grepconsole.filter.AbstractFilter;
-import krasa.grepconsole.filter.AnsiInputFilter;
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.filter.GrepInputFilter;
+import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.grep.GrepCopyingFilter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 /**
  * @author Vojtech Krasa
@@ -33,6 +28,7 @@ public class ServiceManager {
 	/** to couple console with filters */
 	private WeakReference<AnsiInputFilter> lastAnsi;
 	private WeakReference<GrepCopyingFilter> lastCopier;
+	private WeakReference<GrepHighlightingInputFilter> lastGrepHighlightFilter;
 	private WeakReference<GrepHighlightFilter> lastQuickFilter;
 	private long lastExecutionId;
 
@@ -78,7 +74,16 @@ public class ServiceManager {
 		lastAnsi = new WeakReference<AnsiInputFilter>(service);
 		return service;
 	}
+`
 
+	public GrepHighlightingInputFilter createHighlightInputFilter(Project project) {
+		GrepHighlightingInputFilter grepHighlightFilter = new GrepHighlightingInputFilter(project);
+		grepHighlightFilter.setExecutionId(getLastExecutionId());
+		highlightFilters.add(new WeakReference<GrepHighlightFilter>(grepHighlightFilter));
+		lastGrepHighlightFilter = new WeakReference<GrepHighlightingInputFilter>(grepHighlightFilter);
+		return grepHighlightFilter;
+	}
+		
 	public GrepHighlightFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		final GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project);
 		grepHighlightFilter.setExecutionId(getLastExecutionId());
@@ -153,6 +158,11 @@ public class ServiceManager {
 			weakCopiersMap.put(console, lastCopier);
 			this.lastCopier = null;
 		}
+		GrepHighlightingInputFilter lastGrepHighlightFilter = getLastGrepHighlightFilter();
+		if (lastGrepHighlightFilter != null) {
+			weakHighlightersMap.put(console, lastGrepHighlightFilter);
+			this.lastGrepHighlightFilter = null;
+		}
 	}
 
 	@Nullable
@@ -173,4 +183,13 @@ public class ServiceManager {
 		}
 	}
 
+	@Nullable
+	private GrepHighlightingInputFilter getLastGrepHighlightFilter() {
+		if (lastGrepHighlightFilter != null) {
+			return lastGrepHighlightFilter.get();
+		} else {
+			return null;
+		}
+	}
+	
 }

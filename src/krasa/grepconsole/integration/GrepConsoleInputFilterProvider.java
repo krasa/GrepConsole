@@ -1,21 +1,28 @@
 package krasa.grepconsole.integration;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.execution.filters.ConsoleInputFilterProvider;
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.openapi.project.Project;
-
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
+import org.jetbrains.annotations.NotNull;
 
 public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvider {
 
 	@NotNull
 	@Override
 	public InputFilter[] getDefaultFilters(@NotNull Project project) {
-		return new InputFilter[] { ServiceManager.getInstance().createInputFilter(project),
-				ServiceManager.getInstance().createAnsiFilter(project),
-				ServiceManager.getInstance().createCopyingFilter(project) };
+		ServiceManager manager = ServiceManager.getInstance();
+		if (GrepConsoleApplicationComponent.getInstance().getState().isSynchronousHighlighting()) {
+			return new InputFilter[]{manager.createInputFilter(project),
+					manager.createAnsiFilter(project),
+					manager.createHighlightInputFilter(project),
+					manager.createCopyingFilter(project)};
+		} else {
+			return new InputFilter[]{manager.createInputFilter(project),
+					manager.createAnsiFilter(project),
+					manager.createCopyingFilter(project)};
+		}
 	}
 
 }
