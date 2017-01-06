@@ -1,16 +1,5 @@
 package krasa.grepconsole.grep;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.regex.PatternSyntaxException;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -23,6 +12,16 @@ import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.regex.PatternSyntaxException;
 
 public class GrepPanel extends JPanel implements Disposable {
 
@@ -32,7 +31,7 @@ public class GrepPanel extends JPanel implements Disposable {
 	@Nullable
 	private ConsoleViewImpl originalConsole;
 	private final ConsoleViewImpl newConsole;
-	private final GrepCopyingListener copyingListener;
+	private final GrepCopyingFilterListener copyingListener;
 	private final RunnerLayoutUi runnerLayoutUi;
 	private TextFieldWithStoredHistory expressionTextField;
 	private TextFieldWithStoredHistory unlessExpressionTextField;
@@ -63,7 +62,7 @@ public class GrepPanel extends JPanel implements Disposable {
 	}
 
 	public GrepPanel(final ConsoleViewImpl originalConsole, final ConsoleViewImpl newConsole,
-			final GrepCopyingListener copyingListener, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
+					 GrepCopyingFilterListener copyingListener, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
 		this.copyingListener = copyingListener;

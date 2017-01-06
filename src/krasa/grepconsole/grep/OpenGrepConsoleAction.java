@@ -1,14 +1,5 @@
 package krasa.grepconsole.grep;
 
-import java.awt.*;
-import java.io.OutputStream;
-
-import javax.swing.*;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
@@ -21,14 +12,23 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.Key;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-
+import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
+import krasa.grepconsole.grep.listener.Mode;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.OutputStream;
 
 public class OpenGrepConsoleAction extends DumbAwareAction {
 
@@ -47,22 +47,20 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		String expression = getExpression(e);
 		CopyListenerModel copyListenerModel = new CopyListenerModel(false, false, false, expression, null);
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
-
 		final LightProcessHandler myProcessHandler = new LightProcessHandler();
+
+		final GrepCopyingFilterListener copyingListener;
+		Mode mode = Mode.SYNC;
+		if (Mode.SYNC == mode) {
+			copyingListener = new GrepCopyingFilterSyncListener(copyListenerModel, myProcessHandler);
+		} else {
+			copyingListener = new GrepCopyingFilterAsyncListener(copyListenerModel, myProcessHandler);
+		} 
+		
+		
 		final ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(eventProject, myProcessHandler);
 		DefaultActionGroup actions = new DefaultActionGroup();
-
-		final GrepCopyingListener copyingListener = new GrepCopyingListener(copyListenerModel) {
-
-			@Override
-			protected void onMatch(String s, Key key) {
-				myProcessHandler.notifyTextAvailable(s, key);
-			}
-
-		};
-
-		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, expression,
-				runnerLayoutUi);
+		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, expression, runnerLayoutUi);
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel);
 		for (AnAction action : newConsole.createConsoleActions()) {
 			actions.add(action);
@@ -73,6 +71,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		runnerLayoutUi.addContent(tab);
 		runnerLayoutUi.selectAndFocus(tab, true, true);
 
+
 		for (String s : originalConsoleView.getEditor().getDocument().getText().split("\n")) {
 			copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
 		}
@@ -80,6 +79,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		Disposer.register(tab, consolePanel);
 		Disposer.register(tab, newConsole);
+		Disposer.register(tab, copyingListener);
 		Disposer.register(consolePanel, quickFilterPanel);
 		Disposer.register(newConsole, new Disposable() {
 			@Override
@@ -109,7 +109,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		quickFilterPanel.setApplyCallback(new ApplyCallback() {
 			@Override
 			public void apply(CopyListenerModel copyListenerModel) {
-				copyingListener.set(copyListenerModel);
+				copyingListener.modelUpdated(copyListenerModel);
 				updateTitle(tab, consolePanel.disposed, copyListenerModel.getExpression());
 			}
 
@@ -179,7 +179,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return runnerLayoutUi;
 	}
 
-	protected static class LightProcessHandler extends ProcessHandler {
+	public static class LightProcessHandler extends ProcessHandler {
 		@Override
 		protected void destroyProcessImpl() {
 			throw new UnsupportedOperationException();
