@@ -27,11 +27,16 @@ public class GrepCopyingFilterAsyncListener implements GrepCopyingFilterListener
 
 	@Override
 	public void process(String s, ConsoleViewContentType type) {
-		consoleBuffer.print(s, type);
+		consoleBuffer.onData(s, type);
+	}
+
+	@Override
+	public void clearStats() {
+		consoleBuffer.clearStats();
 	}
 
 	@Override
 	public void dispose() {
-		consoleBuffer.dispose();
+		consoleBuffer.dispose();   
 	}
 }

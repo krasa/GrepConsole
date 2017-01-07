@@ -47,18 +47,18 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		String expression = getExpression(e);
 		CopyListenerModel copyListenerModel = new CopyListenerModel(false, false, false, expression, null);
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
-		final LightProcessHandler myProcessHandler = new LightProcessHandler();
+		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
 		final GrepCopyingFilterListener copyingListener;
-		Mode mode = Mode.SYNC;
+		Mode mode = Mode.ASYNC;
 		if (Mode.SYNC == mode) {
 			copyingListener = new GrepCopyingFilterSyncListener(copyListenerModel, myProcessHandler);
 		} else {
 			copyingListener = new GrepCopyingFilterAsyncListener(copyListenerModel, myProcessHandler);
-		} 
-		
-		
-		final ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(eventProject, myProcessHandler);
+		}
+
+
+		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(eventProject, myProcessHandler);
 		DefaultActionGroup actions = new DefaultActionGroup();
 		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, expression, runnerLayoutUi);
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel);
@@ -77,11 +77,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 		copyingFilter.addListener(copyingListener);
 
+		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(eventProject);
+		if (runContentDescriptor != null) {
+			Disposer.register(runContentDescriptor, tab);
+		}
 		Disposer.register(tab, consolePanel);
-		Disposer.register(tab, newConsole);
-		Disposer.register(tab, copyingListener);
+		Disposer.register(consolePanel, newConsole);
+		Disposer.register(consolePanel, copyingListener);
 		Disposer.register(consolePanel, quickFilterPanel);
-		Disposer.register(newConsole, new Disposable() {
+		Disposer.register(consolePanel, new Disposable() {
 			@Override
 			public void dispose() {
 				copyingFilter.removeListener(copyingListener);
@@ -101,8 +105,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			@Override
 			public void dispose() {
 				// dispose chained grep consoles
-				Disposer.dispose(consolePanel);
-				updateTitle(tab, consolePanel.disposed, tab.getDisplayName());
+				Disposer.dispose(quickFilterPanel);
+				tab.setDisplayName(title(tab.getDisplayName()) + " (Inactive)");
 			}
 		});
 
@@ -110,7 +114,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			@Override
 			public void apply(CopyListenerModel copyListenerModel) {
 				copyingListener.modelUpdated(copyListenerModel);
-				updateTitle(tab, consolePanel.disposed, copyListenerModel.getExpression());
+				tab.setDisplayName(title(copyListenerModel.getExpression()));
 			}
 
 		});
@@ -137,10 +141,6 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return RunnerLayoutUiImpl.CONTENT_TYPE.get(selectedContent);
 	}
 
-	protected void updateTitle(Content logContent, boolean disposed, String s) {
-		logContent.setDisplayName(title(s) + (disposed ? " (Inactive)" : ""));
-	}
-
 	interface ApplyCallback {
 
 		void apply(CopyListenerModel copyListenerModel);
@@ -150,8 +150,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	private RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl originalConsoleView, DataContext dataContext) {
 		RunnerLayoutUi runnerLayoutUi = null;
 
-		RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
-		final RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+		final RunContentDescriptor selectedContent = getRunContentDescriptor(eventProject);
 		if (selectedContent != null) {
 			runnerLayoutUi = selectedContent.getRunnerLayoutUi();
 		}
@@ -177,6 +176,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		}
 		return runnerLayoutUi;
+	}
+
+	private RunContentDescriptor getRunContentDescriptor(Project eventProject) {
+		RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
+		return contentManager.getSelectedContent();
 	}
 
 	public static class LightProcessHandler extends ProcessHandler {
@@ -247,8 +251,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	static class MyJPanel extends JPanel implements Disposable {
-		private final RunnerLayoutUi runnerLayoutUi;
-		private boolean disposed;
+		private RunnerLayoutUi runnerLayoutUi;
 
 		public MyJPanel(RunnerLayoutUi runnerLayoutUi) {
 			this.runnerLayoutUi = runnerLayoutUi;
@@ -256,7 +259,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		@Override
 		public void dispose() {
-			disposed = true;
+			runnerLayoutUi = null;
+			//TODO leak when closing tail by Close button
+//			myPreferredFocusableComponent com.intellij.ui.tabs.TabInfo    
+
+			removeAll();
 		}
 	}
 }
+

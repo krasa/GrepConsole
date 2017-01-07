@@ -1,14 +1,5 @@
 package krasa.grepconsole.tail;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
@@ -38,6 +29,13 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copy of com.intellij.execution.RunContentExecutor Runs a process and prints the output in a content tab within the
@@ -150,6 +148,7 @@ public class TailContentExecutor implements Disposable {
 				"RunnerToolbar");
 
 		Disposer.register(this, descriptor);
+		Disposer.register(descriptor, content);
 		Disposer.register(content, consoleView);
 		if (myStopAction != null) {
 			Disposer.register(consoleView, new Disposable() {

@@ -8,4 +8,6 @@ public interface GrepCopyingFilterListener extends Disposable {
 	void modelUpdated(CopyListenerModel copyListenerModel);
 
 	void process(String s, ConsoleViewContentType type);
+
+	void clearStats();
 }

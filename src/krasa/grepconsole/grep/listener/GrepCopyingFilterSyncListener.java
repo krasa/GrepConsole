@@ -35,6 +35,11 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	}
 
 	@Override
+	public void clearStats() {
+
+	}
+
+	@Override
 	public void dispose() {
 
 	}
