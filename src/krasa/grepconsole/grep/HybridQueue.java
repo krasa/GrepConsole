@@ -14,51 +14,74 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class HybridQueue implements Disposable {
 	private static final Logger log = LoggerFactory.getLogger(HybridQueue.class);
 	private LongEventProducerWithTranslator bufferProducer;
+	private Disruptor<LogEvent> disruptor;
+	private FileBackingQueue fileBackingQueue;
+	private State state;
 
 	public HybridQueue(EventConsumer eventConsumer) {
 		// The factory for the event
 		LongEventFactory factory = new LongEventFactory();
 
 		// Specify the size of the ring buffer, must be power of 2.
-		int bufferSize = IntMath.pow(2, 3); //2^14 16k
+		int bufferSize = IntMath.pow(2, 16); //2^14 16k  , ^16=65536
 
 		// Construct the Disruptor
-		Disruptor<LogEvent> disruptor = new Disruptor<LogEvent>(factory, bufferSize, new ThreadFactory() {
+		state = new State();
+		fileBackingQueue = new FileBackingQueue(state);
+		// Connect the handler
+		ThreadFactory grepConsole = new ThreadFactory() {
 			@Override
 			public Thread newThread(@NotNull Runnable r) {
 				Thread thread = new Thread(r, "GrepConsole");
 				thread.setDaemon(true);
 				return thread;
 			}
-		}, ProducerType.MULTI, new BlockingWaitStrategy());
-		State state = new State();
-		FileBackingQueue fileBackingQueue = new FileBackingQueue(state);
-		// Connect the handler
-		disruptor.handleEventsWith(new LogEventHandler(disruptor.getRingBuffer(), fileBackingQueue, state, eventConsumer));
+		};
+		this.disruptor = new Disruptor<LogEvent>(factory, bufferSize, grepConsole, ProducerType.MULTI, new BlockingWaitStrategy());
+		this.disruptor.handleEventsWith(new LogEventHandler(this.disruptor.getRingBuffer(), fileBackingQueue, state, eventConsumer));
 
 		// Start the Disruptor, starts all threads running
-		disruptor.start();
+		this.disruptor.start();
 
 		// Get the ring buffer from the Disruptor to be used for publishing.
-		RingBuffer<LogEvent> ringBuffer = disruptor.getRingBuffer();
+		RingBuffer<LogEvent> ringBuffer = this.disruptor.getRingBuffer();
 		bufferProducer = new LongEventProducerWithTranslator(fileBackingQueue, ringBuffer,
 				state);
 	}
 
-	public void print(String s, ConsoleViewContentType type) {
+	public void onData(String s, ConsoleViewContentType type) {
 		bufferProducer.onData(s);
 	}
 
 	@Override
 	public void dispose() {
+		try {
+			try {
+				disruptor.shutdown(0, TimeUnit.NANOSECONDS);
+				// if shutdown is successful:
+				// 1. exception is not thrown (obviously)
+				// Disruptor.halt() is called automatically (less obvious)
+			} catch (TimeoutException e) {
+				disruptor.halt();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		fileBackingQueue.dispose();
+	}
+
+	public void clearStats() {
+		state.clear();
 	}
 
 	public static class LongEventProducerWithTranslator {
@@ -86,12 +109,18 @@ public class HybridQueue implements Disposable {
 			}
 			boolean added;
 			if (!state.isFileBacking()) {
-				System.out.println("added to ringBuffer " + bb);
+//				System.out.println("added to ringBuffer " + bb);
 
-				added = ringBuffer.tryPublishEvent(TRANSLATOR, bb, null, null);
+				boolean fileBackingEnabled = false;
+				if (fileBackingEnabled) {
+					added = ringBuffer.tryPublishEvent(TRANSLATOR, bb, null, null);
+				} else {
+					ringBuffer.publishEvent(TRANSLATOR, bb, null, null);
+					added = true;
+				} 
 
 				if (!added) {
-					System.out.println("ringBuffer full, queing to file");
+//					System.out.println("ringBuffer full, queing to file");
 					fileBackingQueue.activateFileBacking();
 					added = fileBackingQueue.tryAdd(bb);
 				}
@@ -102,7 +131,7 @@ public class HybridQueue implements Disposable {
 				added = fileBackingQueue.tryAdd(bb);
 			}
 			if (!added) {
-				System.out.println("item not added, race condition, trying to add again  " + state);
+//				System.out.println("item not added, race condition, trying to add again  " + state);
 				add(bb, ++tries);
 			}
 		}
@@ -128,6 +157,10 @@ public class HybridQueue implements Disposable {
 
 				if (event.getFileBuffer() == null) {
 					processEvent(event.get());
+					event.set((ConsoleViewContentType) null);
+					event.set((QueueFile) null);
+					event.set((ConsoleViewContentType) null);
+					
 					if (!fileBackingQueue.isQueuePublished()) {
 						fileBackingQueue.tryPublishFileQueue(ringBuffer);
 					}
@@ -138,7 +171,7 @@ public class HybridQueue implements Disposable {
 
 			} catch (Throwable e) {
 				e.printStackTrace();
-//				log.error(e.getMessage(), e);
+				log.error(e.getMessage(), e);
 			}
 		}
 
@@ -159,6 +192,7 @@ public class HybridQueue implements Disposable {
 		private final State state;
 		private QueueFile lastFileQueue;
 		private boolean queuePublished = true;
+		private File lastFile;
 
 		public FileBackingQueue(State state) {
 			this.state = state;
@@ -166,13 +200,14 @@ public class HybridQueue implements Disposable {
 
 		public synchronized QueueFile activateFileBacking() {
 			if (state.fileBacking.get()) {
-				System.out.println("FileBacking already activated - race condition");
+//				System.out.println("FileBacking already activated - race condition");
 				return lastFileQueue;
 			}
-			System.out.println("activateFileBacking");
+			System.out.println("activateFileBacking " + state);
 			state.fileBacking.set(true);
 			try {
-				lastFileQueue = new QueueFile(FileUtil.generateRandomTemporaryPath());
+				lastFile = FileUtil.generateRandomTemporaryPath();
+				lastFileQueue = new QueueFile(lastFile);
 				queuePublished = false;
 				return lastFileQueue;
 			} catch (IOException e) {
@@ -181,7 +216,7 @@ public class HybridQueue implements Disposable {
 		}
 
 		private synchronized void deactivateFileBacking() {
-			System.out.println("deactivateFileBacking");
+//			System.out.println("deactivateFileBacking");
 			if (!queuePublished) {
 				throw new IllegalStateException("fileQueue not published, therefore processed, yet it is being disabled, fuck");
 			}
@@ -194,27 +229,27 @@ public class HybridQueue implements Disposable {
 
 		public synchronized void tryPublishFileQueue(RingBuffer<LogEvent> ringBuffer) {
 			if (queuePublished) {
-				System.out.println("queue already published, race condition");
+//				System.out.println("queue already published, race condition");
 				return;
 			}
 			if (lastFileQueue == null) {
 				throw new IllegalStateException("publishing null lastFileQueue, fuck");
 			}
 			if (ringBuffer.tryPublishEvent(TRANSLATOR, null, null, lastFileQueue)) {
-				System.out.println("FileQueue published to ringBuffer");
+//				System.out.println("FileQueue published to ringBuffer");
 				queuePublished = true;
 			} else {
-				System.out.println("FileQueue not published - ringBuffer full - will try on the next event");
+//				System.out.println("FileQueue not published - ringBuffer full - will try on the next event");
 			}
 		}
 
 		public synchronized boolean tryAdd(String s) {
 			if (!state.isFileBacking()) {
-				System.out.println("fileBacking is deactivated - race condition");
+//				System.out.println("fileBacking is deactivated - race condition");
 				return false;
 			}
 
-			System.out.println("adding to fileQueue " + s);
+//			System.out.println("adding to fileQueue " + s);
 			try {
 				lastFileQueue.add(s.getBytes());
 			} catch (IOException e) {
@@ -247,12 +282,23 @@ public class HybridQueue implements Disposable {
 				fileBuffer.remove();
 				logEventConsumer.processEvent(new String(bytes));
 			}
-			System.out.println("readAll " + i + " " + (System.currentTimeMillis() - start));
+//			System.out.println("readAll " + i + " " + (System.currentTimeMillis() - start));
 			return i;
 
 		}
 
 
+		public void dispose() {
+			QueueFile lastFileQueue = this.lastFileQueue;
+			if (lastFileQueue != null) {
+				try {
+					lastFileQueue.close();
+					lastFile.delete();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private static final EventTranslatorThreeArg<LogEvent, String, ConsoleViewContentType, QueueFile> TRANSLATOR = new EventTranslatorThreeArg<LogEvent, String, ConsoleViewContentType, QueueFile>() {
@@ -329,6 +375,11 @@ public class HybridQueue implements Disposable {
 		}
 
 		protected void consumerDelay() {
+		}
+
+		public void clear() {
+			itemsConsumed.set(0);
+			itemsProduced.set(0);
 		}
 	}
 }
