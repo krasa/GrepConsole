@@ -16,6 +16,7 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
@@ -50,7 +51,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
 		final GrepCopyingFilterListener copyingListener;
-		Mode mode = Mode.ASYNC;
+		Mode mode = Mode.SYNC;
 		if (Mode.SYNC == mode) {
 			copyingListener = new GrepCopyingFilterSyncListener(copyListenerModel, myProcessHandler);
 		} else {
@@ -126,7 +127,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	@NotNull
 	protected String getExpression(AnActionEvent e) {
-		String s = Utils.getString(e);
+		String s = Utils.getSelectedString(e);
 		if (s == null)
 			s = "";
 		if (s.endsWith("\n")) {
@@ -141,7 +142,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return RunnerLayoutUiImpl.CONTENT_TYPE.get(selectedContent);
 	}
 
-	interface ApplyCallback {
+	public interface ApplyCallback {
 
 		void apply(CopyListenerModel copyListenerModel);
 	}

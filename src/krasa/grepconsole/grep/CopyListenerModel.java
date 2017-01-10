@@ -1,8 +1,8 @@
 package krasa.grepconsole.grep;
 
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
+
+import java.util.regex.Pattern;
 
 public class CopyListenerModel {
 	private final boolean caseSensitive;
@@ -34,6 +34,22 @@ public class CopyListenerModel {
 
 	public String getExpression() {
 		return expression;
+	}
+
+	public boolean isCaseSensitive() {
+		return caseSensitive;
+	}
+
+	public boolean isWholeLine() {
+		return wholeLine;
+	}
+
+	public String getUnlessExpression() {
+		return unlessExpression;
+	}
+
+	public boolean isRegex() {
+		return regex;
 	}
 
 	private int computeFlags() {
