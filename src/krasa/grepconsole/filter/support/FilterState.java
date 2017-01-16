@@ -3,13 +3,12 @@ package krasa.grepconsole.filter.support;
 import java.util.ArrayList;
 import java.util.List;
 
+import krasa.grepconsole.model.Operation;
+
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.execution.filters.Filter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
-
-import krasa.grepconsole.model.Operation;
 
 public class FilterState {
 
@@ -17,7 +16,7 @@ public class FilterState {
 	private int offset;
 	private Operation nextOperation = Operation.CONTINUE_MATCHING;
 	protected ConsoleViewContentType consoleViewContentType;
-	protected List<Filter.ResultItem> resultItemList;
+	protected List<MyResultItem> resultItemList;
 	private boolean exclude;
 	private boolean matchesSomething;
 
@@ -55,7 +54,6 @@ public class FilterState {
 			return null;
 		}
 		return consoleViewContentType.getAttributes();
-
 	}
 
 	public void setExclude(boolean exclude) {
@@ -74,15 +72,15 @@ public class FilterState {
 		return matchesSomething;
 	}
 
-	public boolean add(Filter.ResultItem resultItem) {
+	public boolean add(MyResultItem resultItem) {
 		if (resultItemList == null) {
-			resultItemList = new ArrayList<Filter.ResultItem>();
+			resultItemList = new ArrayList<MyResultItem>();
 		}
 		return resultItemList.add(resultItem);
 	}
 
 	@Nullable
-	public List<Filter.ResultItem> getResultItemList() {
+	public List<MyResultItem> getResultItemList() {
 		return resultItemList;
 	}
 

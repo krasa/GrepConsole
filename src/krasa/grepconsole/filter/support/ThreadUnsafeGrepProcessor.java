@@ -3,13 +3,12 @@ package krasa.grepconsole.filter.support;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import krasa.grepconsole.model.GrepExpressionItem;
+
 import org.apache.commons.lang.StringUtils;
 
-import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-
-import krasa.grepconsole.model.GrepExpressionItem;
 
 public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(ThreadUnsafeGrepProcessor.class.getName());
@@ -45,6 +44,7 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 		this.matches = 0;
 	}
 
+	@SuppressWarnings("Duplicates")
 	@Override
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
@@ -60,8 +60,9 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 						state.setNextOperation(grepExpressionItem.getOperationOnMatch());
 						state.setExclude(grepExpressionItem.isInputFilter());
 						state.setMatchesSomething(true);
-						state.add(new Filter.ResultItem(state.getOffset() + start, state.getOffset() + end, null,
-								grepExpressionItem.getConsoleViewContentType(null).getAttributes()));
+						MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
+								null, grepExpressionItem.getConsoleViewContentType(null));
+						state.add(resultItem);
 						if (grepExpressionItem.getSound().isEnabled()) {
 							grepExpressionItem.getSound().play();
 						}

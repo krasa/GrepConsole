@@ -1,16 +1,20 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
+import java.lang.ref.WeakReference;
+import java.util.*;
+
 import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.grep.GrepCopyingFilter;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.ref.WeakReference;
-import java.util.*;
+import com.intellij.execution.filters.TextConsoleBuilder;
+import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
 
 /**
  * @author Vojtech Krasa
@@ -35,6 +39,7 @@ public class ServiceManager {
 	/** for providing attached filters for certain console */
 	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<ConsoleView, GrepHighlightFilter>();
 	private WeakHashMap<ConsoleView, GrepCopyingFilter> weakCopiersMap = new WeakHashMap<ConsoleView, GrepCopyingFilter>();
+	private boolean createInputFilter = true;
 
 	public static ServiceManager getInstance() {
 		return SERVICE_MANAGER;
@@ -62,10 +67,14 @@ public class ServiceManager {
 		}
 	}
 
+	@Nullable
 	public GrepInputFilter createInputFilter(Project project) {
-		final GrepInputFilter grepInputFilter = new GrepInputFilter(project);
-		inputFilters.add(new WeakReference<GrepInputFilter>(grepInputFilter));
-		return grepInputFilter;
+		if (!createInputFilter) {
+			return null;
+		}
+		GrepInputFilter lastInputFilter = new GrepInputFilter(project);
+		inputFilters.add(new WeakReference<GrepInputFilter>(lastInputFilter));
+		return lastInputFilter;
 	}
 
 	public AnsiInputFilter createAnsiFilter(Project project) {
@@ -82,7 +91,7 @@ public class ServiceManager {
 		lastGrepHighlightFilter = new WeakReference<GrepHighlightingInputFilter>(grepHighlightFilter);
 		return grepHighlightFilter;
 	}
-		
+
 	public GrepHighlightFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		final GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project);
 		grepHighlightFilter.setExecutionId(getLastExecutionId());
@@ -101,21 +110,10 @@ public class ServiceManager {
 
 	@Nullable
 	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
-		return getGrepHighlightFilter(console, weakHighlightersMap, "GrepHighlightFilter");
-	}
-
-	@Nullable
-	public GrepCopyingFilter getCopyingFilter(@NotNull ConsoleView console) {
-		return weakCopiersMap.get(console);
-	}
-
-	@Nullable
-	private GrepHighlightFilter getGrepHighlightFilter(@NotNull ConsoleView console,
-			WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap, final String grepHighlightFilter1) {
 		GrepHighlightFilter grepHighlightFilter = weakHighlightersMap.get(console);
 		if (grepHighlightFilter == null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Something is wrong. " + grepHighlightFilter1 + " not found for ").append(
+			sb.append("Something is wrong. " + "GrepHighlightFilter" + " not found for ").append(
 					System.identityHashCode(console)).append("-").append(console);
 			sb.append(". Registered: [");
 			boolean i = false;
@@ -132,6 +130,11 @@ public class ServiceManager {
 			return null;
 		}
 		return grepHighlightFilter;
+	}
+
+	@Nullable
+	public GrepCopyingFilter getCopyingFilter(@NotNull ConsoleView console) {
+		return weakCopiersMap.get(console);
 	}
 
 	public boolean isRegistered(@NotNull ConsoleView console) {
@@ -190,5 +193,14 @@ public class ServiceManager {
 			return null;
 		}
 	}
-	
+
+	public ConsoleView createConsoleWithoutInputFilter(Project project) {
+		try {
+			createInputFilter = false;
+			TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
+			return consoleBuilder.getConsole();
+		} finally {
+			createInputFilter = true;
+		}
+	}
 }

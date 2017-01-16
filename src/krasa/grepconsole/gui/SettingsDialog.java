@@ -3,23 +3,40 @@ package krasa.grepconsole.gui;
 import static krasa.grepconsole.Cloner.deepClone;
 
 import java.awt.event.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
-import krasa.grepconsole.gui.table.*;
 import krasa.grepconsole.gui.table.CheckboxTreeTable;
-import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.gui.table.GrepExpressionGroupTreeNode;
+import krasa.grepconsole.gui.table.GrepExpressionItemTreeNode;
+import krasa.grepconsole.gui.table.TableUtils;
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionGroup;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.DefaultState;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.tail.TailIntegrationForm;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
+import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.*;
-import com.intellij.ui.*;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.ui.CheckedTreeNode;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -39,16 +56,15 @@ public class SettingsDialog {
 	private JCheckBox enableFiltering;
 	private JCheckBox ansi;
 	private JCheckBox hideAnsiCharacters;
-	private JCheckBox encodeText;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
 	private JCheckBox showStatsInConsole;
 	private JCheckBox showStatsInStatusBar;
 	private JButton fileTailSettings;
-	private JButton reddit;
 	private JButton addNewGroup;
 	private JLabel contextSpecificText;
 	private JCheckBox enableFoldings;
+	private JCheckBox synchronous;
 	private PluginState settings;
 
 	public SettingsDialog(PluginState settings) {
@@ -56,6 +72,13 @@ public class SettingsDialog {
 	}
 
 	public SettingsDialog(PluginState settings, SettingsContext settingsContext) {
+		int version = Integer.parseInt(ApplicationInfo.getInstance().getMajorVersion());
+		if (version < 163) {
+			synchronous.setVisible(false);
+		} else {
+			ansi.setVisible(false);
+			hideAnsiCharacters.setVisible(false);
+		}
 		this.settingsContext = settingsContext;
 		this.settings = settings;
 		DONATEButton.setBorder(null);
@@ -64,17 +87,6 @@ public class SettingsDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
-			}
-		});
-		reddit.setBorder(null);
-		reddit.setContentAreaFilled(false);
-		reddit.setBorderPainted(false);
-		reddit.setFocusPainted(false);
-		reddit.setOpaque(false);
-		reddit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BareBonesBrowserLaunch.openURL("http://www.reddit.com/r/IntelliJIDEA/");
 			}
 		});
 		addNewButton.addActionListener(new AddNewItemAction());
@@ -265,28 +277,28 @@ public class SettingsDialog {
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		ansi.setSelected(data.isEnableAnsiColoring());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
-		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
-		maxLengthToMatch.setText(data.getMaxLengthToMatch());
 		hideAnsiCharacters.setSelected(data.isHideAnsiCommands());
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
-		multilineOutput.setSelected(data.isMultiLineOutput());
-		encodeText.setSelected(data.isEncodeText());
+		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
+		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
 		enableFoldings.setSelected(data.isEnableFoldings());
+		multilineOutput.setSelected(data.isMultiLineOutput());
+		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		synchronous.setSelected(data.isSynchronous());
 	}
 
 	public void getData(Profile data) {
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setEnableAnsiColoring(ansi.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
-		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
-		data.setMaxLengthToMatch(maxLengthToMatch.getText());
 		data.setHideAnsiCommands(hideAnsiCharacters.isSelected());
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
-		data.setMultiLineOutput(multilineOutput.isSelected());
-		data.setEncodeText(encodeText.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
+		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
 		data.setEnableFoldings(enableFoldings.isSelected());
+		data.setMultiLineOutput(multilineOutput.isSelected());
+		data.setMaxLengthToMatch(maxLengthToMatch.getText());
+		data.setSynchronous(synchronous.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
@@ -296,22 +308,22 @@ public class SettingsDialog {
 			return true;
 		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
 			return true;
-		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault())
-			return true;
-		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault())
-			return true;
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
-				: data.getMaxLengthToMatch() != null)
-			return true;
 		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
 			return true;
 		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
 			return true;
-		if (multilineOutput.isSelected() != data.isMultiLineOutput())
+		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault())
 			return true;
-		if (encodeText.isSelected() != data.isEncodeText())
+		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault())
 			return true;
 		if (enableFoldings.isSelected() != data.isEnableFoldings())
+			return true;
+		if (multilineOutput.isSelected() != data.isMultiLineOutput())
+			return true;
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
+				: data.getMaxLengthToMatch() != null)
+			return true;
+		if (synchronous.isSelected() != data.isSynchronous())
 			return true;
 		return false;
 	}

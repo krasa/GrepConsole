@@ -46,7 +46,7 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 
 	private void reset(ConsoleViewImpl consoleViewImpl) {
 		Editor editor = consoleViewImpl.getEditor();
-		removeAllHighlighters(editor);
+		removeAllHighlighters(consoleViewImpl, editor);
 		highlight(consoleViewImpl, editor);
 		StatisticsManager.resetStatisticsPanels(consoleViewImpl);
 	}
@@ -80,7 +80,7 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 		}
 	}
 
-	protected void removeAllHighlighters(Editor editor) {
+	protected void removeAllHighlighters(ConsoleViewImpl consoleViewImpl, Editor editor) {
 		editor.getMarkupModel().removeAllHighlighters();
 	}
 

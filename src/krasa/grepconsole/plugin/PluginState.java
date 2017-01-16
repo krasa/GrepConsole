@@ -1,18 +1,19 @@
 package krasa.grepconsole.plugin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.TailSettings;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.intellij.util.xmlb.annotations.Transient;
 
 public class PluginState extends DomainObject implements Cloneable {
 
 	private List<Profile> profiles = new ArrayList<Profile>();
 	private TailSettings tailSettings;
 	private boolean enabled;
-	private boolean synchronousHighlighting = true;
 
 	public Profile getDefaultProfile() {
 		Profile result = null;
@@ -75,11 +76,9 @@ public class PluginState extends DomainObject implements Cloneable {
 		this.enabled = enabled;
 	}
 
+	@Transient
 	public boolean isSynchronousHighlighting() {
-		return synchronousHighlighting;
+		return getDefaultProfile().isSynchronous();
 	}
 
-	public void setSynchronousHighlighting(boolean synchronousHighlighting) {
-		this.synchronousHighlighting = synchronousHighlighting;
-	}
 }

@@ -3,22 +3,23 @@ package krasa.grepconsole.filter;
 import java.util.Collections;
 import java.util.List;
 
+import krasa.grepconsole.filter.support.FilterState;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.filter.support.MyResultItem;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.filters.Filter;
-import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
-
-import krasa.grepconsole.filter.support.FilterState;
-import krasa.grepconsole.filter.support.GrepProcessor;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
 
 /** must be executed in single thread, see #createProcessor */
 public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	private long executionId;
-	private TextAttributes lastTextAttributes = null;
+	protected ConsoleViewContentType lastTextAttributes = null;
 
 	public GrepHighlightFilter(Project project) {
 		super(project);
@@ -32,12 +33,13 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 	@Override
 	// line can be empty sometimes under heavy load
 	public Result applyFilter(@Nullable String s, int entireLength) {
-		Result result = null;
 		int offset = entireLength;
 		if (s != null) {
 			offset = entireLength - s.length();
 		}
 		FilterState state = super.filter(s, offset);
+
+		Result result = null;
 		if (state != null) {
 			result = prepareResult(entireLength, state);
 		}
@@ -46,8 +48,17 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	private Result prepareResult(int entireLength, FilterState state) {
 		Result result = null;
-		TextAttributes textAttributes = state.getTextAttributes();
-		List<ResultItem> resultItemList = state.getResultItemList();
+		List<MyResultItem> resultItemList = adjustWholeLineMatch(entireLength, state);
+		if (resultItemList != null) {
+			result = new Result(MyResultItem.toIJ(resultItemList));
+			result.setNextAction(NextAction.CONTINUE_FILTERING);
+		}
+		return result;
+	}
+
+	protected List<MyResultItem> adjustWholeLineMatch(int entireLength, FilterState state) {
+		ConsoleViewContentType textAttributes = state.getConsoleViewContentType();
+		List<MyResultItem> resultItemList = state.getResultItemList();
 		if (textAttributes != null) {
 			lastTextAttributes = textAttributes;
 			if (resultItemList == null) {
@@ -62,15 +73,11 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 				resultItemList.add(getResultItem(entireLength, state, lastTextAttributes));
 			}
 		}
-		if (resultItemList != null) {
-			result = new Result(resultItemList);
-			result.setNextAction(NextAction.CONTINUE_FILTERING);
-		}
-		return result;
+		return resultItemList;
 	}
 
-	private ResultItem getResultItem(int entireLength, FilterState state, TextAttributes textAttributes) {
-		return new ResultItem(state.getOffset(), entireLength, null, textAttributes);
+	private MyResultItem getResultItem(int entireLength, FilterState state, ConsoleViewContentType textAttributes) {
+		return new MyResultItem(state.getOffset(), entireLength, null, textAttributes);
 	}
 
 	@Override

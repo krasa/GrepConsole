@@ -1,6 +1,7 @@
 package krasa.grepconsole.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -19,7 +20,6 @@ public class Profile extends DomainObject {
 	private boolean enableMaxLengthLimit = true;
 	private boolean enableAnsiColoring;
 	private boolean hideAnsiCommands;
-	private boolean encodeText;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
@@ -27,6 +27,7 @@ public class Profile extends DomainObject {
 	private boolean showStatsInConsoleByDefault;
 	private boolean showStatsInStatusBarByDefault;
 	private boolean enableFoldings;
+	private boolean synchronous;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -143,13 +144,6 @@ public class Profile extends DomainObject {
 		this.hideAnsiCommands = hideAnsiCommands;
 	}
 
-	public boolean isEncodeText() {
-		return encodeText;
-	}
-
-	public void setEncodeText(boolean encodeText) {
-		this.encodeText = encodeText;
-	}
 
 	public boolean isMultiLineOutput() {
 		return multiLineOutput;
@@ -181,5 +175,13 @@ public class Profile extends DomainObject {
 
 	public void setEnableFoldings(final boolean enableFoldings) {
 		this.enableFoldings = enableFoldings;
+	}
+
+	public boolean isSynchronous() {
+		return synchronous;
+	}
+
+	public void setSynchronous(final boolean synchronous) {
+		this.synchronous = synchronous;
 	}
 }
