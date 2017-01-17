@@ -1,16 +1,16 @@
 package krasa.grepconsole.grep;
 
-import com.intellij.execution.filters.InputFilter;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
-import krasa.grepconsole.filter.AbstractFilter;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class GrepCopyingFilter extends AbstractFilter implements InputFilter {
+import krasa.grepconsole.filter.AbstractFilter;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+
+import com.intellij.execution.filters.InputFilterEx;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.Project;
+
+public class GrepCopyingFilter extends AbstractFilter implements InputFilterEx {
 
 	private List<GrepCopyingFilterListener> copyingListeners = new CopyOnWriteArrayList<GrepCopyingFilterListener>();
 
@@ -19,12 +19,12 @@ public class GrepCopyingFilter extends AbstractFilter implements InputFilter {
 	}
 
 	@Override
-	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
+	public String applyFilter(String s,
 			ConsoleViewContentType consoleViewContentType) {
 		for (GrepCopyingFilterListener copyingListener : copyingListeners) {
 			copyingListener.process(s, consoleViewContentType);
 		}
-		return null;
+		return s;
 	}
 
 	public void addListener(GrepCopyingFilterListener copyingListener) {

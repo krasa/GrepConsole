@@ -27,7 +27,7 @@ public class Profile extends DomainObject {
 	private boolean showStatsInConsoleByDefault;
 	private boolean showStatsInStatusBarByDefault;
 	private boolean enableFoldings;
-	private boolean synchronous;
+	private boolean synchronous = true;
 
 	public Profile() {
 		id = System.currentTimeMillis();

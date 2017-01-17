@@ -7,19 +7,15 @@ import static junit.framework.Assert.assertNull;
 import java.awt.*;
 import java.util.ArrayList;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.util.Pair;
-
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Profile;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class GrepInputFilterTest {
 
@@ -37,36 +33,25 @@ public class GrepInputFilterTest {
 
 	@Test
 	public void testWithoutFilters() throws Exception {
-		java.util.List<Pair<String, ConsoleViewContentType>> result = service2.applyFilter("input", NORMAL_OUTPUT);
-		assertNull(result);
+		String result = service2.applyFilter("input", NORMAL_OUTPUT);
+		assertNotNull(result);
 	}
 
 	@Test
 	public void testNotMatched() throws Exception {
-		assertNull(service.applyFilter("[WARN]", NORMAL_OUTPUT));
+		assertNotNull(service.applyFilter("[WARN]", NORMAL_OUTPUT));
 	}
 
 	@Test
 	public void testMatched() throws Exception {
-		java.util.List<Pair<String, ConsoleViewContentType>> result = service.applyFilter("[ERROR]", NORMAL_OUTPUT);
-		assertNotNull(result);
-		Assert.assertEquals(1, result.size());
-		final Pair<String, ConsoleViewContentType> pai = result.get(0);
-		assertExcludedItem(pai);
+		String result = service.applyFilter("[ERROR]", NORMAL_OUTPUT);
+		assertNull(result);
 	}
 
 	@Test
 	public void testMatched2() throws Exception {
-		java.util.List<Pair<String, ConsoleViewContentType>> result = service.applyFilter("[INFO]", NORMAL_OUTPUT);
-		assertNotNull(result);
-		Assert.assertEquals(1, result.size());
-		final Pair<String, ConsoleViewContentType> pai = result.get(0);
-		assertExcludedItem(pai);
-	}
-
-	private void assertExcludedItem(Pair<String, ConsoleViewContentType> pai) {
-		assertNull(pai.first);
-		assertNull(pai.second);
+		String result = service.applyFilter("[INFO]", NORMAL_OUTPUT);
+		assertNull(result);
 	}
 
 	private GrepProcessor getFilter(String grepExpression, Color red) {

@@ -1,20 +1,20 @@
 package krasa.grepconsole.filter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import com.intellij.execution.filters.InputFilter;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 
 import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 
-public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.execution.filters.InputFilterEx;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.project.Project;
+
+public class GrepInputFilter extends AbstractGrepFilter implements InputFilterEx {
 
 	public GrepInputFilter(Project project) {
 		super(project);
@@ -25,29 +25,17 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	}
 
 	@Override
-	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
-			ConsoleViewContentType consoleViewContentType) {
+	public String applyFilter(@NotNull String s, @NotNull ConsoleViewContentType consoleViewContentType) {
 		FilterState state = super.filter(s, -1);
-		return prepareResult(state);
+		if (state != null && state.isExclude()) {
+			return null;
+		}
+		return s;// input is not changed
 	}
 
 	@Override
 	protected boolean continueFiltering(FilterState state) {
 		return !state.isMatchesSomething();
-	}
-
-	private List<Pair<String, ConsoleViewContentType>> prepareResult(FilterState state) {
-		Pair<String, ConsoleViewContentType> result = null;
-		if (state != null) {
-			if (state.isExclude()) {
-				result = new Pair<String, ConsoleViewContentType>(null, null);
-			}
-		}
-		if (result == null) {
-			return null;// input is not changed
-		} else {
-			return Arrays.asList(result);
-		}
 	}
 
 	@Override
