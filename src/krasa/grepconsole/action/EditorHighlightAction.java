@@ -58,7 +58,7 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 
 	@Override
 	public void applySettings() {
-		removeAllHighlighters(null, editor);
+		removeAllHighlighters(editor);
 		highlight(editor, project);
 	}
 }

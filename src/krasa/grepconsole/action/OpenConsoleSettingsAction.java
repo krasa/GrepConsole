@@ -40,7 +40,7 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	@Override
 	public void applySettings() {
 		if (console != null) {
-			resetHighlights(console);
+			resetHighlightsInConsole(console);
 		}
 	}
 }

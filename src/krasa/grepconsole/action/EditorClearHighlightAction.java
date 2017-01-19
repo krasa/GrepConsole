@@ -1,6 +1,7 @@
 package krasa.grepconsole.action;
 
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 
 public class EditorClearHighlightAction extends HighlightManipulationAction {
