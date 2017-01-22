@@ -6,13 +6,13 @@ import krasa.grepconsole.plugin.ServiceManager;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.execution.filters.ConsoleHighlightingInputFilterExProvider;
-import com.intellij.execution.filters.HighlightingInputFilterEx;
+import com.intellij.execution.filters.ConsoleHighlightingInputFilterProvider;
+import com.intellij.execution.filters.HighlightingInputFilter;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 
-public class GrepConsoleHighlightingInputFilterProvider extends ConsoleHighlightingInputFilterExProvider {
+public class GrepConsoleHighlightingInputFilterProvider extends ConsoleHighlightingInputFilterProvider {
 
 	protected GrepHighlightingInputFilter createHighlightingFilter(@NotNull Project project, ServiceManager manager) {
 		if (GrepConsoleApplicationComponent.getInstance().getState().isSynchronousHighlighting()) {
@@ -23,15 +23,15 @@ public class GrepConsoleHighlightingInputFilterProvider extends ConsoleHighlight
 
 	@NotNull
 	@Override
-	public HighlightingInputFilterEx[] getHighlightingFilters(@NotNull ConsoleView consoleView,
+	public HighlightingInputFilter[] getFilters(@NotNull ConsoleView consoleView,
 			@NotNull Project project, @NotNull GlobalSearchScope globalSearchScope) {
 		ServiceManager manager = ServiceManager.getInstance();
 
 		GrepHighlightingInputFilter highlightingFilter = createHighlightingFilter(project, manager);
 		if (highlightingFilter == null) {
-			return new HighlightingInputFilterEx[0];
+			return new HighlightingInputFilter[0];
 		}
 
-		return new HighlightingInputFilterEx[] { highlightingFilter };
+		return new HighlightingInputFilter[] { highlightingFilter };
 	}
 }

@@ -190,8 +190,8 @@
 
 		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
 		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
-		<consoleInputFilterExProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
-		<consoleHighlightingInputFilterExProvider
+		<consoleTextInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
+		<consoleHighlightingInputFilterProvider
 				implementation="krasa.grepconsole.integration.GrepConsoleHighlightingInputFilterProvider"/>
 		<console.folding implementation="krasa.grepconsole.folding.GrepConsoleFolding"/>
 		<applicationConfigurable id="GrepConsole" displayName="Grep Console"

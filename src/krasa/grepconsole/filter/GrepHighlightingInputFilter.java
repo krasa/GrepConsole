@@ -13,12 +13,12 @@ import org.jetbrains.annotations.NotNull;
 
 import com.google.common.collect.Range;
 import com.google.common.collect.TreeRangeMap;
-import com.intellij.execution.filters.HighlightingInputFilterEx;
+import com.intellij.execution.filters.HighlightingInputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 
-public class GrepHighlightingInputFilter extends GrepHighlightFilter implements HighlightingInputFilterEx {
+public class GrepHighlightingInputFilter extends GrepHighlightFilter implements HighlightingInputFilter {
 
 	public GrepHighlightingInputFilter(Project project) {
 		super(project);

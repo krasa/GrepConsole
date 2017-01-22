@@ -10,11 +10,11 @@ import krasa.grepconsole.model.Profile;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.execution.filters.InputFilterEx;
+import com.intellij.execution.filters.TextInputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 
-public class GrepInputFilter extends AbstractGrepFilter implements InputFilterEx {
+public class GrepInputFilter extends AbstractGrepFilter implements TextInputFilter {
 
 	public GrepInputFilter(Project project) {
 		super(project);
