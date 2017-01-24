@@ -2,7 +2,6 @@ package krasa.grepconsole.filter;
 
 import java.util.*;
 
-import kotlin.ranges.IntRange;
 import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.filter.support.MyResultItem;
@@ -16,7 +15,6 @@ import com.google.common.collect.TreeRangeMap;
 import com.intellij.execution.filters.HighlightingInputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 
 public class GrepHighlightingInputFilter extends GrepHighlightFilter implements HighlightingInputFilter {
 
@@ -29,8 +27,7 @@ public class GrepHighlightingInputFilter extends GrepHighlightFilter implements 
 	}
 
 	@Override
-	public List<Pair<IntRange, ConsoleViewContentType>> applyFilter(String s,
-			ConsoleViewContentType consoleViewContentType) {
+	public HighlightingInputFilter.Result applyFilter(String s, ConsoleViewContentType consoleViewContentType) {
 		if (s != null) {
 			FilterState state = super.filter(s, 0);
 
@@ -41,22 +38,22 @@ public class GrepHighlightingInputFilter extends GrepHighlightFilter implements 
 		return null;
 	}
 
-	private List<Pair<IntRange, ConsoleViewContentType>> prepareResult(String s, int entireLength, FilterState state,
+	private HighlightingInputFilter.Result prepareResult(String s, int entireLength, FilterState state,
 			ConsoleViewContentType originalConsoleViewContentType) {
 
 		List<MyResultItem> resultItemList = adjustWholeLineMatch(entireLength, state);
 
-		List<Pair<IntRange, ConsoleViewContentType>> pairs = null;
+		HighlightingInputFilter.Result pairs = null;
 		if (resultItemList != null) {
-			pairs = new ArrayList<Pair<IntRange, ConsoleViewContentType>>();
+			List<HighlightingInputFilter.ResultItem> resultItems = new ArrayList<HighlightingInputFilter.ResultItem>();
+			pairs = new HighlightingInputFilter.Result(resultItems);
 			for (MyResultItem myResultItem : resultItemList) {
-				IntRange integers = new IntRange(myResultItem.getHighlightStartOffset(),
-						myResultItem.getHighlightEndOffset());
 				ConsoleViewContentType consoleViewContentType = myResultItem.getConsoleViewContentType();
 				if (consoleViewContentType == null) {
 					consoleViewContentType = originalConsoleViewContentType;
 				}
-				pairs.add(Pair.create(integers, consoleViewContentType));
+				resultItems.add(new HighlightingInputFilter.ResultItem(myResultItem.getHighlightStartOffset(),
+						myResultItem.getHighlightEndOffset(), consoleViewContentType));
 			}
 		}
 
