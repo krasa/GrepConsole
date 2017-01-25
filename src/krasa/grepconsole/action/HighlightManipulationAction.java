@@ -33,7 +33,7 @@ public abstract class HighlightManipulationAction extends DumbAwareAction {
 	}
 
 	protected void resetHighlightsInConsole(ConsoleView console) {
-		console.rehighlightHyperlinksAndFoldings();
+		console.rehighlightHyperlinksAndFoldings(true);
 	}
 
 	protected void removeAllHighlighters(Editor editor) {
