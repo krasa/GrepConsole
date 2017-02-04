@@ -95,4 +95,11 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 		}
 		return matchUnless;
 	}
+
+	@Override
+	public String toString() {
+		String grepExpression = grepExpressionItem.getGrepExpression();
+		String unless = grepExpressionItem.getUnlessGrepExpression();
+		return "pattern='" + grepExpression + "', unlessPattern='" + unless + "'";
+	}
 }

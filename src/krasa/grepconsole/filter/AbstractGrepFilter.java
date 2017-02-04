@@ -8,15 +8,22 @@ import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Operation;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
+import com.intellij.notification.Notification;
+import com.intellij.notification.Notifications;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 
 public abstract class AbstractGrepFilter extends AbstractFilter {
 
 	protected List<GrepProcessor> grepProcessors;
+	boolean showLimitNotification = true;
 
 	public AbstractGrepFilter(Project project) {
 		super(project);
@@ -31,12 +38,37 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 	protected FilterState filter(@Nullable String text, int offset) {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
-			FilterState state = new FilterState(getSubstring(text), offset);
+			String substring = getSubstring(text);
+			FilterState state = new FilterState(substring, offset);
 			for (GrepProcessor grepProcessor : grepProcessors) {
-				state = grepProcessor.process(state);
-				if (!continueFiltering(state))
-					return state;
+				try {
+					state = grepProcessor.process(state);
+					if (!continueFiltering(state))
+						return state;
+				} catch (ProcessCanceledException e) {
+					if (showLimitNotification) {
+						showLimitNotification = false;
+						int length = substring.length();
+						int endIndex = substring.length();
+						substring = substring.substring(0, Math.min(endIndex, 120)) + " [length=" + length + "]";
+						final Notification notification = GrepConsoleApplicationComponent.NOTIFICATION.createNotification(
+								"Grep Console plugin: processing took too long, aborting to prevent GUI freezing.\n"
+										+ "Consider changing following settings: 'Match only first N characters on each line'\n"
+										+ "Last expression: [" + grepProcessor + "]\n" + "Line: " + substring
+										+ "\n(Next abortions will not be displayed for this console)"
+
+								, MessageType.WARNING);
+						ApplicationManager.getApplication().invokeLater(new Runnable() {
+							@Override
+							public void run() {
+								Notifications.Bus.notify(notification, project);
+							}
+						});
+					}
+					break;
+				}
 			}
+
 			return state;
 		}
 		return null;

@@ -9,6 +9,8 @@ import krasa.grepconsole.model.Profile;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.intellij.notification.NotificationDisplayType;
+import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.*;
@@ -17,6 +19,9 @@ import com.intellij.openapi.components.*;
 public class GrepConsoleApplicationComponent
 		implements ApplicationComponent,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
+
+	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Grep Console",
+			NotificationDisplayType.BALLOON, true);
 
 	protected List<GrepExpressionItem> foldingsCache;
 	private PluginState settings;
