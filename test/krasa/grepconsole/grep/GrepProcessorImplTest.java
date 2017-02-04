@@ -5,11 +5,6 @@ import static junit.framework.Assert.assertEquals;
 
 import java.awt.*;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
-
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
@@ -17,6 +12,11 @@ import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Operation;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
 
 public class GrepProcessorImplTest {
 
@@ -50,7 +50,7 @@ public class GrepProcessorImplTest {
 		FilterState process = grepProcessor.process(getInput(LINE));
 		assertEquals(Operation.EXIT, process.getNextOperation());
 		assertEquals(getTextAttributesFromCache(grepExpressionItem), process.getConsoleViewContentType());
-		assertEquals(LINE, process.getText());
+		assertEquals(LINE, process.getCharSequence().toString());
 
 	}
 
@@ -77,7 +77,7 @@ public class GrepProcessorImplTest {
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
-		assertEquals(LINE_FOO, process.getText());
+		assertEquals(LINE_FOO, process.getCharSequence().toString());
 
 	}
 
@@ -89,7 +89,7 @@ public class GrepProcessorImplTest {
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
-		assertEquals(LINE_FOO, process.getText());
+		assertEquals(LINE_FOO, process.getCharSequence().toString());
 	}
 
 	private GrepExpressionItem getGrepExpressionItem() {

@@ -3,13 +3,13 @@ package krasa.grepconsole.filter.support;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import krasa.grepconsole.model.GrepExpressionItem;
+
 import org.apache.commons.lang.StringUtils;
 
 import com.intellij.execution.filters.Filter;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
-
-import krasa.grepconsole.model.GrepExpressionItem;
 
 public class GrepProcessorImpl implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(GrepProcessorImpl.class.getName());
@@ -39,7 +39,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 	@Override
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
-			String matchedLine = state.getText();
+			CharSequence matchedLine = state.getCharSequence();
 			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
 				Pattern pattern = grepExpressionItem.getPattern();
 				if (pattern != null) {
@@ -73,7 +73,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 		return state;
 	}
 
-	private boolean matches(String matchedLine) {
+	private boolean matches(CharSequence matchedLine) {
 		Pattern pattern = grepExpressionItem.getPattern();
 		boolean matches = false;
 		if (pattern != null) {
@@ -82,7 +82,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 		return matches;
 	}
 
-	private boolean matchesUnless(String matchedLine) {
+	private boolean matchesUnless(CharSequence matchedLine) {
 		boolean matchUnless = false;
 		Pattern unlessPattern = grepExpressionItem.getUnlessPattern();
 		if (unlessPattern != null) {
