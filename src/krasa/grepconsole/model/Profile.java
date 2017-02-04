@@ -112,7 +112,7 @@ public class Profile extends DomainObject {
 		if (maxLengthToMatch == null || maxLengthToMatch.length() == 0) {
 			maxLengthToMatch = DEFAULT;
 		}
-		maxLengthToMatch = maxLengthToMatch.replace("\u00A0", "").replace(" ", "");
+		maxLengthToMatch = normalize(maxLengthToMatch);
 		if (maxLengthToMatch.length() == 0 || !NumberUtils.isNumber(maxLengthToMatch)) {
 			maxLengthToMatch = DEFAULT;
 		}
@@ -176,11 +176,15 @@ public class Profile extends DomainObject {
 		if (maxProcessingTime == null || maxProcessingTime.length() == 0) {
 			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
 		}
-		maxProcessingTime = maxProcessingTime.trim().replace("\u00A0", "").replace(" ", "");
+		maxProcessingTime = normalize(maxProcessingTime);
 		if (maxProcessingTime.length() == 0 || !NumberUtils.isNumber(maxProcessingTime)) {
 			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
 		}
 		this.maxProcessingTime = maxProcessingTime;
 		maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
+	}
+
+	protected String normalize(String s) {
+		return s.trim().replaceAll("[\u00A0 ,.]", "");
 	}
 }
