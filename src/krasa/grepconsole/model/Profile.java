@@ -1,6 +1,7 @@
 package krasa.grepconsole.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 
@@ -8,6 +9,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 
 public class Profile extends DomainObject {
 	public static final String DEFAULT = "120";
+	private static final String MAX_PROCESSING_TIME_DEFAULT = "1000";
 	private String maxLengthToMatch = DEFAULT;
 	private long id;
 	private boolean defaultProfile;
@@ -17,9 +19,6 @@ public class Profile extends DomainObject {
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
 	private boolean enableMaxLengthLimit = true;
-	private boolean enableAnsiColoring;
-	private boolean hideAnsiCommands;
-	private boolean encodeText;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
@@ -27,6 +26,9 @@ public class Profile extends DomainObject {
 	private boolean showStatsInConsoleByDefault;
 	private boolean showStatsInStatusBarByDefault;
 	private boolean enableFoldings;
+	private String maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
+	@Transient
+	private transient Integer maxProcessingTimeAsInt;
 
 	public Profile() {
 		id = System.currentTimeMillis();
@@ -95,6 +97,13 @@ public class Profile extends DomainObject {
 		return maxLengthToMatchAsInt;
 	}
 
+	public Integer getMaxProcessingTimeAsInt() {
+		if (maxProcessingTimeAsInt == null) {
+			maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
+		}
+		return maxProcessingTimeAsInt;
+	}
+
 	public String getMaxLengthToMatch() {
 		return maxLengthToMatch;
 	}
@@ -127,30 +136,6 @@ public class Profile extends DomainObject {
 		this.enabledInputFiltering = enabledInputFiltering;
 	}
 
-	public boolean isEnableAnsiColoring() {
-		return enableAnsiColoring;
-	}
-
-	public void setEnableAnsiColoring(final boolean enableAnsiColoring) {
-		this.enableAnsiColoring = enableAnsiColoring;
-	}
-
-	public boolean isHideAnsiCommands() {
-		return hideAnsiCommands;
-	}
-
-	public void setHideAnsiCommands(final boolean hideAnsiCommands) {
-		this.hideAnsiCommands = hideAnsiCommands;
-	}
-
-	public boolean isEncodeText() {
-		return encodeText;
-	}
-
-	public void setEncodeText(boolean encodeText) {
-		this.encodeText = encodeText;
-	}
-
 	public boolean isMultiLineOutput() {
 		return multiLineOutput;
 	}
@@ -181,5 +166,21 @@ public class Profile extends DomainObject {
 
 	public void setEnableFoldings(final boolean enableFoldings) {
 		this.enableFoldings = enableFoldings;
+	}
+
+	public String getMaxProcessingTime() {
+		return maxProcessingTime;
+	}
+
+	public void setMaxProcessingTime(String maxProcessingTime) {
+		if (maxProcessingTime == null || maxProcessingTime.length() == 0) {
+			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
+		}
+		maxProcessingTime = maxProcessingTime.trim().replace("\u00A0", "").replace(" ", "");
+		if (maxProcessingTime.length() == 0 || !NumberUtils.isNumber(maxProcessingTime)) {
+			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
+		}
+		this.maxProcessingTime = maxProcessingTime;
+		maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
 	}
 }

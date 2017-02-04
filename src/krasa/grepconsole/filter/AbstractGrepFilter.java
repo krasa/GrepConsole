@@ -39,7 +39,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
 			String substring = getSubstring(text);
-			FilterState state = new FilterState(substring, offset);
+			FilterState state = new FilterState(substring, offset, profile.getMaxProcessingTimeAsInt());
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				try {
 					state = grepProcessor.process(state);
@@ -53,9 +53,9 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 						substring = substring.substring(0, Math.min(endIndex, 120)) + " [length=" + length + "]";
 						final Notification notification = GrepConsoleApplicationComponent.NOTIFICATION.createNotification(
 								"Grep Console plugin: processing took too long, aborting to prevent GUI freezing.\n"
-										+ "Consider changing following settings: 'Match only first N characters on each line'\n"
+										+ "Consider changing following settings: 'Match only first N characters on each line' or 'Max processing time for a line'\n"
 										+ "Last expression: [" + grepProcessor + "]\n" + "Line: " + substring
-										+ "\n(Next abortions will not be displayed for this console)"
+										+ "\n(More notifications will not be displayed for this console. Notification can be disabled at File | Settings | Appearance & Behavior | Notifications`)"
 
 								, MessageType.WARNING);
 						ApplicationManager.getApplication().invokeLater(new Runnable() {

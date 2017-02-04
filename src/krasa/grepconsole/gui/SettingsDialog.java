@@ -3,23 +3,39 @@ package krasa.grepconsole.gui;
 import static krasa.grepconsole.Cloner.deepClone;
 
 import java.awt.event.*;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
 
-import krasa.grepconsole.gui.table.*;
 import krasa.grepconsole.gui.table.CheckboxTreeTable;
-import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.gui.table.GrepExpressionGroupTreeNode;
+import krasa.grepconsole.gui.table.GrepExpressionItemTreeNode;
+import krasa.grepconsole.gui.table.TableUtils;
+import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionGroup;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.DefaultState;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.tail.TailIntegrationForm;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.*;
-import com.intellij.ui.*;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.ui.CheckedTreeNode;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.tree.TreeUtil;
@@ -37,18 +53,15 @@ public class SettingsDialog {
 	private JButton duplicateButton;
 	private JButton deleteButton;
 	private JCheckBox enableFiltering;
-	private JCheckBox ansi;
-	private JCheckBox hideAnsiCharacters;
-	private JCheckBox encodeText;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
 	private JCheckBox showStatsInConsole;
 	private JCheckBox showStatsInStatusBar;
 	private JButton fileTailSettings;
-	private JButton reddit;
 	private JButton addNewGroup;
 	private JLabel contextSpecificText;
 	private JCheckBox enableFoldings;
+	private JFormattedTextField maxProcessingTime;
 	private PluginState settings;
 
 	public SettingsDialog(PluginState settings) {
@@ -64,17 +77,6 @@ public class SettingsDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
-			}
-		});
-		reddit.setBorder(null);
-		reddit.setContentAreaFilled(false);
-		reddit.setBorderPainted(false);
-		reddit.setFocusPainted(false);
-		reddit.setOpaque(false);
-		reddit.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BareBonesBrowserLaunch.openURL("http://www.reddit.com/r/IntelliJIDEA/");
 			}
 		});
 		addNewButton.addActionListener(new AddNewItemAction());
@@ -97,14 +99,6 @@ public class SettingsDialog {
 		table.addMouseListener(rightClickMenu());
 		table.addKeyListener(new DeleteListener());
 		disableCopyDeleteButton();
-		ansi.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (ansi.getModel().isSelected()) {
-					hideAnsiCharacters.getModel().setSelected(true);
-				}
-			}
-		});
 
 		fileTailSettings.addActionListener(new FileTailSettings());
 
@@ -258,62 +252,8 @@ public class SettingsDialog {
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
+		maxProcessingTime = new JFormattedTextField(numberFormatter);
 		table = new SettingsTableBuilder(this).getTable();
-	}
-
-	public void setData(Profile data) {
-		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
-		ansi.setSelected(data.isEnableAnsiColoring());
-		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
-		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
-		maxLengthToMatch.setText(data.getMaxLengthToMatch());
-		hideAnsiCharacters.setSelected(data.isHideAnsiCommands());
-		enableFiltering.setSelected(data.isEnabledInputFiltering());
-		multilineOutput.setSelected(data.isMultiLineOutput());
-		encodeText.setSelected(data.isEncodeText());
-		enableFoldings.setSelected(data.isEnableFoldings());
-	}
-
-	public void getData(Profile data) {
-		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
-		data.setEnableAnsiColoring(ansi.isSelected());
-		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
-		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
-		data.setMaxLengthToMatch(maxLengthToMatch.getText());
-		data.setHideAnsiCommands(hideAnsiCharacters.isSelected());
-		data.setEnabledInputFiltering(enableFiltering.isSelected());
-		data.setMultiLineOutput(multilineOutput.isSelected());
-		data.setEncodeText(encodeText.isSelected());
-		data.setEnableFoldings(enableFoldings.isSelected());
-	}
-
-	public boolean isModified(Profile data) {
-		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
-			return true;
-		if (ansi.isSelected() != data.isEnableAnsiColoring())
-			return true;
-		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
-			return true;
-		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault())
-			return true;
-		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault())
-			return true;
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
-				: data.getMaxLengthToMatch() != null)
-			return true;
-		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
-			return true;
-		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
-			return true;
-		if (multilineOutput.isSelected() != data.isMultiLineOutput())
-			return true;
-		if (encodeText.isSelected() != data.isEncodeText())
-			return true;
-		if (enableFoldings.isSelected() != data.isEnableFoldings())
-			return true;
-		return false;
 	}
 
 	private GrepExpressionItem newItem() {
@@ -360,6 +300,54 @@ public class SettingsDialog {
 				throw new IllegalStateException("unexpected tree node" + o);
 			}
 		}
+	}
+
+	public void setData(Profile data) {
+		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
+		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
+		enableFiltering.setSelected(data.isEnabledInputFiltering());
+		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
+		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
+		enableFoldings.setSelected(data.isEnableFoldings());
+		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		multilineOutput.setSelected(data.isMultiLineOutput());
+		maxProcessingTime.setText(data.getMaxProcessingTime());
+	}
+
+	public void getData(Profile data) {
+		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
+		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
+		data.setEnabledInputFiltering(enableFiltering.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
+		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
+		data.setEnableFoldings(enableFoldings.isSelected());
+		data.setMaxLengthToMatch(maxLengthToMatch.getText());
+		data.setMultiLineOutput(multilineOutput.isSelected());
+		data.setMaxProcessingTime(maxProcessingTime.getText());
+	}
+
+	public boolean isModified(Profile data) {
+		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
+			return true;
+		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
+			return true;
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
+			return true;
+		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault())
+			return true;
+		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault())
+			return true;
+		if (enableFoldings.isSelected() != data.isEnableFoldings())
+			return true;
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
+				: data.getMaxLengthToMatch() != null)
+			return true;
+		if (multilineOutput.isSelected() != data.isMultiLineOutput())
+			return true;
+		if (maxProcessingTime.getText() != null ? !maxProcessingTime.getText().equals(data.getMaxProcessingTime())
+				: data.getMaxProcessingTime() != null)
+			return true;
+		return false;
 	}
 
 	private class DeleteListener extends KeyAdapter {

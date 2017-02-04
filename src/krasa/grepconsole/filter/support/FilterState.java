@@ -23,9 +23,9 @@ public class FilterState {
 	private boolean matchesSomething;
 	private CharSequence charSequence;
 
-	public FilterState(String text, int offset) {
+	public FilterState(String text, int offset, Integer maxProcessingTimeAsInt) {
 		this.offset = offset;
-		charSequence = StringUtil.newBombedCharSequence(text, 1000);
+		charSequence = StringUtil.newBombedCharSequence(text, maxProcessingTimeAsInt);
 	}
 
 	@NotNull
