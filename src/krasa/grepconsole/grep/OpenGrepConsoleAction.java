@@ -136,6 +136,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return s;
 	}
 
+	@Nullable
 	protected String getContentType(RunnerLayoutUi runnerLayoutUi) {
 		ContentManager contentManager = runnerLayoutUi.getContentManager();
 		Content selectedContent = contentManager.getSelectedContent();
@@ -243,7 +244,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(originalConsoleView);
 		if (eventProject != null && copyingFilter != null) {
 			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
-			enabled = runnerLayoutUi != null;
+			String contentType = getContentType(runnerLayoutUi);
+			enabled = runnerLayoutUi != null && contentType != null;
 		}
 
 		presentation.setEnabled(enabled);
