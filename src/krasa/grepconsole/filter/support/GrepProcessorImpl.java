@@ -39,7 +39,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 	@Override
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
-			String matchedLine = state.getText();
+			CharSequence matchedLine = state.getCharSequence();
 			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
 				Pattern pattern = grepExpressionItem.getPattern();
 				if (pattern != null) {
@@ -75,7 +75,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 		return state;
 	}
 
-	private boolean matches(String matchedLine) {
+	private boolean matches(CharSequence matchedLine) {
 		Pattern pattern = grepExpressionItem.getPattern();
 		boolean matches = false;
 		if (pattern != null) {
@@ -84,7 +84,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 		return matches;
 	}
 
-	private boolean matchesUnless(String matchedLine) {
+	private boolean matchesUnless(CharSequence matchedLine) {
 		boolean matchUnless = false;
 		Pattern unlessPattern = grepExpressionItem.getUnlessPattern();
 		if (unlessPattern != null) {
@@ -94,5 +94,12 @@ public class GrepProcessorImpl implements GrepProcessor {
 			}
 		}
 		return matchUnless;
+	}
+
+	@Override
+	public String toString() {
+		String grepExpression = grepExpressionItem.getGrepExpression();
+		String unless = grepExpressionItem.getUnlessGrepExpression();
+		return "pattern='" + grepExpression + "', unlessPattern='" + unless + "'";
 	}
 }

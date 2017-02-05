@@ -54,8 +54,6 @@ public class SettingsDialog {
 	private JButton duplicateButton;
 	private JButton deleteButton;
 	private JCheckBox enableFiltering;
-	private JCheckBox ansi;
-	private JCheckBox hideAnsiCharacters;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
 	private JCheckBox showStatsInConsole;
@@ -64,6 +62,7 @@ public class SettingsDialog {
 	private JButton addNewGroup;
 	private JLabel contextSpecificText;
 	private JCheckBox enableFoldings;
+	private JFormattedTextField maxProcessingTime;
 	private JCheckBox synchronous;
 	private PluginState settings;
 
@@ -109,14 +108,6 @@ public class SettingsDialog {
 		table.addMouseListener(rightClickMenu());
 		table.addKeyListener(new DeleteListener());
 		disableCopyDeleteButton();
-		ansi.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (ansi.getModel().isSelected()) {
-					hideAnsiCharacters.getModel().setSelected(true);
-				}
-			}
-		});
 
 		fileTailSettings.addActionListener(new FileTailSettings());
 
@@ -270,62 +261,8 @@ public class SettingsDialog {
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
+		maxProcessingTime = new JFormattedTextField(numberFormatter);
 		table = new SettingsTableBuilder(this).getTable();
-	}
-
-	public void setData(Profile data) {
-		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
-		ansi.setSelected(data.isEnableAnsiColoring());
-		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		hideAnsiCharacters.setSelected(data.isHideAnsiCommands());
-		enableFiltering.setSelected(data.isEnabledInputFiltering());
-		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
-		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
-		enableFoldings.setSelected(data.isEnableFoldings());
-		multilineOutput.setSelected(data.isMultiLineOutput());
-		maxLengthToMatch.setText(data.getMaxLengthToMatch());
-		synchronous.setSelected(data.isSynchronous());
-	}
-
-	public void getData(Profile data) {
-		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
-		data.setEnableAnsiColoring(ansi.isSelected());
-		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setHideAnsiCommands(hideAnsiCharacters.isSelected());
-		data.setEnabledInputFiltering(enableFiltering.isSelected());
-		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
-		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
-		data.setEnableFoldings(enableFoldings.isSelected());
-		data.setMultiLineOutput(multilineOutput.isSelected());
-		data.setMaxLengthToMatch(maxLengthToMatch.getText());
-		data.setSynchronous(synchronous.isSelected());
-	}
-
-	public boolean isModified(Profile data) {
-		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
-			return true;
-		if (ansi.isSelected() != data.isEnableAnsiColoring())
-			return true;
-		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
-			return true;
-		if (hideAnsiCharacters.isSelected() != data.isHideAnsiCommands())
-			return true;
-		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
-			return true;
-		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault())
-			return true;
-		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault())
-			return true;
-		if (enableFoldings.isSelected() != data.isEnableFoldings())
-			return true;
-		if (multilineOutput.isSelected() != data.isMultiLineOutput())
-			return true;
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
-				: data.getMaxLengthToMatch() != null)
-			return true;
-		if (synchronous.isSelected() != data.isSynchronous())
-			return true;
-		return false;
 	}
 
 	private GrepExpressionItem newItem() {
@@ -372,6 +309,54 @@ public class SettingsDialog {
 				throw new IllegalStateException("unexpected tree node" + o);
 			}
 		}
+	}
+
+	public void setData(Profile data) {
+		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
+		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
+		enableFiltering.setSelected(data.isEnabledInputFiltering());
+		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
+		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
+		enableFoldings.setSelected(data.isEnableFoldings());
+		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		multilineOutput.setSelected(data.isMultiLineOutput());
+		maxProcessingTime.setText(data.getMaxProcessingTime());
+	}
+
+	public void getData(Profile data) {
+		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
+		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
+		data.setEnabledInputFiltering(enableFiltering.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
+		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
+		data.setEnableFoldings(enableFoldings.isSelected());
+		data.setMaxLengthToMatch(maxLengthToMatch.getText());
+		data.setMultiLineOutput(multilineOutput.isSelected());
+		data.setMaxProcessingTime(maxProcessingTime.getText());
+	}
+
+	public boolean isModified(Profile data) {
+		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit())
+			return true;
+		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting())
+			return true;
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering())
+			return true;
+		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault())
+			return true;
+		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault())
+			return true;
+		if (enableFoldings.isSelected() != data.isEnableFoldings())
+			return true;
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch())
+				: data.getMaxLengthToMatch() != null)
+			return true;
+		if (multilineOutput.isSelected() != data.isMultiLineOutput())
+			return true;
+		if (maxProcessingTime.getText() != null ? !maxProcessingTime.getText().equals(data.getMaxProcessingTime())
+				: data.getMaxProcessingTime() != null)
+			return true;
+		return false;
 	}
 
 	private class DeleteListener extends KeyAdapter {

@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.text.StringUtil;
 
+
 public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(ThreadUnsafeGrepProcessor.class.getName());
 	protected Matcher patternMatcher;
@@ -48,8 +49,7 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 	@Override
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
-			String matchedLine = state.getText();
-			CharSequence input = StringUtil.newBombedCharSequence(matchedLine, 10000);
+			CharSequence input = state.getCharSequence();
 			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
 				if (patternMatcher != null) {
 					patternMatcher.reset(input);
@@ -97,5 +97,12 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 			matchUnless = unlessMatcher.reset(matchedLine).matches();
 		}
 		return matchUnless;
+	}
+
+	@Override
+	public String toString() {
+		String grepExpression = grepExpressionItem.getGrepExpression();
+		String unless = grepExpressionItem.getUnlessGrepExpression();
+		return "pattern='" + grepExpression + "', unlessPattern='" + unless + "'";
 	}
 }

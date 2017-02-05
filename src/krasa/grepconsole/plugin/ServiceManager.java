@@ -16,6 +16,19 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 
+import krasa.grepconsole.filter.AbstractFilter;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.GrepInputFilter;
+import krasa.grepconsole.filter.support.Cache;
+import krasa.grepconsole.grep.GrepCopyingFilter;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+
 /**
  * @author Vojtech Krasa
  */
@@ -27,10 +40,8 @@ public class ServiceManager {
 	/** for tracking settings change */
 	private List<WeakReference<GrepHighlightFilter>> highlightFilters = new ArrayList<WeakReference<GrepHighlightFilter>>();
 	private List<WeakReference<GrepInputFilter>> inputFilters = new ArrayList<WeakReference<GrepInputFilter>>();
-	private List<WeakReference<AnsiInputFilter>> ansiFilters = new ArrayList<WeakReference<AnsiInputFilter>>();
 
 	/** to couple console with filters */
-	private WeakReference<AnsiInputFilter> lastAnsi;
 	private WeakReference<GrepCopyingFilter> lastCopier;
 	private WeakReference<GrepHighlightingInputFilter> lastGrepHighlightFilter;
 	private WeakReference<GrepHighlightFilter> lastQuickFilter;
@@ -48,7 +59,6 @@ public class ServiceManager {
 	public void resetSettings() {
 		iterate(highlightFilters);
 		iterate(inputFilters);
-		iterate(ansiFilters);
 		// todo this may not work properly, regenerate GrepExpressionItem id
 		Cache.reset();
 
@@ -77,12 +87,6 @@ public class ServiceManager {
 		return lastInputFilter;
 	}
 
-	public AnsiInputFilter createAnsiFilter(Project project) {
-		AnsiInputFilter service = new AnsiInputFilter(project);
-		ansiFilters.add(new WeakReference<AnsiInputFilter>(service));
-		lastAnsi = new WeakReference<AnsiInputFilter>(service);
-		return service;
-	}
 
 	public GrepHighlightingInputFilter createHighlightInputFilter(Project project) {
 		GrepHighlightingInputFilter grepHighlightFilter = new GrepHighlightingInputFilter(project);
@@ -150,11 +154,6 @@ public class ServiceManager {
 	}
 
 	public void registerConsole(ConsoleView console) {
-		AnsiInputFilter lastAnsi = getLastAnsi();
-		if (lastAnsi != null && !lastAnsi.isRegistered()) {
-			lastAnsi.setConsole(console);
-			this.lastAnsi = null;
-		}
 		GrepCopyingFilter lastCopier = getLastCopier();
 		if (lastCopier != null) {
 			weakCopiersMap.put(console, lastCopier);
@@ -164,15 +163,6 @@ public class ServiceManager {
 		if (lastGrepHighlightFilter != null) {
 			weakHighlightersMap.put(console, lastGrepHighlightFilter);
 			this.lastGrepHighlightFilter = null;
-		}
-	}
-
-	@Nullable
-	private AnsiInputFilter getLastAnsi() {
-		if (lastAnsi != null) {
-			return lastAnsi.get();
-		} else {
-			return null;
 		}
 	}
 

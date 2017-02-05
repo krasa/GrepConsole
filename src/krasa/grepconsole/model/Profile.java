@@ -9,6 +9,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 
 public class Profile extends DomainObject {
 	public static final String DEFAULT = "120";
+	private static final String MAX_PROCESSING_TIME_DEFAULT = "1000";
 	private String maxLengthToMatch = DEFAULT;
 	private long id;
 	private boolean defaultProfile;
@@ -18,8 +19,6 @@ public class Profile extends DomainObject {
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
 	private boolean enableMaxLengthLimit = true;
-	private boolean enableAnsiColoring;
-	private boolean hideAnsiCommands;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
@@ -27,6 +26,9 @@ public class Profile extends DomainObject {
 	private boolean showStatsInConsoleByDefault;
 	private boolean showStatsInStatusBarByDefault;
 	private boolean enableFoldings;
+	private String maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
+	@Transient
+	private transient Integer maxProcessingTimeAsInt;
 	private boolean synchronous;
 
 	public Profile() {
@@ -96,6 +98,13 @@ public class Profile extends DomainObject {
 		return maxLengthToMatchAsInt;
 	}
 
+	public Integer getMaxProcessingTimeAsInt() {
+		if (maxProcessingTimeAsInt == null) {
+			maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
+		}
+		return maxProcessingTimeAsInt;
+	}
+
 	public String getMaxLengthToMatch() {
 		return maxLengthToMatch;
 	}
@@ -104,7 +113,7 @@ public class Profile extends DomainObject {
 		if (maxLengthToMatch == null || maxLengthToMatch.length() == 0) {
 			maxLengthToMatch = DEFAULT;
 		}
-		maxLengthToMatch = maxLengthToMatch.replace("\u00A0", "").replace(" ", "");
+		maxLengthToMatch = normalize(maxLengthToMatch);
 		if (maxLengthToMatch.length() == 0 || !NumberUtils.isNumber(maxLengthToMatch)) {
 			maxLengthToMatch = DEFAULT;
 		}
@@ -127,23 +136,6 @@ public class Profile extends DomainObject {
 	public void setEnabledInputFiltering(boolean enabledInputFiltering) {
 		this.enabledInputFiltering = enabledInputFiltering;
 	}
-
-	public boolean isEnableAnsiColoring() {
-		return enableAnsiColoring;
-	}
-
-	public void setEnableAnsiColoring(final boolean enableAnsiColoring) {
-		this.enableAnsiColoring = enableAnsiColoring;
-	}
-
-	public boolean isHideAnsiCommands() {
-		return hideAnsiCommands;
-	}
-
-	public void setHideAnsiCommands(final boolean hideAnsiCommands) {
-		this.hideAnsiCommands = hideAnsiCommands;
-	}
-
 
 	public boolean isMultiLineOutput() {
 		return multiLineOutput;
@@ -175,6 +167,26 @@ public class Profile extends DomainObject {
 
 	public void setEnableFoldings(final boolean enableFoldings) {
 		this.enableFoldings = enableFoldings;
+	}
+
+	public String getMaxProcessingTime() {
+		return maxProcessingTime;
+	}
+
+	public void setMaxProcessingTime(String maxProcessingTime) {
+		if (maxProcessingTime == null || maxProcessingTime.length() == 0) {
+			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
+		}
+		maxProcessingTime = normalize(maxProcessingTime);
+		if (maxProcessingTime.length() == 0 || !NumberUtils.isNumber(maxProcessingTime)) {
+			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
+		}
+		this.maxProcessingTime = maxProcessingTime;
+		maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
+	}
+
+	protected String normalize(String s) {
+		return s.trim().replaceAll("[\u00A0 ,.]", "");
 	}
 
 	public boolean isSynchronous() {

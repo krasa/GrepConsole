@@ -5,11 +5,6 @@ import static junit.framework.Assert.assertEquals;
 
 import java.awt.*;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.intellij.execution.ui.ConsoleViewContentType;
-
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
@@ -17,6 +12,11 @@ import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Operation;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
 
 public class GrepProcessorImplTest {
 
@@ -37,7 +37,7 @@ public class GrepProcessorImplTest {
 		FilterState process = grepProcessor.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepProcessor.process(new FilterState(LINE, -1));
+		process = grepProcessor.process(new FilterState(LINE, -1, 1000));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -50,7 +50,7 @@ public class GrepProcessorImplTest {
 		FilterState process = grepProcessor.process(getInput(LINE));
 		assertEquals(Operation.EXIT, process.getNextOperation());
 		assertEquals(getTextAttributesFromCache(grepExpressionItem), process.getConsoleViewContentType());
-		assertEquals(LINE, process.getText());
+		assertEquals(LINE, process.getCharSequence().toString());
 
 	}
 
@@ -73,11 +73,11 @@ public class GrepProcessorImplTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		GrepProcessorImpl grepProcessor = new GrepProcessorImpl(grepExpressionItem);
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, -1));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, -1, 1000));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
-		assertEquals(LINE_FOO, process.getText());
+		assertEquals(LINE_FOO, process.getCharSequence().toString());
 
 	}
 
@@ -85,11 +85,11 @@ public class GrepProcessorImplTest {
 	public void testNoGrepExpression() throws Exception {
 
 		GrepProcessorImpl grepProcessor = new GrepProcessorImpl(new GrepExpressionItem());
-		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, -1));
+		FilterState process = grepProcessor.process(new FilterState(LINE_FOO, -1, 1000));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
-		assertEquals(LINE_FOO, process.getText());
+		assertEquals(LINE_FOO, process.getCharSequence().toString());
 	}
 
 	private GrepExpressionItem getGrepExpressionItem() {
@@ -106,7 +106,7 @@ public class GrepProcessorImplTest {
 	}
 
 	private FilterState getInput(String line) {
-		return new FilterState(line, -1);
+		return new FilterState(line, -1, 1000);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {
