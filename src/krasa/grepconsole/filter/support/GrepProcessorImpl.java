@@ -8,7 +8,6 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
 
 public class GrepProcessorImpl implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(GrepProcessorImpl.class.getName());
@@ -39,11 +38,11 @@ public class GrepProcessorImpl implements GrepProcessor {
 	@Override
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
-			CharSequence matchedLine = state.getCharSequence();
+			CharSequence input = state.getCharSequence();
 			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
 				Pattern pattern = grepExpressionItem.getPattern();
 				if (pattern != null) {
-					final Matcher matcher = pattern.matcher(StringUtil.newBombedCharSequence(matchedLine, 10000));
+					final Matcher matcher = pattern.matcher(input);
 					while (matcher.find()) {
 						matches++;
 						final int start = matcher.start();
@@ -60,7 +59,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 						}
 					}
 				}
-			} else if (matches(matchedLine) && !matchesUnless(matchedLine)) {
+			} else if (matches(input) && !matchesUnless(input)) {
 				matches++;
 				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
 				state.setConsoleViewContentType(
@@ -75,20 +74,20 @@ public class GrepProcessorImpl implements GrepProcessor {
 		return state;
 	}
 
-	private boolean matches(CharSequence matchedLine) {
+	private boolean matches(CharSequence input) {
 		Pattern pattern = grepExpressionItem.getPattern();
 		boolean matches = false;
 		if (pattern != null) {
-			matches = pattern.matcher(matchedLine).matches();
+			matches = pattern.matcher(input).matches();
 		}
 		return matches;
 	}
 
-	private boolean matchesUnless(CharSequence matchedLine) {
+	private boolean matchesUnless(CharSequence input) {
 		boolean matchUnless = false;
 		Pattern unlessPattern = grepExpressionItem.getUnlessPattern();
 		if (unlessPattern != null) {
-			Matcher unlessMatcher = unlessPattern.matcher(matchedLine);
+			Matcher unlessMatcher = unlessPattern.matcher(input);
 			if (unlessMatcher.matches()) {
 				matchUnless = true;
 			}

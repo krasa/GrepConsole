@@ -8,7 +8,6 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import org.apache.commons.lang.StringUtils;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.util.text.StringUtil;
 
 
 public class ThreadUnsafeGrepProcessor implements GrepProcessor {
@@ -83,18 +82,18 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 		return state;
 	}
 
-	private boolean matches(CharSequence matchedLine) {
+	private boolean matches(CharSequence input) {
 		boolean matches = false;
 		if (patternMatcher != null) {
-			matches = patternMatcher.reset(matchedLine).matches();
+			matches = patternMatcher.reset(input).matches();
 		}
 		return matches;
 	}
 
-	private boolean matchesUnless(CharSequence matchedLine) {
+	private boolean matchesUnless(CharSequence input) {
 		boolean matchUnless = false;
 		if (unlessMatcher != null) {
-			matchUnless = unlessMatcher.reset(matchedLine).matches();
+			matchUnless = unlessMatcher.reset(input).matches();
 		}
 		return matchUnless;
 	}

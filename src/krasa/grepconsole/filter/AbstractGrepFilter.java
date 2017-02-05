@@ -35,7 +35,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		this.grepProcessors = grepProcessors;
 	}
 
-	protected FilterState filter(@Nullable String text, int offset) {
+	protected final FilterState filter(@Nullable String text, int offset) {
 		// line can be empty sometimes under heavy load
 		if (!StringUtils.isEmpty(text) && !grepProcessors.isEmpty()) {
 			String substring = getSubstring(text);
