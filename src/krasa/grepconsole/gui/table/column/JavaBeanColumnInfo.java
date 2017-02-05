@@ -17,7 +17,7 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	private int additionalWidth = 0;
 	private String propertyName;
 	private int width = -1;
-	private List<ValueChangedListener<Value>> valueChangedListeners;
+	private List<ValueChangedListener<Item, Value>> valueChangedListeners;
 
 	public JavaBeanColumnInfo(String name, String propertyName) {
 		super(name);
@@ -70,8 +70,8 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	public void setValue(Item item, Value value) {
 		setPropertyValue(item, value);
 		if (valueChangedListeners != null) {
-			for (ValueChangedListener<Value> lister : valueChangedListeners) {
-				lister.onValueChanged(value);
+			for (ValueChangedListener<Item, Value> lister : valueChangedListeners) {
+				lister.onValueChanged(item, value);
 			}
 		}
 	}
@@ -127,14 +127,14 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 		return "JavaBeanColumnInfo{" + "tooltipText='" + tooltipText + '\'' + "} " + super.toString();
 	}
 
-	public boolean addListener(ValueChangedListener<Value> listener) {
+	public boolean addListener(ValueChangedListener<Item, Value> listener) {
 		if (valueChangedListeners == null) {
-			valueChangedListeners = new ArrayList<ValueChangedListener<Value>>();
+			valueChangedListeners = new ArrayList<ValueChangedListener<Item, Value>>();
 		}
 		return valueChangedListeners.add(listener);
 	}
 
-	public boolean removeListener(ValueChangedListener<Value> o) {
+	public boolean removeListener(ValueChangedListener<Item, Value> o) {
 		if (valueChangedListeners != null) {
 			return valueChangedListeners.remove(o);
 		}

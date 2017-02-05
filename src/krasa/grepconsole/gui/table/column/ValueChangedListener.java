@@ -1,5 +1,5 @@
 package krasa.grepconsole.gui.table.column;
 
-public interface ValueChangedListener<T> {
-	void onValueChanged(T newValue);
+public interface ValueChangedListener<Item, T> {
+	void onValueChanged(Item item, T newValue);
 }

@@ -1,18 +1,23 @@
 package krasa.grepconsole.gui;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.*;
 
-import krasa.grepconsole.gui.table.*;
+import krasa.grepconsole.gui.table.CheckboxTreeCellRendererBase;
 import krasa.grepconsole.gui.table.CheckboxTreeTable;
+import krasa.grepconsole.gui.table.TableRowTransferHandler;
 import krasa.grepconsole.gui.table.column.*;
-import krasa.grepconsole.model.*;
+import krasa.grepconsole.model.GrepExpressionGroup;
+import krasa.grepconsole.model.GrepExpressionItem;
 
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import com.intellij.ide.DefaultTreeExpander;
-import com.intellij.ui.*;
+import com.intellij.ui.CheckedTreeNode;
+import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.ColumnInfo;
@@ -41,13 +46,24 @@ public class SettingsTableBuilder {
 		});
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
 				"grepExpression").preferedStringValue("___________________________________")));
-		columns.add(new FolderColumnInfoWrapper(new JavaBeanColumnInfo<GrepExpressionItem, String>("Unless expression",
-				"unlessGrepExpression").preferedStringValue("______________")));
+
+		JavaBeanColumnInfo<GrepExpressionItem, String> unless = new JavaBeanColumnInfo<GrepExpressionItem, String>(
+				"Unless expression", "unlessGrepExpression");
+		columns.add(new FolderColumnInfoWrapper(unless.preferedStringValue("______________")));
+		unless.addListener(new ValueChangedListener<GrepExpressionItem, String>() {
+			@Override
+			public void onValueChanged(GrepExpressionItem grepExpressionItem, String newValue) {
+				if (!StringUtils.isEmpty(newValue)) {
+					grepExpressionItem.setWholeLine(true);
+				}
+			}
+		});
+
 		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> inputFilter = new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
 				"Filter out", "inputFilter");
-		inputFilter.addListener(new ValueChangedListener<Boolean>() {
+		inputFilter.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override
-			public void onValueChanged(Boolean newValue) {
+			public void onValueChanged(GrepExpressionItem grepExpressionItem, Boolean newValue) {
 				if (newValue && !settingsDialog.getProfile().isEnabledInputFiltering()) {
 					settingsDialog.getProfile().setEnabledInputFiltering(true);
 					settingsDialog.setData(settingsDialog.getProfile());
@@ -57,9 +73,9 @@ public class SettingsTableBuilder {
 		columns.add(new FolderColumnInfoWrapper(inputFilter));
 		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> fold = new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
 				"Fold", "fold");
-		fold.addListener(new ValueChangedListener<Boolean>() {
+		fold.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override
-			public void onValueChanged(Boolean newValue) {
+			public void onValueChanged(GrepExpressionItem grepExpressionItem, Boolean newValue) {
 				if (newValue && !settingsDialog.getProfile().isEnableFoldings()) {
 					settingsDialog.getProfile().setEnableFoldings(true);
 					settingsDialog.setData(settingsDialog.getProfile());
@@ -68,7 +84,7 @@ public class SettingsTableBuilder {
 		});
 		columns.add(new FolderColumnInfoWrapper(fold));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
-						"Whole line", "wholeLine").tooltipText("Highlights a whole line if it matches, or only matching substrings. Only for highlighting.")));
+"Whole line", "wholeLine").tooltipText("Match a whole line, otherwise find a matching substrings - 'Unless expression' works only for whole lines.")));
 		columns.add(new FolderColumnInfoWrapper(
 						new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against next configured items to apply multiple styles")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
