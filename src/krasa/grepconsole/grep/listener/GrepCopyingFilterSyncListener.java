@@ -1,23 +1,25 @@
 package krasa.grepconsole.grep.listener;
 
-import com.intellij.execution.process.ProcessOutputTypes;
-import com.intellij.execution.ui.ConsoleViewContentType;
-import com.intellij.openapi.util.Key;
 import krasa.grepconsole.grep.CopyListenerModel;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 
+import org.jetbrains.annotations.NotNull;
+
+import com.intellij.execution.process.ProcessOutputTypes;
+import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.util.Key;
+
 public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener {
 
-	private CopyListenerModel.Matcher matcher;
+	private volatile CopyListenerModel.Matcher matcher;
 	private final OpenGrepConsoleAction.LightProcessHandler myProcessHandler;
 
-	public GrepCopyingFilterSyncListener(CopyListenerModel copyListenerModel, OpenGrepConsoleAction.LightProcessHandler myProcessHandler) {
-		matcher = copyListenerModel.matcher();
+	public GrepCopyingFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler) {
 		this.myProcessHandler = myProcessHandler;
 	}
 
 	@Override
-	public void modelUpdated(CopyListenerModel copyListenerModel) {
+	public void modelUpdated(@NotNull CopyListenerModel copyListenerModel) {
 		matcher = copyListenerModel.matcher();
 	}
 
@@ -29,7 +31,7 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 		} else if (type == ConsoleViewContentType.SYSTEM_OUTPUT) {
 			stdout = ProcessOutputTypes.SYSTEM;
 		}
-		if (matcher.matches(s)) {
+		if (matcher != null && matcher.matches(s)) {
 			myProcessHandler.notifyTextAvailable(s, stdout);
 		}
 	}

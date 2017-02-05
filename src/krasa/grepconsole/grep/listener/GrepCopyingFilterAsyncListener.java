@@ -1,17 +1,18 @@
 package krasa.grepconsole.grep.listener;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
 import krasa.grepconsole.grep.CopyListenerModel;
 import krasa.grepconsole.grep.HybridQueue;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
+
+import com.intellij.execution.ui.ConsoleViewContentType;
 
 public class GrepCopyingFilterAsyncListener implements GrepCopyingFilterListener {
 
 	private HybridQueue consoleBuffer;
 	private GrepCopyingFilterSyncListener grepCopyingFilterSyncListener;
 
-	public GrepCopyingFilterAsyncListener(CopyListenerModel copyListenerModel, OpenGrepConsoleAction.LightProcessHandler myProcessHandler) {
-		grepCopyingFilterSyncListener = new GrepCopyingFilterSyncListener(copyListenerModel, myProcessHandler);
+	public GrepCopyingFilterAsyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler) {
+		grepCopyingFilterSyncListener = new GrepCopyingFilterSyncListener(myProcessHandler);
 		this.consoleBuffer = new HybridQueue(new EventConsumer() {
 			@Override
 			public void processEvent(String s) {

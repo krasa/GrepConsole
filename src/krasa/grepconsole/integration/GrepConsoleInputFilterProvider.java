@@ -1,5 +1,7 @@
 package krasa.grepconsole.integration;
 
+import krasa.grepconsole.filter.GrepInputFilter;
+import krasa.grepconsole.grep.GrepCopyingFilter;
 import krasa.grepconsole.plugin.ServiceManager;
 
 import org.jetbrains.annotations.NotNull;
@@ -13,8 +15,13 @@ public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvide
 	@NotNull
 	@Override
 	public InputFilter[] getDefaultFilters(@NotNull Project project) {
-		return new InputFilter[] { ServiceManager.getInstance().createInputFilter(project),
-				ServiceManager.getInstance().createCopyingFilter(project) };
+		GrepInputFilter inputFilter = ServiceManager.getInstance().createInputFilter(project);
+		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().createCopyingFilter(project);
+		if (inputFilter != null) {
+			return new InputFilter[] { inputFilter, copyingFilter };
+		} else {
+			return new InputFilter[] { copyingFilter };
+		}
 	}
 
 }

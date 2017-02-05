@@ -15,13 +15,15 @@
  */
 package krasa.grepconsole.grep.gui;
 
-import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.openapi.util.text.StringUtil;
-import krasa.grepconsole.grep.CopyListenerModel;
-import org.jetbrains.annotations.NonNls;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import krasa.grepconsole.grep.CopyListenerModel;
+
+import org.jetbrains.annotations.NonNls;
+
+import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.util.text.StringUtil;
 
 /**
  * User: anna
@@ -61,5 +63,10 @@ public class MyTextFieldWithStoredHistory extends MyTextFieldWithHistory {
 			}
 		}
 		return result;
+	}
+
+	public void clearHistory() {
+		PropertiesComponent.getInstance().unsetValue(myPropertyName);
+		setHistory(reset());
 	}
 }

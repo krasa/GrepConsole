@@ -30,7 +30,6 @@ import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.tail.TailIntegrationForm;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
-import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -63,7 +62,7 @@ public class SettingsDialog {
 	private JLabel contextSpecificText;
 	private JCheckBox enableFoldings;
 	private JFormattedTextField maxProcessingTime;
-	private JCheckBox synchronous;
+	// private JCheckBox synchronous;
 	private PluginState settings;
 
 	public SettingsDialog(PluginState settings) {
@@ -71,13 +70,10 @@ public class SettingsDialog {
 	}
 
 	public SettingsDialog(PluginState settings, SettingsContext settingsContext) {
-		int version = Integer.parseInt(ApplicationInfo.getInstance().getMajorVersion());
-		if (version < 163) {
-			synchronous.setVisible(false);
-		} else {
-			ansi.setVisible(false);
-			hideAnsiCharacters.setVisible(false);
-		}
+		// int version = Integer.parseInt(ApplicationInfo.getInstance().getMajorVersion());
+		// if (version < 163) {
+		// synchronous.setVisible(false);
+		// }
 		this.settingsContext = settingsContext;
 		this.settings = settings;
 		DONATEButton.setBorder(null);

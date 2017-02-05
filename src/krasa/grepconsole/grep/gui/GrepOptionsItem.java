@@ -1,9 +1,10 @@
 package krasa.grepconsole.grep.gui;
 
-import com.google.common.base.Splitter;
+import java.util.List;
+
 import krasa.grepconsole.grep.CopyListenerModel;
 
-import java.util.List;
+import com.google.common.base.Splitter;
 
 public class GrepOptionsItem {
 	int version = 0;
@@ -11,6 +12,7 @@ public class GrepOptionsItem {
 	boolean regex;
 	boolean caseSensitive;
 	String expression;
+
 
 	public GrepOptionsItem setVersion(final int version) {
 		this.version = version;
@@ -93,6 +95,21 @@ public class GrepOptionsItem {
 
 	}
 
+	public static GrepOptionsItem from(GrepOptionsItem item) {
+		GrepOptionsItem grepOptionsItem = new GrepOptionsItem();
+		grepOptionsItem.wholeLine = item.isWholeLine();
+		grepOptionsItem.regex = item.isRegex();
+		grepOptionsItem.caseSensitive = item.isCaseSensitive();
+		grepOptionsItem.expression = item.getExpression();
+		grepOptionsItem.version = item.getVersion();
+		return grepOptionsItem;
+	}
+
+	@Override
+	public String toString() {
+		return expression;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -100,26 +117,13 @@ public class GrepOptionsItem {
 
 		GrepOptionsItem that = (GrepOptionsItem) o;
 
-		if (version != that.version) return false;
-		if (wholeLine != that.wholeLine) return false;
-		if (regex != that.regex) return false;
-		if (caseSensitive != that.caseSensitive) return false;
 		return expression != null ? expression.equals(that.expression) : that.expression == null;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = version;
-		result = 31 * result + (wholeLine ? 1 : 0);
-		result = 31 * result + (regex ? 1 : 0);
-		result = 31 * result + (caseSensitive ? 1 : 0);
-		result = 31 * result + (expression != null ? expression.hashCode() : 0);
-		return result;
+		return expression != null ? expression.hashCode() : 0;
 	}
 
 
-	@Override
-	public String toString() {
-		return expression;
-	}
 }

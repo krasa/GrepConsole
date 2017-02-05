@@ -15,16 +15,18 @@
  */
 package krasa.grepconsole.grep.gui;
 
-import com.intellij.openapi.fileChooser.FileTextField;
-import com.intellij.openapi.ui.ComboBox;
-import krasa.grepconsole.grep.CopyListenerModel;
-
-import javax.swing.*;
-import javax.swing.event.DocumentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.*;
+import javax.swing.event.DocumentListener;
+
+import krasa.grepconsole.grep.CopyListenerModel;
+
+import com.intellij.openapi.fileChooser.FileTextField;
+import com.intellij.openapi.ui.ComboBox;
 
 public class MyTextFieldWithHistory extends ComboBox {
 	private int myHistorySize = 5;
@@ -145,7 +147,8 @@ public class MyTextFieldWithHistory extends ComboBox {
 
 		public void setSelectedItem(Object anItem) {
 			if (anItem instanceof String) {
-				if (!((String) anItem).isEmpty()) {
+				String newExpression = (String) anItem;
+				if (!newExpression.isEmpty()) {
 					for (GrepOptionsItem grepOptionsItem : myFullList) {
 						if (grepOptionsItem.expression.equals(anItem)) {
 							mySelectedItem = grepOptionsItem;
@@ -153,6 +156,7 @@ public class MyTextFieldWithHistory extends ComboBox {
 						}
 					}
 				}
+				mySelectedItem = GrepOptionsItem.from(mySelectedItem).setExpression(newExpression);
 			} else {
 				mySelectedItem = (GrepOptionsItem) anItem;
 			}

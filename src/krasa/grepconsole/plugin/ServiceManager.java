@@ -3,7 +3,10 @@ package krasa.grepconsole.plugin;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-import krasa.grepconsole.filter.*;
+import krasa.grepconsole.filter.AbstractFilter;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.GrepHighlightingInputFilter;
+import krasa.grepconsole.filter.GrepInputFilter;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.grep.GrepCopyingFilter;
 
@@ -12,19 +15,6 @@ import org.jetbrains.annotations.Nullable;
 
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-
-import krasa.grepconsole.filter.AbstractFilter;
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.filter.GrepInputFilter;
-import krasa.grepconsole.filter.support.Cache;
-import krasa.grepconsole.grep.GrepCopyingFilter;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -44,7 +34,6 @@ public class ServiceManager {
 	/** to couple console with filters */
 	private WeakReference<GrepCopyingFilter> lastCopier;
 	private WeakReference<GrepHighlightingInputFilter> lastGrepHighlightFilter;
-	private WeakReference<GrepHighlightFilter> lastQuickFilter;
 	private long lastExecutionId;
 
 	/** for providing attached filters for certain console */

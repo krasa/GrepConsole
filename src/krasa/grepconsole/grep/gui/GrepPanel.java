@@ -1,8 +1,22 @@
 package krasa.grepconsole.grep.gui;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.util.regex.PatternSyntaxException;
+
+import javax.swing.*;
+
+import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.OpenGrepConsoleAction;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -12,19 +26,6 @@ import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
-import krasa.grepconsole.grep.CopyListenerModel;
-import krasa.grepconsole.grep.OpenGrepConsoleAction;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.util.regex.PatternSyntaxException;
 
 public class GrepPanel extends JPanel implements Disposable {
 
@@ -47,7 +48,8 @@ public class GrepPanel extends JPanel implements Disposable {
 	private JBCheckBox regex;
 	private JLabel expLabel;
 	private JLabel unlessLabel;
-	private OpenGrepConsoleAction.ApplyCallback applyCallback;
+	private JButton clearHistory;
+	private OpenGrepConsoleAction.Callback applyCallback;
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -90,13 +92,21 @@ public class GrepPanel extends JPanel implements Disposable {
 		unlessLabel.setLabelFor(unlessExpressionTextField);
 		actions();
 		buttons();
-		expressionTextField.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				updateGrepOptions((GrepOptionsItem) expressionTextField.getSelectedItem());
-			}
-		});
+		expressionTextField.addItemListener(new ItemChangeListener());
+		CopyListenerModel copyListenerModel = new CopyListenerModel(matchCase.isSelected(), wholeLine.isSelected(),
+				regex.isSelected(), expressionTextField.getText(), unlessExpressionTextField.getText());
+		this.expressionTextField.addCurrentTextToHistory(copyListenerModel);
 	}
 
+	class ItemChangeListener implements ItemListener {
+		@Override
+		public void itemStateChanged(ItemEvent event) {
+			if (event.getStateChange() == ItemEvent.SELECTED) {
+				GrepOptionsItem item = (GrepOptionsItem) event.getItem();
+				updateGrepOptions(item);
+			}
+		}
+	}
 	protected void updateGrepOptions(GrepOptionsItem selectedItem) {
 		if (selectedItem != null) {
 			wholeLine.setSelected(selectedItem.isWholeLine());
@@ -135,6 +145,16 @@ public class GrepPanel extends JPanel implements Disposable {
 				reload();
 			}
 		});
+		clearHistory.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				expressionTextField.clearHistory();
+
+				PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+				propertiesComponent.unsetValue("ConsoleQuickFilterPanel-unlessExpression");
+				unlessExpressionTextField.reset();
+			}
+		});
 		sourceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -157,6 +177,7 @@ public class GrepPanel extends JPanel implements Disposable {
 		buttonSize(sourceButton);
 		buttonSize(reloadButton);
 		buttonSize(applyButton);
+		buttonSize(clearHistory);
 	}
 
 	protected void reload() {
@@ -172,7 +193,7 @@ public class GrepPanel extends JPanel implements Disposable {
 		}
 	}
 
-	protected void apply() {
+	public void apply() {
 		if (applyCallback != null) {
 			CopyListenerModel copyListenerModel = new CopyListenerModel(matchCase.isSelected(),
 					wholeLine.isSelected(), regex.isSelected(), expressionTextField.getText(),
@@ -210,7 +231,8 @@ public class GrepPanel extends JPanel implements Disposable {
 		sourceButton.setEnabled(false);
 	}
 
-	public void setApplyCallback(OpenGrepConsoleAction.ApplyCallback applyCallback) {
+	public void setApplyCallback(OpenGrepConsoleAction.Callback applyCallback) {
 		this.applyCallback = applyCallback;
+		apply();
 	}
 }

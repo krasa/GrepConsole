@@ -54,9 +54,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		final GrepCopyingFilterListener copyingListener;
 		Mode mode = Mode.SYNC;
 		if (Mode.SYNC == mode) {
-			copyingListener = new GrepCopyingFilterSyncListener(copyListenerModel, myProcessHandler);
+			copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler);
 		} else {
-			copyingListener = new GrepCopyingFilterAsyncListener(copyListenerModel, myProcessHandler);
+			copyingListener = new GrepCopyingFilterAsyncListener(myProcessHandler);
 		}
 
 
@@ -73,6 +73,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		runnerLayoutUi.addContent(tab);
 		runnerLayoutUi.selectAndFocus(tab, true, true);
 
+		quickFilterPanel.setApplyCallback(new Callback() {
+			@Override
+			public void apply(CopyListenerModel copyListenerModel) {
+				copyingListener.modelUpdated(copyListenerModel);
+				tab.setDisplayName(title(copyListenerModel.getExpression()));
+			}
+		});
 
 		for (String s : originalConsoleView.getEditor().getDocument().getText().split("\n")) {
 			copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
@@ -112,14 +119,6 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		});
 
-		quickFilterPanel.setApplyCallback(new ApplyCallback() {
-			@Override
-			public void apply(CopyListenerModel copyListenerModel) {
-				copyingListener.modelUpdated(copyListenerModel);
-				tab.setDisplayName(title(copyListenerModel.getExpression()));
-			}
-
-		});
 	}
 
 	protected String title(String expression) {
@@ -143,7 +142,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return RunnerLayoutUiImpl.CONTENT_TYPE.get(selectedContent);
 	}
 
-	public interface ApplyCallback {
+	public interface Callback {
 
 		void apply(CopyListenerModel copyListenerModel);
 	}
