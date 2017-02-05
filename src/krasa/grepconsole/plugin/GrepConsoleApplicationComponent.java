@@ -26,6 +26,7 @@ public class GrepConsoleApplicationComponent
 	protected List<GrepExpressionItem> foldingsCache;
 	private PluginState settings;
 	protected int cachedMaxLengthToMatch = Integer.MAX_VALUE;
+	private Integer maxProcessingTimeAsInt;
 
 	public GrepConsoleApplicationComponent() {
 	}
@@ -33,6 +34,11 @@ public class GrepConsoleApplicationComponent
 	public static GrepConsoleApplicationComponent getInstance() {
 		return ApplicationManager.getApplication().getComponent(GrepConsoleApplicationComponent.class);
 	}
+
+	public Integer getCachedMaxProcessingTimeAsInt() {
+		return maxProcessingTimeAsInt;
+	}
+
 	public int getCachedMaxLengthToMatch() {
 		return cachedMaxLengthToMatch;
 	}
@@ -51,7 +57,7 @@ public class GrepConsoleApplicationComponent
 	void initFoldingCache() {
 		List<GrepExpressionItem> list = new ArrayList<GrepExpressionItem>();
 		Profile profile = getInstance().getState().getDefaultProfile();
-		
+		maxProcessingTimeAsInt = profile.getMaxProcessingTimeAsInt();
 		if (profile.isEnableMaxLengthLimit()) {
 			cachedMaxLengthToMatch = profile.getMaxLengthToMatchAsInt();
 		} else {
@@ -122,5 +128,6 @@ public class GrepConsoleApplicationComponent
 	public String getPresentableName() {
 		return "Grep Console";
 	}
+
 
 }
