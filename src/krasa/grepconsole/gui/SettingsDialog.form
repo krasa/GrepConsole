@@ -42,10 +42,10 @@
               </scrollpane>
               <component id="f941c" class="javax.swing.JCheckBox" binding="enableMaxLength">
                 <constraints>
-                  <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Match only first N characters on each line:"/>
+                  <text value="Match only first N characters on each line (highly recommended)"/>
                 </properties>
               </component>
               <component id="9c3fa" class="javax.swing.JCheckBox" binding="enableHighlightingCheckBox" default-binding="true">
@@ -126,41 +126,6 @@
                   <text value="Enable filtering out"/>
                 </properties>
               </component>
-              <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBar">
-                <constraints>
-                  <grid row="2" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Always show statistics panel in Status Bar"/>
-                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
-                </properties>
-              </component>
-              <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsole">
-                <constraints>
-                  <grid row="3" column="3" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <selected value="false"/>
-                  <text value="Always show statistics panel in Console"/>
-                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
-                </properties>
-              </component>
-              <component id="2430b" class="javax.swing.JCheckBox" binding="enableFoldings">
-                <constraints>
-                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Enable foldings"/>
-                </properties>
-              </component>
-              <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
-                <constraints>
-                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value=""/>
-                </properties>
-              </component>
               <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -195,6 +160,49 @@
               <component id="6a419" class="javax.swing.JFormattedTextField" binding="maxProcessingTime" custom-create="true">
                 <constraints>
                   <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+              <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsole">
+                <constraints>
+                  <grid row="4" column="4" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <selected value="false"/>
+                  <text value="Always show statistics panel in Console"/>
+                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+                </properties>
+              </component>
+              <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBar">
+                <constraints>
+                  <grid row="3" column="4" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Always show statistics panel in Status Bar"/>
+                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+                </properties>
+              </component>
+              <component id="2430b" class="javax.swing.JCheckBox" binding="enableFoldings">
+                <constraints>
+                  <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Enable foldings"/>
+                </properties>
+              </component>
+              <component id="e5060" class="javax.swing.JCheckBox" binding="filterOutBeforeGreppingToASubConsole">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Filter out before grepping to a sub-console"/>
+                </properties>
+              </component>
+              <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
+                <constraints>
+                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <text value=""/>

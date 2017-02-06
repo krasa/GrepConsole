@@ -31,6 +31,7 @@ public class Profile extends DomainObject {
 	@Transient
 	private transient Integer maxProcessingTimeAsInt;
 	private boolean synchronous;
+	private boolean filterOutBeforeGrep;
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
@@ -215,5 +216,13 @@ public class Profile extends DomainObject {
 
 	public void setSynchronous(final boolean synchronous) {
 		this.synchronous = synchronous;
+	}
+
+	public boolean isFilterOutBeforeGrep() {
+		return filterOutBeforeGrep;
+	}
+
+	public void setFilterOutBeforeGrep(final boolean filterOutBeforeGrep) {
+		this.filterOutBeforeGrep = filterOutBeforeGrep;
 	}
 }
