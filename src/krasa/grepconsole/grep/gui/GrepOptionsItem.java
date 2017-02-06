@@ -1,10 +1,10 @@
 package krasa.grepconsole.grep.gui;
 
-import java.util.List;
-
-import krasa.grepconsole.grep.CopyListenerModel;
-
 import com.google.common.base.Splitter;
+import krasa.grepconsole.grep.CopyListenerModel;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class GrepOptionsItem {
 	int version = 0;
@@ -95,7 +95,10 @@ public class GrepOptionsItem {
 
 	}
 
-	public static GrepOptionsItem from(GrepOptionsItem item) {
+	public static GrepOptionsItem from(@Nullable GrepOptionsItem item) {
+		if (item == null) {
+			return new GrepOptionsItem();
+		}
 		GrepOptionsItem grepOptionsItem = new GrepOptionsItem();
 		grepOptionsItem.wholeLine = item.isWholeLine();
 		grepOptionsItem.regex = item.isRegex();
