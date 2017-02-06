@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.4.163.000.1</version>
+	<version>6.5.163.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>6.5 (2017-02-05)
+		<br>- Grep sub-console improvements 
         <br>6.4 (2017-02-04)
 		<br>- ANSI support deleted, for IJ 2016+  
 		<br>- more strict performance checks
