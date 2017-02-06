@@ -21,6 +21,9 @@ public class GrepCopyingFilter extends AbstractFilter implements InputFilter {
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 			ConsoleViewContentType consoleViewContentType) {
+		if (s != null && !s.endsWith("\n")) {
+			s = s + "\n";
+		}
 		for (GrepCopyingFilterListener copyingListener : copyingListeners) {
 			copyingListener.process(s, consoleViewContentType);
 		}
