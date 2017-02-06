@@ -1,21 +1,29 @@
 package krasa.grepconsole.grep.listener;
 
-import krasa.grepconsole.grep.CopyListenerModel;
-import krasa.grepconsole.grep.OpenGrepConsoleAction;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
+import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.OpenGrepConsoleAction;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.utils.Notifier;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener {
 
-	private volatile CopyListenerModel.Matcher matcher;
 	private final OpenGrepConsoleAction.LightProcessHandler myProcessHandler;
+	private final Project project;
+	private volatile CopyListenerModel.Matcher matcher;
+	private volatile Profile profile;
+	private volatile boolean showLimitNotification = true;
 
-	public GrepCopyingFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler) {
+	public GrepCopyingFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
 		this.myProcessHandler = myProcessHandler;
+		this.project = project;
+		this.profile = profile;
 	}
 
 	@Override
@@ -24,15 +32,37 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	}
 
 	@Override
+	public void profileUpdated(@NotNull Profile profile) {
+		this.profile = profile;
+	}
+
+	@Override
 	public void process(String s, ConsoleViewContentType type) {
+		if (matcher == null || StringUtils.isEmpty(s)) {
+			return;
+		}
+
 		Key stdout = ProcessOutputTypes.STDOUT;
 		if (type == ConsoleViewContentType.ERROR_OUTPUT) {
 			stdout = ProcessOutputTypes.STDERR;
 		} else if (type == ConsoleViewContentType.SYSTEM_OUTPUT) {
 			stdout = ProcessOutputTypes.SYSTEM;
 		}
-		if (matcher != null && matcher.matches(s)) {
-			myProcessHandler.notifyTextAvailable(s, stdout);
+
+		String substring = profile.limitInputLength_andCutNewLine(s);
+		CharSequence charSequence = profile.limitProcessingTime(substring);
+		try {
+			if (matcher.matches(charSequence)) {
+				if (!s.endsWith("\n")) {
+					s = s + "\n";
+				}
+				myProcessHandler.notifyTextAvailable(s, stdout);
+			}
+		} catch (ProcessCanceledException e) {
+			if (showLimitNotification) {
+				showLimitNotification = false;
+				Notifier.notify_GrepCopyingFilter(substring, matcher, project);
+			}
 		}
 	}
 

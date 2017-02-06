@@ -7,6 +7,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ide.CopyPasteManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -48,5 +49,19 @@ public class Utils {
 		DataContext dataContext = e.getDataContext();
 		Editor data1 = CommonDataKeys.EDITOR.getData(dataContext);
 		return data1.getCaretModel().getPrimaryCaret().getSelectedText();
+	}
+
+	@NotNull
+	public static String toNiceLineForLog(String substring) {
+		int length = substring.length();
+		int endIndex = substring.length();
+		int min = Math.min(endIndex, 120);
+
+		String result = substring.substring(0, min);
+		if (min < endIndex) {
+			result += "...";
+		}
+		result += " [length=" + length + "]";
+		return result;
 	}
 }

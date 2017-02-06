@@ -69,21 +69,16 @@ public class CopyListenerModel {
 			this.wholeLine = wholeLine;
 		}
 
-		public boolean matches(String s) {
-			if (!StringUtils.isEmpty(s)) {
+		public boolean matches(CharSequence s) {
 				if (matchesPattern(expressionPattern, s) && !matchesPattern(unlessExpressionPattern, s)) {
 					return true;
 				}
-			}
 			return false;
 		}
 
-		private boolean matchesPattern(Pattern pattern, String matchedLine) {
+		private boolean matchesPattern(Pattern pattern, CharSequence matchedLine) {
 			boolean matches = false;
 			if (pattern != null) {
-				if (matchedLine.endsWith("\n")) {
-					matchedLine = matchedLine.substring(0, matchedLine.length() - 1);
-				}
 				if (wholeLine) {
 					matches = pattern.matcher(matchedLine).matches();
 				} else {
@@ -93,5 +88,13 @@ public class CopyListenerModel {
 			return matches;
 		}
 
+		@Override
+		public String toString() {
+			return "[" +
+					"expressionPattern=" + expressionPattern +
+					", unlessExpressionPattern=" + unlessExpressionPattern +
+					", wholeLine=" + wholeLine +
+					']';
+		}
 	}
 }

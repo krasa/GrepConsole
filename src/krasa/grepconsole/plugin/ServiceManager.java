@@ -1,23 +1,17 @@
 package krasa.grepconsole.plugin;
 
-import java.lang.ref.WeakReference;
-import java.util.*;
-
-import krasa.grepconsole.filter.AbstractFilter;
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.filter.GrepHighlightingInputFilter;
-import krasa.grepconsole.filter.GrepInputFilter;
-import krasa.grepconsole.filter.support.Cache;
-import krasa.grepconsole.grep.GrepCopyingFilter;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.filter.*;
+import krasa.grepconsole.filter.support.Cache;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 /**
  * @author Vojtech Krasa
@@ -48,20 +42,29 @@ public class ServiceManager {
 	public void resetSettings() {
 		iterate(highlightFilters);
 		iterate(inputFilters);
+		iterate(weakCopiersMap.values());
 		// todo this may not work properly, regenerate GrepExpressionItem id
 		Cache.reset();
 
 	}
 
-	private <T extends AbstractFilter> void iterate(final List<WeakReference<T>> cacheAnsi1) {
-		Iterator<WeakReference<T>> iterator = cacheAnsi1.iterator();
+	private void iterate(Collection<GrepCopyingFilter> values) {
+		for (GrepCopyingFilter filter : values) {
+			if (filter != null) {
+				filter.onChange();
+			}
+		}
+	}
+
+	private <T extends AbstractFilter> void iterate(final List<WeakReference<T>> filters) {
+		Iterator<WeakReference<T>> iterator = filters.iterator();
 		while (iterator.hasNext()) {
 			WeakReference<T> next = iterator.next();
-			T ansiInputFilter = next.get();
-			if (ansiInputFilter == null) {
+			T filter = next.get();
+			if (filter == null) {
 				iterator.remove();
 			} else {
-				ansiInputFilter.onChange();
+				filter.onChange();
 			}
 		}
 	}

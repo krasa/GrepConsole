@@ -1,11 +1,12 @@
 package krasa.grepconsole.model;
 
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.xmlb.annotations.Transient;
+import org.apache.commons.lang.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.commons.lang.math.NumberUtils;
-
-import com.intellij.util.xmlb.annotations.Transient;
 
 public class Profile extends DomainObject {
 	public static final String DEFAULT = "120";
@@ -30,6 +31,25 @@ public class Profile extends DomainObject {
 	@Transient
 	private transient Integer maxProcessingTimeAsInt;
 	private boolean synchronous;
+
+	// for higlighting, it always ends with \n, but for input filtering it does not
+	@NotNull
+	public String limitInputLength_andCutNewLine(@NotNull String text) {
+		int endIndex = text.length();
+		if (text.endsWith("\n")) {
+			--endIndex;
+		}
+		if (this.isEnableMaxLengthLimit()) {
+			endIndex = Math.min(endIndex, this.getMaxLengthToMatchAsInt());
+		}
+		return text.substring(0, endIndex);
+	}
+
+	@NotNull
+	public CharSequence limitProcessingTime(String substring) {
+		return StringUtil.newBombedCharSequence(substring, this.getMaxProcessingTimeAsInt());
+	}
+
 
 	public Profile() {
 		id = System.currentTimeMillis();

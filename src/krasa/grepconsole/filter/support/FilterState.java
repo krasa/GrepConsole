@@ -1,18 +1,13 @@
 package krasa.grepconsole.filter.support;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import krasa.grepconsole.model.Operation;
-
-import org.jetbrains.annotations.NotNull;
-import krasa.grepconsole.model.Operation;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.util.text.StringUtil;
+import krasa.grepconsole.model.Operation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FilterState {
@@ -25,9 +20,9 @@ public class FilterState {
 	private boolean matchesSomething;
 	private CharSequence charSequence;
 
-	public FilterState(String text, int offset, Integer maxProcessingTimeAsInt) {
+	public FilterState(int offset, CharSequence charSequence) {
 		this.offset = offset;
-		charSequence = StringUtil.newBombedCharSequence(text, maxProcessingTimeAsInt);
+		this.charSequence = charSequence;
 	}
 
 	@NotNull

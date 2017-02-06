@@ -1,22 +1,5 @@
 package krasa.grepconsole.grep;
 
-import java.awt.*;
-import java.io.OutputStream;
-
-import javax.swing.*;
-
-import krasa.grepconsole.grep.gui.GrepPanel;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
-import krasa.grepconsole.grep.listener.Mode;
-import krasa.grepconsole.plugin.ServiceManager;
-import krasa.grepconsole.utils.Utils;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
@@ -31,6 +14,23 @@ import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import krasa.grepconsole.filter.GrepCopyingFilter;
+import krasa.grepconsole.grep.gui.GrepPanel;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
+import krasa.grepconsole.grep.listener.Mode;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.utils.Utils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.OutputStream;
 
 public class OpenGrepConsoleAction extends DumbAwareAction {
 
@@ -50,13 +50,14 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		CopyListenerModel copyListenerModel = new CopyListenerModel(false, false, false, expression, null);
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
+		Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile();
 
 		final GrepCopyingFilterListener copyingListener;
 		Mode mode = Mode.SYNC;
 		if (Mode.SYNC == mode) {
-			copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler);
+			copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, eventProject, profile);
 		} else {
-			copyingListener = new GrepCopyingFilterAsyncListener(myProcessHandler);
+			copyingListener = new GrepCopyingFilterAsyncListener(myProcessHandler, eventProject, profile);
 		}
 
 

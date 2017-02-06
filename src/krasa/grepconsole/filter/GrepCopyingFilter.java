@@ -1,10 +1,9 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.filter;
 
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import krasa.grepconsole.filter.AbstractFilter;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 
 import java.util.List;
@@ -21,13 +20,20 @@ public class GrepCopyingFilter extends AbstractFilter implements InputFilter {
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 			ConsoleViewContentType consoleViewContentType) {
-		if (s != null && !s.endsWith("\n")) {
-			s = s + "\n";
-		}
-		for (GrepCopyingFilterListener copyingListener : copyingListeners) {
+		for (int i = 0; i < copyingListeners.size(); i++) {
+			GrepCopyingFilterListener copyingListener = copyingListeners.get(i);
 			copyingListener.process(s, consoleViewContentType);
 		}
 		return null;
+	}
+
+	@Override
+	protected void refreshProfile() {
+		super.refreshProfile();
+
+		for (GrepCopyingFilterListener copyingListener : copyingListeners) {
+			copyingListener.profileUpdated(profile);
+		}
 	}
 
 	public void addListener(GrepCopyingFilterListener copyingListener) {
