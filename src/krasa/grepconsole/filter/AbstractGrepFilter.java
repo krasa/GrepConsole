@@ -16,7 +16,7 @@ import java.util.List;
 
 public abstract class AbstractGrepFilter extends AbstractFilter {
 
-	protected List<GrepProcessor> grepProcessors;
+	protected volatile List<GrepProcessor> grepProcessors;
 	private boolean showLimitNotification = true;
 
 	public AbstractGrepFilter(Project project) {
