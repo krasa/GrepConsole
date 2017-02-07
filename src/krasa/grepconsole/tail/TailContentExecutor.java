@@ -1,5 +1,15 @@
 package krasa.grepconsole.tail;
 
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.*;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
@@ -22,6 +32,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -29,13 +40,6 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Copy of com.intellij.execution.RunContentExecutor Runs a process and prints the output in a content tab within the
@@ -54,6 +58,7 @@ public class TailContentExecutor implements Disposable {
 	private String myTitle = "Output";
 	private String myHelpId = null;
 	private boolean myActivateToolWindow = true;
+	private File file;
 
 	public TailContentExecutor(@NotNull Project project, @NotNull ProcessHandler process) {
 		myProject = project;
@@ -187,8 +192,15 @@ public class TailContentExecutor implements Disposable {
 		final DefaultActionGroup actionGroup = new DefaultActionGroup();
 		actionGroup.add(new RerunAction(consolePanel, consoleView));
 		actionGroup.add(new StopAction());
+		actionGroup.add(new PinAction());
 		actionGroup.add(myUi.getOptions().getLayoutActions());
-		actionGroup.add(new CloseAction(runExecutorInstance, contentDescriptor, myProject));
+		actionGroup.add(new CloseAction(runExecutorInstance, contentDescriptor, myProject) {
+			@Override
+			public void actionPerformed(AnActionEvent e) {
+				super.actionPerformed(e);
+				ServiceManager.getService(TailPin.class).removePinned(file);
+			}
+		});
 		return actionGroup;
 	}
 	public void activateToolWindow() {
@@ -217,6 +229,10 @@ public class TailContentExecutor implements Disposable {
 	@Override
 	public void dispose() {
 		Disposer.dispose(this);
+	}
+
+	public void forFile(File file) {
+		this.file = file;
 	}
 
 	private class RerunAction extends AnAction implements DumbAware {
@@ -255,5 +271,33 @@ public class TailContentExecutor implements Disposable {
 			e.getPresentation().setVisible(myStopAction != null);
 			e.getPresentation().setEnabled(myStopEnabled != null && myStopEnabled.compute());
 		}
+	}
+
+	private class PinAction extends ToggleAction implements DumbAware {
+		private boolean pinned;
+		@NotNull
+		private final TailPin service;
+
+		public PinAction() {
+			super("Pin", "Reopen with project", AllIcons.General.Pin_tab);
+			service = ServiceManager.getService(myProject, TailPin.class);
+			pinned = service.isPinned(file.getAbsoluteFile());
+		}
+
+		@Override
+		public boolean isSelected(AnActionEvent anActionEvent) {
+			return pinned;
+		}
+
+		@Override
+		public void setSelected(AnActionEvent anActionEvent, boolean b) {
+			pinned = b;
+			if (b) {
+				service.addPinned(file);
+			} else {
+				service.removePinned(file);
+			}
+		}
+
 	}
 }

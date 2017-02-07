@@ -3,6 +3,9 @@ package krasa.grepconsole.action;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import krasa.grepconsole.tail.MyProcessHandler;
+import krasa.grepconsole.tail.TailContentExecutor;
+
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.execution.impl.ConsoleBuffer;
 import com.intellij.execution.process.ProcessHandler;
@@ -15,9 +18,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
-
-import krasa.grepconsole.tail.MyProcessHandler;
-import krasa.grepconsole.tail.TailContentExecutor;
 
 /**
  * @author Vojtech Krasa
@@ -62,6 +62,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 				openFileInConsole(project, file);
 			}
 		});
+		executor.forFile(file);
 		executor.withTitle(file.getName());
 		executor.withStop(new Runnable() {
 			@Override

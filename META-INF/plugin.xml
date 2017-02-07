@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.5.163.000.1</version>
+	<version>6.6.163.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -27,6 +27,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>6.6 (2017-02-07)
+		<br>- Tail tabs pinning (reopening with a project)
         <br>6.5 (2017-02-05)
 		<br>- Grep sub-console improvements 
         <br>6.4 (2017-02-04)
@@ -197,6 +199,8 @@
 		<console.folding implementation="krasa.grepconsole.folding.GrepConsoleFolding"/>
 		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
 								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
+
+		<projectService serviceImplementation="krasa.grepconsole.tail.TailPin"/>
 
 		<!-- Add your extensions here -->
 	</extensions>
