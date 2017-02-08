@@ -15,21 +15,6 @@
  */
 package krasa.grepconsole.gui.table;
 
-import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Enumeration;
-
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ClickListener;
 import com.intellij.ui.dualView.TreeTableView;
@@ -37,6 +22,19 @@ import com.intellij.ui.treeStructure.treetable.ListTreeTableModelOnColumns;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Enumeration;
 
 /**
  * @author nik
@@ -189,7 +187,7 @@ public class CheckboxTreeTable extends TreeTableView {
 
 	@SuppressWarnings("unchecked")
 	public <T> T[] getCheckedNodes(final Class<T> nodeType) {
-		final ArrayList<T> nodes = new ArrayList<T>();
+		final ArrayList<T> nodes = new ArrayList<>();
 		final Object root = getTree().getModel().getRoot();
 		if (!(root instanceof CheckedTreeNode)) {
 			throw new IllegalStateException("The root must be instance of the " + CheckedTreeNode.class.getName()

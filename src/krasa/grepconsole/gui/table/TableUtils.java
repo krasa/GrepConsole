@@ -1,18 +1,16 @@
 package krasa.grepconsole.gui.table;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import com.intellij.ui.treeStructure.treetable.ListTreeTableModelOnColumns;
+import com.intellij.util.ui.tree.TreeUtil;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import org.jetbrains.annotations.NotNull;
-
-import com.intellij.ui.treeStructure.treetable.ListTreeTableModelOnColumns;
-import com.intellij.util.ui.tree.TreeUtil;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -31,7 +29,7 @@ public class TableUtils {
 	}
 
 	public static void selectNodes(List<DefaultMutableTreeNode> selectedNodes, CheckboxTreeTable table) {
-		List<TreePath> treePaths = new ArrayList<TreePath>();
+		List<TreePath> treePaths = new ArrayList<>();
 		for (DefaultMutableTreeNode selectedNode : selectedNodes) {
 			treePaths.add(new TreePath(selectedNode.getPath()));
 		}

@@ -15,18 +15,16 @@
  */
 package krasa.grepconsole.grep.gui;
 
+import com.intellij.openapi.fileChooser.FileTextField;
+import com.intellij.openapi.ui.ComboBox;
+import krasa.grepconsole.grep.CopyListenerModel;
+
+import javax.swing.*;
+import javax.swing.event.DocumentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.*;
-import javax.swing.event.DocumentListener;
-
-import krasa.grepconsole.grep.CopyListenerModel;
-
-import com.intellij.openapi.fileChooser.FileTextField;
-import com.intellij.openapi.ui.ComboBox;
 
 public class MyTextFieldWithHistory extends ComboBox {
 	private int myHistorySize = 5;
@@ -69,7 +67,7 @@ public class MyTextFieldWithHistory extends ComboBox {
 
 	public List<String> getHistory() {
 		final int itemsCount = myModel.getSize();
-		List<String> history = new ArrayList<String>(itemsCount);
+		List<String> history = new ArrayList<>(itemsCount);
 		for (int i = 0; i < itemsCount; i++) {
 			GrepOptionsItem elementAt = (GrepOptionsItem) myModel.getElementAt(i);
 			history.add(elementAt.asString());
@@ -115,7 +113,7 @@ public class MyTextFieldWithHistory extends ComboBox {
 	}
 
 	public class MyModel extends AbstractListModel implements ComboBoxModel {
-		private List<GrepOptionsItem> myFullList = new ArrayList<GrepOptionsItem>();
+		private List<GrepOptionsItem> myFullList = new ArrayList<>();
 
 		private GrepOptionsItem mySelectedItem;
 
@@ -168,7 +166,7 @@ public class MyTextFieldWithHistory extends ComboBox {
 		}
 
 		public void setItems(List<GrepOptionsItem> aList) {
-			myFullList = new ArrayList<GrepOptionsItem>(aList);
+			myFullList = new ArrayList<>(aList);
 			fireContentsChanged();
 		}
 	}

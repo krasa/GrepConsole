@@ -62,7 +62,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 
 
 	protected void initProcessors() {
-		grepProcessors = new ArrayList<GrepProcessor>();
+		grepProcessors = new ArrayList<>();
 		for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {
 			if (shouldAdd(grepExpressionItem)) {
 				grepProcessors.add(createProcessor(grepExpressionItem));

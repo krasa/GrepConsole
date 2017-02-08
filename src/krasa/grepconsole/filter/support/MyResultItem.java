@@ -1,14 +1,13 @@
 package krasa.grepconsole.filter.support;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyResultItem {
 	public final int highlightStartOffset;
@@ -53,7 +52,7 @@ public class MyResultItem {
 		if (resultItemList == null) {
 			return null;
 		}
-		List<Filter.ResultItem> transformed = new ArrayList<Filter.ResultItem>(resultItemList.size());
+		List<Filter.ResultItem> transformed = new ArrayList<>(resultItemList.size());
 		for (MyResultItem myResultItem : resultItemList) {
 			transformed.add(new Filter.ResultItem(myResultItem.highlightStartOffset, myResultItem.highlightEndOffset,
 					myResultItem.hyperlinkInfo, myResultItem.getAttributes()));

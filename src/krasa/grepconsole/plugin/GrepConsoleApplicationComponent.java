@@ -1,19 +1,17 @@
 package krasa.grepconsole.plugin;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.*;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
 public class GrepConsoleApplicationComponent
@@ -55,7 +53,7 @@ public class GrepConsoleApplicationComponent
 	}
 
 	void initFoldingCache() {
-		List<GrepExpressionItem> list = new ArrayList<GrepExpressionItem>();
+		List<GrepExpressionItem> list = new ArrayList<>();
 		Profile profile = getInstance().getState().getDefaultProfile();
 		maxProcessingTimeAsInt = profile.getMaxProcessingTimeAsInt();
 		if (profile.isEnableMaxLengthLimit()) {

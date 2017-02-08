@@ -1,26 +1,23 @@
 package krasa.grepconsole.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
-import krasa.grepconsole.gui.table.CheckboxTreeCellRendererBase;
-import krasa.grepconsole.gui.table.CheckboxTreeTable;
-import krasa.grepconsole.gui.table.TableRowTransferHandler;
-import krasa.grepconsole.gui.table.column.*;
-import krasa.grepconsole.model.GrepExpressionGroup;
-import krasa.grepconsole.model.GrepExpressionItem;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.ColumnInfo;
+import krasa.grepconsole.gui.table.CheckboxTreeCellRendererBase;
+import krasa.grepconsole.gui.table.CheckboxTreeTable;
+import krasa.grepconsole.gui.table.TableRowTransferHandler;
+import krasa.grepconsole.gui.table.column.*;
+import krasa.grepconsole.model.GrepExpressionGroup;
+import krasa.grepconsole.model.GrepExpressionItem;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -31,7 +28,7 @@ public class SettingsTableBuilder {
 	private CheckboxTreeTable table;
 
 	public SettingsTableBuilder(final SettingsDialog settingsDialog) {
-		List<ColumnInfo> columns = new ArrayList<ColumnInfo>();
+		List<ColumnInfo> columns = new ArrayList<>();
 		columns.add(new TreeColumnInfo("") {
 			@Nullable
 			@Override
@@ -47,7 +44,7 @@ public class SettingsTableBuilder {
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
 				"grepExpression").preferedStringValue("___________________________________")));
 
-		JavaBeanColumnInfo<GrepExpressionItem, String> unless = new JavaBeanColumnInfo<GrepExpressionItem, String>(
+		JavaBeanColumnInfo<GrepExpressionItem, String> unless = new JavaBeanColumnInfo<>(
 				"Unless expression", "unlessGrepExpression");
 		columns.add(new FolderColumnInfoWrapper(unless.preferedStringValue("______________")));
 		unless.addListener(new ValueChangedListener<GrepExpressionItem, String>() {
@@ -59,7 +56,7 @@ public class SettingsTableBuilder {
 			}
 		});
 
-		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> inputFilter = new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> inputFilter = new CheckBoxJavaBeanColumnInfo<>(
 				"Filter out", "inputFilter");
 		inputFilter.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override
@@ -71,7 +68,7 @@ public class SettingsTableBuilder {
 			}
 		});
 		columns.add(new FolderColumnInfoWrapper(inputFilter));
-		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> fold = new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> fold = new CheckBoxJavaBeanColumnInfo<>(
 				"Fold", "fold");
 		fold.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override

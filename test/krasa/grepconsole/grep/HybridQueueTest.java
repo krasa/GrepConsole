@@ -21,7 +21,7 @@ public class HybridQueueTest {
 		int bufferSize = IntMath.pow(2, 3); //2^14 16k
 
 		// Construct the Disruptor
-		Disruptor<HybridQueue.LogEvent> disruptor = new Disruptor<HybridQueue.LogEvent>(factory, bufferSize, new ThreadFactory() {
+		Disruptor<HybridQueue.LogEvent> disruptor = new Disruptor<>(factory, bufferSize, new ThreadFactory() {
 			@Override
 			public Thread newThread(@NotNull Runnable r) {
 				Thread thread = new Thread(r, "GrepConsole");

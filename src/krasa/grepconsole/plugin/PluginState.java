@@ -1,17 +1,16 @@
 package krasa.grepconsole.plugin;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.TailSettings;
 
-import com.intellij.util.xmlb.annotations.Transient;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PluginState extends DomainObject implements Cloneable {
 
-	private List<Profile> profiles = new ArrayList<Profile>();
+	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;
 	private boolean enabled;
 

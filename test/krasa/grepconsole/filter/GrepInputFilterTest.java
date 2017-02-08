@@ -1,25 +1,23 @@
 package krasa.grepconsole.filter;
 
-import static com.intellij.execution.ui.ConsoleViewContentType.NORMAL_OUTPUT;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-
-import java.awt.*;
-import java.util.ArrayList;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.util.Pair;
-
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.GrepStyle;
 import krasa.grepconsole.model.Profile;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.awt.*;
+import java.util.ArrayList;
+
+import static com.intellij.execution.ui.ConsoleViewContentType.NORMAL_OUTPUT;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
 public class GrepInputFilterTest {
 
@@ -28,11 +26,11 @@ public class GrepInputFilterTest {
 
 	@Before
 	public void setUp() throws Exception {
-		ArrayList<GrepProcessor> grepProcessors = new ArrayList<GrepProcessor>();
+		ArrayList<GrepProcessor> grepProcessors = new ArrayList<>();
 		grepProcessors.add(getFilter(".*ERROR.*", Color.RED));
 		grepProcessors.add(getFilter(".*INFO.*", Color.BLUE));
 		service = new GrepInputFilter(new Profile(), grepProcessors);
-		service2 = new GrepInputFilter(new Profile(), new ArrayList<GrepProcessor>());
+		service2 = new GrepInputFilter(new Profile(), new ArrayList<>());
 	}
 
 	@Test

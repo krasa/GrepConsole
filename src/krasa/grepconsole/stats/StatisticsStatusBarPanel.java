@@ -1,17 +1,5 @@
 package krasa.grepconsole.stats;
 
-import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimerTask;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
@@ -30,25 +18,34 @@ import com.intellij.ui.JBColor;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SeparatorComponent;
 import com.intellij.ui.content.ContentManager;
-
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.stats.common.ColorPanel;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimerTask;
 
 /**
  * @author Vojtech Krasa
  */
 public abstract class StatisticsStatusBarPanel extends JPanel {
 	private final JPanel jPanel;
-	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<Pair<JLabel, GrepProcessor>>();
+	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<>();
 	private java.util.Timer timer;
 	private WeakReference<ConsoleView> consoleView;
 	private GrepHighlightFilter grepHighlightFilter;
 
 	public StatisticsStatusBarPanel(ConsoleView consoleView, GrepHighlightFilter filter) {
 		super(new BorderLayout());
-		this.consoleView = new WeakReference<ConsoleView>(consoleView);
+		this.consoleView = new WeakReference<>(consoleView);
 		this.grepHighlightFilter = filter;
 		add(new SeparatorComponent(7), BorderLayout.WEST);
 
@@ -109,7 +106,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	private JLabel getLabel(GrepProcessor processor) {
 		final JLabel label = new JLabel("0");
 		label.setForeground(JBColor.BLACK);
-		pairs.add(new Pair<JLabel, GrepProcessor>(label, processor));
+		pairs.add(new Pair<>(label, processor));
 		return label;
 	}
 

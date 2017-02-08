@@ -47,7 +47,7 @@ public class HybridQueue implements Disposable {
 				return thread;
 			}
 		};
-		this.disruptor = new Disruptor<LogEvent>(factory, bufferSize, grepConsole, ProducerType.MULTI, new BlockingWaitStrategy());
+		this.disruptor = new Disruptor<>(factory, bufferSize, grepConsole, ProducerType.MULTI, new BlockingWaitStrategy());
 		this.disruptor.handleEventsWith(new LogEventHandler(this.disruptor.getRingBuffer(), fileBackingQueue, state, eventConsumer));
 
 		// Start the Disruptor, starts all threads running

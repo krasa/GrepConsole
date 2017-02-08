@@ -16,7 +16,7 @@ public class GrepExpressionRootFolder extends GrepExpressionFolder {
 	public GrepExpressionRootFolder() {
 		super();
 
-		styles = new HashMap<String, GrepStyle>();
+		styles = new HashMap<>();
 	}
 
 	public Collection<GrepStyle> getStyles() {
@@ -77,7 +77,7 @@ public class GrepExpressionRootFolder extends GrepExpressionFolder {
 	 * Call this after new elements with new styles have been added.
 	 */
 	public void addMissingStyles() {
-		LinkedList<AbstractGrepModelElement> queue = new LinkedList<AbstractGrepModelElement>();
+		LinkedList<AbstractGrepModelElement> queue = new LinkedList<>();
 		queue.add(this);
 
 		while (!queue.isEmpty()) {

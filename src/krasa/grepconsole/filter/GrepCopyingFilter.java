@@ -11,7 +11,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GrepCopyingFilter extends AbstractFilter implements InputFilter {
 
-	private List<GrepCopyingFilterListener> copyingListeners = new CopyOnWriteArrayList<GrepCopyingFilterListener>();
+	private List<GrepCopyingFilterListener> copyingListeners = new CopyOnWriteArrayList<>();
 
 	public GrepCopyingFilter(Project project) {
 		super(project);

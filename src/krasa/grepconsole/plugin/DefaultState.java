@@ -1,17 +1,16 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.ui.JBColor;
+import com.intellij.util.ui.UIUtil;
+import krasa.grepconsole.model.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import krasa.grepconsole.model.*;
-
-import com.intellij.ui.JBColor;
-import com.intellij.util.ui.UIUtil;
-
 public class DefaultState {
 	public static List<Profile> createDefault() {
-		List<Profile> profiles = new ArrayList<Profile>();
+		List<Profile> profiles = new ArrayList<>();
 		Profile profile = new Profile();
 		profile.setDefaultProfile(true);
 		profiles.add(profile);
@@ -23,7 +22,7 @@ public class DefaultState {
 	}
 
 	public static List<GrepExpressionItem> createDefaultItems() {
-		List<GrepExpressionItem> items = new ArrayList<GrepExpressionItem>();
+		List<GrepExpressionItem> items = new ArrayList<>();
 		items.add(newItem().style(
 				getGrepStyle(JBColor.RED, UIUtil.isUnderDarcula() ? Color.BLACK : Color.WHITE).bold(true)).grepExpression(
 				".*FATAL.*"));

@@ -1,30 +1,28 @@
 package krasa.grepconsole.filter;
 
-import static junit.framework.Assert.*;
+import com.intellij.execution.filters.Filter;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.filter.support.GrepProcessorImpl;
+import krasa.grepconsole.model.*;
+import org.junit.Test;
 
 import java.awt.*;
 import java.util.ArrayList;
 
-import org.junit.Test;
-
-import com.intellij.execution.filters.Filter;
-
-import krasa.grepconsole.filter.support.GrepProcessor;
-import krasa.grepconsole.filter.support.GrepProcessorImpl;
-import krasa.grepconsole.model.*;
+import static junit.framework.Assert.*;
 
 public class GrepHighlightFilterTest {
 
 	@Test
 	public void testWithoutFilters() throws Exception {
-		GrepHighlightFilter grepConsoleService = new GrepHighlightFilter(new Profile(), new ArrayList<GrepProcessor>());
+		GrepHighlightFilter grepConsoleService = new GrepHighlightFilter(new Profile(), new ArrayList<>());
 		Filter.Result result = grepConsoleService.applyFilter("input", 10);
 		assertNull(result);
 	}
 
 	@Test
 	public void testWithFilters() throws Exception {
-		ArrayList<GrepProcessor> grepProcessors = new ArrayList<GrepProcessor>();
+		ArrayList<GrepProcessor> grepProcessors = new ArrayList<>();
 		grepProcessors.add(getFilterB(".*ERROR.*", Color.RED, Operation.EXIT));
 		grepProcessors.add(getFilterB(".*INFO.*", Color.BLUE, Operation.EXIT));
 		GrepHighlightFilter grepFilter = new GrepHighlightFilter(new Profile(), grepProcessors);
@@ -51,7 +49,7 @@ public class GrepHighlightFilterTest {
 
 	@Test
 	public void testCombinations() throws Exception {
-		ArrayList<GrepProcessor> grepProcessors = new ArrayList<GrepProcessor>();
+		ArrayList<GrepProcessor> grepProcessors = new ArrayList<>();
 		grepProcessors.add(getFilterF(".*BLACK FOREGROUND.*", Color.BLACK, Operation.CONTINUE_MATCHING));
 		grepProcessors.add(getFilterB(".*RED BACKGROUND.*", Color.RED, Operation.CONTINUE_MATCHING));
 		GrepHighlightFilter grepFilter = new GrepHighlightFilter(new Profile(), grepProcessors);

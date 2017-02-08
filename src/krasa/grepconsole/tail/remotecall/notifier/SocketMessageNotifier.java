@@ -1,22 +1,25 @@
 package krasa.grepconsole.tail.remotecall.notifier;
 
-import static java.net.URLDecoder.decode;
-
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-import krasa.grepconsole.tail.remotecall.handler.MessageHandler;
-
 import com.google.common.io.Closeables;
 import com.intellij.openapi.diagnostic.Logger;
+import krasa.grepconsole.tail.remotecall.handler.MessageHandler;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.*;
+
+import static java.net.URLDecoder.decode;
 
 public class SocketMessageNotifier implements MessageNotifier {
 
 	private static final Logger log = Logger.getInstance(SocketMessageNotifier.class);
 	private static final String CRLF = "\r\n";
 	private static final String NL = "\n";
-	private final Collection<MessageHandler> messageHandlers = new HashSet<MessageHandler>();
+	private final Collection<MessageHandler> messageHandlers = new HashSet<>();
 	private final ServerSocket serverSocket;
 
 	public SocketMessageNotifier(ServerSocket serverSocket) {
@@ -25,7 +28,7 @@ public class SocketMessageNotifier implements MessageNotifier {
 
 	private static Map<String, String> getParametersFromUrl(String url) {
 		String parametersString = url.substring(url.indexOf('?') + 1);
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = new HashMap<>();
 		StringTokenizer tokenizer = new StringTokenizer(parametersString, "&");
 		while (tokenizer.hasMoreElements()) {
 			String[] parametersPair = tokenizer.nextToken().split("=", 2);

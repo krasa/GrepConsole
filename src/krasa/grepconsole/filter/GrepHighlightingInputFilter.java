@@ -1,21 +1,19 @@
 package krasa.grepconsole.filter;
 
-import java.util.*;
-
-import krasa.grepconsole.filter.support.FilterState;
-import krasa.grepconsole.filter.support.GrepProcessor;
-import krasa.grepconsole.filter.support.MyResultItem;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.collect.Range;
 import com.google.common.collect.TreeRangeMap;
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import krasa.grepconsole.filter.support.FilterState;
+import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.filter.support.MyResultItem;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.model.Profile;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 public class GrepHighlightingInputFilter extends GrepHighlightFilter implements InputFilter {
 
@@ -50,7 +48,7 @@ public class GrepHighlightingInputFilter extends GrepHighlightFilter implements 
 		if (resultItemList != null) {
 			Set<Map.Entry<Range<Integer>, MyResultItem>> entries = toRanges(resultItemList);
 
-			pairs = new ArrayList<Pair<String, ConsoleViewContentType>>(entries.size());
+			pairs = new ArrayList<>(entries.size());
 
 			for (Map.Entry<Range<Integer>, MyResultItem> entry : entries) {
 				Range<Integer> key = entry.getKey();

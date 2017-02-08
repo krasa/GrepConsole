@@ -71,7 +71,7 @@ public class FilterState {
 
 	public boolean add(MyResultItem resultItem) {
 		if (resultItemList == null) {
-			resultItemList = new ArrayList<MyResultItem>();
+			resultItemList = new ArrayList<>();
 		}
 		return resultItemList.add(resultItem);
 	}

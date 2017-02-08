@@ -22,8 +22,8 @@ public class ServiceManager {
 	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
 
 	/** for tracking settings change */
-	private List<WeakReference<GrepHighlightFilter>> highlightFilters = new ArrayList<WeakReference<GrepHighlightFilter>>();
-	private List<WeakReference<GrepInputFilter>> inputFilters = new ArrayList<WeakReference<GrepInputFilter>>();
+	private List<WeakReference<GrepHighlightFilter>> highlightFilters = new ArrayList<>();
+	private List<WeakReference<GrepInputFilter>> inputFilters = new ArrayList<>();
 
 	/** to couple console with filters */
 	private WeakReference<GrepCopyingFilter> lastCopier;
@@ -31,8 +31,8 @@ public class ServiceManager {
 	private long lastExecutionId;
 
 	/** for providing attached filters for certain console */
-	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<ConsoleView, GrepHighlightFilter>();
-	private WeakHashMap<ConsoleView, GrepCopyingFilter> weakCopiersMap = new WeakHashMap<ConsoleView, GrepCopyingFilter>();
+	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<>();
+	private WeakHashMap<ConsoleView, GrepCopyingFilter> weakCopiersMap = new WeakHashMap<>();
 	private boolean createInputFilter = true;
 
 	public static ServiceManager getInstance() {
@@ -75,7 +75,7 @@ public class ServiceManager {
 			return null;
 		}
 		GrepInputFilter lastInputFilter = new GrepInputFilter(project);
-		inputFilters.add(new WeakReference<GrepInputFilter>(lastInputFilter));
+		inputFilters.add(new WeakReference<>(lastInputFilter));
 		return lastInputFilter;
 	}
 
@@ -83,15 +83,15 @@ public class ServiceManager {
 	public GrepHighlightingInputFilter createHighlightInputFilter(Project project) {
 		GrepHighlightingInputFilter grepHighlightFilter = new GrepHighlightingInputFilter(project);
 		grepHighlightFilter.setExecutionId(getLastExecutionId());
-		highlightFilters.add(new WeakReference<GrepHighlightFilter>(grepHighlightFilter));
-		lastGrepHighlightFilter = new WeakReference<GrepHighlightingInputFilter>(grepHighlightFilter);
+		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
+		lastGrepHighlightFilter = new WeakReference<>(grepHighlightFilter);
 		return grepHighlightFilter;
 	}
 
 	public GrepHighlightFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		final GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project);
 		grepHighlightFilter.setExecutionId(getLastExecutionId());
-		highlightFilters.add(new WeakReference<GrepHighlightFilter>(grepHighlightFilter));
+		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
 		if (consoleView != null) {
 			weakHighlightersMap.put(consoleView, grepHighlightFilter);
 		}
@@ -100,7 +100,7 @@ public class ServiceManager {
 
 	public GrepCopyingFilter createCopyingFilter(@NotNull Project project) {
 		final GrepCopyingFilter grepInputFilter = new GrepCopyingFilter(project);
-		lastCopier = new WeakReference<GrepCopyingFilter>(grepInputFilter);
+		lastCopier = new WeakReference<>(grepInputFilter);
 		return grepInputFilter;
 	}
 

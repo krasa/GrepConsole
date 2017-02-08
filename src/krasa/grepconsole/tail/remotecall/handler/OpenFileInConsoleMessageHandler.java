@@ -1,20 +1,22 @@
 package krasa.grepconsole.tail.remotecall.handler;
 
-import java.awt.*;
-import java.io.File;
-import java.util.*;
-import java.util.List;
-
-import krasa.grepconsole.action.OpenFileInConsoleAction;
-import krasa.grepconsole.utils.FocusUtils;
-
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.wm.*;
+import com.intellij.openapi.wm.IdeFrame;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import com.intellij.openapi.wm.impl.IdeFrameImpl;
+import krasa.grepconsole.action.OpenFileInConsoleAction;
+import krasa.grepconsole.utils.FocusUtils;
+
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -97,7 +99,7 @@ public class OpenFileInConsoleMessageHandler implements MessageHandler {
 				}
 
 				private List<String> getValues(IdeFrame[] allProjectFrames) {
-					List<String> values = new ArrayList<String>();
+					List<String> values = new ArrayList<>();
 					for (int i = 0; i < allProjectFrames.length; i++) {
 						IdeFrame allProjectFrame = allProjectFrames[i];
 						final Project project = allProjectFrame.getProject();

@@ -1,10 +1,10 @@
 package krasa.grepconsole.gui.table;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.dnd.DragSource;
-import java.util.*;
-import java.util.List;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.ui.treeStructure.treetable.TreeTableModelAdapter;
+import com.intellij.ui.treeStructure.treetable.TreeTableTree;
+import com.intellij.util.ArrayUtil;
+import krasa.grepconsole.gui.SettingsDialog;
 
 import javax.activation.ActivationDataFlavor;
 import javax.activation.DataHandler;
@@ -12,13 +12,13 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-
-import krasa.grepconsole.gui.SettingsDialog;
-
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.ui.treeStructure.treetable.TreeTableModelAdapter;
-import com.intellij.ui.treeStructure.treetable.TreeTableTree;
-import com.intellij.util.ArrayUtil;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DragSource;
+import java.util.*;
+import java.util.List;
 
 public class TableRowTransferHandler extends TransferHandler {
 	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class.getName());
@@ -80,9 +80,9 @@ public class TableRowTransferHandler extends TransferHandler {
 			Arrays.sort(selectionRows);
 			selectionRows = ArrayUtil.reverseArray(selectionRows);
 
-			java.util.List<DefaultMutableTreeNode> nodesToSelect = new ArrayList<DefaultMutableTreeNode>();
-			java.util.List<DefaultMutableTreeNode> nodesToExpand = new ArrayList<DefaultMutableTreeNode>();
-			java.util.List<DefaultMutableTreeNode> selectedNodes = new ArrayList<DefaultMutableTreeNode>();
+			java.util.List<DefaultMutableTreeNode> nodesToSelect = new ArrayList<>();
+			java.util.List<DefaultMutableTreeNode> nodesToExpand = new ArrayList<>();
+			java.util.List<DefaultMutableTreeNode> selectedNodes = new ArrayList<>();
 			for (int selectionRow : selectionRows) {
 				TreePath treePath = tree.getPathForRow(selectionRow);
 				selectedNodes.add((DefaultMutableTreeNode) treePath.getLastPathComponent());
@@ -169,7 +169,7 @@ public class TableRowTransferHandler extends TransferHandler {
 
 	public List<DefaultMutableTreeNode> getChildren(DefaultMutableTreeNode parent) {
 		Enumeration children = parent.children();
-		List<DefaultMutableTreeNode> list = new ArrayList<DefaultMutableTreeNode>();
+		List<DefaultMutableTreeNode> list = new ArrayList<>();
 		while (children.hasMoreElements()) {
 			DefaultMutableTreeNode o = (DefaultMutableTreeNode) children.nextElement();
 			list.add(o);

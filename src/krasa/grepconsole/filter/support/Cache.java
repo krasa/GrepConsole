@@ -1,13 +1,13 @@
 package krasa.grepconsole.filter.support;
 
+import com.intellij.execution.ui.ConsoleViewContentType;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import com.intellij.execution.ui.ConsoleViewContentType;
-
 public class Cache {
 	protected static Cache instance;
-	private Map<String, ConsoleViewContentType> map = new HashMap<String, ConsoleViewContentType>();
+	private Map<String, ConsoleViewContentType> map = new HashMap<>();
 
 	public static Cache getInstance() {
 		if (instance == null) {
@@ -17,7 +17,7 @@ public class Cache {
 	}
 
 	public static void reset() {
-		getInstance().setMap(new HashMap<String, ConsoleViewContentType>());
+		getInstance().setMap(new HashMap<>());
 	}
 
 	public Map<String, ConsoleViewContentType> getMap() {

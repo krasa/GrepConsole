@@ -14,9 +14,9 @@ public class Profile extends DomainObject {
 	private String maxLengthToMatch = DEFAULT;
 	private long id;
 	private boolean defaultProfile;
-	private List<GrepExpressionGroup> grepExpressionGroups = new ArrayList<GrepExpressionGroup>();
+	private List<GrepExpressionGroup> grepExpressionGroups = new ArrayList<>();
 	@Deprecated
-	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
+	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
 	private boolean enableMaxLengthLimit = true;
@@ -73,7 +73,7 @@ public class Profile extends DomainObject {
 	}
 
 	public List<GrepExpressionItem> getAllGrepExpressionItems() {
-		List<GrepExpressionItem> items = new ArrayList<GrepExpressionItem>();
+		List<GrepExpressionItem> items = new ArrayList<>();
 		for (GrepExpressionGroup group : grepExpressionGroups) {
 			items.addAll(group.getGrepExpressionItems());
 		}

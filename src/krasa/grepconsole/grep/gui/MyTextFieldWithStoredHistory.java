@@ -15,15 +15,13 @@
  */
 package krasa.grepconsole.grep.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import krasa.grepconsole.grep.CopyListenerModel;
-
-import org.jetbrains.annotations.NonNls;
-
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.util.text.StringUtil;
+import krasa.grepconsole.grep.CopyListenerModel;
+import org.jetbrains.annotations.NonNls;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: anna
@@ -47,7 +45,7 @@ public class MyTextFieldWithStoredHistory extends MyTextFieldWithHistory {
 	public List<GrepOptionsItem> reset() {
 		final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 		final String history = propertiesComponent.getValue(myPropertyName);
-		List<GrepOptionsItem> result = new ArrayList<GrepOptionsItem>();
+		List<GrepOptionsItem> result = new ArrayList<>();
 		if (history != null) {
 			final String[] items = history.split("\n");
 			for (String item : items) {

@@ -9,7 +9,7 @@ import java.util.List;
 public class GrepExpressionGroup extends DomainObject {
 	private boolean enabled;
 	private String name;
-	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<GrepExpressionItem>();
+	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
 
 	public GrepExpressionGroup() {
 	}

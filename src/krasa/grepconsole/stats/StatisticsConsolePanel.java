@@ -1,14 +1,5 @@
 package krasa.grepconsole.stats;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TimerTask;
-
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -20,16 +11,23 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
-
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.event.HyperlinkEvent;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.TimerTask;
 
 /**
  * @author Vojtech Krasa
  */
 public class StatisticsConsolePanel extends JPanel implements Disposable {
-	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<Pair<JLabel, GrepProcessor>>();
+	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<>();
 	private java.util.Timer timer;
 	private final JPanel jPanel;
 	private GrepHighlightFilter grepHighlightFilter;
@@ -101,7 +99,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 		final JLabel label = new JLabel("0");
 		label.setForeground(JBColor.BLACK);
-		pairs.add(new Pair<JLabel, GrepProcessor>(label, processor));
+		pairs.add(new Pair<>(label, processor));
 
 		final krasa.grepconsole.stats.common.ColorPanel color = new krasa.grepconsole.stats.common.ColorPanel(
 				processor.getGrepExpressionItem().getGrepExpression());

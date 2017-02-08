@@ -15,7 +15,7 @@ public class GrepExpressionFolder extends AbstractGrepModelElement {
 	public GrepExpressionFolder(String id) {
 		super(id);
 
-		children = new LinkedList<AbstractGrepModelElement>();
+		children = new LinkedList<>();
 	}
 
 	@Override

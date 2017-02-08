@@ -241,7 +241,7 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 
   public static class ExecutorServiceHolder {
     private static final ThreadPoolExecutor ourThreadExecutorsService =
-      new ThreadPoolExecutor(0, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(),
+            new ThreadPoolExecutor(0, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<>(),
                              ConcurrencyUtil.newNamedThreadFactory("OSProcessHandler pooled thread"));
 
     /** @deprecated use {@link MyProcessHandler#submit(Runnable)} instead (to be removed in IDEA 16) */

@@ -1,18 +1,17 @@
 package krasa.grepconsole.filter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-
 import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
@@ -40,7 +39,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		Pair<String, ConsoleViewContentType> result = null;
 		if (state != null) {
 			if (state.isExclude()) {
-				result = new Pair<String, ConsoleViewContentType>(null, null);
+				result = new Pair<>(null, null);
 			}
 		}
 		if (result == null) {
@@ -52,7 +51,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	@Override
 	protected void initProcessors() {
-		grepProcessors = new ArrayList<GrepProcessor>();
+		grepProcessors = new ArrayList<>();
 		if (profile.isEnabledInputFiltering()) {
 			boolean inputFilterExists = false;
 			for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {

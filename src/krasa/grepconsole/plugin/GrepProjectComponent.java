@@ -123,7 +123,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	}
 
 	public void register(CloseAction action) {
-		tailCloseActions.add(new WeakReference<CloseAction>(action));
+		tailCloseActions.add(new WeakReference<>(action));
 	}
 
 	public void closeAllTails(AnActionEvent e) {

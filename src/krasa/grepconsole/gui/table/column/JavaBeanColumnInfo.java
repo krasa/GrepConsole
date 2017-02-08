@@ -1,14 +1,12 @@
 package krasa.grepconsole.gui.table.column;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
+import com.intellij.util.ui.ColumnInfo;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.util.ui.ColumnInfo;
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	private String maxStringValue = null;
@@ -129,7 +127,7 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 
 	public boolean addListener(ValueChangedListener<Item, Value> listener) {
 		if (valueChangedListeners == null) {
-			valueChangedListeners = new ArrayList<ValueChangedListener<Item, Value>>();
+			valueChangedListeners = new ArrayList<>();
 		}
 		return valueChangedListeners.add(listener);
 	}
