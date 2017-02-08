@@ -12,7 +12,6 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.tail.TailContentExecutor;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,9 +27,8 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 	private Project project;
 	private GrepProjectState grepProjectState = new GrepProjectState();
-	@Transient
-	private transient List<WeakReference<TailContentExecutor.PinAction>> listeners = new ArrayList<>();
-	private transient List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
+	private List<WeakReference<TailContentExecutor.PinAction>> listeners = new ArrayList<>();
+	private List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
 
 	public static GrepProjectComponent getInstance(Project project) {
 		return project.getComponent(GrepProjectComponent.class);
