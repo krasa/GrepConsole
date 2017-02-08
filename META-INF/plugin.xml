@@ -200,8 +200,6 @@
 		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
 								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
 
-		<projectService serviceImplementation="krasa.grepconsole.tail.TailPin"/>
-
 		<!-- Add your extensions here -->
 	</extensions>
 </idea-plugin>

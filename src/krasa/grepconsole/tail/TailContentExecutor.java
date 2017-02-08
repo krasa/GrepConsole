@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.swing.*;
 
+import krasa.grepconsole.plugin.GrepProjectComponent;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +34,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -198,7 +199,7 @@ public class TailContentExecutor implements Disposable {
 			@Override
 			public void actionPerformed(AnActionEvent e) {
 				super.actionPerformed(e);
-				ServiceManager.getService(TailPin.class).removePinned(file);
+				GrepProjectComponent.getInstance(myProject).unpin(file);
 			}
 		});
 		return actionGroup;
@@ -273,15 +274,14 @@ public class TailContentExecutor implements Disposable {
 		}
 	}
 
-	private class PinAction extends ToggleAction implements DumbAware {
+	public class PinAction extends ToggleAction implements DumbAware {
 		private boolean pinned;
-		@NotNull
-		private final TailPin service;
 
 		public PinAction() {
 			super("Pin", "Reopen with project", AllIcons.General.Pin_tab);
-			service = ServiceManager.getService(myProject, TailPin.class);
-			pinned = service.isPinned(file.getAbsoluteFile());
+			GrepProjectComponent instance = GrepProjectComponent.getInstance(myProject);
+			instance.register(this);
+			pinned = instance.isPinned(file.getAbsoluteFile());
 		}
 
 		@Override
@@ -289,13 +289,18 @@ public class TailContentExecutor implements Disposable {
 			return pinned;
 		}
 
+		public void refreshPinStatus(GrepProjectComponent projectComponent) {
+			pinned = projectComponent.isPinned(file.getAbsoluteFile());
+		}
+
 		@Override
 		public void setSelected(AnActionEvent anActionEvent, boolean b) {
 			pinned = b;
-			if (b) {
-				service.addPinned(file);
+			GrepProjectComponent projectComponent = GrepProjectComponent.getInstance(myProject);
+			if (pinned) {
+				projectComponent.pin(file);
 			} else {
-				service.removePinned(file);
+				projectComponent.unpin(file);
 			}
 		}
 

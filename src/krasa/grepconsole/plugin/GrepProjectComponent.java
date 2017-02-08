@@ -1,23 +1,39 @@
 package krasa.grepconsole.plugin;
 
-import static com.intellij.openapi.components.ServiceManager.getService;
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import krasa.grepconsole.tail.TailPin;
+import krasa.grepconsole.tail.TailContentExecutor;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.intellij.execution.ExecutionAdapter;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBusConnection;
+import com.intellij.util.xmlb.annotations.Transient;
 
-public class GrepProjectComponent implements ProjectComponent {
+@State(name = "GrepConsole", storages = { @Storage(value = "GrepConsole.xml") })
+public class GrepProjectComponent implements ProjectComponent, PersistentStateComponent<GrepProjectState> {
 	private static final Logger LOG = Logger.getInstance(GrepProjectComponent.class);
 
 	private Project project;
+	private GrepProjectState grepProjectState = new GrepProjectState();
+	@Transient
+	private transient List<WeakReference<TailContentExecutor.PinAction>> listeners = new ArrayList<>();
+
+	public static GrepProjectComponent getInstance(Project project) {
+		return project.getComponent(GrepProjectComponent.class);
+	}
 
 	public GrepProjectComponent(Project project) {
 		this.project = project;
@@ -54,7 +70,9 @@ public class GrepProjectComponent implements ProjectComponent {
 	public void projectOpened() {
 		// called when project is opened
 		try {
-			getService(project, TailPin.class).openOldPins();
+			if (grepProjectState != null) {
+				grepProjectState.openOldPins(project);
+			}
 		} catch (Exception e) {
 			LOG.error(e);
 		}
@@ -62,5 +80,46 @@ public class GrepProjectComponent implements ProjectComponent {
 
 	@Override
 	public void projectClosed() {
+	}
+
+	@NotNull
+	@Override
+	public GrepProjectState getState() {
+		return grepProjectState;
+	}
+
+	@Override
+	public void loadState(GrepProjectState grepProjectState) {
+		this.grepProjectState = grepProjectState;
+	}
+
+	public void register(TailContentExecutor.PinAction action) {
+		listeners.add(new WeakReference<>(action));
+	}
+
+	public void pin(@NotNull File pinnedFile) {
+		grepProjectState.addPinned(pinnedFile);
+		refresh();
+	}
+
+	public void unpin(File file) {
+		getState().removePinned(file);
+		refresh();
+	}
+
+	private void refresh() {
+		for (Iterator<WeakReference<TailContentExecutor.PinAction>> iterator = listeners.iterator(); iterator.hasNext();) {
+			WeakReference<TailContentExecutor.PinAction> listener = iterator.next();
+			TailContentExecutor.PinAction pinAction = listener.get();
+			if (pinAction == null) {
+				iterator.remove();
+			} else {
+				pinAction.refreshPinStatus(this);
+			}
+		}
+	}
+
+	public boolean isPinned(File file) {
+		return getState().isPinned(file);
 	}
 }
