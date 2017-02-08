@@ -1,0 +1,47 @@
+package krasa.grepconsole.plugin;
+
+import com.intellij.openapi.project.Project;
+import krasa.grepconsole.action.OpenFileInConsoleAction;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+public class GrepProjectState {
+	@NotNull
+	private Set<String> pinnedTailFiles = new LinkedHashSet<>();
+
+	public void openOldPins(Project project) {
+		for (String pinnedFile : pinnedTailFiles.toArray(new String[pinnedTailFiles.size()])) {
+			File file = new File(pinnedFile);
+			if (file.exists()) {
+				new OpenFileInConsoleAction().openFileInConsole(project, file);
+			} else {
+				pinnedTailFiles.remove(pinnedFile);
+			}
+		}
+	}
+
+	@NotNull
+	public Set<String> getPinnedTailFiles() {
+		return pinnedTailFiles;
+	}
+
+	public void setPinnedTailFiles(@NotNull Set<String> pinnedTailFiles) {
+		this.pinnedTailFiles = pinnedTailFiles;
+	}
+
+	public void addPinned(@NotNull File pinnedFile) {
+		this.pinnedTailFiles.add(pinnedFile.getAbsolutePath());
+	}
+
+	public void removePinned(File file) {
+		this.pinnedTailFiles.remove(file.getAbsolutePath());
+	}
+
+
+	public boolean isPinned(File file) {
+		return pinnedTailFiles.contains(file.getAbsolutePath());
+	}
+}
