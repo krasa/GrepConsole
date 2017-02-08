@@ -1,18 +1,10 @@
 package krasa.grepconsole.plugin;
 
-import java.io.File;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import krasa.grepconsole.tail.TailContentExecutor;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.execution.ExecutionAdapter;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.ui.actions.CloseAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
@@ -21,6 +13,14 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBusConnection;
 import com.intellij.util.xmlb.annotations.Transient;
+import krasa.grepconsole.tail.TailContentExecutor;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @State(name = "GrepConsole", storages = { @Storage(value = "GrepConsole.xml") })
 public class GrepProjectComponent implements ProjectComponent, PersistentStateComponent<GrepProjectState> {
@@ -30,6 +30,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	private GrepProjectState grepProjectState = new GrepProjectState();
 	@Transient
 	private transient List<WeakReference<TailContentExecutor.PinAction>> listeners = new ArrayList<>();
+	private transient List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
 
 	public static GrepProjectComponent getInstance(Project project) {
 		return project.getComponent(GrepProjectComponent.class);
@@ -121,5 +122,19 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 	public boolean isPinned(File file) {
 		return getState().isPinned(file);
+	}
+
+	public void register(CloseAction action) {
+		tailCloseActions.add(new WeakReference<CloseAction>(action));
+	}
+
+	public void closeAllTails(AnActionEvent e) {
+		for (WeakReference<CloseAction> tailCloseAction : tailCloseActions) {
+			CloseAction closeAction = tailCloseAction.get();
+			if (closeAction != null) {
+				closeAction.actionPerformed(e);
+			}
+		}
+		tailCloseActions.clear();
 	}
 }

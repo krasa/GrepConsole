@@ -1,17 +1,5 @@
 package krasa.grepconsole.tail;
 
-import java.awt.*;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.*;
-
-import krasa.grepconsole.plugin.GrepProjectComponent;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.ExecutionManager;
@@ -41,6 +29,15 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
+import krasa.grepconsole.plugin.GrepProjectComponent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copy of com.intellij.execution.RunContentExecutor Runs a process and prints the output in a content tab within the
@@ -195,13 +192,16 @@ public class TailContentExecutor implements Disposable {
 		actionGroup.add(new StopAction());
 		actionGroup.add(new PinAction());
 		actionGroup.add(myUi.getOptions().getLayoutActions());
-		actionGroup.add(new CloseAction(runExecutorInstance, contentDescriptor, myProject) {
+		CloseAction closeAction = new CloseAction(runExecutorInstance, contentDescriptor, myProject) {
 			@Override
 			public void actionPerformed(AnActionEvent e) {
 				super.actionPerformed(e);
 				GrepProjectComponent.getInstance(myProject).unpin(file);
 			}
-		});
+		};
+		GrepProjectComponent.getInstance(myProject).register(closeAction);
+		actionGroup.add(closeAction);
+		actionGroup.add(new CloseAll());
 		return actionGroup;
 	}
 	public void activateToolWindow() {
@@ -274,14 +274,26 @@ public class TailContentExecutor implements Disposable {
 		}
 	}
 
+	private class CloseAll extends AnAction implements DumbAware {
+		public CloseAll() {
+			super("Close All", "Close All", AllIcons.Actions.Exit);
+		}
+
+		@Override
+		public void actionPerformed(AnActionEvent e) {
+			GrepProjectComponent.getInstance(myProject).closeAllTails(e);
+		}
+
+	}
+
 	public class PinAction extends ToggleAction implements DumbAware {
 		private boolean pinned;
 
 		public PinAction() {
 			super("Pin", "Reopen with project", AllIcons.General.Pin_tab);
-			GrepProjectComponent instance = GrepProjectComponent.getInstance(myProject);
-			instance.register(this);
-			pinned = instance.isPinned(file.getAbsoluteFile());
+			GrepProjectComponent projectComponent = GrepProjectComponent.getInstance(myProject);
+			projectComponent.register(this);
+			pinned = projectComponent.isPinned(file.getAbsoluteFile());
 		}
 
 		@Override
