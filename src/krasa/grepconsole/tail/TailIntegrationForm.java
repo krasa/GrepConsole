@@ -1,21 +1,20 @@
 package krasa.grepconsole.tail;
 
-import java.awt.event.*;
-import java.io.File;
-import java.util.Arrays;
-
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-
-import krasa.grepconsole.model.TailSettings;
-import krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent;
-
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.PathUtil;
+import krasa.grepconsole.model.TailSettings;
+import krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent;
+
+import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.Arrays;
 
 public class TailIntegrationForm {
 	private final Logger log = Logger.getInstance(TailIntegrationForm.class);
@@ -99,8 +98,14 @@ public class TailIntegrationForm {
 
 	private void updateWindowsIntegration() {
 		if (SystemInfo.isWindows) {
-			final boolean setupped = WindowsRegistryChange.isSetupped(getJarPath(), getPort());
-			windowsIntegration.setText(setupped ? "Remove Windows integration" : "Integrate with Windows context menu");
+			try {
+				final boolean setupped = WindowsRegistryChange.isSetupped(getJarPath(), getPort());
+				windowsIntegration.setText(setupped ? "Remove Windows integration" : "Integrate with Windows context menu");
+			} catch (Throwable e) {
+				log.error(e);
+				windowsIntegration.setEnabled(false);
+				windowsIntegrationLabel.setEnabled(false);
+			}
 		} else {
 			windowsIntegration.setVisible(false);
 			windowsIntegrationLabel.setVisible(false);
