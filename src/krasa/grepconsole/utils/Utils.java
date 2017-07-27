@@ -5,6 +5,8 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
+import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ide.CopyPasteManager;
 import org.jetbrains.annotations.NotNull;
@@ -14,9 +16,9 @@ import java.awt.datatransfer.Transferable;
 
 public class Utils {
 	public static int tryParseInteger(String text) {
-		if ("".equals(text))
+		if ("".equals(text)) {
 			return 0;
-
+		}
 		try {
 			return Integer.parseInt(text);
 		} catch (NumberFormatException e) {
@@ -47,8 +49,13 @@ public class Utils {
 
 	public static String getSelectedString(AnActionEvent e) {
 		DataContext dataContext = e.getDataContext();
-		Editor data1 = CommonDataKeys.EDITOR.getData(dataContext);
-		return data1.getCaretModel().getPrimaryCaret().getSelectedText();
+		Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
+		if (editor == null) {
+			return null;
+		}
+		CaretModel caretModel = editor.getCaretModel();
+		Caret primaryCaret = caretModel.getPrimaryCaret();
+		return primaryCaret.getSelectedText();
 	}
 
 	@NotNull
