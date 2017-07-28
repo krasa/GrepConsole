@@ -19,13 +19,9 @@ public class WindowsRegistryChange {
 	public static final WinReg.HKEY CURRENT_USER = WinReg.HKEY_CURRENT_USER;
 
 	public static void main(String[] args) {
-		final String jarPath = "F:\\workspace\\_projekty\\Github\\" + getGrepConsoleRegistryName() + "\\lib\\"
+		final String jarPath = "F:\\workspace\\_projekty\\Github\\GrepConsole\\lib\\"
 				+ HTTP_CLIENT_JAR;
 		setup(jarPath, 8093);
-	}
-
-	public static String getGrepConsoleRegistryName() {
-		return "GrepConsole" + ApplicationNamesInfo.getInstance().getProductName();
 	}
 
 	public static void setup(String jarPath, final int port) {
@@ -33,18 +29,30 @@ public class WindowsRegistryChange {
 
 		Advapi32Util.registryCreateKey(CURRENT_USER, "Software\\Classes\\*\\shell");
 		Advapi32Util.registryCreateKey(CURRENT_USER, CLASSES_GREPCONSOLE);
-		Advapi32Util.registrySetStringValue(CURRENT_USER, CLASSES_GREPCONSOLE, null, "Open in " + getProductName()
+		Advapi32Util.registrySetStringValue(CURRENT_USER, CLASSES_GREPCONSOLE, null, "Open in " + getFullProductName()
 				+ " console");
 		Advapi32Util.registryCreateKey(CURRENT_USER, CLASSES_GREPCONSOLE_COMMAND);
-		Advapi32Util.registrySetStringValue(CURRENT_USER, CLASSES_GREPCONSOLE_COMMAND, null, getCommand(jarPath, port));
+		Advapi32Util.registryCreateKey(CURRENT_USER, CLASSES_GREPCONSOLE_COMMAND);
+		Advapi32Util.registrySetExpandableStringValue(CURRENT_USER, CLASSES_GREPCONSOLE_COMMAND, null, getCommand(jarPath, port));
 	}
 
-	private static String getProductName() {
+	public static String getGrepConsoleRegistryName() {
+		return "GrepConsole" + getProductName();
+	}
+
+	public static String getProductName() {
+//		return "IDEA";
+		return ApplicationNamesInfo.getInstance().getProductName();
+	}
+
+
+	private static String getFullProductName() {
+//		return "IntelliJ IDEA";
 		return ApplicationNamesInfo.getInstance().getFullProductName();
 	}
 
 	public static String getCommand(String jarPath, int port) {
-		return "javaw -jar \"" + jarPath + "\" " + port + " \"%1\"";
+		return "%JAVA_HOME%\\bin\\javaw -jar \"" + jarPath + "\" " + port + " \"%1\"";
 	}
 
 	public static boolean isSetupped(String jarPath, final int port) {
