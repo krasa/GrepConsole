@@ -17,9 +17,9 @@
  - http and Windows context menu integration
 
          
-image::https://github.com/krasa/GrepConsole/blob/master/screenshotColors.png
+image::screenshotColors.png[]
 
-image::https://github.com/krasa/GrepConsole/blob/master/screenshotGrepSubConsole.png                 
+image::screenshotGrepSubConsole.png[]                 
 
                                            
 Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
