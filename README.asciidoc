@@ -16,10 +16,10 @@
  - Drag&Drop "Tail File" panel in main toolbar (if the toolbar is enabled)
  - http and Windows context menu integration
 
+         
+image::https://github.com/krasa/GrepConsole/blob/master/screenshotColors.png
 
-image::screenshotColors.png
-
-image::screenshotGrepSubConsole.png                 
+image::https://github.com/krasa/GrepConsole/blob/master/screenshotGrepSubConsole.png                 
 
                                            
 Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
