@@ -99,13 +99,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		runnerLayoutUi.selectAndFocus(tab, true, true);
 
 
-		PinnedGrepsState.RunConfigurationRef runConfigurationRef = pinAction.getRunConfigurationRef();
+		PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef = pinAction.getRunConfigurationRef();
 		quickFilterPanel.setApplyCallback(new Callback() {
 			@Override
 			public void apply(GrepModel grepModel) {
 				copyingListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getExpression()));
-				PinnedGrepsState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, false);
+				PinnedGrepConsolesState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, false);
 			}
 		});
 
@@ -314,7 +314,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private final String parentConsoleUUID;
 		private String consoleUUID;
 		private Project myProject;
-		private PinnedGrepsState.RunConfigurationRef runConfigurationRef;
+		private PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef;
 
 		public PinAction(Project myProject, GrepPanel quickFilterPanel, RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID) {
 			super("Pin", "Reopen on next run", AllIcons.General.Pin_tab);
@@ -322,8 +322,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			this.parentConsoleUUID = parentConsoleUUID;
 			this.consoleUUID = consoleUUID;
 			this.myProject = myProject;
-			runConfigurationRef = new PinnedGrepsState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
-			PinnedGrepsState projectComponent = PinnedGrepsState.getInstance(this.myProject);
+			runConfigurationRef = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
+			PinnedGrepConsolesState projectComponent = PinnedGrepConsolesState.getInstance(this.myProject);
 			projectComponent.register(this);
 			pinned = projectComponent.isPinned(this);
 		}
@@ -333,14 +333,14 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			return pinned;
 		}
 
-		public void refreshPinStatus(PinnedGrepsState projectComponent) {
+		public void refreshPinStatus(PinnedGrepConsolesState projectComponent) {
 			pinned = projectComponent.isPinned(this);
 		}
 
 		@Override
 		public void setSelected(AnActionEvent anActionEvent, boolean b) {
 			pinned = b;
-			PinnedGrepsState projectComponent = PinnedGrepsState.getInstance(myProject);
+			PinnedGrepConsolesState projectComponent = PinnedGrepConsolesState.getInstance(myProject);
 			if (pinned) {
 				projectComponent.pin(this);
 			} else {
@@ -369,7 +369,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 
 		@NotNull
-		public PinnedGrepsState.RunConfigurationRef getRunConfigurationRef() {
+		public PinnedGrepConsolesState.RunConfigurationRef getRunConfigurationRef() {
 			return runConfigurationRef;
 		}
 	}

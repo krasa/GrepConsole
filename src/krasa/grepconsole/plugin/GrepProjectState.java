@@ -2,6 +2,7 @@ package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.action.OpenFileInConsoleAction;
+import krasa.grepconsole.grep.PinnedGrepConsolesState;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -11,6 +12,8 @@ import java.util.Set;
 public class GrepProjectState {
 	@NotNull
 	private Set<String> pinnedTailFiles = new LinkedHashSet<>();
+	@NotNull
+	private PinnedGrepConsolesState pinnedGrepConsolesState = new PinnedGrepConsolesState();
 
 	public void openOldPins(Project project) {
 		for (String pinnedFile : pinnedTailFiles.toArray(new String[pinnedTailFiles.size()])) {
@@ -21,6 +24,15 @@ public class GrepProjectState {
 				pinnedTailFiles.remove(pinnedFile);
 			}
 		}
+	}
+
+	@NotNull
+	public PinnedGrepConsolesState getPinnedGrepConsolesState() {
+		return pinnedGrepConsolesState;
+	}
+
+	public void setPinnedGrepConsolesState(@NotNull PinnedGrepConsolesState pinnedGrepConsolesState) {
+		this.pinnedGrepConsolesState = pinnedGrepConsolesState;
 	}
 
 	@NotNull

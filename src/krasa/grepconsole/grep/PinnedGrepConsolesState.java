@@ -1,8 +1,7 @@
 package krasa.grepconsole.grep;
 
-import com.intellij.openapi.components.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.xmlb.XmlSerializerUtil;
+import krasa.grepconsole.plugin.GrepProjectComponent;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -11,29 +10,15 @@ import javax.swing.*;
 import java.lang.ref.WeakReference;
 import java.util.*;
 
-@State(name = "PinnedGrepsState", storages = {
-		@Storage(file = StoragePathMacros.PROJECT_FILE),
-		@Storage(file = StoragePathMacros.PROJECT_CONFIG_DIR + "/grepConsolePins.xml", scheme = StorageScheme.DIRECTORY_BASED)})
-public class PinnedGrepsState implements PersistentStateComponent<PinnedGrepsState> {
+public class PinnedGrepConsolesState {
 
 	@com.intellij.util.xmlb.annotations.Transient
 	private List<WeakReference<OpenGrepConsoleAction.PinAction>> actions = new ArrayList<>();
+	private Map<RunConfigurationRef, Pins> map = new HashMap<>();
 
-	public static PinnedGrepsState getInstance(Project project) {
-		return ServiceManager.getService(project, PinnedGrepsState.class);
+	public static PinnedGrepConsolesState getInstance(Project project) {
+		return GrepProjectComponent.getInstance(project).getPinnedGreps();
 	}
-
-	@Nullable
-	@Override
-	public PinnedGrepsState getState() {
-		return this;
-	}
-
-	@Override
-	public void loadState(PinnedGrepsState state) {
-		XmlSerializerUtil.copyBean(state, this);
-	}
-
 
 	public void register(OpenGrepConsoleAction.PinAction pinAction) {
 		actions.add(new WeakReference<>(pinAction));
@@ -109,7 +94,6 @@ public class PinnedGrepsState implements PersistentStateComponent<PinnedGrepsSta
 	}
 
 
-	private Map<RunConfigurationRef, Pins> map = new HashMap<>();
 
 	public Pins getPins(RunConfigurationRef key) {
 		return map.get(key);

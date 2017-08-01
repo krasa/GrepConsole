@@ -12,6 +12,7 @@ import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.messages.MessageBusConnection;
+import krasa.grepconsole.grep.PinnedGrepConsolesState;
 import krasa.grepconsole.tail.TailContentExecutor;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,4 +136,9 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 		}
 		tailCloseActions.clear();
 	}
+
+	public PinnedGrepConsolesState getPinnedGreps() {
+		return grepProjectState.getPinnedGrepConsolesState();
+	}
+
 }

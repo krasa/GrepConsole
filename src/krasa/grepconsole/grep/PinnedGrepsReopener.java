@@ -40,8 +40,8 @@ public class PinnedGrepsReopener {
 				if (!descriptors.isEmpty()) {
 					if (descriptors.size() == 1) {
 						RunContentDescriptor runContentDescriptor = (RunContentDescriptor) descriptors.toArray()[0];
-						PinnedGrepsState.RunConfigurationRef key = new PinnedGrepsState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
-						PinnedGrepsState.Pins state = PinnedGrepsState.getInstance(project).getPins(key);
+						PinnedGrepConsolesState.RunConfigurationRef key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
+						PinnedGrepConsolesState.Pins state = PinnedGrepConsolesState.getInstance(project).getPins(key);
 						if (state != null && !state.getPins().isEmpty() && consoleView instanceof ConsoleViewImpl) {
 							try {
 								SwingUtilities.invokeAndWait(() -> {
@@ -50,8 +50,8 @@ public class PinnedGrepsReopener {
 									}
 									try {
 										enabled = false;
-										List<PinnedGrepsState.Pin> list = state.getPins();
-										for (PinnedGrepsState.Pin pin : list) {
+										List<PinnedGrepConsolesState.Pin> list = state.getPins();
+										for (PinnedGrepConsolesState.Pin pin : list) {
 											if (pin.getParentConsoleUUID() == null) {
 												initConsole(pin, (ConsoleViewImpl) consoleView, list);
 											}
@@ -69,9 +69,9 @@ public class PinnedGrepsReopener {
 				}
 			}
 
-			public void initConsole(PinnedGrepsState.Pin pin, ConsoleViewImpl parent, List<PinnedGrepsState.Pin> list) {
+			public void initConsole(PinnedGrepConsolesState.Pin pin, ConsoleViewImpl parent, List<PinnedGrepConsolesState.Pin> list) {
 				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, parent, pin.getGrepModel(), null, pin.getConsoleUUID());
-				for (PinnedGrepsState.Pin childPin : list) {
+				for (PinnedGrepConsolesState.Pin childPin : list) {
 					if (pin.getConsoleUUID().equals(childPin.getParentConsoleUUID())) {
 						initConsole(childPin, foo, list);
 					}
