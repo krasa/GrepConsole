@@ -61,6 +61,7 @@ public class SettingsDialog {
 	private JCheckBox enableFoldings;
 	private JFormattedTextField maxProcessingTime;
 	private JCheckBox filterOutBeforeGreppingToASubConsole;
+	private JButton web;
 	// private JCheckBox synchronous;
 	private PluginState settings;
 
@@ -81,6 +82,12 @@ public class SettingsDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
+			}
+		});
+		web.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				BareBonesBrowserLaunch.openURL("https://plugins.jetbrains.com/plugin/7125-grep-console");
 			}
 		});
 		addNewButton.addActionListener(new AddNewItemAction());

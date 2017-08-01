@@ -197,7 +197,8 @@
                   <grid row="2" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Filter out before grepping to a sub-console"/>
+                  <text value="Use filtering before grepping to a sub-console"/>
+                  <toolTipText value="Uncheck if you want to grep all the input into a sub-console before it will be filtered."/>
                 </properties>
               </component>
               <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
@@ -206,6 +207,15 @@
                 </constraints>
                 <properties>
                   <text value=""/>
+                </properties>
+              </component>
+              <component id="4c78f" class="javax.swing.JButton" binding="web" default-binding="true">
+                <constraints>
+                  <grid row="2" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <horizontalTextPosition value="0"/>
+                  <text value="Web page"/>
                 </properties>
               </component>
             </children>
