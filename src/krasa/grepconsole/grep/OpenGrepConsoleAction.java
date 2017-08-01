@@ -5,8 +5,10 @@ import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.*;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
@@ -31,8 +33,11 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.OutputStream;
+import java.util.UUID;
 
 public class OpenGrepConsoleAction extends DumbAwareAction {
+	public OpenGrepConsoleAction() {
+	}
 
 	public OpenGrepConsoleAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
 		super(text, description, icon);
@@ -42,29 +47,48 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	public void actionPerformed(AnActionEvent e) {
 		Project eventProject = getEventProject(e);
 		ConsoleViewImpl originalConsoleView = (ConsoleViewImpl) getConsoleView(e);
+		String expression = getExpression(e);
+		try {
+			PinnedGrepsReopener.enabled = false;
+			createGrepConsole(eventProject, originalConsoleView, null, expression, UUID.randomUUID().toString());
+		} finally {
+			PinnedGrepsReopener.enabled = true;
+		}
+
+	}
+
+	public ConsoleViewImpl createGrepConsole(Project project, ConsoleViewImpl originalConsoleView, @Nullable CopyListenerModel copyListenerModel, @Nullable String expression, String consoleUUID) {
+		if (copyListenerModel != null) {
+			expression = copyListenerModel.getExpression();
+		}
+
 		final GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(originalConsoleView);
 		if (copyingFilter == null) {
 			throw new IllegalStateException("Console not supported: " + originalConsoleView);
 		}
-		String expression = getExpression(e);
-		CopyListenerModel copyListenerModel = new CopyListenerModel(false, false, false, expression, null);
-		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
+		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project);
+		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, originalConsoleView);
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 		Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile();
-
 		final GrepCopyingFilterListener copyingListener;
 		Mode mode = Mode.SYNC;
 		if (Mode.SYNC == mode) {
-			copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, eventProject, profile);
+			copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, project, profile);
 		} else {
-			copyingListener = new GrepCopyingFilterAsyncListener(myProcessHandler, eventProject, profile);
+			copyingListener = new GrepCopyingFilterAsyncListener(myProcessHandler, project, profile);
 		}
 
 
-		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(eventProject, myProcessHandler);
+		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(project, myProcessHandler);
+		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, copyListenerModel, expression, runnerLayoutUi);
+
+
 		DefaultActionGroup actions = new DefaultActionGroup();
-		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, expression, runnerLayoutUi);
-		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel);
+		String parentConsoleUUID = getConsoleUUID(originalConsoleView);
+		PinAction pinAction = new PinAction(project, quickFilterPanel, runContentDescriptor, parentConsoleUUID, consoleUUID);
+		actions.add(pinAction);
+
+		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
 		for (AnAction action : newConsole.createConsoleActions()) {
 			actions.add(action);
 		}
@@ -74,20 +98,23 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		runnerLayoutUi.addContent(tab);
 		runnerLayoutUi.selectAndFocus(tab, true, true);
 
+
+		PinnedGrepsState.RunConfigurationRef runConfigurationRef = pinAction.getRunConfigurationRef();
 		quickFilterPanel.setApplyCallback(new Callback() {
 			@Override
 			public void apply(CopyListenerModel copyListenerModel) {
 				copyingListener.modelUpdated(copyListenerModel);
 				tab.setDisplayName(title(copyListenerModel.getExpression()));
+				PinnedGrepsState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, copyListenerModel, false);
 			}
 		});
 
+		originalConsoleView.flushDeferredText();
 		for (String s : originalConsoleView.getEditor().getDocument().getText().split("\n")) {
 			copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
 		}
 		copyingFilter.addListener(copyingListener);
 
-		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(eventProject);
 		if (runContentDescriptor != null) {
 			Disposer.register(runContentDescriptor, tab);
 		}
@@ -119,7 +146,17 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				tab.setDisplayName(title(tab.getDisplayName()) + " (Inactive)");
 			}
 		});
+		return newConsole;
+	}
 
+	@Nullable
+	public String getConsoleUUID(ConsoleViewImpl originalConsoleView) {
+		String parentConsoleUUID = null;
+		Container parent = originalConsoleView.getParent();
+		if (parent instanceof MyJPanel) {
+			parentConsoleUUID = ((MyJPanel) parent).getConsoleUUID();
+		}
+		return parentConsoleUUID;
 	}
 
 	protected String title(String expression) {
@@ -150,7 +187,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	@Nullable
-	private RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl originalConsoleView, DataContext dataContext) {
+	private RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl originalConsoleView) {
 		RunnerLayoutUi runnerLayoutUi = null;
 
 		final RunContentDescriptor selectedContent = getRunContentDescriptor(eventProject);
@@ -210,19 +247,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	private static MyJPanel createConsolePanel(RunnerLayoutUi runnerLayoutUi, ConsoleView view, ActionGroup actions,
-											   GrepPanel comp) {
-		MyJPanel panel = new MyJPanel(runnerLayoutUi);
+											   GrepPanel comp, String consoleUUID) {
+		MyJPanel panel = new MyJPanel(runnerLayoutUi, consoleUUID);
 		panel.setLayout(new BorderLayout());
 		panel.add(comp.getRootComponent(), BorderLayout.NORTH);
 		panel.add(view.getComponent(), BorderLayout.CENTER);
-		panel.add(createToolbar(actions), BorderLayout.WEST);
-		return panel;
-	}
-
-	private static JComponent createToolbar(ActionGroup actions) {
 		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions,
 				false);
-		return actionToolbar.getComponent();
+		panel.add(actionToolbar.getComponent(), BorderLayout.WEST);
+		return panel;
 	}
 
 	private ConsoleView createConsole(@NotNull Project project, @NotNull ProcessHandler processHandler) {
@@ -244,7 +277,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		ConsoleViewImpl originalConsoleView = (ConsoleViewImpl) getConsoleView(e);
 		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(originalConsoleView);
 		if (eventProject != null && copyingFilter != null) {
-			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView, e.getDataContext());
+			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, originalConsoleView);
 			enabled = runnerLayoutUi != null && getContentType(runnerLayoutUi) != null;
 		}
 
@@ -254,9 +287,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	static class MyJPanel extends JPanel implements Disposable {
 		private RunnerLayoutUi runnerLayoutUi;
+		private final String consoleUUID;
 
-		public MyJPanel(RunnerLayoutUi runnerLayoutUi) {
+		public MyJPanel(RunnerLayoutUi runnerLayoutUi, String consoleUUID) {
 			this.runnerLayoutUi = runnerLayoutUi;
+			this.consoleUUID = consoleUUID;
+		}
+
+		public String getConsoleUUID() {
+			return consoleUUID;
 		}
 
 		@Override
@@ -266,6 +305,72 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 //			myPreferredFocusableComponent com.intellij.ui.tabs.TabInfo    
 
 			removeAll();
+		}
+	}
+
+	public static class PinAction extends ToggleAction implements DumbAware {
+		private boolean pinned;
+		private final GrepPanel quickFilterPanel;
+		private final String parentConsoleUUID;
+		private String consoleUUID;
+		private Project myProject;
+		private PinnedGrepsState.RunConfigurationRef runConfigurationRef;
+
+		public PinAction(Project myProject, GrepPanel quickFilterPanel, RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID) {
+			super("Pin", "Reopen on next run", AllIcons.General.Pin_tab);
+			this.quickFilterPanel = quickFilterPanel;
+			this.parentConsoleUUID = parentConsoleUUID;
+			this.consoleUUID = consoleUUID;
+			this.myProject = myProject;
+			runConfigurationRef = new PinnedGrepsState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
+			PinnedGrepsState projectComponent = PinnedGrepsState.getInstance(this.myProject);
+			projectComponent.register(this);
+			pinned = projectComponent.isPinned(this);
+		}
+
+		@Override
+		public boolean isSelected(AnActionEvent anActionEvent) {
+			return pinned;
+		}
+
+		public void refreshPinStatus(PinnedGrepsState projectComponent) {
+			pinned = projectComponent.isPinned(this);
+		}
+
+		@Override
+		public void setSelected(AnActionEvent anActionEvent, boolean b) {
+			pinned = b;
+			PinnedGrepsState projectComponent = PinnedGrepsState.getInstance(myProject);
+			if (pinned) {
+				projectComponent.pin(this);
+			} else {
+				projectComponent.unpin(this);
+			}
+		}
+
+		public CopyListenerModel getModel() {
+			return quickFilterPanel.getModel();
+		}
+
+		public boolean isPinned() {
+			return pinned;
+		}
+
+		public String getParentConsoleUUID() {
+			return parentConsoleUUID;
+		}
+
+		public String getConsoleUUID() {
+			return consoleUUID;
+		}
+
+		public Project getMyProject() {
+			return myProject;
+		}
+
+		@NotNull
+		public PinnedGrepsState.RunConfigurationRef getRunConfigurationRef() {
+			return runConfigurationRef;
 		}
 	}
 }

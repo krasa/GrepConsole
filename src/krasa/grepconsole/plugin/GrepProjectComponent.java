@@ -27,7 +27,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 	private Project project;
 	private GrepProjectState grepProjectState = new GrepProjectState();
-	private List<WeakReference<TailContentExecutor.PinAction>> listeners = new ArrayList<>();
+	private List<WeakReference<TailContentExecutor.PinAction>> tailPinActions = new ArrayList<>();
 	private List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
 
 	public static GrepProjectComponent getInstance(Project project) {
@@ -93,7 +93,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	}
 
 	public void register(TailContentExecutor.PinAction action) {
-		listeners.add(new WeakReference<>(action));
+		tailPinActions.add(new WeakReference<>(action));
 	}
 
 	public void pin(@NotNull File pinnedFile) {
@@ -107,7 +107,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	}
 
 	private void refresh() {
-		for (Iterator<WeakReference<TailContentExecutor.PinAction>> iterator = listeners.iterator(); iterator.hasNext();) {
+		for (Iterator<WeakReference<TailContentExecutor.PinAction>> iterator = tailPinActions.iterator(); iterator.hasNext(); ) {
 			WeakReference<TailContentExecutor.PinAction> listener = iterator.next();
 			TailContentExecutor.PinAction pinAction = listener.get();
 			if (pinAction == null) {

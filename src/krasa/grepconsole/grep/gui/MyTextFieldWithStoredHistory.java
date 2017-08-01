@@ -29,12 +29,16 @@ import java.util.List;
  */
 public class MyTextFieldWithStoredHistory extends MyTextFieldWithHistory {
 	private final String myPropertyName;
-
+	private boolean initialized = false;
+	
 	public MyTextFieldWithStoredHistory(@NonNls final String propertyName) {
 		myPropertyName = propertyName;
 	}
 
 	public void addCurrentTextToHistory(CopyListenerModel copyListenerModel) {
+		if (!initialized) {
+			throw new RuntimeException("not initialized");
+		}
 		super.addCurrentTextToHistory(copyListenerModel);
 		PropertiesComponent.getInstance().setValue(myPropertyName, StringUtil.join(getHistory(), "\n"));
 	}
@@ -43,6 +47,7 @@ public class MyTextFieldWithStoredHistory extends MyTextFieldWithHistory {
 	 * does not work when called from createUIComponents
 	 */
 	public List<GrepOptionsItem> reset() {
+		initialized = true;
 		final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 		final String history = propertiesComponent.getValue(myPropertyName);
 		List<GrepOptionsItem> result = new ArrayList<>();

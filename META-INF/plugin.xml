@@ -199,7 +199,8 @@
 		<console.folding implementation="krasa.grepconsole.folding.GrepConsoleFolding"/>
 		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
 								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
-
+		<projectService
+				serviceImplementation="krasa.grepconsole.grep.PinnedGrepsState"/>
 		<!-- Add your extensions here -->
 	</extensions>
 </idea-plugin>

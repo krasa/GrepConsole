@@ -1,18 +1,5 @@
 package krasa.grepconsole.grep.gui;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.regex.PatternSyntaxException;
-
-import javax.swing.*;
-
-import krasa.grepconsole.grep.CopyListenerModel;
-import krasa.grepconsole.grep.OpenGrepConsoleAction;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -26,6 +13,16 @@ import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
+import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.OpenGrepConsoleAction;
+import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.regex.PatternSyntaxException;
 
 public class GrepPanel extends JPanel implements Disposable {
 
@@ -50,6 +47,7 @@ public class GrepPanel extends JPanel implements Disposable {
 	private JLabel unlessLabel;
 	private JButton clearHistory;
 	private OpenGrepConsoleAction.Callback applyCallback;
+	private CopyListenerModel copyListenerModel;
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -67,12 +65,25 @@ public class GrepPanel extends JPanel implements Disposable {
 	}
 
 	public GrepPanel(final ConsoleViewImpl originalConsole, final ConsoleViewImpl newConsole,
-					 GrepCopyingFilterListener copyingListener, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
+					 GrepCopyingFilterListener copyingListener, CopyListenerModel copyListenerModel, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
 		this.copyingListener = copyingListener;
 		this.runnerLayoutUi = runnerLayoutUi;
+		initModel(pattern, copyListenerModel);
+		actions();
+		buttons();
+		expressionTextField.addItemListener(new ItemChangeListener());
+
+	}
+
+	public void initModel(String pattern, CopyListenerModel copyListenerModel) {
+		//reset initializes model
 		java.util.List<GrepOptionsItem> history = expressionTextField.reset();
+		if (copyListenerModel != null) {
+			this.expressionTextField.addCurrentTextToHistory(copyListenerModel);
+		}
+
 		if (!StringUtils.isEmpty(pattern)) {
 			GrepOptionsItem selectedItem = null;
 			for (GrepOptionsItem grepOptionsItem : history) {
@@ -90,10 +101,7 @@ public class GrepPanel extends JPanel implements Disposable {
 
 		expLabel.setLabelFor(expressionTextField);
 		unlessLabel.setLabelFor(unlessExpressionTextField);
-		actions();
-		buttons();
-		expressionTextField.addItemListener(new ItemChangeListener());
-		CopyListenerModel copyListenerModel = new CopyListenerModel(matchCase.isSelected(), wholeLine.isSelected(),
+		copyListenerModel = new CopyListenerModel(matchCase.isSelected(), wholeLine.isSelected(),
 				regex.isSelected(), expressionTextField.getText(), unlessExpressionTextField.getText());
 		this.expressionTextField.addCurrentTextToHistory(copyListenerModel);
 	}
@@ -163,15 +171,25 @@ public class GrepPanel extends JPanel implements Disposable {
 					JComponent component = content.getComponent();
 					if (component == originalConsole) {
 						runnerLayoutUi.selectAndFocus(content, true, true);
-					} else if (isChild(component, originalConsole)) {
+						return;
+					} else if (isChild(component, originalConsole, -1)) {
 						runnerLayoutUi.selectAndFocus(content, true, true);
+						return;
+					}
+				}
+				//for testng console
+				for (Content content : contents) {
+					JComponent component = content.getComponent();
+					if (isChild(component, originalConsole, -2)) {
+						runnerLayoutUi.selectAndFocus(content, true, true);
+						return;
 					}
 				}
 
 			}
 
-			private boolean isChild(JComponent component, ConsoleViewImpl originalConsole) {
-				return component.getComponentZOrder(originalConsole) != -1;
+			private boolean isChild(JComponent component, ConsoleViewImpl originalConsole, int i) {
+				return component.getComponentZOrder(originalConsole) != i;
 			}
 		});
 		buttonSize(sourceButton);
@@ -193,6 +211,10 @@ public class GrepPanel extends JPanel implements Disposable {
 		}
 	}
 
+	public CopyListenerModel getModel() {
+		return copyListenerModel;
+	}
+	
 	public void apply() {
 		if (applyCallback != null) {
 			CopyListenerModel copyListenerModel = new CopyListenerModel(matchCase.isSelected(),
@@ -203,6 +225,7 @@ public class GrepPanel extends JPanel implements Disposable {
 				applyCallback.apply(copyListenerModel);
 				expressionTextField.addCurrentTextToHistory(copyListenerModel);
 				unlessExpressionTextField.addCurrentTextToHistory();
+				this.copyListenerModel = copyListenerModel;
 			} catch (PatternSyntaxException e) {
 				final Notification notification = GROUP_DISPLAY_ID_ERROR.createNotification(
 						"Grep: invalid regexp", NotificationType.WARNING);
