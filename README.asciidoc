@@ -1,0 +1,27 @@
+= Grep Console - IntelliJ plugin
+
+- change colors of matching text or lines
+- grep output into a new console tab
+- fold output
+- filter out unwanted lines
+- play sounds on matches
+- tail files*
+
+
+==== File Tailing:
+
+ - Main menu | Tools | Open File in Console
+ - Main Menu | Help | Tail (IntelliJ) Log in Console
+ - Project View toolwindow | right click context menu | Tail
+ - Drag&Drop "Tail File" panel in main toolbar (if the toolbar is enabled)
+ - http and Windows context menu integration
+
+
+image::screenshotColors.png
+
+image::screenshotGrepSubConsole.png                 
+
+                                           
+Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
+Used http://plugins.jetbrains.com/plugin/6027?pr=idea[Remote call plugin] implementation for http integration.
+
