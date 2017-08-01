@@ -13,7 +13,7 @@ import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
-import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 import org.apache.commons.lang.StringUtils;
@@ -47,7 +47,7 @@ public class GrepPanel extends JPanel implements Disposable {
 	private JLabel unlessLabel;
 	private JButton clearHistory;
 	private OpenGrepConsoleAction.Callback applyCallback;
-	private CopyListenerModel copyListenerModel;
+	private GrepModel grepModel;
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -65,23 +65,23 @@ public class GrepPanel extends JPanel implements Disposable {
 	}
 
 	public GrepPanel(final ConsoleViewImpl originalConsole, final ConsoleViewImpl newConsole,
-					 GrepCopyingFilterListener copyingListener, CopyListenerModel copyListenerModel, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
+					 GrepCopyingFilterListener copyingListener, GrepModel grepModel, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
 		this.copyingListener = copyingListener;
 		this.runnerLayoutUi = runnerLayoutUi;
-		initModel(pattern, copyListenerModel);
+		initModel(pattern, grepModel);
 		actions();
 		buttons();
 		expressionTextField.addItemListener(new ItemChangeListener());
 
 	}
 
-	public void initModel(String pattern, CopyListenerModel copyListenerModel) {
+	public void initModel(String pattern, GrepModel grepModel) {
 		//reset initializes model
 		java.util.List<GrepOptionsItem> history = expressionTextField.reset();
-		if (copyListenerModel != null) {
-			this.expressionTextField.addCurrentTextToHistory(copyListenerModel);
+		if (grepModel != null) {
+			this.expressionTextField.addCurrentTextToHistory(grepModel);
 		}
 
 		if (!StringUtils.isEmpty(pattern)) {
@@ -101,9 +101,9 @@ public class GrepPanel extends JPanel implements Disposable {
 
 		expLabel.setLabelFor(expressionTextField);
 		unlessLabel.setLabelFor(unlessExpressionTextField);
-		copyListenerModel = new CopyListenerModel(matchCase.isSelected(), wholeLine.isSelected(),
+		grepModel = new GrepModel(matchCase.isSelected(), wholeLine.isSelected(),
 				regex.isSelected(), expressionTextField.getText(), unlessExpressionTextField.getText());
-		this.expressionTextField.addCurrentTextToHistory(copyListenerModel);
+		this.expressionTextField.addCurrentTextToHistory(grepModel);
 	}
 
 	class ItemChangeListener implements ItemListener {
@@ -211,21 +211,21 @@ public class GrepPanel extends JPanel implements Disposable {
 		}
 	}
 
-	public CopyListenerModel getModel() {
-		return copyListenerModel;
+	public GrepModel getModel() {
+		return grepModel;
 	}
 	
 	public void apply() {
 		if (applyCallback != null) {
-			CopyListenerModel copyListenerModel = new CopyListenerModel(matchCase.isSelected(),
+			GrepModel grepModel = new GrepModel(matchCase.isSelected(),
 					wholeLine.isSelected(), regex.isSelected(), expressionTextField.getText(),
 					unlessExpressionTextField.getText());
 
 			try {
-				applyCallback.apply(copyListenerModel);
-				expressionTextField.addCurrentTextToHistory(copyListenerModel);
+				applyCallback.apply(grepModel);
+				expressionTextField.addCurrentTextToHistory(grepModel);
 				unlessExpressionTextField.addCurrentTextToHistory();
-				this.copyListenerModel = copyListenerModel;
+				this.grepModel = grepModel;
 			} catch (PatternSyntaxException e) {
 				final Notification notification = GROUP_DISPLAY_ID_ERROR.createNotification(
 						"Grep: invalid regexp", NotificationType.WARNING);

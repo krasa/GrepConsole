@@ -58,23 +58,23 @@ public class PinnedGrepsState implements PersistentStateComponent<PinnedGrepsSta
 		update(pinAction.getRunConfigurationRef(), pinAction.getParentConsoleUUID(), pinAction.getConsoleUUID(), pinAction.getModel(), true);
 	}
 
-	public void update(RunConfigurationRef runContentDescriptor, String parentConsoleUUID, String consoleUUID, CopyListenerModel copyListenerModel, boolean add) {
+	public void update(RunConfigurationRef runContentDescriptor, String parentConsoleUUID, String consoleUUID, GrepModel grepModel, boolean add) {
 		Pins pins = map.get(runContentDescriptor);
 
 		if (pins == null) {
 			if (add) {
-				map.put(runContentDescriptor, new Pins(parentConsoleUUID, consoleUUID, copyListenerModel));
+				map.put(runContentDescriptor, new Pins(parentConsoleUUID, consoleUUID, grepModel));
 			}
 		} else {
 			boolean updated = false;
 			for (Pin pin : pins.pins) {
 				if (pin.consoleUUID.equals(consoleUUID)) {
-					pin.copyListenerModel = copyListenerModel;
+					pin.grepModel = grepModel;
 					updated = true;
 				}
 			}
 			if (!updated && add) {
-				pins.pins.add(new Pin(parentConsoleUUID, consoleUUID, copyListenerModel));
+				pins.pins.add(new Pin(parentConsoleUUID, consoleUUID, grepModel));
 			}
 		}
 	}
@@ -118,8 +118,8 @@ public class PinnedGrepsState implements PersistentStateComponent<PinnedGrepsSta
 	public static class Pins {
 		private List<Pin> pins = new ArrayList<>();
 
-		public Pins(String parentConsoleUUID, String consoleUUID, CopyListenerModel copyListenerModel) {
-			pins.add(new Pin(parentConsoleUUID, consoleUUID, copyListenerModel));
+		public Pins(String parentConsoleUUID, String consoleUUID, GrepModel grepModel) {
+			pins.add(new Pin(parentConsoleUUID, consoleUUID, grepModel));
 		}
 
 		public Pins() {
@@ -138,19 +138,19 @@ public class PinnedGrepsState implements PersistentStateComponent<PinnedGrepsSta
 		@Nullable
 		private String parentConsoleUUID;
 		private String consoleUUID;
-		private CopyListenerModel copyListenerModel;
+		private GrepModel grepModel;
 
 		public Pin() {
 		}
 
-		public Pin(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, @NotNull CopyListenerModel copyListenerModel) {
+		public Pin(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel) {
 			this.parentConsoleUUID = parentConsoleUUID;
 			this.consoleUUID = consoleUUID;
-			this.copyListenerModel = copyListenerModel;
+			this.grepModel = grepModel;
 		}
 
-		public void setCopyListenerModel(@NotNull CopyListenerModel copyListenerModel) {
-			this.copyListenerModel = copyListenerModel;
+		public void setGrepModel(@NotNull GrepModel grepModel) {
+			this.grepModel = grepModel;
 		}
 
 		public void setParentConsoleUUID(@Nullable String parentConsoleUUID) {
@@ -170,8 +170,8 @@ public class PinnedGrepsState implements PersistentStateComponent<PinnedGrepsSta
 			return consoleUUID;
 		}
 
-		public CopyListenerModel getCopyListenerModel() {
-			return copyListenerModel;
+		public GrepModel getGrepModel() {
+			return grepModel;
 		}
 
 		@Override
@@ -179,7 +179,7 @@ public class PinnedGrepsState implements PersistentStateComponent<PinnedGrepsSta
 			return "Pin{" +
 					"parentConsoleUUID='" + parentConsoleUUID + '\'' +
 					", consoleUUID='" + consoleUUID + '\'' +
-					", grepModel=" + copyListenerModel +
+					", grepModel=" + grepModel +
 					'}';
 		}
 	}

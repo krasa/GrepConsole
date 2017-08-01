@@ -70,7 +70,7 @@ public class PinnedGrepsReopener {
 			}
 
 			public void initConsole(PinnedGrepsState.Pin pin, ConsoleViewImpl parent, List<PinnedGrepsState.Pin> list) {
-				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, parent, pin.getCopyListenerModel(), null, pin.getConsoleUUID());
+				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, parent, pin.getGrepModel(), null, pin.getConsoleUUID());
 				for (PinnedGrepsState.Pin childPin : list) {
 					if (pin.getConsoleUUID().equals(childPin.getParentConsoleUUID())) {
 						initConsole(childPin, foo, list);

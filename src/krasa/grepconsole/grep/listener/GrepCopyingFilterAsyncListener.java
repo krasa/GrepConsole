@@ -2,7 +2,7 @@ package krasa.grepconsole.grep.listener;
 
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.HybridQueue;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 import krasa.grepconsole.model.Profile;
@@ -23,8 +23,8 @@ public class GrepCopyingFilterAsyncListener implements GrepCopyingFilterListener
 	}
 
 	@Override
-	public void modelUpdated(CopyListenerModel copyListenerModel) {
-		grepCopyingFilterSyncListener.modelUpdated(copyListenerModel);
+	public void modelUpdated(GrepModel grepModel) {
+		grepCopyingFilterSyncListener.modelUpdated(grepModel);
 	}
 
 	@Override

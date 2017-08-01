@@ -1,7 +1,7 @@
 package krasa.grepconsole.grep.gui;
 
 import com.google.common.base.Splitter;
-import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.GrepModel;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -84,12 +84,12 @@ public class GrepOptionsItem {
 		return grepOptionsItem;
 	}
 
-	public static GrepOptionsItem from(CopyListenerModel copyListenerModel) {
+	public static GrepOptionsItem from(GrepModel grepModel) {
 		GrepOptionsItem grepOptionsItem = new GrepOptionsItem();
-		grepOptionsItem.wholeLine = copyListenerModel.isWholeLine();
-		grepOptionsItem.regex = copyListenerModel.isRegex();
-		grepOptionsItem.caseSensitive = copyListenerModel.isCaseSensitive();
-		grepOptionsItem.expression = copyListenerModel.getExpression();
+		grepOptionsItem.wholeLine = grepModel.isWholeLine();
+		grepOptionsItem.regex = grepModel.isRegex();
+		grepOptionsItem.caseSensitive = grepModel.isCaseSensitive();
+		grepOptionsItem.expression = grepModel.getExpression();
 		return grepOptionsItem;
 
 

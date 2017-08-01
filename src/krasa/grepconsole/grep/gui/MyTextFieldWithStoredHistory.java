@@ -17,7 +17,7 @@ package krasa.grepconsole.grep.gui;
 
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.util.text.StringUtil;
-import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.GrepModel;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.ArrayList;
@@ -35,11 +35,11 @@ public class MyTextFieldWithStoredHistory extends MyTextFieldWithHistory {
 		myPropertyName = propertyName;
 	}
 
-	public void addCurrentTextToHistory(CopyListenerModel copyListenerModel) {
+	public void addCurrentTextToHistory(GrepModel grepModel) {
 		if (!initialized) {
 			throw new RuntimeException("not initialized");
 		}
-		super.addCurrentTextToHistory(copyListenerModel);
+		super.addCurrentTextToHistory(grepModel);
 		PropertiesComponent.getInstance().setValue(myPropertyName, StringUtil.join(getHistory(), "\n"));
 	}
 

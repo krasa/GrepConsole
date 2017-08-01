@@ -17,7 +17,7 @@ package krasa.grepconsole.grep.gui;
 
 import com.intellij.openapi.fileChooser.FileTextField;
 import com.intellij.openapi.ui.ComboBox;
-import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.GrepModel;
 
 import javax.swing.*;
 import javax.swing.event.DocumentListener;
@@ -88,8 +88,8 @@ public class MyTextFieldWithHistory extends ComboBox {
 		hidePopup();
 	}
 
-	public void addCurrentTextToHistory(CopyListenerModel copyListenerModel) {
-		myModel.addElement(GrepOptionsItem.from(copyListenerModel));
+	public void addCurrentTextToHistory(GrepModel grepModel) {
+		myModel.addElement(GrepOptionsItem.from(grepModel));
 	}
 
 	public void selectText() {

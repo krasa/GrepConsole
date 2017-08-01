@@ -5,7 +5,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
-import krasa.grepconsole.grep.CopyListenerModel;
+import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.utils.Notifier;
@@ -16,7 +16,7 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 
 	private final OpenGrepConsoleAction.LightProcessHandler myProcessHandler;
 	private final Project project;
-	private volatile CopyListenerModel.Matcher matcher;
+	private volatile GrepModel.Matcher matcher;
 	private volatile Profile profile;
 	private volatile boolean showLimitNotification = true;
 
@@ -27,8 +27,8 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	}
 
 	@Override
-	public void modelUpdated(@NotNull CopyListenerModel copyListenerModel) {
-		matcher = copyListenerModel.matcher();
+	public void modelUpdated(@NotNull GrepModel grepModel) {
+		matcher = grepModel.matcher();
 	}
 
 	@Override

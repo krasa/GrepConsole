@@ -4,15 +4,15 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.regex.Pattern;
 
-public class CopyListenerModel {
+public class GrepModel {
 	private final boolean caseSensitive;
 	private final boolean wholeLine;
 	private final String expression;
 	private final String unlessExpression;
 	private final boolean regex;
 
-	public CopyListenerModel(boolean caseSensitive, boolean wholeLine, boolean regex, String expression,
-			String unlessExpression) {
+	public GrepModel(boolean caseSensitive, boolean wholeLine, boolean regex, String expression,
+					 String unlessExpression) {
 		this.caseSensitive = caseSensitive;
 		this.wholeLine = wholeLine;
 		this.expression = expression;

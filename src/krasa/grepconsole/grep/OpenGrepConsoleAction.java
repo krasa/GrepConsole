@@ -57,9 +57,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	}
 
-	public ConsoleViewImpl createGrepConsole(Project project, ConsoleViewImpl originalConsoleView, @Nullable CopyListenerModel copyListenerModel, @Nullable String expression, String consoleUUID) {
-		if (copyListenerModel != null) {
-			expression = copyListenerModel.getExpression();
+	public ConsoleViewImpl createGrepConsole(Project project, ConsoleViewImpl originalConsoleView, @Nullable GrepModel grepModel, @Nullable String expression, String consoleUUID) {
+		if (grepModel != null) {
+			expression = grepModel.getExpression();
 		}
 
 		final GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(originalConsoleView);
@@ -80,7 +80,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 
 		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(project, myProcessHandler);
-		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, copyListenerModel, expression, runnerLayoutUi);
+		final GrepPanel quickFilterPanel = new GrepPanel(originalConsoleView, newConsole, copyingListener, grepModel, expression, runnerLayoutUi);
 
 
 		DefaultActionGroup actions = new DefaultActionGroup();
@@ -102,10 +102,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		PinnedGrepsState.RunConfigurationRef runConfigurationRef = pinAction.getRunConfigurationRef();
 		quickFilterPanel.setApplyCallback(new Callback() {
 			@Override
-			public void apply(CopyListenerModel copyListenerModel) {
-				copyingListener.modelUpdated(copyListenerModel);
-				tab.setDisplayName(title(copyListenerModel.getExpression()));
-				PinnedGrepsState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, copyListenerModel, false);
+			public void apply(GrepModel grepModel) {
+				copyingListener.modelUpdated(grepModel);
+				tab.setDisplayName(title(grepModel.getExpression()));
+				PinnedGrepsState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, false);
 			}
 		});
 
@@ -183,7 +183,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	public interface Callback {
 
-		void apply(CopyListenerModel copyListenerModel);
+		void apply(GrepModel grepModel);
 	}
 
 	@Nullable
@@ -348,7 +348,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		}
 
-		public CopyListenerModel getModel() {
+		public GrepModel getModel() {
 			return quickFilterPanel.getModel();
 		}
 

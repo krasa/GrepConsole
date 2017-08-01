@@ -5,75 +5,75 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class CopyListenerModelTest {
-	private CopyListenerModel.Matcher matcher;
+public class GrepModelTest {
+	private GrepModel.Matcher matcher;
 
 	@Test
 	public void matchTest() throws Exception {
-		matcher = new CopyListenerModel(false, false, false, "a", "").matcher();
+		matcher = new GrepModel(false, false, false, "a", "").matcher();
 		_true("a");
 		_true("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(false, false, false, "a", "aa").matcher();
+		matcher = new GrepModel(false, false, false, "a", "aa").matcher();
 		_true("a");
 		_true("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(false, false, true, "a", "aa").matcher();
+		matcher = new GrepModel(false, false, true, "a", "aa").matcher();
 		_true("a");
 		_true("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(false, false, false, "a[a]", "").matcher();
+		matcher = new GrepModel(false, false, false, "a[a]", "").matcher();
 		false_("a");
 		false_("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(false, false, true, "a[a]", "").matcher();
+		matcher = new GrepModel(false, false, true, "a[a]", "").matcher();
 		false_("a");
 		false_("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(false, false, true, "a", "").matcher();
+		matcher = new GrepModel(false, false, true, "a", "").matcher();
 		_true("a");
 		_true("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(false, true, false, "a", "").matcher();
+		matcher = new GrepModel(false, true, false, "a", "").matcher();
 		_true("a");
 		_true("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(false, true, true, "a", "").matcher();
+		matcher = new GrepModel(false, true, true, "a", "").matcher();
 		_true("a");
 		_true("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(true, false, false, "a", "").matcher();
+		matcher = new GrepModel(true, false, false, "a", "").matcher();
 		_true("a");
 		false_("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new CopyListenerModel(true, false, true, "a", "").matcher();
+		matcher = new GrepModel(true, false, true, "a", "").matcher();
 		_true("a");
 		false_("A");
 		_true("aa");
