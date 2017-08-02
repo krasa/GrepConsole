@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.6.163.000.0</version>
+	<version>6.7.163.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -9,13 +9,16 @@
 
 
 	<description><![CDATA[
-			Allows you to define a series of regular expressions which will be tested against the console output or file. 
-			Each expression matching a line will affect the style of the entire line, or play a sound. 
-			For example, error messages could be set to show up with a red background.<br>
-	 		<br>
-	 		Additional Features:<br>
-	 		Filter/grep the console output into a new console tab<br>
-	 		File Tailing:<br>
+		  <ul>
+			<li>change colors of matching text or lines</li>
+			<li>grep output into a new console tab</li>
+			<li>fold output</li>
+			<li>filter out unwanted lines</li>
+			<li>play sounds on matches</li>
+			<li>tail files*</li>
+		  </ul>
+		   <br>
+	 		*File Tailing: <br>
 	 		- Main menu | Tools | Open File in Console<br>
 	 		- Main Menu | Help | Tail (IntelliJ) Log in Console<br>
 	 		- Project View ToolWindow | right click context menu | Tail<br>
@@ -27,6 +30,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>6.7 (2017-08-02)
+		<br>- Grep Consoles pinning
+		<br>- file tail integration fix for Win 10
         <br>6.6 (2017-02-09)
 		<br>- Tail tabs pinning (reopening with a project)
         <br>6.5 (2017-02-05)
