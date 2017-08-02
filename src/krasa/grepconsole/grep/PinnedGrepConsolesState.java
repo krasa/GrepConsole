@@ -1,6 +1,9 @@
 package krasa.grepconsole.grep;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
+import com.intellij.util.xmlb.annotations.Transient;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -12,9 +15,17 @@ import java.util.*;
 
 public class PinnedGrepConsolesState {
 
-	@com.intellij.util.xmlb.annotations.Transient
+	@Transient
+	private int MAX_SIZE;
+	@Transient
 	private List<WeakReference<OpenGrepConsoleAction.PinAction>> actions = new ArrayList<>();
-	private Map<RunConfigurationRef, Pins> map = new HashMap<>();
+
+	private Map<RunConfigurationRef, Pins> map = new LinkedHashMap<>();
+
+	public PinnedGrepConsolesState() {
+		//noinspection UnresolvedPropertyKey
+		MAX_SIZE = Registry.intValue("krasa.grepconsole.grep.PinnedGrepConsolesState.MAX_SIZE", 50);
+	}
 
 	public static PinnedGrepConsolesState getInstance(Project project) {
 		return GrepProjectComponent.getInstance(project).getPinnedGreps();
@@ -22,6 +33,9 @@ public class PinnedGrepConsolesState {
 
 	public void register(OpenGrepConsoleAction.PinAction pinAction) {
 		actions.add(new WeakReference<>(pinAction));
+		if (GrepConsoleApplicationComponent.getInstance().getProfile().isAlwaysPinGrepConsoles()) {
+			pin(pinAction);
+		}
 	}
 
 	public boolean isPinned(OpenGrepConsoleAction.PinAction pinAction) {
@@ -43,12 +57,13 @@ public class PinnedGrepConsolesState {
 		update(pinAction.getRunConfigurationRef(), pinAction.getParentConsoleUUID(), pinAction.getConsoleUUID(), pinAction.getModel(), true);
 	}
 
-	public void update(RunConfigurationRef runContentDescriptor, String parentConsoleUUID, String consoleUUID, GrepModel grepModel, boolean add) {
+	public void update(@NotNull RunConfigurationRef runContentDescriptor, String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel, boolean add) {
 		Pins pins = map.get(runContentDescriptor);
 
 		if (pins == null) {
 			if (add) {
 				map.put(runContentDescriptor, new Pins(parentConsoleUUID, consoleUUID, grepModel));
+				clean();
 			}
 		} else {
 			boolean updated = false;
@@ -62,6 +77,22 @@ public class PinnedGrepConsolesState {
 				pins.pins.add(new Pin(parentConsoleUUID, consoleUUID, grepModel));
 			}
 		}
+	}
+
+	private void clean() {
+		if (isFull()) {
+			Iterator<RunConfigurationRef> iterator = map.keySet().iterator();
+			while (iterator.hasNext()) {
+				if (!isFull()) {
+					break;
+				}
+				iterator.remove();
+			}
+		}
+	}
+
+	private boolean isFull() {
+		return map.size() > MAX_SIZE;
 	}
 
 	public void unpin(OpenGrepConsoleAction.PinAction pinAction) {
@@ -102,7 +133,7 @@ public class PinnedGrepConsolesState {
 	public static class Pins {
 		private List<Pin> pins = new ArrayList<>();
 
-		public Pins(String parentConsoleUUID, String consoleUUID, GrepModel grepModel) {
+		public Pins(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel) {
 			pins.add(new Pin(parentConsoleUUID, consoleUUID, grepModel));
 		}
 

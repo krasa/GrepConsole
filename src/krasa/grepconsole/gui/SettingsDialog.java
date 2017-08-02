@@ -62,6 +62,7 @@ public class SettingsDialog {
 	private JFormattedTextField maxProcessingTime;
 	private JCheckBox filterOutBeforeGreppingToASubConsole;
 	private JButton web;
+	private JCheckBox alwaysPinGrepConsoles;
 	// private JCheckBox synchronous;
 	private PluginState settings;
 
@@ -316,42 +317,45 @@ public class SettingsDialog {
 	public void setData(Profile data) {
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		multilineOutput.setSelected(data.isMultiLineOutput());
 		maxProcessingTime.setText(data.getMaxProcessingTime());
-		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
-		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
-		enableFoldings.setSelected(data.isEnableFoldings());
 		filterOutBeforeGreppingToASubConsole.setSelected(data.isFilterOutBeforeGrep());
 		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		alwaysPinGrepConsoles.setSelected(data.isAlwaysPinGrepConsoles());
+		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
+		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
+		enableFiltering.setSelected(data.isEnabledInputFiltering());
+		enableFoldings.setSelected(data.isEnableFoldings());
 	}
 
 	public void getData(Profile data) {
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setMultiLineOutput(multilineOutput.isSelected());
 		data.setMaxProcessingTime(maxProcessingTime.getText());
-		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
-		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
-		data.setEnableFoldings(enableFoldings.isSelected());
 		data.setFilterOutBeforeGrep(filterOutBeforeGreppingToASubConsole.isSelected());
 		data.setMaxLengthToMatch(maxLengthToMatch.getText());
+		data.setAlwaysPinGrepConsoles(alwaysPinGrepConsoles.isSelected());
+		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
+		data.setEnabledInputFiltering(enableFiltering.isSelected());
+		data.setEnableFoldings(enableFoldings.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
 		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit()) return true;
 		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting()) return true;
-		if (enableFiltering.isSelected() != data.isEnabledInputFiltering()) return true;
 		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
 		if (maxProcessingTime.getText() != null ? !maxProcessingTime.getText().equals(data.getMaxProcessingTime()) : data.getMaxProcessingTime() != null)
 			return true;
-		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
-		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault()) return true;
-		if (enableFoldings.isSelected() != data.isEnableFoldings()) return true;
 		if (filterOutBeforeGreppingToASubConsole.isSelected() != data.isFilterOutBeforeGrep()) return true;
 		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch()) : data.getMaxLengthToMatch() != null)
 			return true;
+		if (alwaysPinGrepConsoles.isSelected() != data.isAlwaysPinGrepConsoles()) return true;
+		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
+		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault()) return true;
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering()) return true;
+		if (enableFoldings.isSelected() != data.isEnableFoldings()) return true;
 		return false;
 	}
 

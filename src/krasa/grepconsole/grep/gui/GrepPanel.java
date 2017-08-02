@@ -104,6 +104,9 @@ public class GrepPanel extends JPanel implements Disposable {
 		grepModel = new GrepModel(matchCase.isSelected(), wholeLine.isSelected(),
 				regex.isSelected(), expressionTextField.getText(), unlessExpressionTextField.getText());
 		this.expressionTextField.addCurrentTextToHistory(grepModel);
+		this.grepModel = new GrepModel(matchCase.isSelected(),
+				wholeLine.isSelected(), regex.isSelected(), expressionTextField.getText(),
+				unlessExpressionTextField.getText());
 	}
 
 	class ItemChangeListener implements ItemListener {

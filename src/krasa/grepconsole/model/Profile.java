@@ -32,6 +32,7 @@ public class Profile extends DomainObject {
 	private transient Integer maxProcessingTimeAsInt;
 	private boolean synchronous;
 	private boolean filterOutBeforeGrep;
+	private boolean alwaysPinGrepConsoles = true;
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
@@ -224,5 +225,13 @@ public class Profile extends DomainObject {
 
 	public void setFilterOutBeforeGrep(final boolean filterOutBeforeGrep) {
 		this.filterOutBeforeGrep = filterOutBeforeGrep;
+	}
+
+	public boolean isAlwaysPinGrepConsoles() {
+		return alwaysPinGrepConsoles;
+	}
+
+	public void setAlwaysPinGrepConsoles(final boolean alwaysPinGrepConsoles) {
+		this.alwaysPinGrepConsoles = alwaysPinGrepConsoles;
 	}
 }

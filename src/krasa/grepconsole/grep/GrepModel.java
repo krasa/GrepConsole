@@ -5,11 +5,14 @@ import org.apache.commons.lang.StringUtils;
 import java.util.regex.Pattern;
 
 public class GrepModel {
-	private final boolean caseSensitive;
-	private final boolean wholeLine;
-	private final String expression;
-	private final String unlessExpression;
-	private final boolean regex;
+	private boolean caseSensitive;
+	private boolean wholeLine;
+	private String expression;
+	private String unlessExpression;
+	private boolean regex;
+
+	public GrepModel() {
+	}
 
 	public GrepModel(boolean caseSensitive, boolean wholeLine, boolean regex, String expression,
 					 String unlessExpression) {
@@ -30,6 +33,26 @@ public class GrepModel {
 			unlessExpressionPattern = Pattern.compile(unlessExpression, computeFlags());
 		}
 		return new Matcher(expressionPattern, unlessExpressionPattern, wholeLine);
+	}
+
+	public void setCaseSensitive(boolean caseSensitive) {
+		this.caseSensitive = caseSensitive;
+	}
+
+	public void setWholeLine(boolean wholeLine) {
+		this.wholeLine = wholeLine;
+	}
+
+	public void setExpression(String expression) {
+		this.expression = expression;
+	}
+
+	public void setUnlessExpression(String unlessExpression) {
+		this.unlessExpression = unlessExpression;
+	}
+
+	public void setRegex(boolean regex) {
+		this.regex = regex;
 	}
 
 	public String getExpression() {

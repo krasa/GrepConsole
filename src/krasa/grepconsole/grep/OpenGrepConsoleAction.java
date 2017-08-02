@@ -317,7 +317,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef;
 
 		public PinAction(Project myProject, GrepPanel quickFilterPanel, RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID) {
-			super("Pin", "Reopen on next run", AllIcons.General.Pin_tab);
+			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;
 			this.consoleUUID = consoleUUID;
