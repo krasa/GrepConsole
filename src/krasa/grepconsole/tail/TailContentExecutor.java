@@ -142,6 +142,7 @@ public class TailContentExecutor implements Disposable {
 				return AllIcons.Process.DisabledRun;
 			}
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
+		descriptor.setExecutionId(System.nanoTime());
 
 		final Content content = layoutUi.createContent("ConsoleContent", consolePanel, myTitle,
 				AllIcons.Debugger.Console, consolePanel);

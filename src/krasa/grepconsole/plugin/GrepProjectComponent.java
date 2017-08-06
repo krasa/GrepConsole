@@ -1,8 +1,5 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.execution.ExecutionAdapter;
-import com.intellij.execution.ExecutionManager;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -11,7 +8,6 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.util.messages.MessageBusConnection;
 import krasa.grepconsole.grep.PinnedGrepConsolesState;
 import krasa.grepconsole.tail.TailContentExecutor;
 import org.jetbrains.annotations.NotNull;
@@ -45,14 +41,6 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 	@Override
 	public void initComponent() {
-		final MessageBusConnection conn = project.getMessageBus().connect();
-
-		conn.subscribe(ExecutionManager.EXECUTION_TOPIC, new ExecutionAdapter() {
-			@Override
-			public void processStarting(String executorId, @NotNull ExecutionEnvironment env) {
-				ServiceManager.getInstance().setLastExecutionId(env.getExecutionId());
-			}
-		});
 	}
 
 	@Override

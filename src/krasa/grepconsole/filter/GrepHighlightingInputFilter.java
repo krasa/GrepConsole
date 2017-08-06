@@ -39,7 +39,7 @@ public class GrepHighlightingInputFilter extends GrepHighlightFilter implements 
 	}
 
 	private List<Pair<String, ConsoleViewContentType>> prepareResult(String s, int entireLength, FilterState state,
-			ConsoleViewContentType originalConsoleViewContentType) {
+																	 ConsoleViewContentType consoleViewContentType) {
 
 		List<MyResultItem> resultItemList = adjustWholeLineMatch(entireLength, state);
 
@@ -57,14 +57,14 @@ public class GrepHighlightingInputFilter extends GrepHighlightFilter implements 
 				Integer end = key.upperEndpoint();
 
 				if (lastIndex < start) {
-					pairs.add(Pair.create(s.substring(lastIndex, start), originalConsoleViewContentType));
+					pairs.add(Pair.create(s.substring(lastIndex, start), consoleViewContentType));
 				}
 
 				pairs.add(Pair.create(s.substring(start, end), value.getConsoleViewContentType()));
 				lastIndex = end;
 			}
 			if (s.length() > lastIndex) {
-				pairs.add(Pair.create(s.substring(lastIndex, s.length()), originalConsoleViewContentType));
+				pairs.add(Pair.create(s.substring(lastIndex, s.length()), consoleViewContentType));
 			}
 		}
 

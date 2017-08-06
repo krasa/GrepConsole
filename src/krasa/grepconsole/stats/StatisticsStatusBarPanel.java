@@ -1,10 +1,7 @@
 package krasa.grepconsole.stats;
 
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.execution.ui.RunContentManager;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -13,19 +10,20 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SeparatorComponent;
-import com.intellij.ui.content.ContentManager;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.stats.common.ColorPanel;
+import krasa.grepconsole.utils.FocusUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.lang.ref.WeakReference;
@@ -53,6 +51,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 		layout.setVgap(0);
 		layout.setHgap(4);
 		jPanel = new JPanel(new GridBagLayout());
+		jPanel.setBorder(new LineBorder(Color.BLACK, 1));
 
 		// jPanel.setBackground(Color.BLUE);
 		add(jPanel, BorderLayout.CENTER);
@@ -85,7 +84,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	}
 
 	private JPanel createItem(GrepProcessor processor,
-			final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
+							  final MouseInputAdapter mouseInputAdapter) {
 		final JPanel panel = getItemPanel();
 		ColorPanel colorPanel = getColorPanel(processor);
 		JLabel label = getLabel(processor);
@@ -133,22 +132,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	private void showToolWindow() {
 		final ConsoleViewImpl consoleViewImpl = (ConsoleViewImpl) this.consoleView.get();
 		if (consoleViewImpl != null) {
-			activate(consoleViewImpl.getProject(), grepHighlightFilter.getExecutionId());
-		}
-	}
-
-	private void activate(Project project, long executionId) {
-		final RunContentManager runContentManager = ExecutionManager.getInstance(project).getContentManager();
-		for (RunContentDescriptor descriptor : runContentManager.getAllDescriptors()) {
-			if (descriptor.getExecutionId() == executionId) {
-				final ToolWindow toolWindowByDescriptor = runContentManager.getToolWindowByDescriptor(descriptor);
-				if (toolWindowByDescriptor != null) {
-					final ContentManager contentManager = toolWindowByDescriptor.getContentManager();
-					toolWindowByDescriptor.activate(null);
-					contentManager.setSelectedContent(descriptor.getAttachedContent(), true);
-					return;
-				}
-			}
+			FocusUtils.navigate(getProject(), consoleViewImpl);
 		}
 	}
 
@@ -163,8 +147,15 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	}
 
 	private void initComponents() {
-		OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter = new OpenConsoleSettingsActionMouseInputAdapter(
-				consoleView.get(), getProject());
+		MouseInputAdapter mouseInputAdapter = new MouseInputAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					FocusUtils.navigate(getProject(), consoleView.get());
+				}
+			}
+		};
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInStatusBar()) {
@@ -173,7 +164,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 		}
 	}
 
-	public void add(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
+	public void add(GrepProcessor processor, final MouseInputAdapter mouseInputAdapter) {
 		jPanel.add(createItem(processor, mouseInputAdapter));
 	}
 

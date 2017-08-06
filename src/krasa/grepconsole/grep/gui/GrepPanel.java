@@ -11,11 +11,11 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+import krasa.grepconsole.utils.FocusUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -169,31 +169,10 @@ public class GrepPanel extends JPanel implements Disposable {
 		sourceButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Content[] contents = runnerLayoutUi.getContents();
-				for (Content content : contents) {
-					JComponent component = content.getComponent();
-					if (component == originalConsole) {
-						runnerLayoutUi.selectAndFocus(content, true, true);
-						return;
-					} else if (isChild(component, originalConsole, -1)) {
-						runnerLayoutUi.selectAndFocus(content, true, true);
-						return;
-					}
-				}
-				//for testng console
-				for (Content content : contents) {
-					JComponent component = content.getComponent();
-					if (isChild(component, originalConsole, -2)) {
-						runnerLayoutUi.selectAndFocus(content, true, true);
-						return;
-					}
-				}
+				FocusUtils.selectAndFocusSubTab(runnerLayoutUi, originalConsole);
 
 			}
 
-			private boolean isChild(JComponent component, ConsoleViewImpl originalConsole, int i) {
-				return component.getComponentZOrder(originalConsole) != i;
-			}
 		});
 		buttonSize(sourceButton);
 		buttonSize(reloadButton);

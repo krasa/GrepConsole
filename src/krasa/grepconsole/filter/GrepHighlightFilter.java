@@ -16,7 +16,6 @@ import java.util.List;
 /** must be executed in single thread, see #createProcessor */
 public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
-	private long executionId;
 	protected ConsoleViewContentType lastTextAttributes = null;
 
 	public GrepHighlightFilter(Project project) {
@@ -90,13 +89,6 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 				&& !(profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter());
 	}
 
-	public long getExecutionId() {
-		return executionId;
-	}
-
-	public void setExecutionId(long executionId) {
-		this.executionId = executionId;
-	}
 
 	public boolean hasGrepProcessorsForStatusBar() {
 		final List<GrepProcessor> grepProcessors = getGrepProcessors();

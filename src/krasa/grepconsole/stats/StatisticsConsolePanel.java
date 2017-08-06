@@ -11,14 +11,18 @@ import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
+import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
+import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.model.GrepColor;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.MouseInputAdapter;
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
@@ -60,8 +64,15 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 	private void init() {
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
-		OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter = new OpenConsoleSettingsActionMouseInputAdapter(
-				consoleView, getProject());
+		MouseInputAdapter mouseInputAdapter = new MouseInputAdapter() {
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				if (e.getButton() == MouseEvent.BUTTON1) {
+					new OpenConsoleSettingsAction(consoleView).actionPerformed(getProject(), SettingsContext.NONE);
+				}
+			}
+		};
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInConsole()) {
 				add(grepProcessor, mouseInputAdapter);
@@ -86,12 +97,12 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		}));
 	}
 
-	public void add(GrepProcessor processor, final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
+	public void add(GrepProcessor processor, final MouseInputAdapter mouseInputAdapter) {
 		jPanel.add(createCounterPanel(processor, mouseInputAdapter));
 	}
 
 	private JPanel createCounterPanel(GrepProcessor processor,
-			final OpenConsoleSettingsActionMouseInputAdapter mouseInputAdapter) {
+									  final MouseInputAdapter mouseInputAdapter) {
 		GrepColor backgroundColor = processor.getGrepExpressionItem().getStyle().getBackgroundColor();
 		GrepColor foregroundColor = processor.getGrepExpressionItem().getStyle().getForegroundColor();
 		final JPanel panel = new JPanel(new FlowLayout());

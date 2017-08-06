@@ -1,10 +1,10 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.execution.filters.TextConsoleBuilder;
-import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.MyConsoleViewImplImpl;
 import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,6 @@ public class ServiceManager {
 	/** to couple console with filters */
 	private WeakReference<GrepCopyingFilter> lastCopier;
 	private WeakReference<GrepHighlightingInputFilter> lastGrepHighlightFilter;
-	private long lastExecutionId;
 
 	/** for providing attached filters for certain console */
 	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<>();
@@ -82,7 +81,6 @@ public class ServiceManager {
 
 	public GrepHighlightingInputFilter createHighlightInputFilter(Project project) {
 		GrepHighlightingInputFilter grepHighlightFilter = new GrepHighlightingInputFilter(project);
-		grepHighlightFilter.setExecutionId(getLastExecutionId());
 		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
 		lastGrepHighlightFilter = new WeakReference<>(grepHighlightFilter);
 		return grepHighlightFilter;
@@ -90,7 +88,6 @@ public class ServiceManager {
 
 	public GrepHighlightFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		final GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project);
-		grepHighlightFilter.setExecutionId(getLastExecutionId());
 		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
 		if (consoleView != null) {
 			weakHighlightersMap.put(consoleView, grepHighlightFilter);
@@ -137,14 +134,6 @@ public class ServiceManager {
 		return weakHighlightersMap.containsKey(console);
 	}
 
-	public long getLastExecutionId() {
-		return lastExecutionId;
-	}
-
-	public void setLastExecutionId(long lastExecutionId) {
-		this.lastExecutionId = lastExecutionId;
-	}
-
 	public void registerConsole(ConsoleView console) {
 		GrepCopyingFilter lastCopier = getLastCopier();
 		if (lastCopier != null) {
@@ -176,11 +165,10 @@ public class ServiceManager {
 		}
 	}
 
-	public ConsoleView createConsoleWithoutInputFilter(Project project) {
+	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleViewImpl parentConsoleView) {
 		try {
 			createInputFilter = false;
-			TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
-			return consoleBuilder.getConsole();
+			return new MyConsoleViewImplImpl(project, false, parentConsoleView);
 		} finally {
 			createInputFilter = true;
 		}
