@@ -101,7 +101,7 @@
             </constraints>
             <properties>
               <text value="Reload"/>
-              <toolTipText value="[Alt+Enter] - with the focus in the textfield. Processes the whole source with new the settings"/>
+              <toolTipText value="[Alt+Enter] - with the focus in the textfield. Processes the whole source with the new settings"/>
             </properties>
           </component>
           <component id="7f91a" class="javax.swing.JButton" binding="sourceButton">
