@@ -86,6 +86,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 			@Override
 			public void run() {
 				StatisticsManager.clearCount(grepHighlightFilter);
+				reset();
 			}
 		}));
 

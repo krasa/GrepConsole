@@ -10,7 +10,9 @@ import java.util.List;
 
 public class Profile extends DomainObject {
 	public static final String DEFAULT = "120";
+	public static final String DEFAULT_GREP = "1000";
 	private static final String MAX_PROCESSING_TIME_DEFAULT = "1000";
+
 	private String maxLengthToMatch = DEFAULT;
 	private long id;
 	private boolean defaultProfile;
@@ -33,6 +35,10 @@ public class Profile extends DomainObject {
 	private boolean synchronous;
 	private boolean filterOutBeforeGrep;
 	private boolean alwaysPinGrepConsoles = true;
+	private String maxLengthToGrep = DEFAULT_GREP;
+	@Transient
+	private transient Integer maxLengthToGrepAsInt;
+	private boolean enableMaxLengthGrepLimit;
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
@@ -43,6 +49,18 @@ public class Profile extends DomainObject {
 		}
 		if (this.isEnableMaxLengthLimit()) {
 			endIndex = Math.min(endIndex, this.getMaxLengthToMatchAsInt());
+		}
+		return text.substring(0, endIndex);
+	}
+
+	@NotNull
+	public String limitInputGrepLength_andCutNewLine(@NotNull String text) {
+		int endIndex = text.length();
+		if (text.endsWith("\n")) {
+			--endIndex;
+		}
+		if (this.isEnableMaxLengthGrepLimit()) {
+			endIndex = Math.min(endIndex, this.getMaxLengthToGrepAsInt());
 		}
 		return text.substring(0, endIndex);
 	}
@@ -120,6 +138,13 @@ public class Profile extends DomainObject {
 		return maxLengthToMatchAsInt;
 	}
 
+	public Integer getMaxLengthToGrepAsInt() {
+		if (maxLengthToGrepAsInt == null) {
+			maxLengthToGrepAsInt = Integer.valueOf(maxLengthToGrep);
+		}
+		return maxLengthToGrepAsInt;
+	}
+
 	public Integer getMaxProcessingTimeAsInt() {
 		if (maxProcessingTimeAsInt == null) {
 			maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
@@ -132,15 +157,21 @@ public class Profile extends DomainObject {
 	}
 
 	public void setMaxLengthToMatch(String maxLengthToMatch) {
+		maxLengthToMatch = normalizeInt(maxLengthToMatch, DEFAULT);
+		this.maxLengthToMatch = maxLengthToMatch;
+		maxLengthToMatchAsInt = Integer.valueOf(maxLengthToMatch);
+	}
+
+	@NotNull
+	public String normalizeInt(String maxLengthToMatch, String aDefault) {
 		if (maxLengthToMatch == null || maxLengthToMatch.length() == 0) {
-			maxLengthToMatch = DEFAULT;
+			maxLengthToMatch = aDefault;
 		}
 		maxLengthToMatch = normalize(maxLengthToMatch);
 		if (maxLengthToMatch.length() == 0 || !NumberUtils.isNumber(maxLengthToMatch)) {
-			maxLengthToMatch = DEFAULT;
+			maxLengthToMatch = aDefault;
 		}
-		this.maxLengthToMatch = maxLengthToMatch;
-		maxLengthToMatchAsInt = Integer.valueOf(maxLengthToMatch);
+		return maxLengthToMatch;
 	}
 
 	public boolean isEnableMaxLengthLimit() {
@@ -196,13 +227,7 @@ public class Profile extends DomainObject {
 	}
 
 	public void setMaxProcessingTime(String maxProcessingTime) {
-		if (maxProcessingTime == null || maxProcessingTime.length() == 0) {
-			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
-		}
-		maxProcessingTime = normalize(maxProcessingTime);
-		if (maxProcessingTime.length() == 0 || !NumberUtils.isNumber(maxProcessingTime)) {
-			maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
-		}
+		maxProcessingTime = normalizeInt(maxProcessingTime, MAX_PROCESSING_TIME_DEFAULT);
 		this.maxProcessingTime = maxProcessingTime;
 		maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
 	}
@@ -233,5 +258,23 @@ public class Profile extends DomainObject {
 
 	public void setAlwaysPinGrepConsoles(final boolean alwaysPinGrepConsoles) {
 		this.alwaysPinGrepConsoles = alwaysPinGrepConsoles;
+	}
+
+	public String getMaxLengthToGrep() {
+		return maxLengthToGrep;
+	}
+
+	public void setMaxLengthToGrep(String maxLengthToGrep) {
+		maxLengthToGrep = normalizeInt(maxLengthToGrep, DEFAULT_GREP);
+		this.maxLengthToGrep = maxLengthToGrep;
+		maxLengthToGrepAsInt = Integer.valueOf(maxLengthToGrep);
+	}
+
+	public boolean isEnableMaxLengthGrepLimit() {
+		return enableMaxLengthGrepLimit;
+	}
+
+	public void setEnableMaxLengthGrepLimit(final boolean enableMaxLengthGrepLimit) {
+		this.enableMaxLengthGrepLimit = enableMaxLengthGrepLimit;
 	}
 }

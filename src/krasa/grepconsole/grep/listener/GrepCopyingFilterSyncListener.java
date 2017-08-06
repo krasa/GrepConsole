@@ -49,7 +49,7 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 			stdout = ProcessOutputTypes.SYSTEM;
 		}
 
-		String substring = profile.limitInputLength_andCutNewLine(s);
+		String substring = profile.limitInputGrepLength_andCutNewLine(s);
 		CharSequence charSequence = profile.limitProcessingTime(substring);
 		try {
 			if (matcher.matches(charSequence)) {

@@ -88,7 +88,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 			bgs = new Color[]{
 					new Color(114, 120, 125),
 					new Color(255, 255, 255),
-					new Color(105, 175, 128),
+					new Color(105, 175, 128),					
 					new Color(248, 209, 72),
 					new Color(207, 83, 41),
 					new Color(204, 114, 189),
@@ -129,7 +129,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 			@NotNull
 			@Override
 			public AnAction[] getChildren(@Nullable AnActionEvent e) {
-				return new AnAction[] { new ResetCountAction(), new HideAction() };
+				return new AnAction[]{new ResetAction(), new HideAction()};
 			}
 		};
 		ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
@@ -268,14 +268,15 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 
 	protected abstract void hideStatusBar();
 
-	private class ResetCountAction extends DumbAwareAction {
-		public ResetCountAction() {
-			super("Reset count");
+	private class ResetAction extends DumbAwareAction {
+		public ResetAction() {
+			super("Reset");
 		}
 
 		@Override
 		public void actionPerformed(AnActionEvent e) {
 			StatisticsManager.clearCount(consoleView.get());
+			reset();
 		}
 	}
 

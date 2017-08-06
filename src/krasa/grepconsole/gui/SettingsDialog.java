@@ -63,6 +63,8 @@ public class SettingsDialog {
 	private JCheckBox filterOutBeforeGreppingToASubConsole;
 	private JButton web;
 	private JCheckBox alwaysPinGrepConsoles;
+	private JFormattedTextField maxLengthToGrep;
+	private JCheckBox enableMaxLengthGrep;
 	// private JCheckBox synchronous;
 	private PluginState settings;
 
@@ -264,6 +266,7 @@ public class SettingsDialog {
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
+		maxLengthToGrep = new JFormattedTextField(numberFormatter);
 		maxProcessingTime = new JFormattedTextField(numberFormatter);
 		table = new SettingsTableBuilder(this).getTable();
 	}
@@ -317,45 +320,52 @@ public class SettingsDialog {
 	public void setData(Profile data) {
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
-		multilineOutput.setSelected(data.isMultiLineOutput());
 		maxProcessingTime.setText(data.getMaxProcessingTime());
 		filterOutBeforeGreppingToASubConsole.setSelected(data.isFilterOutBeforeGrep());
-		maxLengthToMatch.setText(data.getMaxLengthToMatch());
 		alwaysPinGrepConsoles.setSelected(data.isAlwaysPinGrepConsoles());
-		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
 		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
 		enableFiltering.setSelected(data.isEnabledInputFiltering());
 		enableFoldings.setSelected(data.isEnableFoldings());
+		enableMaxLengthGrep.setSelected(data.isEnableMaxLengthGrepLimit());
+		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		maxLengthToGrep.setText(data.getMaxLengthToGrep());
+		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
+		multilineOutput.setSelected(data.isMultiLineOutput());
 	}
 
 	public void getData(Profile data) {
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
-		data.setMultiLineOutput(multilineOutput.isSelected());
 		data.setMaxProcessingTime(maxProcessingTime.getText());
 		data.setFilterOutBeforeGrep(filterOutBeforeGreppingToASubConsole.isSelected());
-		data.setMaxLengthToMatch(maxLengthToMatch.getText());
 		data.setAlwaysPinGrepConsoles(alwaysPinGrepConsoles.isSelected());
-		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
 		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
 		data.setEnabledInputFiltering(enableFiltering.isSelected());
 		data.setEnableFoldings(enableFoldings.isSelected());
+		data.setEnableMaxLengthGrepLimit(enableMaxLengthGrep.isSelected());
+		data.setMaxLengthToMatch(maxLengthToMatch.getText());
+		data.setMaxLengthToGrep(maxLengthToGrep.getText());
+		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
+		data.setMultiLineOutput(multilineOutput.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
 		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit()) return true;
 		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting()) return true;
-		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
 		if (maxProcessingTime.getText() != null ? !maxProcessingTime.getText().equals(data.getMaxProcessingTime()) : data.getMaxProcessingTime() != null)
 			return true;
 		if (filterOutBeforeGreppingToASubConsole.isSelected() != data.isFilterOutBeforeGrep()) return true;
-		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch()) : data.getMaxLengthToMatch() != null)
-			return true;
 		if (alwaysPinGrepConsoles.isSelected() != data.isAlwaysPinGrepConsoles()) return true;
-		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
 		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault()) return true;
 		if (enableFiltering.isSelected() != data.isEnabledInputFiltering()) return true;
 		if (enableFoldings.isSelected() != data.isEnableFoldings()) return true;
+		if (enableMaxLengthGrep.isSelected() != data.isEnableMaxLengthGrepLimit()) return true;
+		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch()) : data.getMaxLengthToMatch() != null)
+			return true;
+		if (maxLengthToGrep.getText() != null ? !maxLengthToGrep.getText().equals(data.getMaxLengthToGrep()) : data.getMaxLengthToGrep() != null)
+			return true;
+		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
+		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
 		return false;
 	}
 
