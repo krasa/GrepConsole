@@ -11,7 +11,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
-import krasa.grepconsole.MyConsoleViewImplImpl;
+import krasa.grepconsole.MyConsoleViewImpl;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -99,8 +99,8 @@ public class FocusUtils {
 		if (executionConsole instanceof BaseTestsOutputConsoleView) {
 			executionConsole = ((BaseTestsOutputConsoleView) executionConsole).getConsole();
 		}
-		if (consoleView instanceof MyConsoleViewImplImpl && orChild) {
-			ConsoleViewImpl parentConsoleView = ((MyConsoleViewImplImpl) consoleView).getParentConsoleView();
+		if (consoleView instanceof MyConsoleViewImpl && orChild) {
+			ConsoleViewImpl parentConsoleView = ((MyConsoleViewImpl) consoleView).getParentConsoleView();
 			return isSameConsole(dom, parentConsoleView, orChild);
 		}
 		return executionConsole == consoleView;

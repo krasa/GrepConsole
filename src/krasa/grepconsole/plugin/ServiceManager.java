@@ -4,7 +4,7 @@ import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.MyConsoleViewImplImpl;
+import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
 import org.jetbrains.annotations.NotNull;
@@ -168,7 +168,7 @@ public class ServiceManager {
 	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleViewImpl parentConsoleView) {
 		try {
 			createInputFilter = false;
-			return new MyConsoleViewImplImpl(project, false, parentConsoleView);
+			return new MyConsoleViewImpl(project, false, parentConsoleView);
 		} finally {
 			createInputFilter = true;
 		}
