@@ -46,6 +46,7 @@
                 </constraints>
                 <properties>
                   <text value="Match only first N characters on each line (highly recommended)"/>
+                  <toolTipText value="Applies for everything - filtering, highlighting and grepping..."/>
                 </properties>
               </component>
               <component id="9c3fa" class="javax.swing.JCheckBox" binding="enableHighlightingCheckBox" default-binding="true">
