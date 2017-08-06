@@ -1,5 +1,14 @@
 package krasa.grepconsole.action;
 
+import com.intellij.ide.DataManager;
+import com.intellij.ide.dnd.FileCopyPasteUtil;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
+import com.intellij.openapi.project.Project;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.MouseAdapter;
@@ -7,19 +16,11 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.List;
 
-import javax.swing.*;
-
-import com.intellij.ide.DataManager;
-import com.intellij.ide.dnd.FileCopyPasteUtil;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
-import com.intellij.openapi.project.Project;
-
 /**
  * @author Vojtech Krasa
  */
 public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction implements CustomComponentAction {
-
+	private static final Logger log = LoggerFactory.getLogger(OpenFileInConsoleToolbarAction.class);
 	@Override
 	public JComponent createCustomComponent(Presentation presentation) {
 		final JPanel comp = new JPanel();
@@ -39,20 +40,25 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 	private class MyTransferHandler extends TransferHandler {
 		@Override
 		public boolean importData(JComponent comp, Transferable t) {
-			if (canHandleDrop(t.getTransferDataFlavors())) {
-				final List<File> fileList = FileCopyPasteUtil.getFileList(t);
-				if (fileList != null) {
-					DataContext context = DataManager.getInstance().getDataContext(comp);
-					final Project data = CommonDataKeys.PROJECT.getData(context);
-					for (File file : fileList) {
-						if (!file.isDirectory()) {
-							openFileInConsole(data, file);
+			try {
+				if (canHandleDrop(t.getTransferDataFlavors())) {
+					final List<File> fileList = FileCopyPasteUtil.getFileList(t);
+					if (fileList != null) {
+						DataContext context = DataManager.getInstance().getDataContext(comp);
+						final Project data = CommonDataKeys.PROJECT.getData(context);
+						for (File file : fileList) {
+							if (!file.isDirectory()) {
+								openFileInConsole(data, file);
+							}
 						}
 					}
+					return true;
 				}
-				return true;
+				return false;
+			} catch (Throwable e) {
+				log.error(e.getMessage(), e);
+				return false;
 			}
-			return false;
 		}
 
 		@Override
