@@ -167,18 +167,24 @@
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsoleAction"
-				text="Open File in Console - Tail"
-				description="Open File in Console - Tail">
+				text="Tail File in Console..."
+				description="Tail File in Console..."
+				icon="/krasa/grepconsole/tail/tail.png"
+				>
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.OpenFileInConsoleProjectViewAction"
 				text="Tail in Console"
-				description="Tail in Console">
+				description="Tail in Console"
+				icon="/krasa/grepconsole/tail/tail.png"
+				>
 			<add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="RevealIn"/>
 		</action>
 		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
-				text="Open Current File in Console - Tail"
-				description="Open Current Editor File in Console - Tail">
+				text="Tail Current File in Console"
+				description="Tail Current Editor File in Console"
+				icon="/krasa/grepconsole/tail/tail.png"
+				>
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsoleToolbarAction"
@@ -187,8 +193,11 @@
 				description="Drag and drop to open file in console">
 			<add-to-group group-id="MainToolBar" anchor="last"/>
 		</action>
-		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog" text="Tail Log in Console"
-				description="Tail Log in Console - by Grep Console">
+		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog" 
+				text="Tail Log in Console"
+				description="Tail Log in Console - by Grep Console plugin"
+				icon="/krasa/grepconsole/tail/tail.png"
+				>
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>
 		<action id="GrepConsoleTail" class="krasa.grepconsole.action.GrepConsoleTailDummyAction"
