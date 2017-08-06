@@ -66,7 +66,6 @@ public class FocusUtils {
 
 	public static void navigate(Project project, @Nullable ConsoleView consoleView) {
 		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project, dom -> isSameConsole(dom, consoleView, true));
-		System.err.println(descriptors);
 		if (descriptors.size() == 1) {
 			RunContentDescriptor o = (RunContentDescriptor) descriptors.toArray()[0];
 			RunnerLayoutUi runnerLayoutUi = o.getRunnerLayoutUi();
@@ -75,7 +74,6 @@ public class FocusUtils {
 
 			if (runnerLayoutUi != null) {
 				ActionCallback actionCallback = selectAndFocusSubTab(runnerLayoutUi, (ConsoleViewImpl) consoleView);
-				System.err.println(actionCallback);
 			}
 		}
 
