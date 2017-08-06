@@ -10,9 +10,9 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SeparatorComponent;
+import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
@@ -31,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimerTask;
 
+import static com.intellij.ui.ColorUtil.brighter;
+
 /**
  * @author Vojtech Krasa
  */
@@ -40,20 +42,21 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	private java.util.Timer timer;
 	private WeakReference<ConsoleView> consoleView;
 	private GrepHighlightFilter grepHighlightFilter;
-
+	private static Color[] bgs = getColors();
+	static int i = 5; 
 	public StatisticsStatusBarPanel(ConsoleView consoleView, GrepHighlightFilter filter) {
 		super(new BorderLayout());
 		this.consoleView = new WeakReference<>(consoleView);
 		this.grepHighlightFilter = filter;
 		add(new SeparatorComponent(7), BorderLayout.WEST);
-
 		final FlowLayout layout = new FlowLayout();
 		layout.setVgap(0);
 		layout.setHgap(4);
 		jPanel = new JPanel(new GridBagLayout());
 		jPanel.setBorder(new LineBorder(Color.BLACK, 1));
-
-		// jPanel.setBackground(Color.BLUE);
+		setBackground(getBgColor());
+		jPanel.setBackground(getBackground());
+		
 		add(jPanel, BorderLayout.CENTER);
 		initComponents();
 		startUpdater();
@@ -65,11 +68,60 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (!SwingUtilities.isRightMouseButton(e)) {
-					showToolWindow();
-				}
+				StatisticsStatusBarPanel.this.mouse(e);
 			}
 		});
+	}
+
+	@NotNull
+	public static Color getBgColor() {
+		if (++i >= bgs.length) {
+			i = 0;
+		}
+		return bgs[i];
+	}
+
+	@NotNull
+	public static Color[] getColors() {
+		Color[] bgs;
+		if (UIUtil.isUnderDarcula()) {
+			bgs = new Color[]{
+					new Color(114, 120, 125),
+					new Color(255, 255, 255),
+					new Color(105, 175, 128),
+					new Color(248, 209, 72),
+					new Color(207, 83, 41),
+					new Color(204, 114, 189),
+					new Color(2, 169, 226),
+			};
+		} else {
+			bgs = new Color[]{
+					new Color(232, 232, 232),
+					new Color(162, 162, 162),
+					new Color(105, 175, 128),
+					new Color(248, 209, 72),
+					new Color(207, 83, 41),
+					new Color(204, 114, 189),
+					new Color(2, 169, 226)
+			};
+		}
+		return bgs;
+	}
+
+	public static Color darkerDarkulaBrighterIJ(Color orange) {
+		if (UIUtil.isUnderDarcula()) {
+			return orange.darker().darker();
+		} else {
+			return brighter(orange, 1);
+		}
+	}
+
+	public static Color brighterDarkulaDarkerIJ(Color orange) {
+		if (UIUtil.isUnderDarcula()) {
+			return brighter(orange, 1);
+		} else {
+			return orange.darker().darker();
+		}
 	}
 
 	private void showPopup(Component comp, int x, int y) {
@@ -92,6 +144,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 		label.addMouseListener(mouseInputAdapter);
 		panel.add(colorPanel);
 		panel.add(label);
+		panel.setBackground(null);
 		return panel;
 	}
 
@@ -104,7 +157,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 
 	private JLabel getLabel(GrepProcessor processor) {
 		final JLabel label = new JLabel("0");
-		label.setForeground(JBColor.BLACK);
+		label.setForeground(Color.BLACK);
 		pairs.add(new Pair<>(label, processor));
 		return label;
 	}
@@ -114,11 +167,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 				processor.getGrepExpressionItem().getGrepExpression(), new Dimension(14, 14)) {
 			@Override
 			protected void onMousePressed(MouseEvent e) {
-				if (SwingUtilities.isRightMouseButton(e)) {
-					showPopup(e.getComponent(), e.getX(), e.getY());
-				} else {
-					showToolWindow();
-				}
+				mouse(e);
 			}
 		};
 
@@ -127,6 +176,16 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 		color.setSelectedColor(backgroundColor.getColorAsAWT());
 		color.setBorderColor(foregroundColor.getColorAsAWT());
 		return color;
+	}
+
+	private void mouse(MouseEvent e) {
+		if (SwingUtilities.isRightMouseButton(e)) {
+			showPopup(e.getComponent(), e.getX(), e.getY());
+		} else if (SwingUtilities.isMiddleMouseButton(e)) {
+			StatisticsStatusBarPanel.this.hideStatusBar();
+		} else {
+			showToolWindow();
+		}
 	}
 
 	private void showToolWindow() {
@@ -151,9 +210,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					FocusUtils.navigate(getProject(), consoleView.get());
-				}
+				mouse(e);
 			}
 		};
 		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
