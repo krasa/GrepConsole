@@ -3,9 +3,11 @@ package krasa.grepconsole.integration;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.action.AddHighlightAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
@@ -44,8 +46,8 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 	public AnAction[] postProcessPopupActions(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
 		ServiceManager manager = ServiceManager.getInstance();
 		ArrayList<AnAction> anActions = new ArrayList<>();
-		anActions.add(new OpenGrepConsoleAction("Grep", "Open a new filter/grep console", null));
-		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", null));
+		anActions.add(new OpenGrepConsoleAction("Grep", "Open a new filter/grep console", AllIcons.General.Filter));
+		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", IconLoader.findIcon("/krasa/grepconsole/action/highlight.gif")));
 		if (manager.isRegistered(console)) {
 			anActions.add(new ShowHideStatisticsConsolePanelAction(console));
 			anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
