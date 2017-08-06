@@ -1,12 +1,5 @@
 package krasa.grepconsole.action;
 
-import java.awt.*;
-import java.lang.reflect.Method;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -15,11 +8,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.ColorPicker;
-
 import krasa.grepconsole.model.*;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.utils.Rehighlighter;
 import krasa.grepconsole.utils.Utils;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.lang.reflect.Method;
 
 public class AddHighlightAction extends HighlightManipulationAction {
 	public AddHighlightAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
@@ -81,7 +79,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 		GrepConsoleApplicationComponent instance = GrepConsoleApplicationComponent.getInstance();
 		addExpressionItem(string, color, instance.getProfile());
 		ServiceManager.getInstance().resetSettings();
-		resetHighlights(consoleView);
+		new Rehighlighter().resetHighlights(consoleView);
 	}
 
 	private void addExpressionItem(String string, Color color, final Profile profile) {

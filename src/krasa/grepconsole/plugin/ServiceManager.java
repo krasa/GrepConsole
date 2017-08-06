@@ -7,6 +7,9 @@ import com.intellij.openapi.project.Project;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
+import krasa.grepconsole.filter.support.SoundMode;
+import krasa.grepconsole.model.Sound;
+import krasa.grepconsole.utils.Rehighlighter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -172,5 +175,16 @@ public class ServiceManager {
 		} finally {
 			createInputFilter = true;
 		}
+	}
+
+	public void rehighlight() {
+		Rehighlighter rehighlighter = new Rehighlighter();
+
+		Sound.soundMode = SoundMode.DISABLED;
+		for (ConsoleView consoleView : weakHighlightersMap.keySet()) {
+			rehighlighter.resetHighlights(consoleView);
+		}
+		Sound.soundMode = SoundMode.ENABLED;
+
 	}
 }

@@ -1,18 +1,12 @@
 package krasa.grepconsole.action;
 
-import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.plugin.MyConfigurable;
-import krasa.grepconsole.plugin.ServiceManager;
-
-import org.jetbrains.annotations.Nullable;
-
-import com.intellij.execution.filters.Filter;
-import com.intellij.execution.impl.EditorHyperlinkSupport;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.plugin.MyConfigurable;
+import krasa.grepconsole.utils.Rehighlighter;
 
 public class EditorHighlightAction extends HighlightManipulationAction {
 
@@ -33,32 +27,10 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 			instance.setCurrentAction(null);
 		}
 	}
-
-	private void highlight(Editor editor, Project project) {
-		EditorHyperlinkSupport myHyperlinks = new EditorHyperlinkSupport(editor, project);
-		int lineCount = editor.getDocument().getLineCount();
-		if (lineCount > 0) {
-			myHyperlinks.highlightHyperlinks(getGrepFilter(project), getPredefinedMessageFilter(), 0, lineCount - 1);
-		}
-	}
-
-	private GrepHighlightFilter getGrepFilter(Project project) {
-		return ServiceManager.getInstance().createHighlightFilter(project, null);
-	}
-
-	private Filter getPredefinedMessageFilter() {
-		return new Filter() {
-			@Nullable
-			@Override
-			public Result applyFilter(String line, int entireLength) {
-				return null;
-			}
-		};
-	}
-
 	@Override
 	public void applySettings() {
-		removeAllHighlighters(null, editor);
-		highlight(editor, project);
+		Rehighlighter rehighlighter = new Rehighlighter();
+		rehighlighter.removeAllHighlighters(editor);
+		rehighlighter.highlight(editor, project);
 	}
 }

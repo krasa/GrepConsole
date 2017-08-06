@@ -18,9 +18,7 @@ import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.DefaultState;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.PluginState;
+import krasa.grepconsole.plugin.*;
 import krasa.grepconsole.tail.TailIntegrationForm;
 
 import javax.swing.*;
@@ -65,14 +63,15 @@ public class SettingsDialog {
 	private JCheckBox alwaysPinGrepConsoles;
 	private JFormattedTextField maxLengthToGrep;
 	private JCheckBox enableMaxLengthGrep;
+	private JButton rehighlightAll;
 	// private JCheckBox synchronous;
 	private PluginState settings;
 
-	public SettingsDialog(PluginState settings) {
-		this(settings, SettingsContext.NONE);
+	public SettingsDialog(MyConfigurable myConfigurable, PluginState settings) {
+		this(myConfigurable, settings, SettingsContext.NONE);
 	}
 
-	public SettingsDialog(PluginState settings, SettingsContext settingsContext) {
+	public SettingsDialog(MyConfigurable myConfigurable, PluginState settings, SettingsContext settingsContext) {
 		// int version = Integer.parseInt(ApplicationInfo.getInstance().getMajorVersion());
 		// if (version < 163) {
 		// synchronous.setVisible(false);
@@ -93,6 +92,13 @@ public class SettingsDialog {
 				BareBonesBrowserLaunch.openURL("https://plugins.jetbrains.com/plugin/7125-grep-console");
 			}
 		});
+		rehighlightAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				myConfigurable.apply(null);
+				ServiceManager.getInstance().rehighlight();
+			}
+		}); 
 		addNewButton.addActionListener(new AddNewItemAction());
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());

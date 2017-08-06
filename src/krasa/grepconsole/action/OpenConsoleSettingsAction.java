@@ -1,15 +1,15 @@
 package krasa.grepconsole.action;
 
-import javax.swing.*;
-
-import krasa.grepconsole.gui.SettingsContext;
-import krasa.grepconsole.plugin.MyConfigurable;
-
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import krasa.grepconsole.gui.SettingsContext;
+import krasa.grepconsole.plugin.MyConfigurable;
+import krasa.grepconsole.utils.Rehighlighter;
+
+import javax.swing.*;
 
 public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	public static final Icon ICON = IconLoader.getIcon("highlight.gif", OpenConsoleSettingsAction.class);
@@ -40,7 +40,7 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	@Override
 	public void applySettings() {
 		if (console != null) {
-			resetHighlights(console);
+			new Rehighlighter().resetHighlights(console);
 		}
 	}
 }
