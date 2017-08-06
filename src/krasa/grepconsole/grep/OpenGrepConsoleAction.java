@@ -34,6 +34,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.OutputStream;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class OpenGrepConsoleAction extends DumbAwareAction {
 	public OpenGrepConsoleAction() {
@@ -94,7 +95,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 
 		final Content tab = runnerLayoutUi.createContent(getContentType(runnerLayoutUi), consolePanel, title(expression),
-				getTemplatePresentation().getSelectedIcon(), consolePanel);
+				AllIcons.General.Filter, consolePanel);
 		runnerLayoutUi.addContent(tab);
 		runnerLayoutUi.selectAndFocus(tab, true, true);
 
@@ -115,10 +116,25 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 		copyingFilter.addListener(copyingListener);
 
-		if (runContentDescriptor != null) {
-			Disposer.register(runContentDescriptor, tab);
-		}
+		Disposer.register(runContentDescriptor, tab);
 		Disposer.register(tab, consolePanel);
+		AtomicBoolean exit = new AtomicBoolean();
+		Disposer.register(runContentDescriptor, new Disposable() {
+			@Override
+			public void dispose() {
+				exit.set(true);
+			}
+		});
+		Disposer.register(tab, new Disposable() {
+			@Override
+			public void dispose() {
+				if (!exit.get()) {
+					pinAction.setSelected(false);
+				}
+			}
+		});
+	  
+		
 		Disposer.register(consolePanel, newConsole);
 		Disposer.register(consolePanel, copyingListener);
 		Disposer.register(consolePanel, quickFilterPanel);
@@ -316,7 +332,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private Project myProject;
 		private PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef;
 
-		public PinAction(Project myProject, GrepPanel quickFilterPanel, RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID) {
+		public PinAction(Project myProject, GrepPanel quickFilterPanel, @NotNull RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID) {
 			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;
@@ -338,7 +354,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 
 		@Override
-		public void setSelected(AnActionEvent anActionEvent, boolean b) {
+		public void setSelected(@Nullable AnActionEvent anActionEvent, boolean b) {
+			setSelected(b);
+		}
+
+		public void setSelected(boolean b) {
 			pinned = b;
 			PinnedGrepConsolesState projectComponent = PinnedGrepConsolesState.getInstance(myProject);
 			if (pinned) {
