@@ -28,14 +28,18 @@ public class Rehighlighter {
 
 
 	public void removeAllHighlighters(Editor editor) {
-		editor.getMarkupModel().removeAllHighlighters();
+		if (editor != null) {
+			editor.getMarkupModel().removeAllHighlighters();
+		} 
 	}
 
 	private void reset(ConsoleViewImpl consoleViewImpl) {
 		Editor editor = consoleViewImpl.getEditor();
-		removeAllHighlighters(editor);
-		highlightAll(consoleViewImpl, editor);
-		StatisticsManager.resetStatisticsPanels(consoleViewImpl);
+		if (editor != null) {//disposed are null - may be bug
+			removeAllHighlighters(editor);
+			highlightAll(consoleViewImpl, editor);
+			StatisticsManager.resetStatisticsPanels(consoleViewImpl);
+		} 
 	}
 
 	private void highlightAll(ConsoleViewImpl consoleViewImpl, Editor editor) {

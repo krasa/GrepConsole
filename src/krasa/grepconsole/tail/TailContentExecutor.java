@@ -120,7 +120,7 @@ public class TailContentExecutor implements Disposable {
 
 		// Create runner UI layout
 		final RunnerLayoutUi.Factory factory = RunnerLayoutUi.Factory.getInstance(myProject);
-		final RunnerLayoutUi layoutUi = factory.create("Tail", "Tail", "Tail", myProject);
+		final RunnerLayoutUi layoutUi = factory.create("Tail", "Tail", "Tail", this);
 
 		final JComponent consolePanel = createConsolePanel(consoleView, actions);
 		RunContentDescriptor descriptor = new RunContentDescriptor(new RunProfile() {
@@ -151,8 +151,9 @@ public class TailContentExecutor implements Disposable {
 				createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor),
 				"RunnerToolbar");
 
-		Disposer.register(this, descriptor);
+		Disposer.register(descriptor, this);
 		Disposer.register(descriptor, content);
+
 		Disposer.register(content, consoleView);
 		if (myStopAction != null) {
 			Disposer.register(consoleView, new Disposable() {
@@ -230,7 +231,6 @@ public class TailContentExecutor implements Disposable {
 
 	@Override
 	public void dispose() {
-		Disposer.dispose(this);
 	}
 
 	public void forFile(File file) {
