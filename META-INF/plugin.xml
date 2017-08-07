@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.7.163.000.0</version>
+	<version>6.8.163.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -30,6 +30,12 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>6.8 (2017-08-07)
+		<br>- Unpinning of a grep console on closing of the tab
+		<br>- Jumping to a console from the status bar on a left click
+		<br>- Status bar colors
+		<br>- Added a separate grep limit settings
+		<br>- Gui improvements, rehighlight all button
         <br>6.7 (2017-08-02)
 		<br>- Grep Consoles pinning
 		<br>- file tail integration fix for Win 10
@@ -44,78 +50,6 @@
 		<br>- grep improvements    
         <br>6.0 (2016-08-23)
 		<br>- ability to filter/grep the console output into a new console tab
-        <br>5.10 (2016-08-19)
-        <br>- added Tail action to project tool view context menu
-        <br>5.9 (2016-02-26)
-	  	<br>- new IJ 15, 16 compatibility
-        <br>5.8 (2015-05-12)
-	  	<br>- less bright icon
-        <br>5.7 (2014-12-25)
-	  	<br>- Run action duplicated on a toolbar and in menu
-        <br>5.6 (2014-11-3)
-	  	<br>- tailing for PhpStorm fixed
-        <br>5.5 (2014-10-31)
-	  	<br>- allow automake while tailing
-	  	<br>- foldings respect Enabled column
-	  	<br>- npe fix for Mocha tests
-	  	<br>- hopefully more clear settings
-        <br>5.4 (2014-10-24)
-	  	<br>- usable during indexing
-		<br>5.3 (2014-10-21) 
-		<br>- file tail Rerun fix for IJ 14 
-        <br>5.2 (2014-09-24)
-	  	<br>- added Delete key handling
-	  	<br>- fixed NPE when settings dialog is opened more than once
-        <br>5.1 (2014-09-19)
-	  	<br>- foldings
-	  	<br>- little performance improvements
-        <br>5.0 (2014-09-12)
-	  	<br>- IJ 14 API update
-        <br>4.9 (2014-09-11)
-	  	<br>- IllegalStateException fix
-        <br>4.8 (2014-09-04)
-	  	<br>- added Main Menu | Help | Tail IntelliJ Log in Console action
-	  	<br>- various usability improvements
-        <br>4.7 (2014-08-13)
-	  	<br>- added Open Settings action into a console context menu, when there is no buttons bar
-        <br>4.6 (2014-08-13)
-        <br>- disabled statistics actions for incompatible consoles
-        <br>4.5 (2014-08-11)
-        <br>- settings improvements
-        <br>4.4 (2014-07-15)
-        <br>- organizing entries in groups
-        <br>- added link to IntelliJ IDEA Reddit group
-        <br>4.3.x.1 (2014-05-22)
-        <br>- file path encoding fix
-        <br>4.3 (2014-05-22)
-        <br>- http and Windows context menu integration for File Tailing
-        <br>- closing File Tailing without confirmation dialog
-        <br>4.2 (2014-05-19)
-        <br>- drag&drop main toolbar panel for tailing
-        <br>4.1 (2014-05-13)
-        <br>- console statistics bar fix
-        <br>4.0 (2014-05-13)
-        <br>- count of highlighters can be shown in status bar or console
-        <br>3.9 (2014-05-04)
-        <br>- enable Apply button in settings immediately after color change 
-        <br>- memory leak fix
-        <br>3.8 (2014-04-24)
-        <br>- PhpStorm File Tailing fix
-        <br>- moved editor context actions into Tools
-        <br>3.7 (2014-04-22)
-        <br>- usability improvements
-        <br>3.6 (2014-04-19)
-        <br>- new feature: colorization of single words, not whole lines
-        <br>- tooltips for settings table, right click menu 
-        <br>- donation button
-        <br>3.5 (2014-04-19)
-        <br>- added console buttons for file tailing
-        <br>3.4 (2014-04-19)
-        <br>- multiline output highlighting
-        <br>- items are not filtered out if they match highlight item with higher priority
-        <br>- improved color chooser
-        <br>3.3 (2014-03-21)
-        <br>- Match only first N characters on each line fixed for 1000+
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
