@@ -38,7 +38,7 @@ public class Profile extends DomainObject {
 	private String maxLengthToGrep = DEFAULT_GREP;
 	@Transient
 	private transient Integer maxLengthToGrepAsInt;
-	private boolean enableMaxLengthGrepLimit;
+	private boolean enableMaxLengthGrepLimit = true;
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
