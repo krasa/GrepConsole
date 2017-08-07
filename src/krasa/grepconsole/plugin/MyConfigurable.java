@@ -1,19 +1,17 @@
 package krasa.grepconsole.plugin;
 
-import javax.swing.*;
-
+import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurationException;
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.support.SoundMode;
 import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.gui.SettingsDialog;
 import krasa.grepconsole.model.Sound;
-
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.options.ConfigurationException;
+import javax.swing.*;
 
 public class MyConfigurable implements Configurable {
 
@@ -43,7 +41,7 @@ public class MyConfigurable implements Configurable {
 	@Override
 	public JComponent createComponent() {
 		if (form == null) {
-			form = new SettingsDialog(applicationComponent.getState().clone());
+			form = new SettingsDialog(this, applicationComponent.getState().clone());
 		}
 		return form.getRootComponent();
 	}
@@ -55,6 +53,10 @@ public class MyConfigurable implements Configurable {
 
 	@Override
 	public void apply() throws ConfigurationException {
+		apply(currentAction);
+	}
+
+	public void apply(@Nullable HighlightManipulationAction currentAction) {
 		PluginState formSettings = form.getSettings();
 		applicationComponent.loadState(formSettings.clone());
 		serviceManager.resetSettings();
@@ -79,7 +81,7 @@ public class MyConfigurable implements Configurable {
 	}
 
 	public void prepareForm(SettingsContext settingsContext) {
-		form = new SettingsDialog(applicationComponent.getState().clone(), settingsContext);
+		form = new SettingsDialog(this, applicationComponent.getState().clone(), settingsContext);
 	}
 
 	public void setCurrentAction(HighlightManipulationAction currentEditor) {
