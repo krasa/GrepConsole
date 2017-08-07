@@ -190,7 +190,7 @@ public class TailContentExecutor implements Disposable {
 	private ActionGroup createActionToolbar(JComponent consolePanel, ConsoleView consoleView,
 			@NotNull final RunnerLayoutUi myUi, RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
 		final DefaultActionGroup actionGroup = new DefaultActionGroup();
-		actionGroup.add(new RerunAction(consolePanel, consoleView));
+		actionGroup.add(new RerunAction(consolePanel));
 		actionGroup.add(new StopAction());
 		actionGroup.add(new PinAction());
 		actionGroup.add(myUi.getOptions().getLayoutActions());
@@ -238,17 +238,14 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	private class RerunAction extends AnAction implements DumbAware {
-		private final ConsoleView consoleView;
 
-		public RerunAction(JComponent consolePanel, ConsoleView consoleView) {
+		public RerunAction(JComponent consolePanel) {
 			super("Rerun", "Rerun", AllIcons.Actions.Restart);
-			this.consoleView = consoleView;
 			registerCustomShortcutSet(CommonShortcuts.getRerun(), consolePanel);
 		}
 
 		@Override
 		public void actionPerformed(AnActionEvent e) {
-			Disposer.dispose(consoleView);
 			myRerunAction.run();
 		}
 
