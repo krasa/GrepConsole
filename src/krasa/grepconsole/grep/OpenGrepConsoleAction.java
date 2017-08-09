@@ -18,10 +18,8 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import krasa.grepconsole.filter.GrepCopyingFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
-import krasa.grepconsole.grep.listener.Mode;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
@@ -35,6 +33,8 @@ import java.awt.*;
 import java.io.OutputStream;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+//import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
 
 public class OpenGrepConsoleAction extends DumbAwareAction {
 	public OpenGrepConsoleAction() {
@@ -72,13 +72,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, parentConsoleView);
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 		Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile();
-		final GrepCopyingFilterListener copyingListener;
-		Mode mode = Mode.SYNC;
-		if (Mode.SYNC == mode) {
-			copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, project, profile);
-		} else {
-			copyingListener = new GrepCopyingFilterAsyncListener(myProcessHandler, project, profile);
-		}
+		final GrepCopyingFilterListener copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, project, profile);
 
 
 		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(project, parentConsoleView, myProcessHandler);
