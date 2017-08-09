@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.8.163.000.0</version>
+	<version>6.8.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -62,9 +62,13 @@
 	<!--branch 133 - IntelliJ IDEA 13, PyCharm 3.1, WebStorm 7, PhpStorm 7-->
 	<!--branch 131 - WebStorm 7, PyCharm 3.0, PhpStorm 7-->
 
-
+	<!--Branch number	IntelliJ Platform version-->
+	<!--171	2017.1-->
+	<!--163	2016.3-->
+	<!--162	2016.2, AS 2.3.3-->
 	<!--141.3056.4 = 14.1.6-->
-	<idea-version since-build="163.000"/>
+
+	<idea-version since-build="162"/>
 
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
