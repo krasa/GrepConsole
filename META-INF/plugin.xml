@@ -30,7 +30,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>6.9 (2017-09-xx)
+        <br>6.9 (2017-09-18)
 		<br>- Console clearing on match
         <br>6.8 (2017-08-07)
 		<br>- Unpinning of a grep console on closing of the tab
