@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.8.162.000.0</version>
+	<version>6.9.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -30,6 +30,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>6.9 (2017-09-xx)
+		<br>- Console clearing on match
         <br>6.8 (2017-08-07)
 		<br>- Unpinning of a grep console on closing of the tab
 		<br>- Jumping to a console from the status bar on a left click
