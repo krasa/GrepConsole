@@ -17,8 +17,6 @@ public class Profile extends DomainObject {
 	private long id;
 	private boolean defaultProfile;
 	private List<GrepExpressionGroup> grepExpressionGroups = new ArrayList<>();
-	@Deprecated
-	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
 	private boolean enableMaxLengthLimit = true;
@@ -99,21 +97,10 @@ public class Profile extends DomainObject {
 		return items;
 	}
 
-	@Deprecated
-	public List<GrepExpressionItem> getGrepExpressionItems() {
-		return grepExpressionItems;
-	}
-
-	@Deprecated
-	public void setGrepExpressionItems(List<GrepExpressionItem> grepExpressionItems) {
-		this.grepExpressionItems = grepExpressionItems;
-	}
 
 	public List<GrepExpressionGroup> getGrepExpressionGroups() {
-		if (grepExpressionGroups.isEmpty() && grepExpressionItems != null && !grepExpressionItems.isEmpty()) {
+		if (grepExpressionGroups.isEmpty()) {
 			GrepExpressionGroup expressionGroup = new GrepExpressionGroup("default");
-			expressionGroup.getGrepExpressionItems().addAll(grepExpressionItems);
-			grepExpressionItems.clear();
 			grepExpressionGroups.add(expressionGroup);
 		}
 		return grepExpressionGroups;

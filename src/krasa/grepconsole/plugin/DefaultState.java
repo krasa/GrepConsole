@@ -17,7 +17,6 @@ public class DefaultState {
 		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 		grepExpressionGroups.clear();
 		grepExpressionGroups.add(new GrepExpressionGroup("default", createDefaultItems()));
-		profile.getGrepExpressionItems().clear();
 		return profiles;
 	}
 
