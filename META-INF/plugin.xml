@@ -10,12 +10,13 @@
 
 	<description><![CDATA[
 		  <ul>
-			<li>Change colors of matching text.</li>
-			<li>Grep output into a new console tab.</li>
-			<li>Fold output.</li>
-			<li>Filter out unwanted lines.</li>
-			<li>Play sounds on matches.</li>
-			<li>Tail files*.</li>
+			<li>Change colors of matching text</li>
+			<li>Grep output into a new console tab</li>
+			<li>Fold output</li>
+			<li>Filter out unwanted lines</li>
+			<li>Play sounds on matches</li>
+			<li>Clear Console on matches</li>
+			<li>Tail files*</li>
 		  </ul>
 		   <br>
 	 		*File Tailing: <br>

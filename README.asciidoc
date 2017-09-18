@@ -1,11 +1,12 @@
 ==== https://plugins.jetbrains.com/plugin/7125[Grep Console - IntelliJ plugin]
 
-- change colors of matching text or lines
 - grep output into a new console tab
+- change colors of matching text or lines
 - filter out unwanted lines
 - fold output
+- clear console
+- play sounds
 - tail files
-- play sounds on matches
          
 image::screenshotColors.png[]
 image::screenshotGrepSubConsole.png[]                 
