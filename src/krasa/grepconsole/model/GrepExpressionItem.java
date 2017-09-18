@@ -1,19 +1,17 @@
 package krasa.grepconsole.model;
 
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.util.xmlb.annotations.Transient;
-
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.filter.support.ThreadUnsafeGrepProcessor;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -28,6 +26,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private boolean caseInsensitive;
 	private GrepStyle style = new GrepStyle();
 	private Sound sound = new Sound();
+	private boolean clearConsole;
 
 	private transient Pattern pattern;
 	private transient Pattern unlessPattern;
@@ -46,6 +45,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem(String id) {
 		super(id);
 
+	}
+
+	public boolean isClearConsole() {
+		return clearConsole;
+	}
+
+	public void setClearConsole(boolean clearConsole) {
+		this.clearConsole = clearConsole;
 	}
 
 	@Transient

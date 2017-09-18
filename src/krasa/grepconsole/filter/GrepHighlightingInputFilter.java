@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+@Deprecated
 public class GrepHighlightingInputFilter extends GrepHighlightFilter implements InputFilter {
 
 	public GrepHighlightingInputFilter(Project project) {
@@ -27,7 +28,7 @@ public class GrepHighlightingInputFilter extends GrepHighlightFilter implements 
 
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
-			ConsoleViewContentType consoleViewContentType) {
+																  ConsoleViewContentType consoleViewContentType) {
 		if (s != null) {
 			FilterState state = super.filter(s, 0);
 

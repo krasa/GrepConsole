@@ -1,17 +1,17 @@
 package krasa.grepconsole.gui.table.column;
 
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-
-import org.jetbrains.annotations.Nullable;
 
 public abstract class ButtonColumnInfo<Item> extends JavaBeanColumnInfo<Item, Item> {
 
 	private String label;
 
 	public ButtonColumnInfo(String name) {
-		super(null, null);
+		super(name, null);
 		label = name;
 	}
 

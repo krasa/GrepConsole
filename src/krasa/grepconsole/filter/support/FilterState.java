@@ -19,6 +19,7 @@ public class FilterState {
 	private boolean exclude;
 	private boolean matchesSomething;
 	private CharSequence charSequence;
+	private boolean clearConsole;
 
 	public FilterState(int offset, CharSequence charSequence) {
 		this.offset = offset;
@@ -85,4 +86,11 @@ public class FilterState {
 		return offset;
 	}
 
+	public void setClearConsole(boolean clearConsole) {
+		this.clearConsole |= clearConsole;
+	}
+
+	public boolean isClearConsole() {
+		return clearConsole;
+	}
 }

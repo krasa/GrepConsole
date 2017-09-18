@@ -30,11 +30,14 @@ public class ServiceManager {
 
 	/** to couple console with filters */
 	private WeakReference<GrepCopyingFilter> lastCopier;
+	private WeakReference<GrepInputFilter> lastGrepInputFilter;
+	@Deprecated
 	private WeakReference<GrepHighlightingInputFilter> lastGrepHighlightFilter;
 
 	/** for providing attached filters for certain console */
 	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<>();
 	private WeakHashMap<ConsoleView, GrepCopyingFilter> weakCopiersMap = new WeakHashMap<>();
+	private WeakHashMap<ConsoleView, GrepInputFilter> weakGrepInputFilterMap = new WeakHashMap<>();
 	private boolean createInputFilter = true;
 
 	public static ServiceManager getInstance() {
@@ -77,11 +80,13 @@ public class ServiceManager {
 			return null;
 		}
 		GrepInputFilter lastInputFilter = new GrepInputFilter(project);
-		inputFilters.add(new WeakReference<>(lastInputFilter));
+		WeakReference<GrepInputFilter> weakReference = new WeakReference<>(lastInputFilter);
+		inputFilters.add(weakReference);
+		lastGrepInputFilter = weakReference;
 		return lastInputFilter;
 	}
 
-
+	@Deprecated
 	public GrepHighlightingInputFilter createHighlightInputFilter(Project project) {
 		GrepHighlightingInputFilter grepHighlightFilter = new GrepHighlightingInputFilter(project);
 		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
@@ -143,6 +148,11 @@ public class ServiceManager {
 			weakCopiersMap.put(console, lastCopier);
 			this.lastCopier = null;
 		}
+		GrepInputFilter lastGrepInputFilter = getLastGrepInputFilter();
+		if (lastGrepInputFilter != null) {
+			lastGrepInputFilter.setConsole(new WeakReference<>(console));
+			this.lastGrepInputFilter = null;
+		}
 		GrepHighlightingInputFilter lastGrepHighlightFilter = getLastGrepHighlightFilter();
 		if (lastGrepHighlightFilter != null) {
 			weakHighlightersMap.put(console, lastGrepHighlightFilter);
@@ -163,6 +173,15 @@ public class ServiceManager {
 	private GrepHighlightingInputFilter getLastGrepHighlightFilter() {
 		if (lastGrepHighlightFilter != null) {
 			return lastGrepHighlightFilter.get();
+		} else {
+			return null;
+		}
+	}
+
+	@Nullable
+	private GrepInputFilter getLastGrepInputFilter() {
+		if (lastGrepInputFilter != null) {
+			return lastGrepInputFilter.get();
 		} else {
 			return null;
 		}
