@@ -1,12 +1,14 @@
 package krasa.grepconsole.action;
 
-import java.io.File;
-
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
+
+import java.io.File;
 
 /**
  * @author Vojtech Krasa
@@ -15,9 +17,10 @@ public class OpenCurrentFileInConsoleAction extends OpenFileInConsoleAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
+		final Project project = getEventProject(e);
+		if (project == null) return;
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		if (editor != null) {
-			final Project project = getEventProject(e);
 			final PsiDocumentManager manager = PsiDocumentManager.getInstance(project);
 			final PsiFile psiFile = manager.getPsiFile(editor.getDocument());
 			if (psiFile != null) {

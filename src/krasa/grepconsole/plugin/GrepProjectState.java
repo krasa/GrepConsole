@@ -15,7 +15,7 @@ public class GrepProjectState {
 	@NotNull
 	private PinnedGrepConsolesState pinnedGrepConsolesState = new PinnedGrepConsolesState();
 
-	public void openOldPins(Project project) {
+	public void openOldPins(@NotNull Project project) {
 		for (String pinnedFile : pinnedTailFiles.toArray(new String[pinnedTailFiles.size()])) {
 			File file = new File(pinnedFile);
 			if (file.exists()) {

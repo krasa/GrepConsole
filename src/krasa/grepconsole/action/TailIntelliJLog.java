@@ -1,10 +1,11 @@
 package krasa.grepconsole.action;
 
-import java.io.File;
-
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.DumbAwareAction;
+import com.intellij.openapi.project.Project;
+
+import java.io.File;
 
 /**
  * @author Vojtech Krasa
@@ -12,7 +13,10 @@ import com.intellij.openapi.project.DumbAwareAction;
 public class TailIntelliJLog extends DumbAwareAction {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
+		Project project = getEventProject(e);
+		if (project == null) return;
+		
 		final File logFile = new File(PathManager.getLogPath(), "idea.log");
-		new OpenFileInConsoleAction().openFileInConsole(getEventProject(e), logFile);
+		new OpenFileInConsoleAction().openFileInConsole(project, logFile);
 	}
 }

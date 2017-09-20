@@ -1,11 +1,5 @@
 package krasa.grepconsole.action;
 
-import java.io.*;
-import java.nio.charset.Charset;
-
-import krasa.grepconsole.tail.MyProcessHandler;
-import krasa.grepconsole.tail.TailContentExecutor;
-
 import com.intellij.compiler.server.BuildManager;
 import com.intellij.execution.impl.ConsoleBuffer;
 import com.intellij.execution.process.ProcessHandler;
@@ -18,6 +12,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import krasa.grepconsole.tail.MyProcessHandler;
+import krasa.grepconsole.tail.TailContentExecutor;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.*;
+import java.nio.charset.Charset;
 
 /**
  * @author Vojtech Krasa
@@ -27,6 +27,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
+		if (project == null) return;
 		final FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(
 				BrowseFilesListener.SINGLE_FILE_DESCRIPTOR, project, null);
 
@@ -38,7 +39,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		}
 	}
 
-	public void openFileInConsole(final Project project, final File file) {
+	public void openFileInConsole(@NotNull final Project project, final File file) {
 		final Process process = new MyProcess(file);
 
 		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), Charset.defaultCharset()) {

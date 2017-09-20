@@ -45,10 +45,10 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 					final List<File> fileList = FileCopyPasteUtil.getFileList(t);
 					if (fileList != null) {
 						DataContext context = DataManager.getInstance().getDataContext(comp);
-						final Project data = CommonDataKeys.PROJECT.getData(context);
+						final Project project = CommonDataKeys.PROJECT.getData(context);
 						for (File file : fileList) {
-							if (!file.isDirectory()) {
-								openFileInConsole(data, file);
+							if (!file.isDirectory() && project != null) {
+								openFileInConsole(project, file);
 							}
 						}
 					}
