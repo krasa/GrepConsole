@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.9.162.000.0</version>
+	<version>6.10.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -25,12 +25,15 @@
 	 		- Project View ToolWindow | right click context menu | Tail<br>
 	 		- Drag&Drop "Tail File" panel in main toolbar<br>
 	 		- http and Windows context menu integration<br>
+	 		- Encoding auto-detection<br>
 	 		<br>
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
 			Used <a href="http://plugins.jetbrains.com/plugin/6027?pr=idea">Remote call plugin</a> implementation for http integration.<br>
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>6.10 (2017-09-27)
+		<br>- Tail encoding settings and auto-detection
         <br>6.9 (2017-09-18)
 		<br>- Console clearing on match
         <br>6.8 (2017-08-07)

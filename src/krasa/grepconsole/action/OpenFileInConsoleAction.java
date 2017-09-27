@@ -5,6 +5,7 @@ import com.intellij.execution.impl.ConsoleBuffer;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -12,9 +13,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
+import krasa.grepconsole.model.TailSettings;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.tail.MyProcessHandler;
 import krasa.grepconsole.tail.TailContentExecutor;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -23,7 +28,8 @@ import java.nio.charset.Charset;
  * @author Vojtech Krasa
  */
 public class OpenFileInConsoleAction extends DumbAwareAction {
-
+	private static final Logger LOG = Logger.getInstance(OpenFileInConsoleAction.class);
+	             
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
@@ -42,7 +48,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 	public void openFileInConsole(@NotNull final Project project, final File file) {
 		final Process process = new MyProcess(file);
 
-		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), Charset.defaultCharset()) {
+		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), detectEncoding(file)) {
 			@Override
 			public boolean isSilentlyDestroyOnClose() {
 				return true;
@@ -78,6 +84,24 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		});
 		executor.run();
 	}
+
+	@NotNull
+	protected static Charset detectEncoding(File file) {
+		final TailSettings tailSettings = GrepConsoleApplicationComponent.getInstance().getState().getTailSettings();
+		String encoding = null;
+		if (tailSettings.isAutodetectEncoding()) {
+			try {
+				encoding = UniversalDetector.detectCharset(file);
+			} catch (IOException e) {
+				LOG.warn(e);
+			}
+		}
+		if (StringUtils.isEmpty(encoding)) {
+			encoding = tailSettings.getDefaultEncoding();
+		}
+		return Charset.forName(encoding);
+	}
+
 
 	private class MyProcess extends Process {
 		protected volatile boolean running = true;

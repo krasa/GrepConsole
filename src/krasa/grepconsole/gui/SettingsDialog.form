@@ -204,7 +204,7 @@
                   <component id="14c68" class="javax.swing.JButton" binding="fileTailSettings">
                     <constraints/>
                     <properties>
-                      <text value="Tail integration"/>
+                      <text value="Tail settings"/>
                     </properties>
                   </component>
                   <component id="ba71" class="javax.swing.JButton" binding="rehighlightAll">

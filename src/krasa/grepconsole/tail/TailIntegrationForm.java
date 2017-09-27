@@ -25,6 +25,8 @@ public class TailIntegrationForm {
 	private JLabel windowsIntegrationLabel;
 	private JTextArea openFileInConsoleTextArea;
 	private JButton bindButton;
+	private JTextField defaultEncoding;
+	private JCheckBox autodetectEncoding;
 
 	public TailIntegrationForm() {
 		for (JToggleButton button : Arrays.asList(listenOnPortCheckBox)) {
@@ -163,19 +165,24 @@ public class TailIntegrationForm {
 	public void setData(TailSettings data) {
 		port.setText(data.getPort());
 		listenOnPortCheckBox.setSelected(data.isEnabled());
+		defaultEncoding.setText(data.getDefaultEncoding());
+		autodetectEncoding.setSelected(data.isAutodetectEncoding());
 		updateComponents();
 	}
 
 	public void getData(TailSettings data) {
 		data.setPort(port.getText());
 		data.setEnabled(listenOnPortCheckBox.isSelected());
+		data.setDefaultEncoding(defaultEncoding.getText());
+		data.setAutodetectEncoding(autodetectEncoding.isSelected());
 	}
 
 	public boolean isModified(TailSettings data) {
-		if (port.getText() != null ? !port.getText().equals(data.getPort()) : data.getPort() != null)
+		if (port.getText() != null ? !port.getText().equals(data.getPort()) : data.getPort() != null) return true;
+		if (listenOnPortCheckBox.isSelected() != data.isEnabled()) return true;
+		if (defaultEncoding.getText() != null ? !defaultEncoding.getText().equals(data.getDefaultEncoding()) : data.getDefaultEncoding() != null)
 			return true;
-		if (listenOnPortCheckBox.isSelected() != data.isEnabled())
-			return true;
+		if (autodetectEncoding.isSelected() != data.isAutodetectEncoding()) return true;
 		return false;
 	}
 }
