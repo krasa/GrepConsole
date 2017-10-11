@@ -27,7 +27,7 @@ public class SettingsTableBuilder {
 	public static final String CONSOLE_COUNT = "Console count";
 	private CheckboxTreeTable table;
 
-	public SettingsTableBuilder(final SettingsDialog settingsDialog) {
+	public SettingsTableBuilder(final ProfileDetail profileDetail) {
 		List<ColumnInfo> columns = new ArrayList<>();
 		columns.add(new TreeColumnInfo("") {
 			@Nullable
@@ -61,9 +61,9 @@ public class SettingsTableBuilder {
 		inputFilter.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override
 			public void onValueChanged(GrepExpressionItem grepExpressionItem, Boolean newValue) {
-				if (newValue && !settingsDialog.getProfile().isEnabledInputFiltering()) {
-					settingsDialog.getProfile().setEnabledInputFiltering(true);
-					settingsDialog.setData(settingsDialog.getProfile());
+				if (newValue && !profileDetail.profile.isEnabledInputFiltering()) {
+					profileDetail.profile.setEnabledInputFiltering(true);
+					profileDetail.setData(profileDetail.profile);
 				}
 			}
 		});
@@ -73,9 +73,9 @@ public class SettingsTableBuilder {
 		fold.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override
 			public void onValueChanged(GrepExpressionItem grepExpressionItem, Boolean newValue) {
-				if (newValue && !settingsDialog.getProfile().isEnableFoldings()) {
-					settingsDialog.getProfile().setEnableFoldings(true);
-					settingsDialog.setData(settingsDialog.getProfile());
+				if (newValue && !profileDetail.profile.isEnableFoldings()) {
+					profileDetail.profile.setEnableFoldings(true);
+					profileDetail.setData(profileDetail.profile);
 				}
 			}
 		});
@@ -98,8 +98,8 @@ public class SettingsTableBuilder {
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
-		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", settingsDialog)));
-		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console", settingsDialog)));
+		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetail)));
+		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console", profileDetail)));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {
 			@Override
@@ -120,7 +120,7 @@ public class SettingsTableBuilder {
 		table = new CheckboxTreeTable(createRoot(), renderer, columns.toArray(new ColumnInfo[columns.size()]));
 		table.setDragEnabled(true);
 		table.setDropMode(DropMode.INSERT_ROWS);
-		table.setTransferHandler(new TableRowTransferHandler(table, settingsDialog));
+		table.setTransferHandler(new TableRowTransferHandler(table, profileDetail));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(table.getTree());
 		treeExpander.expandAll();

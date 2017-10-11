@@ -1,14 +1,17 @@
 package krasa.grepconsole.model;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
+import krasa.grepconsole.plugin.DefaultState;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Profile extends DomainObject {
+public class Profile extends DomainObject implements Cloneable {
 	public static final String DEFAULT = "120";
 	public static final String DEFAULT_GREP = "1000";
 	private static final String MAX_PROCESSING_TIME_DEFAULT = "1000";
@@ -37,6 +40,7 @@ public class Profile extends DomainObject {
 	@Transient
 	private transient Integer maxLengthToGrepAsInt;
 	private boolean enableMaxLengthGrepLimit = true;
+	private String name;
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
@@ -71,6 +75,10 @@ public class Profile extends DomainObject {
 
 	public Profile() {
 		id = System.currentTimeMillis();
+	}
+
+	public Profile(String name) {
+		this.name = name;
 	}
 
 	public long getId() {
@@ -263,5 +271,51 @@ public class Profile extends DomainObject {
 
 	public void setEnableMaxLengthGrepLimit(final boolean enableMaxLengthGrepLimit) {
 		this.enableMaxLengthGrepLimit = enableMaxLengthGrepLimit;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPresentableName() {
+		if (StringUtils.isBlank(name)) {
+			if (defaultProfile) {
+				name = "default";
+			} else {
+				name = "new";
+			}
+		}
+		return name;
+	}
+
+	@Override
+	public Profile clone() {
+		return krasa.grepconsole.Cloner.deepClone(this);
+	}
+
+	@Override
+	public String toString() {
+		return "Profile{" +
+				"id=" + id +
+				", defaultProfile=" + defaultProfile +
+				", name='" + name + '\'' +
+				"}";
+	}
+
+	public void resetToDefault() {
+		String name = this.name;
+		long id = this.id;
+		boolean defaultProfile = this.defaultProfile;
+
+		XmlSerializerUtil.copyBean(DefaultState.getDefaultProfile(), this);
+
+		this.setName(name);
+		this.setId(id);
+		this.setDefaultProfile(defaultProfile);
+
 	}
 }

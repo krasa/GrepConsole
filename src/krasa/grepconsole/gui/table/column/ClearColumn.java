@@ -2,7 +2,7 @@ package krasa.grepconsole.gui.table.column;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
-import krasa.grepconsole.gui.SettingsDialog;
+import krasa.grepconsole.gui.ProfileDetail;
 import krasa.grepconsole.model.GrepExpressionItem;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,11 +13,11 @@ import javax.swing.table.TableCellRenderer;
 public class ClearColumn extends ButtonColumnInfo<GrepExpressionItem> {
 	public static final Icon DISABLED = AllIcons.Actions.GC;
 	public static final Icon ENABLED = IconLoader.getIcon("clearEnabled.png", ClearColumn.class);
-	private final SettingsDialog settingsDialog;
+	private final ProfileDetail profileDetail;
 
-	public ClearColumn(String title, SettingsDialog settingsDialog) {
+	public ClearColumn(String title, ProfileDetail profileDetail) {
 		super(title);
-		this.settingsDialog = settingsDialog;
+		this.profileDetail = profileDetail;
 	}
 
 
@@ -25,8 +25,8 @@ public class ClearColumn extends ButtonColumnInfo<GrepExpressionItem> {
 	void onButtonClicked(GrepExpressionItem item) {
 		item.setClearConsole(!item.isClearConsole());
 		if (item.isClearConsole()) {
-			settingsDialog.getProfile().setEnabledInputFiltering(true);
-			settingsDialog.setData(settingsDialog.getProfile());
+			profileDetail.profile.setEnabledInputFiltering(true);
+			profileDetail.setData(profileDetail.profile);
 		}
 	}
 

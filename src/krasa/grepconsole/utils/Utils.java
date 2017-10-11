@@ -9,10 +9,15 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ide.CopyPasteManager;
+import krasa.grepconsole.model.Profile;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
 	public static int tryParseInteger(String text) {
@@ -70,5 +75,44 @@ public class Utils {
 		}
 		result += " [length=" + length + "]";
 		return result;
+	}
+
+	public static String generateName(List<Profile> settingsList, String name) {
+		Pattern compile = Pattern.compile("\\(\\d\\)");
+		int i = 0;
+		int index = indexOf(compile, name);
+		if (index > 0) {
+			String s = StringUtils.substring(name, index);
+			try {
+				i = Integer.parseInt(StringUtils.replaceChars(s, "()", ""));
+				name = StringUtils.substring(name, 0, index).trim();
+			} catch (Exception e) {
+			}
+		}
+
+		return generateName(settingsList, i, name, name);
+
+	}
+
+	public static String generateName(List<Profile> settingsList, int i, String name, String resultName) {
+		if (resultName == null) {
+			resultName = name;
+		}
+
+		for (Profile settings : settingsList) {
+			if (resultName.equals(settings.getName())) {
+				resultName = name + " (" + i + ")";
+				resultName = generateName(settingsList, ++i, name, resultName);
+			}
+		}
+		return resultName;
+	}
+
+	/**
+	 * @return index of pattern in s or -1, if not found
+	 */
+	public static int indexOf(Pattern pattern, String s) {
+		Matcher matcher = pattern.matcher(s);
+		return matcher.find() ? matcher.start() : -1;
 	}
 }

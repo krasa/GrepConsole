@@ -111,6 +111,7 @@ public class GrepConsoleApplicationComponent
 		this.settings = state;
 	}
 
+	@Deprecated            //TODO
 	public Profile getProfile() {
 		return getState().getDefaultProfile();
 	}

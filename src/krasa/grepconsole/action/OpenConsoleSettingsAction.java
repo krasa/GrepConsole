@@ -29,10 +29,10 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 		actionPerformed(project, SettingsContext.NONE);
 	}
 
-	public void actionPerformed(Project project, SettingsContext console) {
-		MyConfigurable instance = new MyConfigurable();
+	public void actionPerformed(Project project, SettingsContext settingsContext) {
+		MyConfigurable instance = new MyConfigurable(console);
 		instance.setCurrentAction(this);
-		instance.prepareForm(console);
+		instance.prepareForm(settingsContext);
 		ShowSettingsUtil.getInstance().editConfigurable(project, "GrepConsoleSettings", instance, true);
 		instance.setCurrentAction(null);
 	}

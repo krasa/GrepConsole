@@ -1,6 +1,8 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.impl.ConsoleViewImpl;
+import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -9,6 +11,7 @@ import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.SoundMode;
 import krasa.grepconsole.model.Sound;
+import krasa.grepconsole.plugin.runConfiguration.GrepConsoleData;
 import krasa.grepconsole.utils.Rehighlighter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,11 +38,13 @@ public class ServiceManager {
 	private WeakReference<GrepHighlightingInputFilter> lastGrepHighlightFilter;
 
 	/** for providing attached filters for certain console */
+	private WeakHashMap<ConsoleView, ExecutionEnvironment> executionEnvironments = new WeakHashMap<>();
 	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<>();
 	private WeakHashMap<ConsoleView, GrepCopyingFilter> weakCopiersMap = new WeakHashMap<>();
 	private WeakHashMap<ConsoleView, GrepInputFilter> weakGrepInputFilterMap = new WeakHashMap<>();
 	private boolean createInputFilter = true;
-
+	protected ExecutionEnvironment lastExecutionEnvironment;
+	           
 	public static ServiceManager getInstance() {
 		return SERVICE_MANAGER;
 	}
@@ -158,6 +163,7 @@ public class ServiceManager {
 			weakHighlightersMap.put(console, lastGrepHighlightFilter);
 			this.lastGrepHighlightFilter = null;
 		}
+		executionEnvironments.put(console, lastExecutionEnvironment);
 	}
 
 	@Nullable
@@ -205,5 +211,18 @@ public class ServiceManager {
 		}
 		Sound.soundMode = SoundMode.ENABLED;
 
+	}
+
+	public GrepConsoleData getConsoleSettings(ConsoleView console) {
+		RunConfigurationBase runConfigurationBase = getRunConfigurationBase(console);
+		return GrepConsoleData.getGrepConsoleData(runConfigurationBase);
+	}
+
+	public RunConfigurationBase getRunConfigurationBase(ConsoleView console) {
+		ExecutionEnvironment executionEnvironment = executionEnvironments.get(console);
+		if (executionEnvironment != null && executionEnvironment.getRunProfile() instanceof RunConfigurationBase) {
+			return (RunConfigurationBase) executionEnvironment.getRunProfile();
+		}
+		return null;
 	}
 }

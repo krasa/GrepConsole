@@ -159,5 +159,7 @@
 		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
 								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
 		<!-- Add your extensions here -->
+		<runConfigurationExtension
+				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtension"/>
 	</extensions>
 </idea-plugin>
