@@ -46,7 +46,6 @@ public class PluginState extends DomainObject implements Cloneable {
 			}
 		}
 		if (result == null) {
-			LOG.error(oldProfile + " does not exist, returning default");
 			result = getDefaultProfile();
 		}
 		return result;
