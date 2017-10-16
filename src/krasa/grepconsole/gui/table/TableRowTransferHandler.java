@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.List;
 
 public class TableRowTransferHandler extends TransferHandler {
-	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class.getName());
+	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class);
 
 	/* this seems useless */
 	private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class,

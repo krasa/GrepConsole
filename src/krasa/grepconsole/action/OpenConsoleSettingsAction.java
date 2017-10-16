@@ -15,8 +15,6 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	public static final Icon ICON = IconLoader.getIcon("highlight.gif", OpenConsoleSettingsAction.class);
 	private ConsoleView console;
 
-	public OpenConsoleSettingsAction() {
-	}
 
 	public OpenConsoleSettingsAction(ConsoleView console) {
 		super("Open Grep Console settings", null, ICON);

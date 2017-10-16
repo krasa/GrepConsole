@@ -19,8 +19,8 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 	protected volatile List<GrepProcessor> grepProcessors;
 	private boolean showLimitNotification = true;
 
-	public AbstractGrepFilter(Project project) {
-		super(project);
+	public AbstractGrepFilter(Project project, Profile profile) {
+		super(project, profile);
 		initProcessors();
 	}
 
@@ -88,6 +88,6 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
-		initProcessors();
+		onChange();
 	}
 }

@@ -1,16 +1,19 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.utils.Utils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PluginState extends DomainObject implements Cloneable {
-
+	private static final Logger LOG = Logger.getInstance(PluginState.class);
+	
 	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;
 	private boolean enabled;
@@ -34,6 +37,7 @@ public class PluginState extends DomainObject implements Cloneable {
 		return result;
 	}
 
+	@NotNull
 	public Profile getProfile(Profile oldProfile) {
 		Profile result = null;
 		for (Profile profile : profiles) {
@@ -42,11 +46,25 @@ public class PluginState extends DomainObject implements Cloneable {
 			}
 		}
 		if (result == null) {
+			LOG.error(oldProfile + " does not exist, returning default");
 			result = getDefaultProfile();
 		}
 		return result;
 	}
 
+	@NotNull
+	public Profile getProfile(long selectedProfileId) {
+		Profile result = null;
+		for (Profile profile : profiles) {
+			if (profile.getId() == selectedProfileId) {
+				result = profile;
+			}
+		}
+		if (result == null) {
+			result = getDefaultProfile();
+		}
+		return result;
+	}
 	public TailSettings getTailSettings() {
 		if (tailSettings == null) {
 			tailSettings = new TailSettings();
@@ -139,4 +157,6 @@ public class PluginState extends DomainObject implements Cloneable {
 			return getDefaultProfile();
 		}
 	}
+
+
 }

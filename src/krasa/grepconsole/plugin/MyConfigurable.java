@@ -8,10 +8,12 @@ import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.support.SoundMode;
 import krasa.grepconsole.gui.CompositeSettingsDialog;
 import krasa.grepconsole.gui.SettingsContext;
+import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.Sound;
 import krasa.grepconsole.plugin.runConfiguration.GrepConsoleData;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NonNls;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -20,6 +22,7 @@ public class MyConfigurable implements Configurable {
 
 	private RunConfigurationBase runConfigurationBase;
 	private long originalSelectedProfileId;
+	@Nullable
 	private ConsoleView console;
 	private CompositeSettingsDialog form;
 	private ServiceManager serviceManager = ServiceManager.getInstance();
@@ -29,12 +32,10 @@ public class MyConfigurable implements Configurable {
 	public MyConfigurable() {
 	}
 
-	public MyConfigurable(ConsoleView console) {
+	public MyConfigurable(@NotNull ConsoleView console) {
 		this.console = console;
-		GrepConsoleData consoleSettings = ServiceManager.getInstance().getConsoleSettings(console);
-		if (consoleSettings != null) {
-			originalSelectedProfileId = consoleSettings.getSelectedProfileId();
-		}
+		originalSelectedProfileId = ServiceManager.getInstance().consoles.getSelectedProfileId(console);
+	
 	}
 
 	public MyConfigurable(RunConfigurationBase runConfigurationBase) {
@@ -75,23 +76,31 @@ public class MyConfigurable implements Configurable {
 
 	@Override
 	public void apply() throws ConfigurationException {
-		long selectedProfileId = form.getSelectedProfile().getId();
-		RunConfigurationBase runConfigurationBase = this.runConfigurationBase;
-		if (runConfigurationBase == null) {
-			runConfigurationBase = ServiceManager.getInstance().getRunConfigurationBase(console);
-		}
-		if (runConfigurationBase != null) {
-			GrepConsoleData.getGrepConsoleData(runConfigurationBase).setSelectedProfileId(selectedProfileId);
-		}
-		form.setSelectedProfileId(selectedProfileId);
-		
-		
 		apply(currentAction);
 	}
 
 	public void apply(@Nullable HighlightManipulationAction currentAction) {
 		PluginState formSettings = form.getSettings();
 		applicationComponent.loadState(formSettings.clone());
+
+
+		long selectedProfileId = form.getSelectedProfile().getId();
+		RunConfigurationBase runConfigurationBase = this.runConfigurationBase;
+		if (runConfigurationBase == null && console != null) {
+			runConfigurationBase = ServiceManager.getInstance().getRunConfigurationBase(console);
+		}
+		if (runConfigurationBase != null) {
+			GrepConsoleData.getGrepConsoleData(runConfigurationBase).setSelectedProfileId(selectedProfileId);
+		}
+		if (selectedProfileId != originalSelectedProfileId) {
+			Profile profile = applicationComponent.getState().getProfile(selectedProfileId);
+			if (console != null) {
+				serviceManager.profileChanged(console, profile);
+			}
+		}
+		form.setSelectedProfileId(selectedProfileId);
+
+
 		serviceManager.resetSettings();
 		applicationComponent.initFoldingCache();
 		Sound.soundMode = SoundMode.DISABLED;

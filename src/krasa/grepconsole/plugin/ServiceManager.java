@@ -2,14 +2,17 @@ package krasa.grepconsole.plugin;
 
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.MyConsoleViewImpl;
-import krasa.grepconsole.filter.*;
+import krasa.grepconsole.filter.AbstractFilter;
+import krasa.grepconsole.filter.GrepCopyingFilter;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.GrepInputFilter;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.SoundMode;
+import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.Sound;
 import krasa.grepconsole.plugin.runConfiguration.GrepConsoleData;
 import krasa.grepconsole.utils.Rehighlighter;
@@ -18,12 +21,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Vojtech Krasa
  */
 public class ServiceManager {
-	private static final Logger log = Logger.getInstance(ServiceManager.class.getName());
+	private static final Logger log = Logger.getInstance(ServiceManager.class);
 
 	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
 
@@ -34,25 +38,135 @@ public class ServiceManager {
 	/** to couple console with filters */
 	private WeakReference<GrepCopyingFilter> lastCopier;
 	private WeakReference<GrepInputFilter> lastGrepInputFilter;
-	@Deprecated
-	private WeakReference<GrepHighlightingInputFilter> lastGrepHighlightFilter;
 
-	/** for providing attached filters for certain console */
-	private WeakHashMap<ConsoleView, ExecutionEnvironment> executionEnvironments = new WeakHashMap<>();
-	private WeakHashMap<ConsoleView, GrepHighlightFilter> weakHighlightersMap = new WeakHashMap<>();
-	private WeakHashMap<ConsoleView, GrepCopyingFilter> weakCopiersMap = new WeakHashMap<>();
-	private WeakHashMap<ConsoleView, GrepInputFilter> weakGrepInputFilterMap = new WeakHashMap<>();
+
+	Consoles consoles = new Consoles();
 	private boolean createInputFilter = true;
-	protected ExecutionEnvironment lastExecutionEnvironment;
+	protected RunConfigurationBase lastRunConfiguration;
 	           
 	public static ServiceManager getInstance() {
 		return SERVICE_MANAGER;
 	}
 
+	public Profile getProfile(ConsoleView consoleView) {
+		if (consoleView == null) {
+			return GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
+		}
+		return consoles.getProfile(consoleView);
+	}
+
+
+	static class Consoles {
+		private WeakHashMap<ConsoleView, ConsoleViewData> consoleDataMap = new WeakHashMap<>();
+
+		public void put(ConsoleView consoleView, GrepHighlightFilter grepHighlightFilter) {
+			ConsoleViewData consoleViewData = getOrCreateData(consoleView);
+			consoleViewData.grepHighlightFilter = grepHighlightFilter;
+		}
+
+		public void put(ConsoleView console, GrepCopyingFilter lastCopier) {
+			getOrCreateData(console).grepCopyingFilter = lastCopier;
+		}
+
+		public void put(ConsoleView console, RunConfigurationBase lastRunConfiguration) {
+			getOrCreateData(console).runConfigurationBase = lastRunConfiguration;
+		}
+
+		public void put(ConsoleView console, GrepInputFilter lastGrepInputFilter) {
+			getOrCreateData(console).grepInputFilter = lastGrepInputFilter;
+		}
+
+
+		private ConsoleViewData getOrCreateData(ConsoleView consoleView) {
+			ConsoleViewData consoleViewData = consoleDataMap.get(consoleView);
+			if (consoleViewData == null) {
+				consoleViewData = new ConsoleViewData();
+				consoleDataMap.put(consoleView, consoleViewData);
+			}
+			return consoleViewData;
+		}
+
+		public GrepHighlightFilter getGrepHighlightFilter(ConsoleView console) {
+			return getOrCreateData(console).grepHighlightFilter;
+		}
+
+		public GrepCopyingFilter getGrepCopyingFilter(ConsoleView console) {
+			return getOrCreateData(console).grepCopyingFilter;
+		}
+
+		public Collection<GrepCopyingFilter> getCopiers() {
+			return consoleDataMap.values().stream().map(value -> value.grepCopyingFilter).collect(Collectors.toCollection(ArrayList::new));
+		}
+
+		public RunConfigurationBase getRunConfigurationBase(@NotNull ConsoleView console) {
+			return getOrCreateData(console).runConfigurationBase;
+		}
+
+		public boolean contains(ConsoleView console) {
+			return consoleDataMap.containsKey(console);
+		}
+
+		public Set<Map.Entry<ConsoleView, ConsoleViewData>> entrySet() {
+			return consoleDataMap.entrySet();
+		}
+
+		public ConsoleViewData get(ConsoleView console) {
+			return consoleDataMap.get(console);
+		}
+
+		public Profile getProfile(ConsoleView consoleView) {
+			PluginState state = GrepConsoleApplicationComponent.getInstance().getState();
+			return state.getProfile(getSelectedProfileId(consoleView));
+		}
+
+		public long getSelectedProfileId(ConsoleView console) {
+			ConsoleViewData consoleViewData = get(console);
+			if (consoleViewData.runConfigurationBase != null) {
+				GrepConsoleData grepConsoleData = GrepConsoleData.getGrepConsoleData(consoleViewData.runConfigurationBase);
+				return grepConsoleData.getSelectedProfileId();
+			} else {
+				if (consoleViewData.profile != null) {
+					return consoleViewData.profile.getId();
+				}
+				return 0;
+			}
+		}
+
+		static class ConsoleViewData {
+			RunConfigurationBase runConfigurationBase;
+			/**
+			 * for grep consoles - they don't have RunConfigurationBase
+			 */
+			Profile profile;
+
+			GrepHighlightFilter grepHighlightFilter;
+			GrepCopyingFilter grepCopyingFilter;
+			GrepInputFilter grepInputFilter;
+
+			public void setProfile(Profile selectedProfile) {
+				profile = selectedProfile;
+				GrepCopyingFilter grepCopyingFilter = this.grepCopyingFilter;
+				if (grepCopyingFilter != null) {
+					grepCopyingFilter.setProfile(selectedProfile);
+				}
+				GrepHighlightFilter grepHighlightFilter = this.grepHighlightFilter;
+				if (grepHighlightFilter != null) {
+					grepHighlightFilter.setProfile(selectedProfile);
+				}
+				GrepInputFilter grepInputFilter = this.grepInputFilter;
+				if (grepInputFilter != null) {
+					grepInputFilter.setProfile(selectedProfile);
+				}
+			}
+		}
+	}
+
+	
+	
 	public void resetSettings() {
 		iterate(highlightFilters);
 		iterate(inputFilters);
-		iterate(weakCopiersMap.values());
+		iterate(consoles.getCopiers());
 		// todo this may not work properly, regenerate GrepExpressionItem id
 		Cache.reset();
 
@@ -80,90 +194,64 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	public GrepInputFilter createInputFilter(Project project) {
+	public GrepInputFilter createInputFilter(Project project, Profile profile) {
 		if (!createInputFilter) {
 			return null;
 		}
-		GrepInputFilter lastInputFilter = new GrepInputFilter(project);
+		GrepInputFilter lastInputFilter = new GrepInputFilter(project, profile);
 		WeakReference<GrepInputFilter> weakReference = new WeakReference<>(lastInputFilter);
 		inputFilters.add(weakReference);
 		lastGrepInputFilter = weakReference;
 		return lastInputFilter;
 	}
 
-	@Deprecated
-	public GrepHighlightingInputFilter createHighlightInputFilter(Project project) {
-		GrepHighlightingInputFilter grepHighlightFilter = new GrepHighlightingInputFilter(project);
-		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
-		lastGrepHighlightFilter = new WeakReference<>(grepHighlightFilter);
-		return grepHighlightFilter;
-	}
-
 	public GrepHighlightFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
-		final GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project);
+		if (consoleView != null) {
+			registerConsole(consoleView);
+		}
+
+		Profile profile = getProfile(consoleView);
+		GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project, profile);
 		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
 		if (consoleView != null) {
-			weakHighlightersMap.put(consoleView, grepHighlightFilter);
+			consoles.put(consoleView, grepHighlightFilter);
 		}
 		return grepHighlightFilter;
 	}
 
-	public GrepCopyingFilter createCopyingFilter(@NotNull Project project) {
-		final GrepCopyingFilter grepInputFilter = new GrepCopyingFilter(project);
+	public GrepCopyingFilter createCopyingFilter(@NotNull Project project, Profile profile) {
+		final GrepCopyingFilter grepInputFilter = new GrepCopyingFilter(project, profile);
 		lastCopier = new WeakReference<>(grepInputFilter);
 		return grepInputFilter;
 	}
 
 	@Nullable
 	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
-		GrepHighlightFilter grepHighlightFilter = weakHighlightersMap.get(console);
-		if (grepHighlightFilter == null) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("Something is wrong. " + "GrepHighlightFilter" + " not found for ").append(
-					System.identityHashCode(console)).append("-").append(console);
-			sb.append(". Registered: [");
-			boolean i = false;
-			for (Map.Entry<ConsoleView, GrepHighlightFilter> consoleViewGrepHighlightFilterEntry : weakHighlightersMap.entrySet()) {
-				if (i) {
-					sb.append(",");
-				}
-				sb.append(System.identityHashCode(console)).append("-").append(
-						consoleViewGrepHighlightFilterEntry.getKey());
-				i = true;
-			}
-			sb.append("]");
-			log.warn(sb.toString());
-			return null;
-		}
-		return grepHighlightFilter;
+		return consoles.getGrepHighlightFilter(console);
 	}
 
 	@Nullable
 	public GrepCopyingFilter getCopyingFilter(@NotNull ConsoleView console) {
-		return weakCopiersMap.get(console);
+		return consoles.getGrepCopyingFilter(console);
 	}
 
 	public boolean isRegistered(@NotNull ConsoleView console) {
-		return weakHighlightersMap.containsKey(console);
+		return consoles.contains(console);
 	}
 
 	public void registerConsole(ConsoleView console) {
 		GrepCopyingFilter lastCopier = getLastCopier();
 		if (lastCopier != null) {
-			weakCopiersMap.put(console, lastCopier);
+			consoles.put(console, lastCopier);
 			this.lastCopier = null;
 		}
 		GrepInputFilter lastGrepInputFilter = getLastGrepInputFilter();
 		if (lastGrepInputFilter != null) {
-			lastGrepInputFilter.setConsole(new WeakReference<>(console));
+			lastGrepInputFilter.init(new WeakReference<>(console), getProfile(console));
+			consoles.put(console, lastGrepInputFilter);
 			this.lastGrepInputFilter = null;
 		}
-		GrepHighlightingInputFilter lastGrepHighlightFilter = getLastGrepHighlightFilter();
-		if (lastGrepHighlightFilter != null) {
-			weakHighlightersMap.put(console, lastGrepHighlightFilter);
-			this.lastGrepHighlightFilter = null;
-		}
-		executionEnvironments.put(console, lastExecutionEnvironment);
+		consoles.put(console, lastRunConfiguration);
 	}
 
 	@Nullable
@@ -175,14 +263,6 @@ public class ServiceManager {
 		}
 	}
 
-	@Nullable
-	private GrepHighlightingInputFilter getLastGrepHighlightFilter() {
-		if (lastGrepHighlightFilter != null) {
-			return lastGrepHighlightFilter.get();
-		} else {
-			return null;
-		}
-	}
 
 	@Nullable
 	private GrepInputFilter getLastGrepInputFilter() {
@@ -206,23 +286,24 @@ public class ServiceManager {
 		Rehighlighter rehighlighter = new Rehighlighter();
 
 		Sound.soundMode = SoundMode.DISABLED;
-		for (ConsoleView consoleView : weakHighlightersMap.keySet()) {
-			rehighlighter.resetHighlights(consoleView);
+		for (Map.Entry<ConsoleView, Consoles.ConsoleViewData> consoleView : consoles.entrySet()) {
+			rehighlighter.resetHighlights(consoleView.getKey());
 		}
 		Sound.soundMode = SoundMode.ENABLED;
 
 	}
 
-	public GrepConsoleData getConsoleSettings(ConsoleView console) {
-		RunConfigurationBase runConfigurationBase = getRunConfigurationBase(console);
-		return GrepConsoleData.getGrepConsoleData(runConfigurationBase);
+	public RunConfigurationBase getRunConfigurationBase(@NotNull ConsoleView console) {
+		return consoles.getRunConfigurationBase(console);
 	}
 
-	public RunConfigurationBase getRunConfigurationBase(ConsoleView console) {
-		ExecutionEnvironment executionEnvironment = executionEnvironments.get(console);
-		if (executionEnvironment != null && executionEnvironment.getRunProfile() instanceof RunConfigurationBase) {
-			return (RunConfigurationBase) executionEnvironment.getRunProfile();
-		}
-		return null;
+	public void profileChanged(@NotNull ConsoleView console, @NotNull Profile selectedProfileId) {
+		Consoles.ConsoleViewData consoleViewData = consoles.get(console);
+		if (consoleViewData != null) {
+			consoleViewData.setProfile(selectedProfileId);
+		} else {
+			throw new IllegalStateException("console not registered");
+		} 
 	}
+
 }

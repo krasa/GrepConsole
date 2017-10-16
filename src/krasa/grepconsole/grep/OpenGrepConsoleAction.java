@@ -21,7 +21,6 @@ import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -71,17 +70,19 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project);
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, parentConsoleView);
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
-		Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile();
-		final GrepCopyingFilterListener copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, project, profile);
 
 
 		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(project, parentConsoleView, myProcessHandler);
+		Profile profile = ServiceManager.getInstance().getProfile(parentConsoleView);
+		ServiceManager.getInstance().profileChanged(newConsole, profile);
+
+		final GrepCopyingFilterListener copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, project, profile);
 		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, copyingListener, grepModel, expression, runnerLayoutUi);
 
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView);
-		PinAction pinAction = new PinAction(project, quickFilterPanel, runContentDescriptor, parentConsoleUUID, consoleUUID);
+		PinAction pinAction = new PinAction(project, quickFilterPanel, runContentDescriptor, parentConsoleUUID, consoleUUID, profile);
 		actions.add(pinAction);
 
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
@@ -327,7 +328,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private Project myProject;
 		private PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef;
 
-		public PinAction(Project myProject, GrepPanel quickFilterPanel, @NotNull RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID) {
+		public PinAction(Project myProject, GrepPanel quickFilterPanel, @NotNull RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID, Profile profile) {
 			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;
@@ -335,7 +336,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			this.myProject = myProject;
 			runConfigurationRef = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 			PinnedGrepConsolesState projectComponent = PinnedGrepConsolesState.getInstance(this.myProject);
-			projectComponent.register(this);
+			projectComponent.register(this, profile);
 			pinned = projectComponent.isPinned(this);
 		}
 

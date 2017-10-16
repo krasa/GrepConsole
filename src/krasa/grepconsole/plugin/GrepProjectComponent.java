@@ -2,6 +2,7 @@ package krasa.grepconsole.plugin;
 
 import com.intellij.execution.ExecutionListener;
 import com.intellij.execution.ExecutionManager;
+import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -54,12 +55,12 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 			@Override
 			public void processStarting(String executorId, @NotNull ExecutionEnvironment env) {
-				instance.lastExecutionEnvironment = env;
+				instance.lastRunConfiguration = getRunConfigurationBase(env);
 			}
 
 			@Override
 			public void processStarted(@NotNull String executorId, @NotNull ExecutionEnvironment env, @NotNull ProcessHandler handler) {
-				instance.lastExecutionEnvironment = null;
+				instance.lastRunConfiguration = null;
 			}
 
 			@Override
@@ -80,11 +81,18 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 			@Override
 			public void processNotStarted(String s, @NotNull ExecutionEnvironment executionEnvironment) {
-				instance.lastExecutionEnvironment = null;
+				instance.lastRunConfiguration = null;
 			}
 		});
 	}
 
+	private static RunConfigurationBase getRunConfigurationBase(ExecutionEnvironment executionEnvironment) {
+		if (executionEnvironment != null && executionEnvironment.getRunProfile() instanceof RunConfigurationBase) {
+			return (RunConfigurationBase) executionEnvironment.getRunProfile();
+		}
+		return null;
+	}
+	  
 	@Override
 	public void disposeComponent() {
 		// TODO: insert component disposal logic here

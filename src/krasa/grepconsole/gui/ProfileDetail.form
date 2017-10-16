@@ -249,6 +249,7 @@
                     </constraints>
                     <properties>
                       <text value="Folding"/>
+                      <toolTipText value="Enabled only on the default profile. Folding settings are used globally on all consoles."/>
                     </properties>
                   </component>
                   <component id="e5060" class="javax.swing.JCheckBox" binding="filterOutBeforeGreppingToASubConsole">

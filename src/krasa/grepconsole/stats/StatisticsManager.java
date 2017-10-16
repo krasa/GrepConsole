@@ -1,12 +1,5 @@
 package krasa.grepconsole.stats;
 
-import java.awt.*;
-
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
@@ -16,18 +9,21 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.WindowManager;
-
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * @author Vojtech Krasa
  */
 public class StatisticsManager {
-	private static final Logger log = Logger.getInstance(StatisticsManager.class.getName());
+	private static final Logger log = Logger.getInstance(StatisticsManager.class);
 
 	public static void createStatisticsPanels(final ConsoleViewImpl console) {
 		GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
@@ -35,7 +31,7 @@ public class StatisticsManager {
 			return;
 		}
 
-		Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile();
+		Profile profile = ServiceManager.getInstance().getProfile(console);
 		if (profile.isShowStatsInStatusBarByDefault()) {
 			createStatusBarPanel(console, highlightFilter);
 		}
@@ -61,7 +57,7 @@ public class StatisticsManager {
 				statisticsPanel.revalidate();
 			}
 		} else {
-			Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile();
+			Profile profile = ServiceManager.getInstance().getProfile(console);
 			GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
 			if (highlightFilter != null && profile.isShowStatsInStatusBarByDefault()) {
 				createStatusBarPanel(console, highlightFilter);
@@ -92,7 +88,7 @@ public class StatisticsManager {
 				statisticsConsolePanel.revalidate();
 			}
 		} else {
-			Profile profile = GrepConsoleApplicationComponent.getInstance().getProfile();
+			Profile profile = ServiceManager.getInstance().getProfile(consoleView);
 			GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(consoleView);
 			if (profile.isShowStatsInConsoleByDefault() && highlightFilter != null) {
 				createConsolePanel(consoleView, highlightFilter);

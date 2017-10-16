@@ -1,19 +1,17 @@
 package krasa.grepconsole.model;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.media.*;
-
+import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.filter.support.SoundMode;
 
-import com.intellij.openapi.diagnostic.Logger;
+import javax.media.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * @author Vojtech Krasa
  */
 public class Sound extends DomainObject implements ControllerListener {
-	private static final Logger log = Logger.getInstance(Sound.class.getName());
+	private static final Logger log = Logger.getInstance(Sound.class);
 
 	public static SoundMode soundMode = SoundMode.ENABLED;
 

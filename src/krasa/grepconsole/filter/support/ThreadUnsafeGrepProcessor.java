@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 
 public class ThreadUnsafeGrepProcessor implements GrepProcessor {
-	private static final Logger log = Logger.getInstance(ThreadUnsafeGrepProcessor.class.getName());
+	private static final Logger log = Logger.getInstance(ThreadUnsafeGrepProcessor.class);
 	protected Matcher patternMatcher;
 	protected Matcher unlessMatcher;
 	private GrepExpressionItem grepExpressionItem;

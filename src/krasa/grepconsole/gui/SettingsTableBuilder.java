@@ -79,7 +79,8 @@ public class SettingsTableBuilder {
 				}
 			}
 		});
-		columns.add(new FolderColumnInfoWrapper(fold));
+		FolderColumnInfoWrapper foldC = new FolderColumnInfoWrapper(fold);
+		columns.add(foldC);
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
 "Whole line", "wholeLine").tooltipText("Match a whole line, otherwise find a matching substrings - 'Unless expression' works only for whole lines.")));
 		columns.add(new FolderColumnInfoWrapper(
@@ -117,7 +118,7 @@ public class SettingsTableBuilder {
 
 			}
 		};
-		table = new CheckboxTreeTable(createRoot(), renderer, columns.toArray(new ColumnInfo[columns.size()]));
+		table = new CheckboxTreeTable(createRoot(), renderer, columns.toArray(new ColumnInfo[columns.size()]), foldC);
 		table.setDragEnabled(true);
 		table.setDropMode(DropMode.INSERT_ROWS);
 		table.setTransferHandler(new TableRowTransferHandler(table, profileDetail));

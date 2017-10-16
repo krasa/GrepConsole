@@ -231,13 +231,15 @@ public class ProfileDetail {
 	public void importFrom(@NotNull Profile profile) {
 		this.profile = profile;
 		setData(profile);
-		resetTreeModel();
+		resetTreeModel(profile.isDefaultProfile());
+		enableFoldings.setEnabled(profile.isDefaultProfile());
 	}
 
-	private void resetTreeModel() {
+	private void resetTreeModel(boolean defaultProfile) {
+		table.foldingsEnabled(defaultProfile);
 		CheckedTreeNode root = (CheckedTreeNode) table.getTree().getModel().getRoot();
 		root.removeAllChildren();
-		for (GrepExpressionGroup group : profile.getGrepExpressionGroups()) {
+		for (GrepExpressionGroup group : this.profile.getGrepExpressionGroups()) {
 			GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
 			for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
 				newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
