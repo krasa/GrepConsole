@@ -89,7 +89,7 @@ public class ProfileDetail {
 				myConfigurable.apply(null);
 				ServiceManager.getInstance().rehighlight();
 			}
-		}); 
+		});
 		addNewButton.addActionListener(new AddNewItemAction());
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
@@ -231,8 +231,12 @@ public class ProfileDetail {
 	public void importFrom(@NotNull Profile profile) {
 		this.profile = profile;
 		setData(profile);
-		resetTreeModel(profile.isDefaultProfile());
-		enableFoldings.setEnabled(profile.isDefaultProfile());
+		foldingsEnabled(profile.isDefaultProfile());
+	}
+
+	public void foldingsEnabled(boolean defaultProfile) {
+		resetTreeModel(defaultProfile);
+		enableFoldings.setEnabled(defaultProfile);
 	}
 
 	private void resetTreeModel(boolean defaultProfile) {
