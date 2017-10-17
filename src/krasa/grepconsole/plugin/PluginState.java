@@ -38,20 +38,6 @@ public class PluginState extends DomainObject implements Cloneable {
 	}
 
 	@NotNull
-	public Profile getProfile(Profile oldProfile) {
-		Profile result = null;
-		for (Profile profile : profiles) {
-			if (profile.getId() == oldProfile.getId()) {
-				result = profile;
-			}
-		}
-		if (result == null) {
-			result = getDefaultProfile();
-		}
-		return result;
-	}
-
-	@NotNull
 	public Profile getProfile(long selectedProfileId) {
 		Profile result = null;
 		for (Profile profile : profiles) {
@@ -101,15 +87,6 @@ public class PluginState extends DomainObject implements Cloneable {
 		return getDefaultProfile().isSynchronous();
 	}
 
-	@Override
-	public String toString() {
-		return "PluginState{" +
-				"profiles=" + profiles +
-				", tailSettings=" + tailSettings +
-				", enabled=" + enabled +
-				"} " + super.toString();
-	}
-
 	public Profile createProfile() {
 		Profile profile = DefaultState.getDefaultProfile();
 		profile.setDefaultProfile(false);
@@ -157,5 +134,14 @@ public class PluginState extends DomainObject implements Cloneable {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "PluginState{" +
+				"profiles=" + profiles +
+				", tailSettings=" + tailSettings +
+				", enabled=" + enabled +
+				"} " + super.toString();
+	}
+	          
 
 }

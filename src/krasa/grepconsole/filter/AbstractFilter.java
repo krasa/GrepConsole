@@ -21,7 +21,7 @@ public abstract class AbstractFilter implements DumbAware {
 
 	protected void refreshProfile() {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
-		profile = applicationComponent.getState().getProfile(profile);
+		profile = applicationComponent.getState().getProfile(profile.getId());
 	}
 
 	public void setProfile(Profile profile) {
