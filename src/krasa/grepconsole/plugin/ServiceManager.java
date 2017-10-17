@@ -48,6 +48,7 @@ public class ServiceManager {
 		return SERVICE_MANAGER;
 	}
 
+	@NotNull
 	public Profile getProfile(ConsoleView consoleView) {
 		if (consoleView == null) {
 			return GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
@@ -114,6 +115,7 @@ public class ServiceManager {
 			return consoleDataMap.get(console);
 		}
 
+		@NotNull
 		public Profile getProfile(ConsoleView consoleView) {
 			PluginState state = GrepConsoleApplicationComponent.getInstance().getState();
 			return state.getProfile(getSelectedProfileId(consoleView));
@@ -143,7 +145,7 @@ public class ServiceManager {
 			GrepCopyingFilter grepCopyingFilter;
 			GrepInputFilter grepInputFilter;
 
-			public void setProfile(Profile selectedProfile) {
+			public void setProfile(@NotNull Profile selectedProfile) {
 				profile = selectedProfile;
 				GrepCopyingFilter grepCopyingFilter = this.grepCopyingFilter;
 				if (grepCopyingFilter != null) {
@@ -194,7 +196,7 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	public GrepInputFilter createInputFilter(Project project, Profile profile) {
+	public GrepInputFilter createInputFilter(@NotNull Project project, @NotNull Profile profile) {
 		if (!createInputFilter) {
 			return null;
 		}
@@ -297,10 +299,10 @@ public class ServiceManager {
 		return consoles.getRunConfigurationBase(console);
 	}
 
-	public void profileChanged(@NotNull ConsoleView console, @NotNull Profile selectedProfileId) {
+	public void profileChanged(@NotNull ConsoleView console, @NotNull Profile selectedProfile) {
 		Consoles.ConsoleViewData consoleViewData = consoles.get(console);
 		if (consoleViewData != null) {
-			consoleViewData.setProfile(selectedProfileId);
+			consoleViewData.setProfile(selectedProfile);
 		} else {
 			throw new IllegalStateException("console not registered");
 		} 

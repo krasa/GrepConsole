@@ -9,6 +9,7 @@ import krasa.grepconsole.model.Operation;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.utils.Notifier;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -19,12 +20,12 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 	protected volatile List<GrepProcessor> grepProcessors;
 	private boolean showLimitNotification = true;
 
-	public AbstractGrepFilter(Project project, Profile profile) {
+	public AbstractGrepFilter(@NotNull Project project, @NotNull Profile profile) {
 		super(project, profile);
 		initProcessors();
 	}
 
-	public AbstractGrepFilter(Profile profile, List<GrepProcessor> grepProcessors) {
+	public AbstractGrepFilter(@NotNull Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile);
 		this.grepProcessors = grepProcessors;
 	}
@@ -86,7 +87,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 		initProcessors();
 	}
 
-	public void setProfile(Profile profile) {
+	public void setProfile(@NotNull Profile profile) {
 		this.profile = profile;
 		onChange();
 	}
