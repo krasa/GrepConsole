@@ -35,7 +35,6 @@ public class MyConfigurable implements Configurable {
 	public MyConfigurable(@NotNull ConsoleView console) {
 		this.console = console;
 		originalSelectedProfileId = ServiceManager.getInstance().consoles.getSelectedProfileId(console);
-	
 	}
 
 	public MyConfigurable(RunConfigurationBase runConfigurationBase) {
@@ -79,35 +78,42 @@ public class MyConfigurable implements Configurable {
 		apply(currentAction);
 	}
 
+	/**
+	 * Run Configuration settings calls it all the time on change of models
+	 */
 	public void apply(@Nullable HighlightManipulationAction currentAction) {
 		PluginState formSettings = form.getSettings();
 		applicationComponent.loadState(formSettings.clone());
 
 
-		long selectedProfileId = form.getSelectedProfile().getId();
-		RunConfigurationBase runConfigurationBase = this.runConfigurationBase;
-		if (runConfigurationBase == null && console != null) {
-			runConfigurationBase = ServiceManager.getInstance().getRunConfigurationBase(console);
-		}
-		if (runConfigurationBase != null) {
-			GrepConsoleData.getGrepConsoleData(runConfigurationBase).setSelectedProfileId(selectedProfileId);
-		}
-		if (selectedProfileId != originalSelectedProfileId) {
-			Profile profile = applicationComponent.getState().getProfile(selectedProfileId);
-			if (console != null) {
-				serviceManager.profileChanged(console, profile);
+		Profile selectedProfile = form.getSelectedProfile();
+		if (selectedProfile != null) {
+			long selectedProfileId = selectedProfile.getId();
+			RunConfigurationBase runConfigurationBase = this.runConfigurationBase;
+			if (runConfigurationBase == null && console != null) {
+				runConfigurationBase = ServiceManager.getInstance().getRunConfigurationBase(console);
 			}
-		}
-		form.setSelectedProfileId(selectedProfileId);
+			if (runConfigurationBase != null) {
+				GrepConsoleData.getGrepConsoleData(runConfigurationBase).setSelectedProfileId(selectedProfileId);
+			}
+			if (selectedProfileId != originalSelectedProfileId) {
+				Profile profile = applicationComponent.getState().getProfile(selectedProfileId);
+				if (console != null) {
+					serviceManager.profileChanged(console, profile);
+				}
+			}
+			form.setSelectedProfileId(selectedProfileId);
 
 
-		serviceManager.resetSettings();
-		applicationComponent.initFoldingCache();
-		Sound.soundMode = SoundMode.DISABLED;
-		if (currentAction != null) {
-			currentAction.applySettings();
+			serviceManager.resetSettings();
+			applicationComponent.initFoldingCache();
+			Sound.soundMode = SoundMode.DISABLED;
+			if (currentAction != null) {
+				currentAction.applySettings();
+			}
+			Sound.soundMode = SoundMode.ENABLED;
 		}
-		Sound.soundMode = SoundMode.ENABLED;
+
 	}
 
 	@Override
