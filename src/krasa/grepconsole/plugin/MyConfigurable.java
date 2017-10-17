@@ -83,7 +83,7 @@ public class MyConfigurable implements Configurable {
 	 */
 	public void apply(@Nullable HighlightManipulationAction currentAction) {
 		PluginState formSettings = form.getSettings();
-		applicationComponent.loadState(formSettings.clone());
+		applicationComponent.loadState(getClone(formSettings));
 
 
 		Profile selectedProfile = form.getSelectedProfile();
@@ -104,16 +104,22 @@ public class MyConfigurable implements Configurable {
 			}
 			form.setSelectedProfileId(selectedProfileId);
 
-
-			serviceManager.resetSettings();
-			applicationComponent.initFoldingCache();
-			Sound.soundMode = SoundMode.DISABLED;
-			if (currentAction != null) {
-				currentAction.applySettings();
-			}
-			Sound.soundMode = SoundMode.ENABLED;
+			refreshServices(currentAction);
 		}
+	}
 
+	protected PluginState getClone(PluginState formSettings) {
+		return formSettings.clone();
+	}
+
+	protected void refreshServices(@Nullable HighlightManipulationAction currentAction) {
+		serviceManager.resetSettings();
+		applicationComponent.initFoldingCache();
+		Sound.soundMode = SoundMode.DISABLED;
+		if (currentAction != null) {
+			currentAction.applySettings();
+		}
+		Sound.soundMode = SoundMode.ENABLED;
 	}
 
 	@Override

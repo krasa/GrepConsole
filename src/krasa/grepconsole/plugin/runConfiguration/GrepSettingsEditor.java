@@ -3,8 +3,11 @@ package krasa.grepconsole.plugin.runConfiguration;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
+import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.plugin.MyConfigurable;
+import krasa.grepconsole.plugin.PluginState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -29,7 +32,16 @@ public class GrepSettingsEditor extends SettingsEditor<RunConfigurationBase> {
 	@NotNull
 	@Override
 	protected JComponent createEditor() {
-		myConfigurable = new MyConfigurable(configuration);
+		myConfigurable = new MyConfigurable(configuration) {
+			@Override
+			protected void refreshServices(@Nullable HighlightManipulationAction currentAction) {
+			}
+
+			@Override
+			protected PluginState getClone(PluginState formSettings) {
+				return formSettings;
+			}
+		};
 		return myConfigurable.createComponent();
 	}
 
