@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GrepProcessorImpl implements GrepProcessor {
-	private static final Logger log = Logger.getInstance(GrepProcessorImpl.class.getName());
+	private static final Logger log = Logger.getInstance(GrepProcessorImpl.class);
 
 	private GrepExpressionItem grepExpressionItem;
 	private int matches;

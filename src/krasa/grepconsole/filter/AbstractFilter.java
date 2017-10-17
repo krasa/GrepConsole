@@ -10,9 +10,9 @@ public abstract class AbstractFilter implements DumbAware {
 	protected Project project;
 	protected volatile Profile profile;
 
-	public AbstractFilter(Project project) {
+	public AbstractFilter(Project project, Profile profile) {
 		this.project = project;
-		profile = GrepConsoleApplicationComponent.getInstance().getProfile();
+		this.profile = profile;
 	}
 
 	public AbstractFilter(Profile profile) {
@@ -22,6 +22,11 @@ public abstract class AbstractFilter implements DumbAware {
 	protected void refreshProfile() {
 		GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 		profile = applicationComponent.getState().getProfile(profile);
+	}
+
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+		onChange();
 	}
 
 	public Project getProject() {

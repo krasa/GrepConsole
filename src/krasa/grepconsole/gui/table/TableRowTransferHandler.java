@@ -4,7 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.treeStructure.treetable.TreeTableModelAdapter;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ArrayUtil;
-import krasa.grepconsole.gui.SettingsDialog;
+import krasa.grepconsole.gui.ProfileDetail;
 
 import javax.activation.ActivationDataFlavor;
 import javax.activation.DataHandler;
@@ -21,17 +21,17 @@ import java.util.*;
 import java.util.List;
 
 public class TableRowTransferHandler extends TransferHandler {
-	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class.getName());
+	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class);
 
 	/* this seems useless */
 	private final DataFlavor localObjectFlavor = new ActivationDataFlavor(Integer.class,
 			DataFlavor.javaJVMLocalObjectMimeType, "Integer Row Index");
 	private CheckboxTreeTable table = null;
-	private SettingsDialog settingsDialog;
+	private ProfileDetail profileDetail;
 
-	public TableRowTransferHandler(CheckboxTreeTable table, SettingsDialog settingsDialog) {
+	public TableRowTransferHandler(CheckboxTreeTable table, ProfileDetail profileDetail) {
 		this.table = table;
-		this.settingsDialog = settingsDialog;
+		this.profileDetail = profileDetail;
 	}
 
 	@Override
@@ -159,7 +159,7 @@ public class TableRowTransferHandler extends TransferHandler {
 			TableUtils.expand(nodesToExpand, table);
 			TableUtils.selectNodes(nodesToSelect, table);
 
-			settingsDialog.rebuildProfile();
+			profileDetail.rebuildProfile();
 			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		} catch (Exception e) {
 			log.error(e);

@@ -1,5 +1,11 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.execution.ExecutionListener;
+import com.intellij.execution.ExecutionManager;
+import com.intellij.execution.configurations.RunConfigurationBase;
+import com.intellij.execution.configurations.RunProfile;
+import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -8,6 +14,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.messages.MessageBusConnection;
 import krasa.grepconsole.grep.PinnedGrepConsolesState;
 import krasa.grepconsole.tail.TailContentExecutor;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +48,51 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 	@Override
 	public void initComponent() {
+		final MessageBusConnection conn = project.getMessageBus().connect();
+		ServiceManager instance = ServiceManager.getInstance();
+
+		conn.subscribe(ExecutionManager.EXECUTION_TOPIC, new ExecutionListener() {
+
+			@Override
+			public void processStarting(String executorId, @NotNull ExecutionEnvironment env) {
+				instance.lastRunConfiguration = getRunConfigurationBase(env);
+			}
+
+			@Override
+			public void processStarted(@NotNull String executorId, @NotNull ExecutionEnvironment env, @NotNull ProcessHandler handler) {
+				instance.lastRunConfiguration = null;
+			}
+
+			@Override
+			public void processTerminating(@NotNull RunProfile runProfile, @NotNull ProcessHandler processHandler) {
+
+			}
+
+			@Override
+			public void processTerminated(@NotNull RunProfile runProfile, @NotNull ProcessHandler processHandler) {
+
+			}
+
+			@Override
+			public void processStartScheduled(String s, ExecutionEnvironment executionEnvironment) {
+
+			}
+
+
+			@Override
+			public void processNotStarted(String s, @NotNull ExecutionEnvironment executionEnvironment) {
+				instance.lastRunConfiguration = null;
+			}
+		});
 	}
 
+	private static RunConfigurationBase getRunConfigurationBase(ExecutionEnvironment executionEnvironment) {
+		if (executionEnvironment != null && executionEnvironment.getRunProfile() instanceof RunConfigurationBase) {
+			return (RunConfigurationBase) executionEnvironment.getRunProfile();
+		}
+		return null;
+	}
+	  
 	@Override
 	public void disposeComponent() {
 		// TODO: insert component disposal logic here

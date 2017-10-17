@@ -15,8 +15,6 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	public static final Icon ICON = IconLoader.getIcon("highlight.gif", OpenConsoleSettingsAction.class);
 	private ConsoleView console;
 
-	public OpenConsoleSettingsAction() {
-	}
 
 	public OpenConsoleSettingsAction(ConsoleView console) {
 		super("Open Grep Console settings", null, ICON);
@@ -29,10 +27,10 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 		actionPerformed(project, SettingsContext.NONE);
 	}
 
-	public void actionPerformed(Project project, SettingsContext console) {
-		MyConfigurable instance = new MyConfigurable();
+	public void actionPerformed(Project project, SettingsContext settingsContext) {
+		MyConfigurable instance = new MyConfigurable(console);
 		instance.setCurrentAction(this);
-		instance.prepareForm(console);
+		instance.prepareForm(settingsContext);
 		ShowSettingsUtil.getInstance().editConfigurable(project, "GrepConsoleSettings", instance, true);
 		instance.setCurrentAction(null);
 	}

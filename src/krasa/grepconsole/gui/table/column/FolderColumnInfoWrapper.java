@@ -1,17 +1,14 @@
 package krasa.grepconsole.gui.table.column;
 
-import java.util.Comparator;
+import com.intellij.util.ui.ColumnInfo;
+import krasa.grepconsole.gui.table.ModelUtils;
+import krasa.grepconsole.model.GrepExpressionGroup;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-
-import krasa.grepconsole.gui.table.ModelUtils;
-import krasa.grepconsole.model.GrepExpressionGroup;
-
-import org.jetbrains.annotations.Nullable;
-
-import com.intellij.util.ui.ColumnInfo;
+import java.util.Comparator;
 
 /**
  * @author Vojtech Krasa
@@ -19,6 +16,7 @@ import com.intellij.util.ui.ColumnInfo;
 public class FolderColumnInfoWrapper extends ColumnInfo {
 
 	protected ColumnInfo columnInfo;
+	private boolean enabled = true;
 
 	public FolderColumnInfoWrapper(ColumnInfo columnInfo) {
 		super(columnInfo.getName());
@@ -78,6 +76,9 @@ public class FolderColumnInfoWrapper extends ColumnInfo {
 
 	@Override
 	public boolean isCellEditable(Object o) {
+		if (!enabled) {
+			return false;
+		}
 		Object o1 = ModelUtils.unWrap(o);
 		if (o1 instanceof GrepExpressionGroup) {
 			return false;
@@ -132,5 +133,9 @@ public class FolderColumnInfoWrapper extends ColumnInfo {
 	@Override
 	public String toString() {
 		return columnInfo.toString();
+	}
+
+	public void enabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 }

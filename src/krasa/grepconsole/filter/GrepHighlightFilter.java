@@ -18,11 +18,11 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	protected ConsoleViewContentType lastTextAttributes = null;
 
-	public GrepHighlightFilter(Project project) {
-		super(project);
+	public GrepHighlightFilter(Project project, Profile profile) {
+		super(project, profile);
 	}
 
-	public GrepHighlightFilter(Profile profile, List<GrepProcessor> grepProcessors) {
+	protected GrepHighlightFilter(Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile, grepProcessors);
 	}
 

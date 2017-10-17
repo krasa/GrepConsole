@@ -18,14 +18,18 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	private WeakReference<ConsoleView> console;
 
-	public GrepInputFilter(Project project) {
-		super(project);
+	public GrepInputFilter(Project project, Profile profile) {
+		super(project, profile);
 	}
 
 	public GrepInputFilter(Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile, grepProcessors);
 	}
 
+	public void init(WeakReference<ConsoleView> console, Profile profile) {
+		this.profile = profile;
+		this.console = console;
+	}
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
 			ConsoleViewContentType consoleViewContentType) {
@@ -67,8 +71,5 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		return profile.isEnabledInputFiltering() && (item.isInputFilter() || item.isClearConsole());
 	}
 
-	public void setConsole(WeakReference<ConsoleView> console) {
-		this.console = console;
-	}
 
 }

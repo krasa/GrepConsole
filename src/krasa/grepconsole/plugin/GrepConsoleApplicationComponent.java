@@ -111,10 +111,6 @@ public class GrepConsoleApplicationComponent
 		this.settings = state;
 	}
 
-	public Profile getProfile() {
-		return getState().getDefaultProfile();
-	}
-
 	@NotNull
 	@Override
 	public File[] getExportFiles() {

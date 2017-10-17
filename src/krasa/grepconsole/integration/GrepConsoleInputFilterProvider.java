@@ -16,8 +16,8 @@ public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvide
 	@Override
 	public InputFilter[] getDefaultFilters(@NotNull Project project) {
 		Profile defaultProfile = GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
-		GrepInputFilter inputFilter = ServiceManager.getInstance().createInputFilter(project);
-		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().createCopyingFilter(project);
+		GrepInputFilter inputFilter = ServiceManager.getInstance().createInputFilter(project, defaultProfile);
+		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().createCopyingFilter(project, defaultProfile);
 
 		if (inputFilter != null) {
 			if (defaultProfile.isFilterOutBeforeGrep()) {

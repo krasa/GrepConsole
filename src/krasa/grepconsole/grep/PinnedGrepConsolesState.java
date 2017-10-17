@@ -3,7 +3,7 @@ package krasa.grepconsole.grep;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.xmlb.annotations.Transient;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +31,9 @@ public class PinnedGrepConsolesState {
 		return GrepProjectComponent.getInstance(project).getPinnedGreps();
 	}
 
-	public void register(OpenGrepConsoleAction.PinAction pinAction) {
+	public void register(OpenGrepConsoleAction.PinAction pinAction, Profile profile) {
 		actions.add(new WeakReference<>(pinAction));
-		if (GrepConsoleApplicationComponent.getInstance().getProfile().isAlwaysPinGrepConsoles()) {
+		if (profile.isAlwaysPinGrepConsoles()) {
 			pin(pinAction);
 		}
 	}
@@ -149,6 +149,9 @@ public class PinnedGrepConsolesState {
 		}
 	}
 
+	/**
+	 * TODO add profileId
+	 */
 	public static class Pin {
 		@Nullable
 		private String parentConsoleUUID;

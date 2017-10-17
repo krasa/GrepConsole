@@ -22,6 +22,7 @@ import com.intellij.ui.treeStructure.treetable.ListTreeTableModelOnColumns;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.tree.TreeUtil;
+import krasa.grepconsole.gui.table.column.FolderColumnInfoWrapper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.tree.DefaultTreeModel;
@@ -41,8 +42,11 @@ import java.util.Enumeration;
  */
 public class CheckboxTreeTable extends TreeTableView {
 
-	public CheckboxTreeTable(CheckedTreeNode root, CheckboxTreeCellRendererBase renderer, final ColumnInfo[] columns) {
+	private final FolderColumnInfoWrapper foldColumn;
+
+	public CheckboxTreeTable(CheckedTreeNode root, CheckboxTreeCellRendererBase renderer, final ColumnInfo[] columns, FolderColumnInfoWrapper foldColumn) {
 		super(new ListTreeTableModelOnColumns(root, columns));
+		this.foldColumn = foldColumn;
 		initTree(getTree(), renderer);
 	}
 
@@ -217,4 +221,7 @@ public class CheckboxTreeTable extends TreeTableView {
 		return result;
 	}
 
+	public void foldingsEnabled(boolean defaultProfile) {
+		foldColumn.enabled(defaultProfile);
+	}
 }

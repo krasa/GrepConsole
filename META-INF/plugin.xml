@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>6.10.162.000.0</version>
+	<version>7.0.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -32,6 +32,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>7.0 (2017-10-21)
+		<br>- Run Configuration profiles 
         <br>6.10 (2017-09-27)
 		<br>- Tail encoding settings and auto-detection
         <br>6.9 (2017-09-18)
@@ -159,5 +161,7 @@
 		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
 								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
 		<!-- Add your extensions here -->
+		<runConfigurationExtension
+				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtension"/>
 	</extensions>
 </idea-plugin>

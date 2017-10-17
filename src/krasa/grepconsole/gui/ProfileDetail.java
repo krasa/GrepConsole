@@ -2,8 +2,6 @@ package krasa.grepconsole.gui;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.DialogBuilder;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.JBColor;
@@ -18,8 +16,9 @@ import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.*;
-import krasa.grepconsole.tail.TailIntegrationForm;
+import krasa.grepconsole.plugin.MyConfigurable;
+import krasa.grepconsole.plugin.ServiceManager;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -36,9 +35,8 @@ import java.util.List;
 
 import static krasa.grepconsole.Cloner.deepClone;
 
-public class SettingsDialog {
-	private static final Logger log = Logger.getInstance(SettingsDialog.class);
-	private final SettingsContext settingsContext;
+public class ProfileDetail {
+	private static final Logger log = Logger.getInstance(ProfileDetail.class);
 	private JPanel rootComponent;
 	private CheckboxTreeTable table;
 	private JButton addNewButton;
@@ -53,7 +51,6 @@ public class SettingsDialog {
 	private JButton DONATEButton;
 	private JCheckBox showStatsInConsole;
 	private JCheckBox showStatsInStatusBar;
-	private JButton fileTailSettings;
 	private JButton addNewGroup;
 	private JLabel contextSpecificText;
 	private JCheckBox enableFoldings;
@@ -65,19 +62,13 @@ public class SettingsDialog {
 	private JCheckBox enableMaxLengthGrep;
 	private JButton rehighlightAll;
 	// private JCheckBox synchronous;
-	private PluginState settings;
+	public Profile profile;
 
-	public SettingsDialog(MyConfigurable myConfigurable, PluginState settings) {
-		this(myConfigurable, settings, SettingsContext.NONE);
-	}
-
-	public SettingsDialog(MyConfigurable myConfigurable, PluginState settings, SettingsContext settingsContext) {
+	public ProfileDetail(MyConfigurable myConfigurable, SettingsContext settingsContext) {
 		// int version = Integer.parseInt(ApplicationInfo.getInstance().getMajorVersion());
 		// if (version < 163) {
 		// synchronous.setVisible(false);
 		// }
-		this.settingsContext = settingsContext;
-		this.settings = settings;
 		DONATEButton.setBorder(null);
 		DONATEButton.setContentAreaFilled(false);
 		DONATEButton.addActionListener(new ActionListener() {
@@ -98,7 +89,7 @@ public class SettingsDialog {
 				myConfigurable.apply(null);
 				ServiceManager.getInstance().rehighlight();
 			}
-		}); 
+		});
 		addNewButton.addActionListener(new AddNewItemAction());
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
@@ -120,7 +111,6 @@ public class SettingsDialog {
 		table.addKeyListener(new DeleteListener());
 		disableCopyDeleteButton();
 
-		fileTailSettings.addActionListener(new FileTailSettings());
 
 		if (settingsContext == SettingsContext.CONSOLE) {
 			contextSpecificText.setText("Select items for which statistics should be displayed ('"
@@ -189,7 +179,7 @@ public class SettingsDialog {
 									item.grepExpression(item.getGrepExpression() + ".*");
 								}
 							}
-							reloadNode(SettingsDialog.this.getSelectedNode());
+							reloadNode(ProfileDetail.this.getSelectedNode());
 						}
 
 					});
@@ -233,25 +223,27 @@ public class SettingsDialog {
 		return rootComponent;
 	}
 
-	public PluginState getSettings() {
-		getData(getProfile());
-		return settings;
+	public Profile getSettings() {
+		getData(profile);
+		return profile;
 	}
 
-	public Profile getProfile() {
-		return settings.getDefaultProfile();
+	public void importFrom(@NotNull Profile profile) {
+		this.profile = profile;
+		setData(profile);
+		foldingsEnabled(profile.isDefaultProfile());
 	}
 
-	public void importFrom(PluginState settings) {
-		this.settings = settings;
-		setData(settings.getDefaultProfile());
-		resetTreeModel();
+	public void foldingsEnabled(boolean defaultProfile) {
+		resetTreeModel(defaultProfile);
+		enableFoldings.setEnabled(defaultProfile);
 	}
 
-	private void resetTreeModel() {
+	private void resetTreeModel(boolean defaultProfile) {
+		table.foldingsEnabled(defaultProfile);
 		CheckedTreeNode root = (CheckedTreeNode) table.getTree().getModel().getRoot();
 		root.removeAllChildren();
-		for (GrepExpressionGroup group : getProfile().getGrepExpressionGroups()) {
+		for (GrepExpressionGroup group : this.profile.getGrepExpressionGroups()) {
 			GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
 			for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
 				newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
@@ -262,13 +254,12 @@ public class SettingsDialog {
 		TreeUtil.expandAll(table.getTree());
 	}
 
-	public boolean isSettingsModified(PluginState data) {
-		getData(getProfile());
-		return !this.settings.equals(data);
+	public boolean isSettingsModified(Profile data) {
+		getData(profile);
+		return !this.profile.equals(data);
 	}
 
 	private void createUIComponents() {
-		fileTailSettings = new JButton();
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
@@ -296,7 +287,7 @@ public class SettingsDialog {
 	}
 
 	public void rebuildProfile() {
-		List<GrepExpressionGroup> grepExpressionGroups = getProfile().getGrepExpressionGroups();
+		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 		grepExpressionGroups.clear();
 
 		DefaultMutableTreeNode model = (DefaultMutableTreeNode) table.getTree().getModel().getRoot();
@@ -323,7 +314,7 @@ public class SettingsDialog {
 		}
 	}
 
-	public void setData(Profile data) {
+	public void setData(@NotNull Profile data) {
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		maxProcessingTime.setText(data.getMaxProcessingTime());
@@ -339,7 +330,7 @@ public class SettingsDialog {
 		multilineOutput.setSelected(data.isMultiLineOutput());
 	}
 
-	public void getData(Profile data) {
+	public void getData(@NotNull Profile data) {
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setMaxProcessingTime(maxProcessingTime.getText());
@@ -461,9 +452,9 @@ public class SettingsDialog {
 	private class ResetToDefaultAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			SettingsDialog.this.settings.setProfiles(DefaultState.createDefault());
 			disableCopyDeleteButton();
-			importFrom(SettingsDialog.this.settings);
+			profile.resetToDefault();
+			importFrom(profile);
 		}
 	}
 
@@ -476,8 +467,8 @@ public class SettingsDialog {
 				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
 				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
 
-				TableUtils.reloadTree(SettingsDialog.this.table);
-				TableUtils.selectNode(newChild, SettingsDialog.this.table);
+				TableUtils.reloadTree(ProfileDetail.this.table);
+				TableUtils.selectNode(newChild, ProfileDetail.this.table);
 			} else if (selectedNode instanceof GrepExpressionGroupTreeNode) {
 				GrepExpressionGroup group = copy((GrepExpressionGroup) selectedNode.getUserObject());
 				GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
@@ -487,9 +478,9 @@ public class SettingsDialog {
 				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
 				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
 
-				TableUtils.reloadTree(SettingsDialog.this.table);
-				TableUtils.expand(newChild, SettingsDialog.this.table);
-				TableUtils.selectNode(newChild, SettingsDialog.this.table);
+				TableUtils.reloadTree(ProfileDetail.this.table);
+				TableUtils.expand(newChild, ProfileDetail.this.table);
+				TableUtils.selectNode(newChild, ProfileDetail.this.table);
 			}
 			rebuildProfile();
 		}
@@ -516,26 +507,4 @@ public class SettingsDialog {
 		}
 	}
 
-	private class FileTailSettings implements ActionListener {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			final TailIntegrationForm form = new TailIntegrationForm();
-			form.setData(settings.getTailSettings());
-
-			DialogBuilder builder = new DialogBuilder(SettingsDialog.this.getRootComponent());
-			builder.setCenterPanel(form.getRoot());
-			builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
-			builder.setTitle("Tail File settings");
-			builder.removeAllActions();
-			builder.addOkAction();
-			builder.addCancelAction();
-
-			boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
-			if (isOk) {
-				form.getData(settings.getTailSettings());
-				GrepConsoleApplicationComponent.getInstance().getState().setTailSettings(settings.getTailSettings());
-				form.rebind(settings.getTailSettings());
-			}
-		}
-	}
 }
