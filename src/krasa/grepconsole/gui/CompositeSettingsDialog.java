@@ -18,6 +18,8 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class CompositeSettingsDialog {
 	private PluginState settings;
@@ -44,7 +46,6 @@ public class CompositeSettingsDialog {
 		this.settings = settingsForCloning.clone();
 		this.selectedProfileId = selectedProfileId;
 
-		//todo weakref?
 		profileDetailComponent = new ProfileDetail(myConfigurable, settingsContext);
 		profileDetail.add(profileDetailComponent.getRootComponent());
 //		Dimension minimumSize = new Dimension(0, 0);
@@ -88,29 +89,51 @@ public class CompositeSettingsDialog {
 		renameButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Profile selectedProfile = getSelectedProfile();
-				String presentableName = selectedProfile.getPresentableName();
-				String s = Messages.showInputDialog(renameButton, "New profile name:", "Rename profile",
-						Messages.getQuestionIcon(), presentableName, new NonEmptyInputValidator());
-				if (s != null) {
-					selectedProfile.setName(s);
-					jbList.repaint();
-
-//					initModel(settings);
-				}
+				rename();
 			}
 		});
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Profile delete = settings.delete(getSelectedProfile());
-				initModel();
+				delete();
 			}
 		});
 		fileTailSettings.addActionListener(new FileTailSettingsActionListener());
+		jbList.addKeyListener(getKeyListener());
 		initModel();
 	}
 
+	private void rename() {
+		Profile selectedProfile = getSelectedProfile();
+		String presentableName = selectedProfile.getPresentableName();
+		String s = Messages.showInputDialog(renameButton, "New profile name:", "Rename profile",
+				Messages.getQuestionIcon(), presentableName, new NonEmptyInputValidator());
+		if (s != null) {
+			selectedProfile.setName(s);
+			jbList.repaint();
+
+//					initModel(settings);
+		}
+	}
+
+	private void delete() {
+		settings.delete(getSelectedProfile());
+		initModel();
+	}
+
+	private KeyAdapter getKeyListener() {
+		return new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+					delete();
+				} else if (e.getKeyCode() == KeyEvent.VK_F2) {
+					rename();
+				}
+			}
+		};
+	}
+	  
 	protected void initModel() {
 		profilesModel.clear();
 		for (Profile profile : settings.getProfiles()) {

@@ -42,6 +42,7 @@
                 </constraints>
                 <properties>
                   <text value="Set as Default"/>
+                  <toolTipText value="Used for Tails and other stuff that is not configurable."/>
                 </properties>
               </component>
               <component id="afd32" class="javax.swing.JLabel">
