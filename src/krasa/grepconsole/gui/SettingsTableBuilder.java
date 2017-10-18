@@ -58,6 +58,7 @@ public class SettingsTableBuilder {
 
 		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> inputFilter = new CheckBoxJavaBeanColumnInfo<>(
 				"Filter out", "inputFilter");
+		inputFilter.tooltipText("A line will not be filtered out if any previous expression matches first");
 		inputFilter.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override
 			public void onValueChanged(GrepExpressionItem grepExpressionItem, Boolean newValue) {
@@ -84,7 +85,7 @@ public class SettingsTableBuilder {
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
 "Whole line", "wholeLine").tooltipText("Match a whole line, otherwise find a matching substrings - 'Unless expression' works only for whole lines.")));
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple styles")));
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple highlights")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
 				"caseInsensitive")));
 		columns.add(new FolderColumnInfoWrapper(
@@ -100,7 +101,7 @@ public class SettingsTableBuilder {
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetail)));
-		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console", profileDetail)));
+		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console", profileDetail).tooltipText("Will not work if any previous non-filtering expression is matched first.")));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {
 			@Override

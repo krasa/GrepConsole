@@ -3,6 +3,7 @@ package krasa.grepconsole.gui;
 import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
@@ -61,6 +62,7 @@ public class ProfileDetail {
 	private JFormattedTextField maxLengthToGrep;
 	private JCheckBox enableMaxLengthGrep;
 	private JButton rehighlightAll;
+	private JButton help;
 	// private JCheckBox synchronous;
 	public Profile profile;
 
@@ -121,6 +123,19 @@ public class ProfileDetail {
 		} else {
 			contextSpecificText.setVisible(false);
 		}
+		help.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Messages.showInfoMessage(rootComponent,
+						"Filter out - A line will not be filtered out if any previous expression matches first. \n" +
+								" - Sometimes you may want to see only lines that are highlighted. To do this, add a \".*\" as the last item and set to \"Whole line\" and \"Filter out\".\n" +
+								"Whole line - Matches a whole line, otherwise finds a matching substrings - 'Unless expression' works only for whole lines.\n" +
+								"Continue matching - Matches a line against the next configured items to apply multiple highlights.\n" +
+								"Clear Console - Will not work if any previous non-filtering expression is matched first.\n"
+						,
+						"Columns caveats");
+			}
+		});
 	}
 
 	public MouseAdapter rightClickMenu() {

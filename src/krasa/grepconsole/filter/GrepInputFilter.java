@@ -11,6 +11,7 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -66,10 +67,32 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		}
 	}
 
+	/**
+	 * just want to see lines that are highlighted. To do this, I add a ".*" item as the last item and set to "Whole line" and "Filter out".
+	 * -> must add all items to grepProcessors
+	 * TODO separate clearConsole functionality?
+	 */
+	@Override
+	protected void initProcessors() {
+		grepProcessors = new ArrayList<>();
+		if (profile.isEnabledInputFiltering()) {
+			boolean inputFilterExists = false;
+			for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {
+				grepProcessors.add(createProcessor(grepExpressionItem));
+				if (grepExpressionItem.isInputFilter() || grepExpressionItem.isClearConsole()) {
+					inputFilterExists = true;
+				}
+			}
+			if (!inputFilterExists) {
+				grepProcessors.clear();
+			}
+		}
+	}
+	      
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem item) {
-		return profile.isEnabledInputFiltering() && (item.isInputFilter() || item.isClearConsole());
+//		return profile.isEnabledInputFiltering() && (item.isInputFilter() || item.isClearConsole());
+		throw new UnsupportedOperationException();
 	}
-
-
+	      
 }

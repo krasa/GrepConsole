@@ -241,6 +241,7 @@
                     </constraints>
                     <properties>
                       <text value="Filtering"/>
+                      <toolTipText value="A line will not be filtered out (or console cleared) if any previous expression matches."/>
                     </properties>
                   </component>
                   <component id="2430b" class="javax.swing.JCheckBox" binding="enableFoldings">
@@ -263,6 +264,16 @@
                   </component>
                 </children>
               </grid>
+              <component id="6c545" class="javax.swing.JButton" binding="help">
+                <constraints>
+                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <icon value="actions/help.png"/>
+                  <text value=""/>
+                  <toolTipText value=""/>
+                </properties>
+              </component>
             </children>
           </grid>
         </children>
