@@ -33,8 +33,8 @@
 
 	<change-notes><![CDATA[        
         <br>7.0 (2017-10-21)
-		<br>- Run Configuration profiles 
-		<br>- Restored old filtering behaviour
+		<br>- Run Configuration settings and profiles 
+		<br>- Restored old filtering behaviour prior to v6.9
         <br>6.10 (2017-09-27)
 		<br>- Tail encoding settings and auto-detection
         <br>6.9 (2017-09-18)
