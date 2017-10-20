@@ -4,7 +4,9 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
-public abstract class DomainObject {
+import java.io.Serializable;
+
+public abstract class DomainObject implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
@@ -20,4 +22,5 @@ public abstract class DomainObject {
 	public int hashCode() {
 		return HashCodeBuilder.reflectionHashCode(this);
 	}
+
 }

@@ -1,7 +1,15 @@
 package krasa.grepconsole.gui;
 
 import com.centerkey.utils.BareBonesBrowserLaunch;
+import com.intellij.ide.DataManager;
+import com.intellij.ide.actions.CopyAction;
+import com.intellij.ide.actions.CutAction;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.CheckedTreeNode;
@@ -154,20 +162,35 @@ public class ProfileDetail {
 					}
 					popup.add(newMenuItem("Add New Item", new AddNewItemAction()));
 					popup.add(newMenuItem("Duplicate", new DuplicateAction()));
+					popup.add(new JPopupMenu.Separator());
+					popup.add(newMenuItem("Copy", new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							new CopyAction().actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
+									ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
+						}
+					}));
+					popup.add(newMenuItem("Cut", new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							new CutAction().actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
+									ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
+						}
+					}));
 					popup.add(newMenuItem("Delete", new DeleteAction()));
 					popup.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
 
-			private JMenuItem newMenuItem(String name, ActionListener l) {
-				final JMenuItem item = new JMenuItem(name);
+			private JBMenuItem newMenuItem(String name, ActionListener l) {
+				final JBMenuItem item = new JBMenuItem(name);
 				item.addActionListener(l);
 				return item;
 			}
 
-			private JMenuItem getConvertAction(final GrepExpressionItem item) {
+			private JBMenuItem getConvertAction(final GrepExpressionItem item) {
 				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
-				final JMenuItem convert = new JMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
+				final JBMenuItem convert = new JBMenuItem(highlightOnlyMatchingText ? "Convert to whole line"
 						: "Convert to words only");
 
 				try {
@@ -449,6 +472,7 @@ public class ProfileDetail {
 			rebuildProfile();
 			TableUtils.reloadTree(table);
 			TableUtils.selectNode(newChild, table);
+			table.requestFocus();
 		}
 	}
 
@@ -461,6 +485,7 @@ public class ProfileDetail {
 			rebuildProfile();
 			TableUtils.reloadTree(table);
 			TableUtils.selectNode(aNew, table);
+			table.requestFocus();
 		}
 	}
 
@@ -476,16 +501,17 @@ public class ProfileDetail {
 	private class DuplicateAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			CheckboxTreeTable table = ProfileDetail.this.table;
 			DefaultMutableTreeNode selectedNode = getSelectedNode();
 			if (selectedNode instanceof GrepExpressionItemTreeNode) {
-				GrepExpressionItemTreeNode newChild = new GrepExpressionItemTreeNode(copy(selectedNode));
+				GrepExpressionItemTreeNode newChild = new GrepExpressionItemTreeNode(deepClone((GrepExpressionItem) selectedNode.getUserObject()));
 				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
 				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
 
-				TableUtils.reloadTree(ProfileDetail.this.table);
-				TableUtils.selectNode(newChild, ProfileDetail.this.table);
+				TableUtils.reloadTree(table);
+				TableUtils.selectNode(newChild, table);
 			} else if (selectedNode instanceof GrepExpressionGroupTreeNode) {
-				GrepExpressionGroup group = copy((GrepExpressionGroup) selectedNode.getUserObject());
+				GrepExpressionGroup group = deepClone((GrepExpressionGroup) selectedNode.getUserObject());
 				GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
 				for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
 					newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
@@ -493,26 +519,13 @@ public class ProfileDetail {
 				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
 				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
 
-				TableUtils.reloadTree(ProfileDetail.this.table);
-				TableUtils.expand(newChild, ProfileDetail.this.table);
-				TableUtils.selectNode(newChild, ProfileDetail.this.table);
+				TableUtils.reloadTree(table);
+				TableUtils.expand(newChild, table);
+				TableUtils.selectNode(newChild, table);
 			}
 			rebuildProfile();
 		}
 
-		private GrepExpressionGroup copy(final GrepExpressionGroup grepExpressionGroup) {
-			GrepExpressionGroup group = deepClone(grepExpressionGroup);
-			for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
-				grepExpressionItem.generateNewId();
-			}
-			return group;
-		}
-
-		private GrepExpressionItem copy(DefaultMutableTreeNode selectedNode) {
-			GrepExpressionItem expressionItem = deepClone((GrepExpressionItem) selectedNode.getUserObject());
-			expressionItem.generateNewId();
-			return expressionItem;
-		}
 	}
 
 	private class DeleteAction implements ActionListener {
