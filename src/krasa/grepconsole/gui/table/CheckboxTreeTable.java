@@ -224,4 +224,5 @@ public class CheckboxTreeTable extends TreeTableView {
 	public void foldingsEnabled(boolean defaultProfile) {
 		foldColumn.enabled(defaultProfile);
 	}
+
 }

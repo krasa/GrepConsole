@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.ui.Messages;
@@ -159,25 +160,29 @@ public class ProfileDetail {
 					GrepExpressionItem selectedGrepExpressionItem = getSelectedGrepExpressionItem();
 					if (selectedGrepExpressionItem != null) {
 						popup.add(getConvertAction(selectedGrepExpressionItem));
+						popup.add(new JPopupMenu.Separator());
 					}
 					popup.add(newMenuItem("Add New Item", new AddNewItemAction()));
 					popup.add(newMenuItem("Duplicate", new DuplicateAction()));
 					popup.add(new JPopupMenu.Separator());
-					popup.add(newMenuItem("Copy", new ActionListener() {
+
+					CopyAction copyAction = (CopyAction) ActionManager.getInstance().getAction("$Copy");
+					popup.add(newMenuItem("Copy (" + KeymapUtil.getFirstKeyboardShortcutText(copyAction) + ")", new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							new CopyAction().actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
+							copyAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
 									ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
 						}
 					}));
-					popup.add(newMenuItem("Cut", new ActionListener() {
+					CutAction cutAction = (CutAction) ActionManager.getInstance().getAction("$Cut");
+					popup.add(newMenuItem("Cut (" + KeymapUtil.getFirstKeyboardShortcutText(cutAction) + ")", new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							new CutAction().actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
+							cutAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
 									ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
 						}
 					}));
-					popup.add(newMenuItem("Delete", new DeleteAction()));
+					popup.add(newMenuItem("Delete (Del)", new DeleteAction()));
 					popup.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
