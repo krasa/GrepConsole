@@ -18,6 +18,7 @@ import java.util.List;
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	private WeakReference<ConsoleView> console;
+	protected volatile boolean lastLineFiltered = false;
 
 	public GrepInputFilter(Project project, Profile profile) {
 		super(project, profile);
@@ -31,9 +32,10 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		this.profile = profile;
 		this.console = console;
 	}
+
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
-			ConsoleViewContentType consoleViewContentType) {
+																  ConsoleViewContentType consoleViewContentType) {
 		FilterState state = super.filter(s, -1);
 		clearConsole(state);
 		return prepareResult(state);
@@ -58,15 +60,24 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		if (state != null) {
 			if (state.isExclude()) {
 				result = new Pair<>(null, null);
+				lastLineFiltered = true;
+			} else if (profile.isMultilineInputFilter() && !state.isMatchesSomething() && lastLineFiltered) {
+				result = new Pair<>(null, null);
 			}
 		}
 		if (result == null) {
+			lastLineFiltered = false;
 			return null;// input is not changed
 		} else {
 			return Arrays.asList(result);
 		}
 	}
 
+	@Override
+	public void onChange() {
+		super.onChange();
+		lastLineFiltered = false;
+	}
 	/**
 	 * just want to see lines that are highlighted. To do this, I add a ".*" item as the last item and set to "Whole line" and "Filter out".
 	 * -> must add all items to grepProcessors
@@ -88,11 +99,11 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 			}
 		}
 	}
-	      
+
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem item) {
 //		return profile.isEnabledInputFiltering() && (item.isInputFilter() || item.isClearConsole());
 		throw new UnsupportedOperationException();
 	}
-	      
+
 }

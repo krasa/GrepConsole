@@ -77,15 +77,6 @@
                   <text value=""/>
                 </properties>
               </component>
-              <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBar">
-                <constraints>
-                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Always show statistics panel in Status Bar"/>
-                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
-                </properties>
-              </component>
               <component id="9314d" class="javax.swing.JCheckBox" binding="enableMaxLengthGrep">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -113,25 +104,6 @@
                 </constraints>
                 <properties>
                   <text value=""/>
-                </properties>
-              </component>
-              <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsole">
-                <constraints>
-                  <grid row="3" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <selected value="false"/>
-                  <text value="Always show statistics panel in Console"/>
-                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
-                </properties>
-              </component>
-              <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
-                <constraints>
-                  <grid row="4" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Use a previous highlight when a line is not matched"/>
-                  <toolTipText value="The style is applied for all following lines until another match occurs"/>
                 </properties>
               </component>
               <component id="4c78f" class="javax.swing.JButton" binding="web" default-binding="true">
@@ -189,12 +161,6 @@
                       <text value="Duplicate"/>
                     </properties>
                   </component>
-                  <component id="4270c" class="javax.swing.JButton" binding="deleteButton" default-binding="true">
-                    <constraints/>
-                    <properties>
-                      <text value="Delete"/>
-                    </properties>
-                  </component>
                   <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
                     <constraints/>
                     <properties>
@@ -208,17 +174,23 @@
                       <toolTipText value="Reapply highlighting to all consoles. OK/Apply applies settings to all, but reprocesses a previous output only in the current one."/>
                     </properties>
                   </component>
+                  <component id="6c545" class="javax.swing.JButton" binding="help">
+                    <constraints/>
+                    <properties>
+                      <icon value="actions/help.png"/>
+                      <text value=""/>
+                      <toolTipText value=""/>
+                    </properties>
+                  </component>
+                  <component id="b5eaf" class="javax.swing.JCheckBox" binding="alwaysPinGrepConsoles">
+                    <constraints/>
+                    <properties>
+                      <text value="Always pin grep consoles"/>
+                      <toolTipText value="Uncheck if you want to remove output from the main console but still grep it into a sub-console."/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
-              <component id="b5eaf" class="javax.swing.JCheckBox" binding="alwaysPinGrepConsoles">
-                <constraints>
-                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                </constraints>
-                <properties>
-                  <text value="Always pin grep consoles"/>
-                  <toolTipText value="Uncheck if you want to remove output from the main console but still grep it into a sub-console."/>
-                </properties>
-              </component>
               <grid id="f655b" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
@@ -264,14 +236,41 @@
                   </component>
                 </children>
               </grid>
-              <component id="6c545" class="javax.swing.JButton" binding="help">
+              <component id="6106" class="javax.swing.JCheckBox" binding="showStatsInStatusBar">
                 <constraints>
-                  <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <icon value="actions/help.png"/>
-                  <text value=""/>
-                  <toolTipText value=""/>
+                  <text value="Always show statistics panel in Status Bar"/>
+                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+                </properties>
+              </component>
+              <component id="7cc2" class="javax.swing.JCheckBox" binding="showStatsInConsole">
+                <constraints>
+                  <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <selected value="false"/>
+                  <text value="Always show statistics panel in Console"/>
+                  <toolTipText value="for items which are marked in the settings table. The number may not be right for test executions."/>
+                </properties>
+              </component>
+              <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
+                <constraints>
+                  <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Use a previous highlight when a line is not matched"/>
+                  <toolTipText value="The style is applied for all following lines until another match occurs"/>
+                </properties>
+              </component>
+              <component id="99e19" class="javax.swing.JCheckBox" binding="multilineInputFilter">
+                <constraints>
+                  <grid row="4" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="Filter out not matched lines if the previous one was filtered out"/>
+                  <toolTipText value="The style is applied for all following lines until another match occurs"/>
                 </properties>
               </component>
             </children>

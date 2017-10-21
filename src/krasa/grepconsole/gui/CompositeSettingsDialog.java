@@ -171,10 +171,11 @@ public class CompositeSettingsDialog {
 
 	public boolean isSettingsModified(PluginState state) {
 		boolean profileChanged = selectedProfileId != getSelectedProfile().getId();
-		return profileChanged || !this.settings.equals(state);
+		return profileChanged || profileDetailComponent.isSettingsModified(state.getProfile(selectedProfileId));
 	}
 
 	public PluginState getSettings() {
+		profileDetailComponent.getData(getSelectedProfile());
 		return settings;
 	}
 

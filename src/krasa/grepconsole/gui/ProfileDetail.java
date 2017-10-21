@@ -55,7 +55,6 @@ public class ProfileDetail {
 	private JFormattedTextField maxLengthToMatch;
 	private JCheckBox enableMaxLength;
 	private JButton duplicateButton;
-	private JButton deleteButton;
 	private JCheckBox enableFiltering;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
@@ -72,6 +71,7 @@ public class ProfileDetail {
 	private JCheckBox enableMaxLengthGrep;
 	private JButton rehighlightAll;
 	private JButton help;
+	private JCheckBox multilineInputFilter;
 	// private JCheckBox synchronous;
 	public Profile profile;
 
@@ -105,7 +105,6 @@ public class ProfileDetail {
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
 		duplicateButton.addActionListener(new DuplicateAction());
-		deleteButton.addActionListener(new DeleteAction());
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -253,12 +252,10 @@ public class ProfileDetail {
 	}
 
 	private void disableCopyDeleteButton() {
-		deleteButton.setEnabled(false);
 		duplicateButton.setEnabled(false);
 	}
 
 	private void setSelectedRow(Integer selectedRow) {
-		deleteButton.setEnabled(selectedRow != null && selectedRow >= 0);
 		duplicateButton.setEnabled(selectedRow != null && selectedRow >= 0);
 	}
 
@@ -357,55 +354,58 @@ public class ProfileDetail {
 		}
 	}
 
-	public void setData(@NotNull Profile data) {
+	public void setData(Profile data) {
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
-		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
 		maxProcessingTime.setText(data.getMaxProcessingTime());
-		filterOutBeforeGreppingToASubConsole.setSelected(data.isFilterOutBeforeGrep());
-		alwaysPinGrepConsoles.setSelected(data.isAlwaysPinGrepConsoles());
-		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
-		enableFiltering.setSelected(data.isEnabledInputFiltering());
-		enableFoldings.setSelected(data.isEnableFoldings());
 		enableMaxLengthGrep.setSelected(data.isEnableMaxLengthGrepLimit());
 		maxLengthToMatch.setText(data.getMaxLengthToMatch());
 		maxLengthToGrep.setText(data.getMaxLengthToGrep());
+		alwaysPinGrepConsoles.setSelected(data.isAlwaysPinGrepConsoles());
+		enableHighlightingCheckBox.setSelected(data.isEnabledHighlighting());
+		enableFiltering.setSelected(data.isEnabledInputFiltering());
+		enableFoldings.setSelected(data.isEnableFoldings());
+		filterOutBeforeGreppingToASubConsole.setSelected(data.isFilterOutBeforeGrep());
+		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
 		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
 		multilineOutput.setSelected(data.isMultiLineOutput());
+		multilineInputFilter.setSelected(data.isMultilineInputFilter());
 	}
 
-	public void getData(@NotNull Profile data) {
+	public void getData(Profile data) {
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
-		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
 		data.setMaxProcessingTime(maxProcessingTime.getText());
-		data.setFilterOutBeforeGrep(filterOutBeforeGreppingToASubConsole.isSelected());
-		data.setAlwaysPinGrepConsoles(alwaysPinGrepConsoles.isSelected());
-		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
-		data.setEnabledInputFiltering(enableFiltering.isSelected());
-		data.setEnableFoldings(enableFoldings.isSelected());
 		data.setEnableMaxLengthGrepLimit(enableMaxLengthGrep.isSelected());
 		data.setMaxLengthToMatch(maxLengthToMatch.getText());
 		data.setMaxLengthToGrep(maxLengthToGrep.getText());
+		data.setAlwaysPinGrepConsoles(alwaysPinGrepConsoles.isSelected());
+		data.setEnabledHighlighting(enableHighlightingCheckBox.isSelected());
+		data.setEnabledInputFiltering(enableFiltering.isSelected());
+		data.setEnableFoldings(enableFoldings.isSelected());
+		data.setFilterOutBeforeGrep(filterOutBeforeGreppingToASubConsole.isSelected());
+		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
 		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
 		data.setMultiLineOutput(multilineOutput.isSelected());
+		data.setMultilineInputFilter(multilineInputFilter.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
 		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit()) return true;
-		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting()) return true;
 		if (maxProcessingTime.getText() != null ? !maxProcessingTime.getText().equals(data.getMaxProcessingTime()) : data.getMaxProcessingTime() != null)
 			return true;
-		if (filterOutBeforeGreppingToASubConsole.isSelected() != data.isFilterOutBeforeGrep()) return true;
-		if (alwaysPinGrepConsoles.isSelected() != data.isAlwaysPinGrepConsoles()) return true;
-		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault()) return true;
-		if (enableFiltering.isSelected() != data.isEnabledInputFiltering()) return true;
-		if (enableFoldings.isSelected() != data.isEnableFoldings()) return true;
 		if (enableMaxLengthGrep.isSelected() != data.isEnableMaxLengthGrepLimit()) return true;
 		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch()) : data.getMaxLengthToMatch() != null)
 			return true;
 		if (maxLengthToGrep.getText() != null ? !maxLengthToGrep.getText().equals(data.getMaxLengthToGrep()) : data.getMaxLengthToGrep() != null)
 			return true;
+		if (alwaysPinGrepConsoles.isSelected() != data.isAlwaysPinGrepConsoles()) return true;
+		if (enableHighlightingCheckBox.isSelected() != data.isEnabledHighlighting()) return true;
+		if (enableFiltering.isSelected() != data.isEnabledInputFiltering()) return true;
+		if (enableFoldings.isSelected() != data.isEnableFoldings()) return true;
+		if (filterOutBeforeGreppingToASubConsole.isSelected() != data.isFilterOutBeforeGrep()) return true;
+		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault()) return true;
 		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
 		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
+		if (multilineInputFilter.isSelected() != data.isMultilineInputFilter()) return true;
 		return false;
 	}
 
