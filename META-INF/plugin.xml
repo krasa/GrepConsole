@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>7.0.162.000.4</version>
+	<version>7.1.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -10,13 +10,13 @@
 
 	<description><![CDATA[
 		  <ul>
-			<li>Change colors of matching text</li>
-			<li>Grep output into a new console tab</li>
-			<li>Fold output</li>
-			<li>Filter out unwanted lines</li>
-			<li>Play sounds on matches</li>
-			<li>Clear Console on matches</li>
-			<li>Tail files*</li>
+			<li>Change colors of matching text.</li>
+			<li>Grep output into a new console tab.</li>
+			<li>Fold output.</li>
+			<li>Filter out unwanted lines.</li>
+			<li>Play sounds on matches.</li>
+			<li>Clear Console on matches.</li>
+			<li>Tail files*.</li>
 		  </ul>
 		   <br>
 	 		*File Tailing: <br>
@@ -32,6 +32,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>7.0 (2017-10-31)
+		<br>- GUI improvements
         <br>7.0 (2017-10-21)
 		<br>- Run Configuration settings and profiles 
 		<br>- Multiline input filtering - filter out not matched lines if the previous one was filtered out

@@ -155,12 +155,6 @@
                       <text value="Add new group"/>
                     </properties>
                   </component>
-                  <component id="e5987" class="javax.swing.JButton" binding="duplicateButton" default-binding="true">
-                    <constraints/>
-                    <properties>
-                      <text value="Duplicate"/>
-                    </properties>
-                  </component>
                   <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
                     <constraints/>
                     <properties>
@@ -222,7 +216,7 @@
                     </constraints>
                     <properties>
                       <text value="Folding"/>
-                      <toolTipText value="Enabled only on the default profile. Folding settings are used globally on all consoles."/>
+                      <toolTipText value="Enabled only on the default profile, it is used globally."/>
                     </properties>
                   </component>
                   <component id="e5060" class="javax.swing.JCheckBox" binding="filterOutBeforeGreppingToASubConsole">
@@ -260,7 +254,7 @@
                   <grid row="3" column="2" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="Use a previous highlight when a line is not matched"/>
+                  <text value="Use a previous highlight if a line is not matched"/>
                   <toolTipText value="The style is applied for all following lines until another match occurs"/>
                 </properties>
               </component>
@@ -270,7 +264,7 @@
                 </constraints>
                 <properties>
                   <text value="Filter out not matched lines if the previous one was filtered out"/>
-                  <toolTipText value="The style is applied for all following lines until another match occurs"/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
             </children>

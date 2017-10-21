@@ -4,6 +4,7 @@ import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.CopyAction;
 import com.intellij.ide.actions.CutAction;
+import com.intellij.ide.actions.PasteAction;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -31,8 +32,6 @@ import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
@@ -54,7 +53,6 @@ public class ProfileDetail {
 	private JCheckBox enableHighlightingCheckBox;
 	private JFormattedTextField maxLengthToMatch;
 	private JCheckBox enableMaxLength;
-	private JButton duplicateButton;
 	private JCheckBox enableFiltering;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
@@ -104,22 +102,8 @@ public class ProfileDetail {
 		addNewButton.addActionListener(new AddNewItemAction());
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
-		duplicateButton.addActionListener(new DuplicateAction());
-		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting()) {
-					Object source = e.getSource();
-					if (source instanceof DefaultListSelectionModel) {
-						setSelectedRow(((DefaultListSelectionModel) source).getLeadSelectionIndex());
-					}
-
-				}
-			}
-		});
 		table.addMouseListener(rightClickMenu());
 		table.addKeyListener(new DeleteListener());
-		disableCopyDeleteButton();
 
 
 		if (settingsContext == SettingsContext.CONSOLE) {
@@ -141,7 +125,7 @@ public class ProfileDetail {
 								"Continue matching - Matches a line against the next configured items to apply multiple highlights.\n" +
 								"Clear Console - Will not work if any previous non-filtering expression is matched first.\n"
 						,
-						"Columns caveats");
+						"Columns Caveats");
 			}
 		});
 	}
@@ -152,9 +136,8 @@ public class ProfileDetail {
 			public void mousePressed(MouseEvent e) {
 				if (SwingUtilities.isLeftMouseButton(e)) {
 				} else if (SwingUtilities.isRightMouseButton(e)) {
-					if (getSelectedNode() == null) {
-						return;
-					}
+					boolean somethingSelected = getSelectedNode() != null;
+
 					JPopupMenu popup = new JBPopupMenu();
 					GrepExpressionItem selectedGrepExpressionItem = getSelectedGrepExpressionItem();
 					if (selectedGrepExpressionItem != null) {
@@ -162,26 +145,43 @@ public class ProfileDetail {
 						popup.add(new JPopupMenu.Separator());
 					}
 					popup.add(newMenuItem("Add New Item", new AddNewItemAction()));
-					popup.add(newMenuItem("Duplicate", new DuplicateAction()));
+					if (somethingSelected) {
+						popup.add(newMenuItem("Duplicate", new DuplicateAction()));
+					}
 					popup.add(new JPopupMenu.Separator());
 
 					CopyAction copyAction = (CopyAction) ActionManager.getInstance().getAction("$Copy");
-					popup.add(newMenuItem("Copy (" + KeymapUtil.getFirstKeyboardShortcutText(copyAction) + ")", new ActionListener() {
+					if (somethingSelected) {
+						popup.add(newMenuItem("Copy (" + KeymapUtil.getFirstKeyboardShortcutText(copyAction) + ")", new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								copyAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
+										ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
+							}
+						}));
+						CutAction cutAction = (CutAction) ActionManager.getInstance().getAction("$Cut");
+						popup.add(newMenuItem("Cut (" + KeymapUtil.getFirstKeyboardShortcutText(cutAction) + ")", new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								cutAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
+										ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
+							}
+						}));
+
+
+					}
+					PasteAction pasteAction = (PasteAction) ActionManager.getInstance().getAction("$Paste");
+					popup.add(newMenuItem("Paste (" + KeymapUtil.getFirstKeyboardShortcutText(pasteAction) + ")", new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							copyAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
+							pasteAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
 									ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
 						}
 					}));
-					CutAction cutAction = (CutAction) ActionManager.getInstance().getAction("$Cut");
-					popup.add(newMenuItem("Cut (" + KeymapUtil.getFirstKeyboardShortcutText(cutAction) + ")", new ActionListener() {
-						@Override
-						public void actionPerformed(ActionEvent e) {
-							cutAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
-									ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
-						}
-					}));
-					popup.add(newMenuItem("Delete (Del)", new DeleteAction()));
+					if (somethingSelected) {
+						popup.add(newMenuItem("Delete (Del)", new DeleteAction()));
+					}
+
 					popup.show(e.getComponent(), e.getX(), e.getY());
 				}
 			}
@@ -251,13 +251,6 @@ public class ProfileDetail {
 		return (DefaultMutableTreeNode) table.getTree().getLastSelectedPathComponent();
 	}
 
-	private void disableCopyDeleteButton() {
-		duplicateButton.setEnabled(false);
-	}
-
-	private void setSelectedRow(Integer selectedRow) {
-		duplicateButton.setEnabled(selectedRow != null && selectedRow >= 0);
-	}
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -314,14 +307,6 @@ public class ProfileDetail {
 		item.setHighlightOnlyMatchingText(true);
 		item.getStyle().setBackgroundColor(new GrepColor(true, JBColor.CYAN));
 		return item;
-	}
-
-	private GrepExpressionGroup getGrepExpressionGroup(DefaultMutableTreeNode selectedNode) {
-		return (GrepExpressionGroup) selectedNode.getUserObject();
-	}
-
-	private GrepExpressionItem getSelectedGrepExpressionItem(DefaultMutableTreeNode selectedNode) {
-		return (GrepExpressionItem) selectedNode.getUserObject();
 	}
 
 	public void rebuildProfile() {
@@ -447,10 +432,6 @@ public class ProfileDetail {
 		rebuildProfile();
 		TableUtils.reloadTree(this.table);
 		TableUtils.selectNode((DefaultMutableTreeNode) selectNode, table);
-		DefaultMutableTreeNode root = (DefaultMutableTreeNode) table.getTree().getModel().getRoot();
-		if (root.getChildCount() == 0) {
-			disableCopyDeleteButton();
-		}
 	}
 
 	private class AddNewItemAction implements ActionListener {
@@ -495,7 +476,6 @@ public class ProfileDetail {
 	private class ResetToDefaultAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			disableCopyDeleteButton();
 			profile.resetToDefault();
 			importFrom(profile);
 		}

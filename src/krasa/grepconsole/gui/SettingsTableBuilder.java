@@ -238,8 +238,13 @@ public class SettingsTableBuilder {
 				parent = selectedNode;
 				index = parent.getChildCount();
 			}
-			DefaultMutableTreeNode root = (DefaultMutableTreeNode) parent.getParent();
-			rootIndex = root.getIndex(parent);
+			DefaultMutableTreeNode root;
+			if (parent == null) {
+				root = (DefaultMutableTreeNode) getTree().getModel().getRoot();
+			} else {
+				root = (DefaultMutableTreeNode) parent.getParent();
+				rootIndex = root.getIndex(parent);
+			}
 
 			java.util.List<DefaultMutableTreeNode> nodesToSelect = new ArrayList<>();
 			java.util.List<DefaultMutableTreeNode> nodesToExpand = new ArrayList<>();
