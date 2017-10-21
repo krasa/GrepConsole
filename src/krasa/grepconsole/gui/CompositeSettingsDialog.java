@@ -35,16 +35,16 @@ public class CompositeSettingsDialog {
 	private JButton deleteButton;
 	private ProfileDetail profileDetailComponent;
 	private DefaultListModel profilesModel;
-	private long selectedProfileId;
+	private long originallySelectedProfileId;
 
 
-	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settings, long selectedProfileId) {
-		this(myConfigurable, settings, SettingsContext.NONE, selectedProfileId);
+	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settings, long originallySelectedProfileId) {
+		this(myConfigurable, settings, SettingsContext.NONE, originallySelectedProfileId);
 	}
 
-	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settingsForCloning, SettingsContext settingsContext, long selectedProfileId) {
+	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settingsForCloning, SettingsContext settingsContext, long originallySelectedProfileId) {
 		this.settings = settingsForCloning.clone();
-		this.selectedProfileId = selectedProfileId;
+		this.originallySelectedProfileId = originallySelectedProfileId;
 
 		profileDetailComponent = new ProfileDetail(myConfigurable, settingsContext);
 		profileDetail.add(profileDetailComponent.getRootComponent());
@@ -142,7 +142,7 @@ public class CompositeSettingsDialog {
 		}
 
 
-		selectProfile(selectedProfileId);
+		selectProfile(originallySelectedProfileId);
 	}
 
 	private void createUIComponents() {
@@ -170,8 +170,9 @@ public class CompositeSettingsDialog {
 	}
 
 	public boolean isSettingsModified(PluginState state) {
-		boolean profileChanged = selectedProfileId != getSelectedProfile().getId();
-		return profileChanged || profileDetailComponent.isSettingsModified(state.getProfile(selectedProfileId));
+		Profile selectedProfile = getSelectedProfile();
+		profileDetailComponent.getData(selectedProfile);
+		return originallySelectedProfileId != selectedProfile.getId() || !this.settings.equals(state);
 	}
 
 	public PluginState getSettings() {
@@ -193,8 +194,8 @@ public class CompositeSettingsDialog {
 		return (Profile) jbList.getSelectedValue();
 	}
 
-	public void setSelectedProfileId(long selectedProfileId) {
-		this.selectedProfileId = selectedProfileId;
+	public void setOriginallySelectedProfileId(long originallySelectedProfileId) {
+		this.originallySelectedProfileId = originallySelectedProfileId;
 	}
 
 	public void selectProfile(long selectedProfileId) {

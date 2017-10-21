@@ -102,7 +102,7 @@ public class MyConfigurable implements Configurable {
 					serviceManager.profileChanged(console, profile);
 				}
 			}
-			form.setSelectedProfileId(selectedProfileId);
+			form.setOriginallySelectedProfileId(selectedProfileId);
 
 			refreshServices(currentAction);
 		}

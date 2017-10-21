@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>7.0.162.000.3</version>
+	<version>7.0.162.000.4</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -32,7 +32,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>7.0 (2017-10-20)
+        <br>7.0 (2017-10-21)
 		<br>- Run Configuration settings and profiles 
 		<br>- Multiline input filtering - filter out not matched lines if the previous one was filtered out
 		<br>- Restored old filtering behaviour prior to v6.9 - Sometimes you may want to see only lines that are highlighted. To do this, add a ".*" as the last item and set to "Whole line" and "Filter out".

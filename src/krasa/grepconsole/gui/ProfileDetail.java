@@ -269,6 +269,9 @@ public class ProfileDetail {
 	}
 
 	public void importFrom(@NotNull Profile profile) {
+		if (this.profile != null) {//keep changes when switching to another profile
+			getData(this.profile);
+		}
 		this.profile = profile;
 		setData(profile);
 		foldingsEnabled(profile.isDefaultProfile());
@@ -292,11 +295,6 @@ public class ProfileDetail {
 		}
 		TableUtils.reloadTree(table);
 		TreeUtil.expandAll(table.getTree());
-	}
-
-	public boolean isSettingsModified(Profile data) {
-		getData(profile);
-		return !this.profile.equals(data);
 	}
 
 	private void createUIComponents() {
