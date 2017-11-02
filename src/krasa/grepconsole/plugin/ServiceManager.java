@@ -241,7 +241,7 @@ public class ServiceManager {
 		return consoles.contains(console);
 	}
 
-	public void registerConsole(ConsoleView console) {
+	public void registerConsole(@NotNull ConsoleView console) {
 		GrepCopyingFilter lastCopier = getLastCopier();
 		if (lastCopier != null) {
 			consoles.put(console, lastCopier);

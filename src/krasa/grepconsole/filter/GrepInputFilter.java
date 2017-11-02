@@ -12,13 +12,17 @@ import krasa.grepconsole.model.Profile;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
+	private static final Pair<String, ConsoleViewContentType> REMOVE_OUTPUT = new Pair<>(null, null);
+
 	private WeakReference<ConsoleView> console;
-	protected volatile boolean lastLineFiltered = false;
+	private volatile boolean lastLineFiltered = false;
+	private volatile boolean lastTokenNewLine = false;
+	private boolean testConsole;
 
 	public GrepInputFilter(Project project, Profile profile) {
 		super(project, profile);
@@ -31,11 +35,20 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	public void init(WeakReference<ConsoleView> console, Profile profile) {
 		this.profile = profile;
 		this.console = console;
+		ConsoleView consoleView = console.get();
+		if (consoleView != null) {
+			testConsole = consoleView.getClass().getName().startsWith("com.intellij.execution.testframework.ui");
+		}
 	}
 
 	@Override
-	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s,
-																  ConsoleViewContentType consoleViewContentType) {
+	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s, ConsoleViewContentType consoleViewContentType) {
+		if (testConsole && lastLineFiltered && !lastTokenNewLine && s.equals("\n")) {
+			lastTokenNewLine = true;
+			return Collections.singletonList(REMOVE_OUTPUT);
+		}
+		lastTokenNewLine = false;
+
 		FilterState state = super.filter(s, -1);
 		clearConsole(state);
 		return prepareResult(state);
@@ -59,17 +72,17 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		Pair<String, ConsoleViewContentType> result = null;
 		if (state != null) {
 			if (state.isExclude()) {
-				result = new Pair<>(null, null);
+				result = REMOVE_OUTPUT;
 				lastLineFiltered = true;
 			} else if (profile.isMultilineInputFilter() && !state.isMatchesSomething() && lastLineFiltered) {
-				result = new Pair<>(null, null);
+				result = REMOVE_OUTPUT;
 			}
 		}
 		if (result == null) {
 			lastLineFiltered = false;
 			return null;// input is not changed
 		} else {
-			return Arrays.asList(result);
+			return Collections.singletonList(result);
 		}
 	}
 
@@ -78,10 +91,10 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		super.onChange();
 		lastLineFiltered = false;
 	}
+
 	/**
-	 * just want to see lines that are highlighted. To do this, I add a ".*" item as the last item and set to "Whole line" and "Filter out".
-	 * -> must add all items to grepProcessors
-	 * TODO separate clearConsole functionality?
+	 * just want to see lines that are highlighted. To do this, I add a ".*" item as the last item and set to
+	 * "Whole line" and "Filter out". -> must add all items to grepProcessors TODO separate clearConsole functionality?
 	 */
 	@Override
 	protected void initProcessors() {
@@ -102,7 +115,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem item) {
-//		return profile.isEnabledInputFiltering() && (item.isInputFilter() || item.isClearConsole());
+		// return profile.isEnabledInputFiltering() && (item.isInputFilter() || item.isClearConsole());
 		throw new UnsupportedOperationException();
 	}
 
