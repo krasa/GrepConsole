@@ -5,12 +5,13 @@ import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.WriteExternalException;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
 public class GrepConsoleData implements JDOMExternalizable {
 	public static final Key<GrepConsoleData> GREP_CONSOLE_DATA = Key.create("GrepConsoleData");
-	private static final String SELECTED_PROFILE_ID = "selectedProfileId";
+	public static final String SELECTED_PROFILE_ID = "selectedProfileId";
 	private long selectedProfileId;
 
 	@NotNull
@@ -34,11 +35,20 @@ public class GrepConsoleData implements JDOMExternalizable {
 
 	@Override
 	public void writeExternal(Element element) throws WriteExternalException {
-		element.setAttribute(SELECTED_PROFILE_ID, String.valueOf(selectedProfileId));
-
+		if (!GrepConsoleApplicationComponent.getInstance().getState().isAllowRunConfigurationChanges()) {
+			return;
+		}
+		if (selectedProfileId != 0 && selectedProfileId != GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile().getId()) {
+			element.setAttribute(SELECTED_PROFILE_ID, String.valueOf(selectedProfileId));
+		} else {
+			element.removeAttribute(SELECTED_PROFILE_ID);
+		}
 	}
 
 	public void setSelectedProfileId(long selectedProfileId) {
+		if (!GrepConsoleApplicationComponent.getInstance().getState().isAllowRunConfigurationChanges()) {
+			return;
+		}
 		this.selectedProfileId = selectedProfileId;
 	}
 

@@ -16,7 +16,7 @@ public class PluginState extends DomainObject implements Cloneable {
 	
 	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;
-	private boolean enabled;
+	private boolean allowRunConfigurationChanges = true;
 
 	public Profile getDefaultProfile() {
 		Profile result = null;
@@ -74,12 +74,12 @@ public class PluginState extends DomainObject implements Cloneable {
 		return krasa.grepconsole.Cloner.deepClone(this);
 	}
 
-	public boolean isEnabled() {
-		return enabled;
+	public boolean isAllowRunConfigurationChanges() {
+		return allowRunConfigurationChanges;
 	}
 
-	public void setEnabled(final boolean enabled) {
-		this.enabled = enabled;
+	public void setAllowRunConfigurationChanges(final boolean allowRunConfigurationChanges) {
+		this.allowRunConfigurationChanges = allowRunConfigurationChanges;
 	}
 
 	@Transient
@@ -139,7 +139,7 @@ public class PluginState extends DomainObject implements Cloneable {
 		return "PluginState{" +
 				"profiles=" + profiles +
 				", tailSettings=" + tailSettings +
-				", enabled=" + enabled +
+				", allowRunConfigurationChanges=" + allowRunConfigurationChanges +
 				"} " + super.toString();
 	}
 	          

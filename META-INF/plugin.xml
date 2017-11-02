@@ -32,8 +32,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>7.0 (2017-10-31)
-		<br>- GUI improvements
+        <br>7.1 (2017-11-02)
+		<br>- Option to disable Run Configuration changes
         <br>7.0 (2017-10-21)
 		<br>- Run Configuration settings and profiles 
 		<br>- Multiline input filtering - filter out not matched lines if the previous one was filtered out
@@ -166,6 +166,8 @@
 								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
 		<!-- Add your extensions here -->
 		<runConfigurationExtension
-				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtension"/>
+				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionNew"/>
+		<runConfigurationExtension
+				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionOld"/>
 	</extensions>
 </idea-plugin>

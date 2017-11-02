@@ -12,17 +12,15 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class GrepRunConfigurationExtension extends RunConfigurationExtension {
+public class GrepRunConfigurationExtensionOld extends RunConfigurationExtension {
 
 	@Override
 	public <T extends RunConfigurationBase> void updateJavaParameters(T runConfiguration, JavaParameters javaParameters, RunnerSettings runnerSettings) throws ExecutionException {
-		GrepConsoleData userData = GrepConsoleData.getGrepConsoleData(runConfiguration);
-
 	}
 
 	@Override
 	protected void readExternal(@NotNull RunConfigurationBase runConfiguration, @NotNull Element element) throws InvalidDataException {
-		GrepConsoleData.getGrepConsoleData(runConfiguration).readExternal(element);
+		element.removeAttribute(GrepConsoleData.SELECTED_PROFILE_ID);
 	}
 
 	@Override
@@ -30,7 +28,7 @@ public class GrepRunConfigurationExtension extends RunConfigurationExtension {
 		if (!isApplicableFor(runConfiguration)) {
 			return;
 		}
-		GrepConsoleData.getGrepConsoleData(runConfiguration).writeExternal(element);
+		element.removeAttribute(GrepConsoleData.SELECTED_PROFILE_ID);
 	}
 
 	@Nullable
@@ -46,7 +44,12 @@ public class GrepRunConfigurationExtension extends RunConfigurationExtension {
 
 	@Nullable
 	public SettingsEditor createEditor(@NotNull RunConfigurationBase configuration) {
-		return new GrepSettingsEditor(configuration);
+		return null;
 	}
 
+	@NotNull
+	@Override
+	public String getSerializationId() {
+		return "krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtension";
+	}
 }

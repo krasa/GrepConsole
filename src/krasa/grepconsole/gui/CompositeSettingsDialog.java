@@ -1,5 +1,6 @@
 package krasa.grepconsole.gui;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
@@ -20,8 +21,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 public class CompositeSettingsDialog {
+	private static final String DIVIDER = "krasa.grepconsole.gui.CompositeSettingsDialog";
+	private boolean runConfigurationDialog;
 	private PluginState settings;
 	private JPanel profiles;
 	private JBList jbList;
@@ -33,6 +38,8 @@ public class CompositeSettingsDialog {
 	private JPanel root;
 	private JButton fileTailSettings;
 	private JButton deleteButton;
+	private JCheckBox enableRunConfigurationProfilesCheckBox;
+	private JSplitPane splitPane;
 	private ProfileDetail profileDetailComponent;
 	private DefaultListModel profilesModel;
 	private long originallySelectedProfileId;
@@ -40,6 +47,8 @@ public class CompositeSettingsDialog {
 
 	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settings, long originallySelectedProfileId) {
 		this(myConfigurable, settings, SettingsContext.NONE, originallySelectedProfileId);
+		runConfigurationDialog = true;
+		runConfigurationDialog();
 	}
 
 	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settingsForCloning, SettingsContext settingsContext, long originallySelectedProfileId) {
@@ -51,6 +60,31 @@ public class CompositeSettingsDialog {
 //		Dimension minimumSize = new Dimension(0, 0);
 //		profiles.setMinimumSize(minimumSize);
 
+		String value = PropertiesComponent.getInstance().getValue(DIVIDER);
+		if (value != null) {
+			try {
+				splitPane.setDividerLocation(Integer.parseInt(value));
+			} catch (NumberFormatException e) {
+			}
+		}
+		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY,
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent pce) {
+						Object newValue = pce.getNewValue();
+						System.err.println(newValue);
+						PropertiesComponent.getInstance().setValue(DIVIDER, String.valueOf(newValue));
+					}
+				}
+		);
+
+
+		enableRunConfigurationProfilesCheckBox.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				runConfigurationDialog();
+			}
+		});
 		jbList.addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
@@ -134,8 +168,9 @@ public class CompositeSettingsDialog {
 			}
 		};
 	}
-	  
+
 	protected void initModel() {
+		enableRunConfigurationProfilesCheckBox.setSelected(settings.isAllowRunConfigurationChanges());
 		profilesModel.clear();
 		for (Profile profile : settings.getProfiles()) {
 			profilesModel.addElement(profile);
@@ -143,6 +178,20 @@ public class CompositeSettingsDialog {
 
 
 		selectProfile(originallySelectedProfileId);
+
+	}
+
+	private void runConfigurationDialog() {
+		if (runConfigurationDialog) {
+			boolean allowRunConfigurationChanges = settings.isAllowRunConfigurationChanges();
+			jbList.setEnabled(allowRunConfigurationChanges);
+			renameButton.setEnabled(allowRunConfigurationChanges);
+			addProfile.setEnabled(allowRunConfigurationChanges);
+			setAsDefault.setEnabled(allowRunConfigurationChanges);
+			duplicateButton.setEnabled(allowRunConfigurationChanges);
+			renameButton.setEnabled(allowRunConfigurationChanges);
+			deleteButton.setEnabled(allowRunConfigurationChanges);
+		}
 	}
 
 	private void createUIComponents() {
@@ -172,10 +221,13 @@ public class CompositeSettingsDialog {
 	public boolean isSettingsModified(PluginState state) {
 		Profile selectedProfile = getSelectedProfile();
 		profileDetailComponent.getData(selectedProfile);
-		return originallySelectedProfileId != selectedProfile.getId() || !this.settings.equals(state);
+		return originallySelectedProfileId != selectedProfile.getId()
+				|| !this.settings.equals(state)
+				|| enableRunConfigurationProfilesCheckBox.isSelected() != settings.isAllowRunConfigurationChanges();
 	}
 
 	public PluginState getSettings() {
+		settings.setAllowRunConfigurationChanges(enableRunConfigurationProfilesCheckBox.isSelected());
 		profileDetailComponent.getData(getSelectedProfile());
 		return settings;
 	}
