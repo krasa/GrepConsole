@@ -354,7 +354,7 @@ public class ProfileDetail {
 		multilineInputFilter.setSelected(data.isMultilineInputFilter());
 	}
 
-	public void getData(Profile data) {
+	public void getData(@NotNull Profile data) {
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setMaxProcessingTime(maxProcessingTime.getText());
 		data.setEnableMaxLengthGrepLimit(enableMaxLengthGrep.isSelected());

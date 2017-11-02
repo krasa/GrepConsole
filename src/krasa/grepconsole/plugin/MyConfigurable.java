@@ -82,12 +82,12 @@ public class MyConfigurable implements Configurable {
 	 * Run Configuration settings calls it all the time on change of models
 	 */
 	public void apply(@Nullable HighlightManipulationAction currentAction) {
-		PluginState formSettings = form.getSettings();
-		applicationComponent.loadState(getClone(formSettings));
-
-
 		Profile selectedProfile = form.getSelectedProfile();
 		if (selectedProfile != null) {
+			PluginState formSettings = form.getSettings();
+			applicationComponent.loadState(getClone(formSettings));
+
+
 			long selectedProfileId = selectedProfile.getId();
 			RunConfigurationBase runConfigurationBase = this.runConfigurationBase;
 			if (runConfigurationBase == null && console != null) {
