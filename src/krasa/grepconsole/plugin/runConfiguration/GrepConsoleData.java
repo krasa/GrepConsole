@@ -6,6 +6,7 @@ import com.intellij.openapi.util.JDOMExternalizable;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.WriteExternalException;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,13 +36,10 @@ public class GrepConsoleData implements JDOMExternalizable {
 
 	@Override
 	public void writeExternal(Element element) throws WriteExternalException {
-		if (!GrepConsoleApplicationComponent.getInstance().getState().isAllowRunConfigurationChanges()) {
-			return;
-		}
-		if (selectedProfileId != 0 && selectedProfileId != GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile().getId()) {
+		PluginState state = GrepConsoleApplicationComponent.getInstance().getState();
+		boolean runConfigurationChanges = state.isAllowRunConfigurationChanges();
+		if (runConfigurationChanges && selectedProfileId != 0 && selectedProfileId != state.getDefaultProfile().getId()) {
 			element.setAttribute(SELECTED_PROFILE_ID, String.valueOf(selectedProfileId));
-		} else {
-			element.removeAttribute(SELECTED_PROFILE_ID);
 		}
 	}
 
