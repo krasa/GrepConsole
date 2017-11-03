@@ -17,11 +17,11 @@ import java.util.List;
 
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
-	private static final Pair<String, ConsoleViewContentType> REMOVE_OUTPUT = new Pair<>(null, null);
+	private static final List<Pair<String, ConsoleViewContentType>> REMOVE_OUTPUT = Collections.singletonList(new Pair<>(null, null));
 
 	private WeakReference<ConsoleView> console;
 	private volatile boolean lastLineFiltered = false;
-	private volatile boolean lastTokenNewLine = false;
+	private volatile boolean removeNextNewLine = false;
 	private boolean testConsole;
 
 	public GrepInputFilter(Project project, Profile profile) {
@@ -43,11 +43,10 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String s, ConsoleViewContentType consoleViewContentType) {
-		if (testConsole && lastLineFiltered && !lastTokenNewLine && s.equals("\n")) {
-			lastTokenNewLine = true;
-			return Collections.singletonList(REMOVE_OUTPUT);
+		if (lastLineFiltered && removeNextNewLine && s.equals("\n")) {
+			removeNextNewLine = false;
+			return REMOVE_OUTPUT;
 		}
-		lastTokenNewLine = false;
 
 		FilterState state = super.filter(s, -1);
 		clearConsole(state);
@@ -69,7 +68,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	}
 
 	private List<Pair<String, ConsoleViewContentType>> prepareResult(FilterState state) {
-		Pair<String, ConsoleViewContentType> result = null;
+		List<Pair<String, ConsoleViewContentType>> result = null;
 		if (state != null) {
 			if (state.isExclude()) {
 				result = REMOVE_OUTPUT;
@@ -80,9 +79,11 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		}
 		if (result == null) {
 			lastLineFiltered = false;
+			removeNextNewLine = false;
 			return null;// input is not changed
 		} else {
-			return Collections.singletonList(result);
+			removeNextNewLine = testConsole && state.notTerminatedWithNewline();
+			return result;
 		}
 	}
 

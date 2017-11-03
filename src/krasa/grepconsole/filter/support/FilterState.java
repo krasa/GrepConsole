@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class FilterState {
 
 	private int offset;
@@ -30,6 +29,7 @@ public class FilterState {
 	public CharSequence getCharSequence() {
 		return charSequence;
 	}
+
 	public Operation getNextOperation() {
 		return nextOperation;
 	}
@@ -37,7 +37,6 @@ public class FilterState {
 	public void setNextOperation(Operation nextOperation) {
 		this.nextOperation = nextOperation;
 	}
-
 
 	public void setConsoleViewContentType(ConsoleViewContentType consoleViewContentType) {
 		this.consoleViewContentType = consoleViewContentType;
@@ -92,5 +91,12 @@ public class FilterState {
 
 	public boolean isClearConsole() {
 		return clearConsole;
+	}
+
+	public boolean notTerminatedWithNewline() {
+		if (charSequence.length() == 0) {
+			return false;
+		}
+		return charSequence.charAt(charSequence.length() - 1) != '\n';
 	}
 }
