@@ -72,7 +72,6 @@ public class CompositeSettingsDialog {
 					@Override
 					public void propertyChange(PropertyChangeEvent pce) {
 						Object newValue = pce.getNewValue();
-						System.err.println(newValue);
 						PropertiesComponent.getInstance().setValue(DIVIDER, String.valueOf(newValue));
 					}
 				}
