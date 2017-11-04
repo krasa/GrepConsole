@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>7.1.162.000.1</version>
+	<version>7.2.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -32,6 +32,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>7.1 (2017-11-04)
+		<br>- Fixed "Runner GrepConsoleTail is not registered" exception on startup
         <br>7.1 (2017-11-03)
 		<br>- Option to disable Run Configuration profile settings
 		<br>- Fixed filtering of test console #55
