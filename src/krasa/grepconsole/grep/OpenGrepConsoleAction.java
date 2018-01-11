@@ -8,6 +8,7 @@ import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -36,6 +37,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 //import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
 
 public class OpenGrepConsoleAction extends DumbAwareAction {
+
+	private static final Logger LOG = Logger.getInstance(OpenGrepConsoleAction.class);
+	
 	public OpenGrepConsoleAction() {
 	}
 
@@ -90,7 +94,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			actions.add(action);
 		}
 
-		final Content tab = runnerLayoutUi.createContent(getContentType(runnerLayoutUi), consolePanel, title(expression),
+		final Content tab = runnerLayoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, consolePanel, title(expression),
 				AllIcons.General.Filter, consolePanel);
 		runnerLayoutUi.addContent(tab);
 		runnerLayoutUi.selectAndFocus(tab, true, true);
@@ -186,10 +190,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return s;
 	}
 
+	@Deprecated
 	@Nullable
 	protected String getContentType(@NotNull RunnerLayoutUi runnerLayoutUi) {
 		ContentManager contentManager = runnerLayoutUi.getContentManager();
-		Content selectedContent = contentManager.getSelectedContent();
+		Content selectedContent = contentManager.getSelectedContent();  //not reliable, returns variables for debug sometimes or null
 		return RunnerLayoutUiImpl.CONTENT_TYPE.get(selectedContent);
 	}
 
@@ -287,10 +292,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		Project eventProject = getEventProject(e);
 		ConsoleViewImpl parentConsoleView = (ConsoleViewImpl) getConsoleView(e);
-		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
-		if (eventProject != null && copyingFilter != null) {
-			RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, parentConsoleView);
-			enabled = runnerLayoutUi != null && getContentType(runnerLayoutUi) != null;
+		if (parentConsoleView != null) {
+			GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
+			if (eventProject != null && copyingFilter != null) {
+				RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, parentConsoleView);
+				enabled = runnerLayoutUi != null;
+			}
 		}
 
 		presentation.setEnabled(enabled);
