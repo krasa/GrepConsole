@@ -186,6 +186,9 @@ public class ServiceManager {
 		Iterator<WeakReference<T>> iterator = filters.iterator();
 		while (iterator.hasNext()) {
 			WeakReference<T> next = iterator.next();
+			if (next == null) {    //this should never happen, but still someone got NPE https://github.com/krasa/GrepConsole/issues/100
+				continue;
+			}
 			T filter = next.get();
 			if (filter == null) {
 				iterator.remove();
