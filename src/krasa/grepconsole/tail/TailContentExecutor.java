@@ -14,6 +14,7 @@ import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ExecutionConsole;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.actions.CloseAction;
@@ -144,7 +145,7 @@ public class TailContentExecutor implements Disposable {
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 		descriptor.setExecutionId(System.nanoTime());
 
-		final Content content = layoutUi.createContent("ConsoleContent", consolePanel, myTitle,
+		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, consolePanel, myTitle,
 				AllIcons.Debugger.Console, consolePanel);
 		layoutUi.addContent(content, 0, PlaceInGrid.right, false);
 		layoutUi.getOptions().setLeftToolbar(
