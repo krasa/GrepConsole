@@ -20,16 +20,20 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
+import com.intellij.notification.Notification;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -247,7 +251,12 @@ public class TailContentExecutor implements Disposable {
 
 		@Override
 		public void actionPerformed(AnActionEvent e) {
-			myRerunAction.run();
+			try {
+				myRerunAction.run();
+			} catch (Exception e1) {
+				Notification notification = GrepConsoleApplicationComponent.NOTIFICATION.createNotification(e1.getMessage(), MessageType.WARNING);
+				Notifications.Bus.notify(notification, e.getProject());
+			}
 		}
 
 		@Override
