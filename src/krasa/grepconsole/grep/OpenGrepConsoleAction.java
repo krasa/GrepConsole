@@ -97,7 +97,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		final Content tab = runnerLayoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, consolePanel, title(expression),
 				AllIcons.General.Filter, consolePanel);
 		runnerLayoutUi.addContent(tab);
-		runnerLayoutUi.selectAndFocus(tab, true, true);
+		try {
+			runnerLayoutUi.selectAndFocus(tab, true, true);
+		} catch (Exception e) {
+			LOG.warn(e);
+		}
 
 
 		PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef = pinAction.getRunConfigurationRef();
