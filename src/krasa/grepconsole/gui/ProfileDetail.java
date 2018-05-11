@@ -85,6 +85,7 @@ public class ProfileDetail {
 	private JSplitPane splitPane;
 	private JButton resetHighlighters;
 	private JCheckBox testHighlightersFirst;
+	private JButton addNewInputFilterGroup;
 	// private JCheckBox synchronous;
 	public Profile profile;
 
@@ -132,6 +133,7 @@ public class ProfileDetail {
 
 		addNewButton.addActionListener(new AddNewItemAction(grepTable, false));
 		addNewGroup.addActionListener(new AddNewGroupAction(grepTable));
+		addNewInputFilterGroup.addActionListener(new AddNewGroupAction(inputTable));
 		grepTable.addMouseListener(rightClickMenu(grepTable, false));
 		grepTable.addKeyListener(new DeleteListener(grepTable));
 

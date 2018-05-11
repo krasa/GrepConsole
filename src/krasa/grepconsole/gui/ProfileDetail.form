@@ -3,7 +3,7 @@
   <grid id="27dc6" binding="rootComponent" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="959" height="526"/>
+      <xy x="20" y="20" width="1098" height="537"/>
     </constraints>
     <properties>
       <minimumSize width="750" height="200"/>
@@ -70,10 +70,10 @@
                           </component>
                         </children>
                       </scrollpane>
-                      <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties/>
                         <border type="none"/>
@@ -88,35 +88,32 @@
                           </component>
                           <component id="d37b7" class="javax.swing.JButton" binding="addLivePluginScript">
                             <constraints>
-                              <grid row="0" column="2" row-span="1" col-span="3" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Add 'Live-Plugin' script"/>
                             </properties>
                           </component>
-                          <component id="99e19" class="javax.swing.JCheckBox" binding="multilineInputFilter">
-                            <constraints>
-                              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Filter out not matched lines if the previous one was filtered out"/>
-                              <toolTipText value=""/>
-                            </properties>
-                          </component>
                           <component id="95448" class="javax.swing.JCheckBox" binding="testHighlightersFirst">
                             <constraints>
-                              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Test highlighters first"/>
                               <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: KEEP, Continue: false."/>
                             </properties>
                           </component>
+                          <component id="dab6c" class="javax.swing.JButton" binding="addNewInputFilterGroup">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Add new group"/>
+                            </properties>
+                          </component>
                           <component id="bb383" class="javax.swing.JButton" binding="tranformationHelp">
                             <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false">
-                                <minimum-size width="0" height="0"/>
-                              </grid>
+                              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <icon value="actions/help.png"/>
@@ -124,11 +121,20 @@
                               <toolTipText value=""/>
                             </properties>
                           </component>
+                          <component id="99e19" class="javax.swing.JCheckBox" binding="multilineInputFilter">
+                            <constraints>
+                              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Filter out not matched lines if the previous one was filtered out"/>
+                              <toolTipText value=""/>
+                            </properties>
+                          </component>
                         </children>
                       </grid>
                     </children>
                   </grid>
-                  <grid id="c72d6" binding="highlightersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="c72d6" binding="highlightersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
                       <splitpane position="right"/>
@@ -140,7 +146,7 @@
                     <children>
                       <scrollpane id="44bf4">
                         <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
                             <minimum-size width="-1" height="100"/>
                           </grid>
                         </constraints>
@@ -159,7 +165,7 @@
                       </scrollpane>
                       <grid id="441f9" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
                         <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
                             <minimum-size width="-1" height="0"/>
                           </grid>
                         </constraints>
@@ -196,7 +202,6 @@
                             <constraints/>
                             <properties>
                               <icon value="actions/help.png"/>
-                              <minimumSize width="0" height="0"/>
                               <text value=""/>
                               <toolTipText value=""/>
                             </properties>

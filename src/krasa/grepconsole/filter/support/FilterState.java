@@ -117,7 +117,6 @@ public class FilterState {
 
 		String action = grepExpressionItem.getAction();
 		if (GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
-			setExclude(false);
 		} else if (GrepExpressionItem.ACTION_REMOVE.equals(action)) {
 			setExclude(true);
 		} else if (GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)) {
@@ -156,7 +155,7 @@ public class FilterState {
 
 			t0 = System.currentTimeMillis() - t0;
 			if (t0 > 1000) {
-				LOG.warn("GrepConsole: transformer '" + action + "'took " + t0 + " ms on '''" + originalText + "'''");
+				LOG.warn("GrepConsole: script '" + action + "'took " + t0 + " ms on '''" + originalText + "'''");
 			}
 
 			//noinspection StringEquality

@@ -359,7 +359,7 @@ public class Profile extends DomainObject implements Cloneable {
 	public GrepExpressionGroup getOrCreateInputFilterGroup(String name) {
 		List<GrepExpressionGroup> inputFilterGroups = getInputFilterGroups();
 		for (GrepExpressionGroup inputFilterGroup : inputFilterGroups) {
-			if (inputFilterGroup.getName().equals("name")) {
+			if (inputFilterGroup.getName().equals(name)) {
 				return inputFilterGroup;
 			}
 		}

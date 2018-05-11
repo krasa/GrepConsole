@@ -32,7 +32,7 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>8.0 (2018-05-12)
+        <br>8.0 (2018-05-11)
 		<br>- Support for manipulating output text, and any custom actions (e.g. notifications) via scripting using <a href="https://github.com/dkandalov/live-plugin">LivePlugin</a> or making own plugin. 
 		<br>- Reworked input filtering logic and gui
 		<br>- 'Grep' fix for incomplete stream #103
@@ -165,9 +165,6 @@
 				text="GrepConsoleTailDummyAction">
 		</action>
 	</actions>
-	<extensionPoints>
-		<extensionPoint name="krasaTestProvider" interface="krasa.grepconsole.plugin.ExtensionManager"/>
-	</extensionPoints>
 
 	<extensions defaultExtensionNs="com.intellij">
 		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
