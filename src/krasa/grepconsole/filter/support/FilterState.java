@@ -137,9 +137,10 @@ public class FilterState {
 					LOG.warn("GrepConsole: transformer '" + action + "'took " + t0 + " ms on '''" + originalText + "'''");
 				}
 
-				setTextChanged(true);
+				//noinspection StringEquality
+				setTextChanged(textChanged || text != originalText);
 
-				if (nextOperation == Operation.CONTINUE_MATCHING) {//microoptimisation
+				if (text != null && nextOperation == Operation.CONTINUE_MATCHING) {
 					String substring = profile.limitInputLength_andCutNewLine(text);
 					charSequence = profile.limitProcessingTime(substring);
 				}
