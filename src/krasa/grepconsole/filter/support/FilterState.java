@@ -125,32 +125,50 @@ public class FilterState {
 				setExclude(true);
 			}
 		} else if (action != null) {
-			Function<String, String> stringStringFunction = ExtensionManager.getFunction(action);
-			if (stringStringFunction != null) {
-				long t0 = System.currentTimeMillis();
+			executeFunction(action);
+		}
+		
+		setMatchesSomething(true);
 
-				String originalText = text;
+		if (grepExpressionItem.getSound().isEnabled()) {
+			grepExpressionItem.getSound().play();
+		}
+	}
+
+	protected void executeFunction(String action) {
+		Function<String, String> stringStringFunction = ExtensionManager.getFunction(action);
+		if (stringStringFunction != null) {
+			long t0 = System.currentTimeMillis();
+
+			String originalText = text;
+			try {
 				text = stringStringFunction.apply(originalText);
+			} catch (Throwable e) {
+				LOG.error("Script '" + action + "' error", e);
+				return;
+			}
 
-				t0 = System.currentTimeMillis() - t0;
-				if (t0 > 1000) {
-					LOG.warn("GrepConsole: transformer '" + action + "'took " + t0 + " ms on '''" + originalText + "'''");
-				}
 
-				//noinspection StringEquality
-				setTextChanged(textChanged || text != originalText);
+			if (text == null) {
+				setExclude(true);
+			}
+
+
+			t0 = System.currentTimeMillis() - t0;
+			if (t0 > 1000) {
+				LOG.warn("GrepConsole: transformer '" + action + "'took " + t0 + " ms on '''" + originalText + "'''");
+			}
+
+			//noinspection StringEquality
+			boolean textChanged = this.textChanged || text != originalText;
+			if (textChanged) {
+				setTextChanged(textChanged);
 
 				if (text != null && nextOperation == Operation.CONTINUE_MATCHING) {
 					String substring = profile.limitInputLength_andCutNewLine(text);
 					charSequence = profile.limitProcessingTime(substring);
 				}
 			}
-		}
-		setMatchesSomething(true);
-
-
-		if (grepExpressionItem.getSound().isEnabled()) {
-			grepExpressionItem.getSound().play();
 		}
 	}
 

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
@@ -34,8 +35,6 @@ class LivePluginExampleAction implements ActionListener {
 			@Override
 			public Boolean compute() {
 				try {
-					InputStream resourceAsStream = LivePluginExampleAction.class.getResourceAsStream("LivePlugin.groovy.txt");
-					String text = FileUtil.loadTextAndClose(resourceAsStream);
 
 					String livePluginsPath = FileUtilRt.toSystemIndependentName(getPluginsPath() + "/live-plugins");
 					String name = uniqueName(livePluginsPath);
@@ -44,8 +43,8 @@ class LivePluginExampleAction implements ActionListener {
 						return false;
 					}
 
-					VirtualFile childData = parentFolder.createChildData("GrepConsole", "plugin.groovy");
-					VfsUtil.saveText(childData, text);
+					copy(parentFolder, "/example/plugin.groovy", "plugin.groovy");
+					copy(parentFolder, "/example/support.groovy", "support.groovy");
 
 
 					ApplicationManager.getApplication().invokeLater(new RefreshToolWindow());
@@ -58,6 +57,14 @@ class LivePluginExampleAction implements ActionListener {
 		if (done) {
 			addLivePluginScript.setEnabled(false);
 		}
+	}
+
+	protected void copy(VirtualFile parentFolder, String source, String destination) throws IOException {
+		InputStream resourceAsStream = LivePluginExampleAction.class.getResourceAsStream(source);
+		String text = FileUtil.loadTextAndClose(resourceAsStream);
+		text = text.replace("//REMOVE_COMMENT ", "");
+		VirtualFile childData = parentFolder.createChildData("GrepConsole", destination);
+		VfsUtil.saveText(childData, text);
 	}
 
 	@NotNull

@@ -10,6 +10,9 @@ import java.util.function.Function;
 public class ExtensionManager {
 	public static Map<String, Function<String, String>> functions = new HashMap<>();
 
+	/**
+	 * Function: return null to remove a line, or return text which will be printed to console
+	 */
 	public static void registerFunction(@NotNull String name, Function<String, String> computable) {
 		functions.put(name, computable);
 	}

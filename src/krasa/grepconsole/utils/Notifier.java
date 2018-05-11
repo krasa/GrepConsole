@@ -44,7 +44,7 @@ public class Notifier {
 
 	public static void notify_MissingExtension(String action, final Project project) {
 		final Notification notification = GrepConsoleApplicationComponent.NOTIFICATION.createNotification(
-				"Grep Console plugin: missing extension script '" + action + "', make sure to run your 'Live-Plugin' script or install your custom plugin."
+				"GrepConsole : missing script '" + action + "'"
 
 				, MessageType.WARNING);
 		ApplicationManager.getApplication().invokeLater(new Runnable() {
