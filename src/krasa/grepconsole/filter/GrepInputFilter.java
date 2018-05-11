@@ -127,7 +127,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 				&& !GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)
 				&& !GrepExpressionItem.ACTION_REMOVE.equals(action)
 				&& !GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
-			if (ExtensionManager.getAction(action) == null) {
+			if (ExtensionManager.getFunction(action) == null) {
 				Notifier.notify_MissingExtension(action, project);
 			}
 		}

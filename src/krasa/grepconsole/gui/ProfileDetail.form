@@ -214,7 +214,7 @@
                   </grid>
                 </children>
               </splitpane>
-              <grid id="a6d7b" binding="settings" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+              <grid id="a6d7b" binding="settings" layout-manager="GridLayoutManager" row-count="6" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="5" col-span="5" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -251,7 +251,7 @@
                   <component id="6a419" class="javax.swing.JFormattedTextField" binding="maxProcessingTime" custom-create="true">
                     <constraints>
                       <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="72" height="20"/>
+                        <preferred-size width="72" height="16"/>
                       </grid>
                     </constraints>
                     <properties>
@@ -270,7 +270,7 @@
                   <component id="71e08" class="javax.swing.JFormattedTextField" binding="maxLengthToMatch" custom-create="true">
                     <constraints>
                       <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="72" height="20"/>
+                        <preferred-size width="72" height="16"/>
                       </grid>
                     </constraints>
                     <properties>
@@ -280,7 +280,7 @@
                   <component id="ad44a" class="javax.swing.JFormattedTextField" binding="maxLengthToGrep" custom-create="true">
                     <constraints>
                       <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                        <preferred-size width="72" height="20"/>
+                        <preferred-size width="72" height="16"/>
                       </grid>
                     </constraints>
                     <properties>
@@ -392,13 +392,18 @@
                   </component>
                   <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
                     <constraints>
-                      <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <horizontalTextPosition value="0"/>
                       <text value="Reset all to default"/>
                     </properties>
                   </component>
+                  <vspacer id="c7d4d">
+                    <constraints>
+                      <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </vspacer>
                 </children>
               </grid>
             </children>

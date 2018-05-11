@@ -1,8 +1,6 @@
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.openapi.extensions.PluginId
-
 import java.util.function.Function
-
 import static liveplugin.PluginUtil.*
 
 try {
@@ -11,10 +9,10 @@ try {
             .getPluginClassLoader()
             .loadClass("krasa.grepconsole.plugin.ExtensionManager");
 
-//    clazz.getMethod("unregisterTransformer", String.class)
+//    clazz.getMethod("unregisterFunction", String.class)
 //            .invoke(null, "name")
 
-    clazz.getMethod("registerTransformer", String.class, Function.class)
+    clazz.getMethod("registerFunction", String.class, Function.class)
             .invoke(null, "name",
             new Function<String, String>() {
                 @Override

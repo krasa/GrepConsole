@@ -8,21 +8,21 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class ExtensionManager {
-	public static Map<String, Function<String, String>> actions = new HashMap<>();
+	public static Map<String, Function<String, String>> functions = new HashMap<>();
 
-	public static void registerAction(@NotNull String name, Function<String, String> computable) {
-		actions.put(name, computable);
+	public static void registerFunction(@NotNull String name, Function<String, String> computable) {
+		functions.put(name, computable);
 	}
 
-	public static void unregisterAction(@NotNull String name) {
-		actions.remove(name);
+	public static void unregisterFunction(@NotNull String name) {
+		functions.remove(name);
 	}
 
 	public static Collection<? extends String> references() {
-		return actions.keySet();
+		return functions.keySet();
 	}
 
-	public static Function<String, String> getAction(String name) {
-		return actions.get(name);
+	public static Function<String, String> getFunction(String name) {
+		return functions.get(name);
 	}
 }

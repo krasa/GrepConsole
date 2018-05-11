@@ -125,7 +125,7 @@ public class FilterState {
 				setExclude(true);
 			}
 		} else if (action != null) {
-			Function<String, String> stringStringFunction = ExtensionManager.getAction(action);
+			Function<String, String> stringStringFunction = ExtensionManager.getFunction(action);
 			if (stringStringFunction != null) {
 				long t0 = System.currentTimeMillis();
 
