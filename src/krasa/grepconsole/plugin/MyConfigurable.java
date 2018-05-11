@@ -30,16 +30,19 @@ public class MyConfigurable implements Configurable {
 	HighlightManipulationAction currentAction;
 
 	public MyConfigurable() {
+		setDefaultProfileId();
 	}
 
 	public MyConfigurable(@NotNull ConsoleView console) {
 		this.console = console;
 		originalSelectedProfileId = ServiceManager.getInstance().consoles.getSelectedProfileId(console);
+		setDefaultProfileId();
 	}
 
 	public MyConfigurable(RunConfigurationBase runConfigurationBase) {
 		this.runConfigurationBase = runConfigurationBase;
 		originalSelectedProfileId = GrepConsoleData.getGrepConsoleData(runConfigurationBase).getSelectedProfileId();
+		setDefaultProfileId();
 	}
 
 	@Nls
@@ -66,6 +69,12 @@ public class MyConfigurable implements Configurable {
 			form = new CompositeSettingsDialog(this, applicationComponent.getState(), originalSelectedProfileId);
 		}
 		return form.getRootComponent();
+	}
+
+	protected void setDefaultProfileId() {
+		if (originalSelectedProfileId == 0) {
+			originalSelectedProfileId = applicationComponent.getState().getDefaultProfile().getId();
+		}
 	}
 
 	@Override
