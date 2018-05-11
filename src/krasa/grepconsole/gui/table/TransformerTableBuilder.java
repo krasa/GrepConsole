@@ -106,6 +106,7 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 		};
 
 		columns.add(new FolderColumnInfoWrapper(action));
+		action.preferedStringValue("___________________________________");
 		action.tooltipText("A line will not be filtered out if any previous expression matches first");
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple highlights")));
