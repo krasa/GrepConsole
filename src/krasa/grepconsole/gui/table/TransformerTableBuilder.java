@@ -3,20 +3,25 @@ package krasa.grepconsole.gui.table;
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
+import com.intellij.ui.JBColor;
+import com.intellij.ui.components.JBComboBoxLabel;
+import com.intellij.ui.components.editors.JBComboBoxTableCellEditorComponent;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.gui.ProfileDetail;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.plugin.ExtensionManager;
 import org.apache.commons.lang.StringUtils;
-import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
@@ -70,36 +75,77 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 			@Nullable
 			@Override
 			public TableCellEditor getEditor(GrepExpressionItem o) {
-				return new krasa.grepconsole.gui.table.column.ComboBoxTableCellEditor() {
-					@Override
+
+				return new AbstractTableCellEditor() {
+					private final JBComboBoxTableCellEditorComponent myProfilesChooser = new JBComboBoxTableCellEditorComponent();
+
+					public Object getCellEditorValue() {
+						return myProfilesChooser.getEditorValue();
+					}
+
 					public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-						//noinspection unchecked
-						comboBox.setModel(new ListComboBoxModel(getOptions(o)));
+						myProfilesChooser.setCell(table, row, column);
+						List<String> options = getOptions();
+						myProfilesChooser.setOptions(options.toArray());
+						myProfilesChooser.setOptions(options.toArray());
 
-						comboBox.setSelectedItem(value);
-
-						return comboBox;
+						int i = options.indexOf(value);
+						if (i >= 0) {   //that stupid thing 
+							myProfilesChooser.setDefaultValue(options.get(i));
+						} else {
+							myProfilesChooser.setDefaultValue(value);
+						}
+						return myProfilesChooser;
 					}
 				};
 			}
 
 			@Nullable
 			@Override
-			public TableCellRenderer getRenderer(GrepExpressionItem aVoid) {
-				return krasa.grepconsole.gui.table.column.ComboBoxTableCellRenderer.COMBO_WHEN_SELECTED_RENDERER;
+			public TableCellRenderer getRenderer(final GrepExpressionItem scopeSetting) {
+				return new DefaultTableCellRenderer() {
+					boolean modifyForeground = false;
+					private final JBComboBoxLabel myLabel = new JBComboBoxLabel() {
+
+						@Override
+						public void setForeground(Color color) {
+							if (modifyForeground) {       //com.intellij.ui.dualView.TreeTableView hack
+								super.setForeground(color);
+							}
+						}
+					};
+
+					public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+						if (value != null) {
+							myLabel.setText((String) value);
+							boolean contains = getOptions().contains(scopeSetting.getAction());
+							if (!contains) {
+								modifyForeground = true;
+								myLabel.setForeground(contains ? UIUtil.getTableForeground() : JBColor.RED);
+								modifyForeground = false;
+							} else {
+								modifyForeground = true;
+							}
+
+							if (isSelected) {
+								myLabel.setSelectionIcon();
+							} else {
+								myLabel.setRegularIcon();
+							}
+						}
+						return myLabel;
+
+					}
+				};
 			}
 
 			@NotNull
-			private List<String> getOptions(GrepExpressionItem o) {
+			private List<String> getOptions() {
 				ArrayList<String> options = new ArrayList<>();
-
 				options.add(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED);
 				options.add(GrepExpressionItem.ACTION_REMOVE);
 				options.add(GrepExpressionItem.ACTION_NO_ACTION);
 				options.addAll(ExtensionManager.references());
-//				if (!options.contains(o.getAction())) {
-//					options.add(o.getAction());
-//				}
 				return options;
 			}
 
