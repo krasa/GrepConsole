@@ -69,8 +69,7 @@ public class GrepInputFilterTest {
 
 	private GrepProcessor getFilter(String grepExpression, Color red) {
 		GrepStyle style1 = new GrepStyle().backgroundColor(new GrepColor(red));
-		GrepExpressionItem item = new GrepExpressionItem().grepExpression(grepExpression).style(style1).inputFilter(
-				true);
+		GrepExpressionItem item = new GrepExpressionItem().grepExpression(grepExpression).style(style1).action(GrepExpressionItem.ACTION_REMOVE);
 		return new GrepProcessorImpl(item);
 	}
 }

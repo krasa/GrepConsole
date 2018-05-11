@@ -17,6 +17,15 @@ public class PluginState extends DomainObject implements Cloneable {
 	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;
 	private boolean allowRunConfigurationChanges = true;
+	private int version;
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
 
 	public Profile getDefaultProfile() {
 		Profile result = null;

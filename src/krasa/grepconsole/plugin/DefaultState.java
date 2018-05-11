@@ -25,7 +25,18 @@ public class DefaultState {
 		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 		grepExpressionGroups.clear();
 		grepExpressionGroups.add(new GrepExpressionGroup("default", createDefaultItems()));
+
+		List<GrepExpressionGroup> inputFilters = profile.getInputFilterGroups();
+		inputFilters.clear();
+		inputFilters.add(new GrepExpressionGroup("default", createDefaultInputFilter()));
 		return profile;
+	}
+
+	private static List<GrepExpressionItem> createDefaultInputFilter() {
+		ArrayList<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
+		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE));
+		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*transform this.*").action("externalScriptReference"));
+		return grepExpressionItems;
 	}
 
 	public static List<GrepExpressionItem> createDefaultItems() {

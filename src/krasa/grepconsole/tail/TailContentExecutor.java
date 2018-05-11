@@ -131,8 +131,7 @@ public class TailContentExecutor implements Disposable {
 		RunContentDescriptor descriptor = new RunContentDescriptor(new RunProfile() {
 			@Nullable
 			@Override
-			public RunProfileState getState(@NotNull Executor executor,
-					@NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
+			public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
 				return null;
 			}
 
@@ -149,12 +148,9 @@ public class TailContentExecutor implements Disposable {
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 		descriptor.setExecutionId(System.nanoTime());
 
-		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, consolePanel, myTitle,
-				AllIcons.Debugger.Console, consolePanel);
+		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, consolePanel, myTitle, AllIcons.Debugger.Console, consolePanel);
 		layoutUi.addContent(content, 0, PlaceInGrid.right, false);
-		layoutUi.getOptions().setLeftToolbar(
-				createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor),
-				"RunnerToolbar");
+		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor), "RunnerToolbar");
 
 		Disposer.register(descriptor, this);
 		Disposer.register(descriptor, content);
@@ -192,8 +188,8 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	@NotNull
-	private ActionGroup createActionToolbar(JComponent consolePanel, ConsoleView consoleView,
-			@NotNull final RunnerLayoutUi myUi, RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
+	private ActionGroup createActionToolbar(JComponent consolePanel, ConsoleView consoleView, @NotNull final RunnerLayoutUi myUi,
+											RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
 		final DefaultActionGroup actionGroup = new DefaultActionGroup();
 		actionGroup.add(new RerunAction(consolePanel));
 		actionGroup.add(new StopAction());
@@ -211,6 +207,7 @@ public class TailContentExecutor implements Disposable {
 		actionGroup.add(new CloseAll());
 		return actionGroup;
 	}
+
 	public void activateToolWindow() {
 		ApplicationManager.getApplication().invokeLater(new Runnable() {
 			@Override
@@ -229,8 +226,7 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	private static JComponent createToolbar(ActionGroup actions) {
-		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions,
-				false);
+		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions, false);
 		return actionToolbar.getComponent();
 	}
 

@@ -37,7 +37,7 @@ public class GrepProcessorImpl implements GrepProcessor {
 	public FilterState process(FilterState state) {
 		if (grepExpressionItem.isEnabled() && !StringUtils.isEmpty(grepExpressionItem.getGrepExpression())) {
 			CharSequence input = state.getCharSequence();
-			if (grepExpressionItem.isHighlightOnlyMatchingText()) {
+			if (grepExpressionItem.isHighlightOnlyMatchingText()) { //not whole line
 				Pattern pattern = grepExpressionItem.getPattern();
 				if (pattern != null) {
 					final Matcher matcher = pattern.matcher(input);
@@ -45,30 +45,18 @@ public class GrepProcessorImpl implements GrepProcessor {
 						matches++;
 						final int start = matcher.start();
 						final int end = matcher.end();
-						state.setNextOperation(grepExpressionItem.getOperationOnMatch());
-						state.setExclude(grepExpressionItem.isInputFilter());
-						state.setClearConsole(grepExpressionItem.isClearConsole());
-						state.setMatchesSomething(true);
+						state.executeAction(grepExpressionItem);
 						MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
 								null, grepExpressionItem.getConsoleViewContentType(null));
 
 						state.add(resultItem);
-						if (grepExpressionItem.getSound().isEnabled()) {
-							grepExpressionItem.getSound().play();
-						}
 					}
 				}
-			} else if (matches(input) && !matchesUnless(input)) {
+			} else if (matches(input) && !matchesUnless(input)) {//whole line
 				matches++;
-				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
 				state.setConsoleViewContentType(
 						grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
-				state.setExclude(grepExpressionItem.isInputFilter());
-				state.setClearConsole(grepExpressionItem.isClearConsole());
-				state.setMatchesSomething(true);
-				if (grepExpressionItem.getSound().isEnabled()) {
-					grepExpressionItem.getSound().play();
-				}
+				state.executeAction(grepExpressionItem);
 			}
 		}
 		return state;

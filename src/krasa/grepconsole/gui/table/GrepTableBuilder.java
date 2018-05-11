@@ -1,4 +1,4 @@
-package krasa.grepconsole.gui;
+package krasa.grepconsole.gui.table;
 
 import com.intellij.ide.CopyProvider;
 import com.intellij.ide.CutProvider;
@@ -14,7 +14,7 @@ import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.ColumnInfo;
-import krasa.grepconsole.gui.table.*;
+import krasa.grepconsole.gui.ProfileDetail;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -37,12 +37,15 @@ import static krasa.grepconsole.Cloner.deepClone;
 /**
  * @author Vojtech Krasa
  */
-public class SettingsTableBuilder {
+public class GrepTableBuilder {
 	public static final String STATUS_BAR_COUNT = "StatusBar count";
 	public static final String CONSOLE_COUNT = "Console count";
-	private CheckboxTreeTable table;
+	protected CheckboxTreeTable table;
 
-	public SettingsTableBuilder(final ProfileDetail profileDetail) {
+	protected GrepTableBuilder() {
+	}
+
+	public GrepTableBuilder(final ProfileDetail profileDetail) {
 		List<ColumnInfo> columns = new ArrayList<>();
 		columns.add(new TreeColumnInfo("") {
 			@Nullable
@@ -55,7 +58,8 @@ public class SettingsTableBuilder {
 			public int getWidth(JTable table) {
 				return 64;
 			}
-		});
+		});                     
+		
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
 				"grepExpression").preferedStringValue("___________________________________")));
 
@@ -71,19 +75,25 @@ public class SettingsTableBuilder {
 			}
 		});
 
-		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> inputFilter = new CheckBoxJavaBeanColumnInfo<>(
-				"Filter out", "inputFilter");
-		inputFilter.tooltipText("A line will not be filtered out if any previous expression matches first");
-		inputFilter.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
-			@Override
-			public void onValueChanged(GrepExpressionItem grepExpressionItem, Boolean newValue) {
-				if (newValue && !profileDetail.profile.isEnabledInputFiltering()) {
-					profileDetail.profile.setEnabledInputFiltering(true);
-					profileDetail.setData(profileDetail.profile);
-				}
-			}
-		});
-		columns.add(new FolderColumnInfoWrapper(inputFilter));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+				"Whole line", "wholeLine").tooltipText("Match a whole line, otherwise find a matching substrings - 'Unless expression' works only for whole lines.")));
+
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
+				"caseInsensitive")));   
+		columns.add(new FolderColumnInfoWrapper(
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple highlights")));
+		columns.add(new FolderColumnInfoWrapper(
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Bold", "style.bold")));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Italic",
+				"style.italic")));
+		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background",
+				"style.backgroundColor")));
+		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground",
+				"style.foregroundColor")));
+		columns.add(new FolderColumnInfoWrapper(
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
+		columns.add(new FolderColumnInfoWrapper(
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
 		CheckBoxJavaBeanColumnInfo<GrepExpressionItem> fold = new CheckBoxJavaBeanColumnInfo<>(
 				"Fold", "fold");
 		fold.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
@@ -97,26 +107,7 @@ public class SettingsTableBuilder {
 		});
 		FolderColumnInfoWrapper foldC = new FolderColumnInfoWrapper(fold);
 		columns.add(foldC);
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
-				"Whole line", "wholeLine").tooltipText("Match a whole line, otherwise find a matching substrings - 'Unless expression' works only for whole lines.")));
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple highlights")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
-				"caseInsensitive")));
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Bold", "style.bold")));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Italic",
-				"style.italic")));
-		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Background",
-				"style.backgroundColor")));
-		columns.add(new FolderColumnInfoWrapper(new ColorChooserJavaBeanColumnInfo<GrepExpressionItem>("Foreground",
-				"style.foregroundColor")));
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetail)));
-		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console", profileDetail).tooltipText("Will not work if any previous non-filtering expression is matched first.")));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {
 			@Override
@@ -143,7 +134,7 @@ public class SettingsTableBuilder {
 		treeExpander.expandAll();
 	}
 
-	private CheckedTreeNode createRoot() {
+	protected CheckedTreeNode createRoot() {
 		CheckedTreeNode root = new CheckedTreeNode(null);
 
 		return root;
@@ -153,17 +144,22 @@ public class SettingsTableBuilder {
 		return table;
 	}
 
-	private static class MyCheckboxTreeTable extends CheckboxTreeTable implements CopyProvider, CutProvider, DataProvider, PasteProvider {
+	public static class MyCheckboxTreeTable extends CheckboxTreeTable implements CopyProvider, CutProvider, DataProvider, PasteProvider {
 		private static final Logger LOG = Logger.getInstance(MyCheckboxTreeTable.class);
 		private static final DataFlavor ARRAY_LIST = new DataFlavor(List.class, "List");
 
 		private final ProfileDetail profileDetail;
+		private final FolderColumnInfoWrapper foldColumn;
 
 		public MyCheckboxTreeTable(CheckedTreeNode root, CheckboxTreeCellRendererBase renderer, List<ColumnInfo> columns, FolderColumnInfoWrapper foldC, ProfileDetail profileDetail) {
-			super(root, renderer, columns.toArray(new ColumnInfo[columns.size()]), foldC);
+			super(root, renderer, columns.toArray(new ColumnInfo[columns.size()]));
+			foldColumn = foldC;
 			this.profileDetail = profileDetail;
 		}
 
+		public void foldingsEnabled(boolean defaultProfile) {
+			foldColumn.enabled(defaultProfile);
+		}
 
 		@Override
 		public void performCopy(@NotNull DataContext dataContext) {
@@ -252,7 +248,7 @@ public class SettingsTableBuilder {
 
 			for (DefaultMutableTreeNode toAdd : listToAdd) {
 				if (toAdd instanceof GrepExpressionGroupTreeNode) {
-					GrepExpressionGroup grepExpressionGroup = deepClone(((GrepExpressionGroupTreeNode) toAdd).getGrepExpressionGroup());
+					GrepExpressionGroup grepExpressionGroup = deepClone(((GrepExpressionGroupTreeNode) toAdd).getObject());
 					GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(grepExpressionGroup);
 					for (GrepExpressionItem item : grepExpressionGroup.getGrepExpressionItems()) {
 						GrepExpressionItemTreeNode newItem = new GrepExpressionItemTreeNode(item);

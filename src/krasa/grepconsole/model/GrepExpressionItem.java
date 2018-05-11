@@ -9,16 +9,20 @@ import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.filter.support.ThreadUnsafeGrepProcessor;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
+	public static final String ACTION_REMOVE_UNLESS_MATCHED = "REMOVE_UNLESS_PREVIOUSLY_MATCHED";
+	public static final String ACTION_REMOVE = "REMOVE";
+	public static final String ACTION_NO_ACTION = "NO_ACTION";
+	
 	private boolean enabled = true;
 	/**
 	 * filter out text if matches
 	 */
+	@Deprecated
 	private boolean inputFilter = false;
 	private boolean fold = false;
 	private String grepExpression;
@@ -26,14 +30,15 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private boolean caseInsensitive;
 	private GrepStyle style = new GrepStyle();
 	private Sound sound = new Sound();
+	@Deprecated
 	private boolean clearConsole;
 
 	private transient Pattern pattern;
 	private transient Pattern unlessPattern;
 
 	private Operation operationOnMatch = Operation.EXIT;
+	private String action;
 	private boolean highlightOnlyMatchingText = false;
-	private ItemType itemType = ItemType.REGEXP;
 
 	private boolean showCountInConsole = false;
 	private boolean showCountInStatusBar = false;
@@ -45,6 +50,14 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public GrepExpressionItem(String id) {
 		super(id);
 
+	}
+
+	public String getAction() {
+		return action;
+	}
+
+	public void setAction(String action) {
+		this.action = action;
 	}
 
 	public boolean isClearConsole() {
@@ -70,14 +83,6 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	public void setFold(boolean fold) {
 		this.fold = fold;
-	}
-
-	public ItemType getItemType() {
-		return itemType;
-	}
-
-	public void setItemType(ItemType itemType) {
-		this.itemType = itemType;
 	}
 
 	public void setSound(Sound sound) {
@@ -221,19 +226,6 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		return this;
 	}
 
-	@Override
-	public void findStyleUses(GrepStyle style, Set<GrepExpressionItem> items) {
-		if (this.style == style) {
-			items.add(this);
-		}
-	}
-
-	@Override
-	protected void refreshStyles() {
-		if (style != null) {
-			style = getRoot().getStyle(style.getId());
-		}
-	}
 
 	public Operation getOperationOnMatch() {
 		return operationOnMatch;
@@ -273,11 +265,6 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	public GrepExpressionItem enabled(final boolean enabled) {
 		this.enabled = enabled;
-		return this;
-	}
-
-	public GrepExpressionItem inputFilter(final boolean inputFilter) {
-		this.inputFilter = inputFilter;
 		return this;
 	}
 
@@ -333,4 +320,34 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.operationOnMatch = continueMatching ? Operation.CONTINUE_MATCHING : Operation.EXIT;
 	}
 
+	public GrepExpressionItem fold(boolean fold) {
+		this.fold = fold;
+		return this;
+	}
+
+	public GrepExpressionItem sound(Sound sound) {
+		this.sound = sound;
+		return this;
+	}
+
+	public GrepExpressionItem clearConsole(boolean clearConsole) {
+		this.clearConsole = clearConsole;
+		return this;
+	}
+
+
+	public GrepExpressionItem showCountInConsole(boolean showCountInConsole) {
+		this.showCountInConsole = showCountInConsole;
+		return this;
+	}
+
+	public GrepExpressionItem showCountInStatusBar(boolean showCountInStatusBar) {
+		this.showCountInStatusBar = showCountInStatusBar;
+		return this;
+	}
+
+	public GrepExpressionItem action(String action) {
+		this.action = action;
+		return this;
+	}
 }

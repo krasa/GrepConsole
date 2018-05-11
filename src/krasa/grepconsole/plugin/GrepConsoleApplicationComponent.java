@@ -5,15 +5,18 @@ import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.*;
+import krasa.grepconsole.Cloner;
+import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-@State(name = "GrepConsole", storages = { @Storage(id = "GrepConsole", file = "$APP_CONFIG$/GrepConsole.xml") })
+@State(name = "GrepConsole", storages = {@Storage(file = "$APP_CONFIG$/GrepConsole.xml")})
 public class GrepConsoleApplicationComponent
 		implements ApplicationComponent,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
@@ -60,23 +63,18 @@ public class GrepConsoleApplicationComponent
 			cachedMaxLengthToMatch = profile.getMaxLengthToMatchAsInt();
 		} else {
 			cachedMaxLengthToMatch = Integer.MAX_VALUE;
-		} 
-		
+		}
+
 		List<GrepExpressionItem> grepExpressionItems = profile.getAllGrepExpressionItems();
 		for (GrepExpressionItem grepExpressionItem : grepExpressionItems) {
 			boolean enableFoldings = profile.isEnableFoldings();
 			boolean enabled = grepExpressionItem.isEnabled();
 			boolean fold = grepExpressionItem.isFold();
-			boolean enabledInputFilter = isEnabledInputFilter(profile, grepExpressionItem);
-			if (enableFoldings && enabled && fold && !enabledInputFilter) {
+			if (enableFoldings && enabled && fold) {
 				list.add(grepExpressionItem);
 			}
 		}
 		foldingsCache = list;
-	}
-
-	private boolean isEnabledInputFilter(Profile profile, GrepExpressionItem grepExpressionItem) {
-		return profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter();
 	}
 
 	@Override
@@ -95,7 +93,6 @@ public class GrepConsoleApplicationComponent
 	}
 
 
-
 	@Override
 	@NotNull
 	public PluginState getState() {
@@ -109,12 +106,39 @@ public class GrepConsoleApplicationComponent
 	@Override
 	public void loadState(PluginState state) {
 		this.settings = state;
+
+		migrate();
+	}
+
+	protected void migrate() {
+		if (settings.getVersion() < 1) {
+			List<Profile> profiles = settings.getProfiles();
+			for (Profile profile : profiles) {
+				for (GrepExpressionGroup grepExpressionGroup : profile.getGrepExpressionGroups()) {
+					for (Iterator<GrepExpressionItem> iterator = grepExpressionGroup.getGrepExpressionItems().iterator(); iterator.hasNext(); ) {
+						GrepExpressionItem grepExpressionItem = iterator.next();
+
+						if (grepExpressionItem.isInputFilter()) {
+							GrepExpressionItem newItem = Cloner.deepClone(grepExpressionItem);
+							newItem.action(GrepExpressionItem.ACTION_REMOVE);
+
+							GrepExpressionGroup group = profile.getOrCreateInputFilterGroup(grepExpressionGroup.getName());
+							group.add(newItem);
+
+							iterator.remove();
+						}
+					}
+				}
+
+			}
+			settings.setVersion(1);
+		}
 	}
 
 	@NotNull
 	@Override
 	public File[] getExportFiles() {
-		return new File[] { PathManager.getOptionsFile("grepConsole") };
+		return new File[]{PathManager.getOptionsFile("grepConsole")};
 	}
 
 	@NotNull

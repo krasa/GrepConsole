@@ -7,7 +7,9 @@ import org.apache.commons.lang.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
+/**
+ * should perform faster than GrepProcessorImpl
+ */
 public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(ThreadUnsafeGrepProcessor.class);
 	protected Matcher patternMatcher;
@@ -54,29 +56,16 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 						matches++;
 						final int start = patternMatcher.start();
 						final int end = patternMatcher.end();
-						state.setNextOperation(grepExpressionItem.getOperationOnMatch());
-						state.setExclude(grepExpressionItem.isInputFilter());
-						state.setClearConsole(grepExpressionItem.isClearConsole());
-						state.setMatchesSomething(true);
 						MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
 								null, grepExpressionItem.getConsoleViewContentType(null));
 						state.add(resultItem);
-						if (grepExpressionItem.getSound().isEnabled()) {
-							grepExpressionItem.getSound().play();
-						}
+						state.executeAction(grepExpressionItem);
 					}
 				}
 			} else if (matches(input) && !matchesUnless(input)) {
 				matches++;
-				state.setNextOperation(grepExpressionItem.getOperationOnMatch());
-				state.setConsoleViewContentType(
-						grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
-				state.setExclude(grepExpressionItem.isInputFilter());
-				state.setClearConsole(grepExpressionItem.isClearConsole());
-				state.setMatchesSomething(true);
-				if (grepExpressionItem.getSound().isEnabled()) {
-					grepExpressionItem.getSound().play();
-				}
+				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
+				state.executeAction(grepExpressionItem);
 			}
 		}
 		return state;

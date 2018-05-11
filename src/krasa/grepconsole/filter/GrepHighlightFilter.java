@@ -85,8 +85,7 @@ public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
 
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem grepExpressionItem) {
-		return profile.isEnabledHighlighting()
-				&& !(profile.isEnabledInputFiltering() && grepExpressionItem.isInputFilter());
+		return profile.isEnabledHighlighting();
 	}
 
 

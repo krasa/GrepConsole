@@ -3,6 +3,7 @@ package krasa.grepconsole.model;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
+import krasa.grepconsole.Cloner;
 import krasa.grepconsole.plugin.DefaultState;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
@@ -19,7 +20,11 @@ public class Profile extends DomainObject implements Cloneable {
 	private String maxLengthToMatch = DEFAULT;
 	private long id;
 	private boolean defaultProfile;
+	/**
+	 * for highlighting and folding
+	 */
 	private List<GrepExpressionGroup> grepExpressionGroups = new ArrayList<>();
+	private List<GrepExpressionGroup> inputFilterGroups = new ArrayList<>();
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
 	private boolean enableMaxLengthLimit = true;
@@ -42,6 +47,7 @@ public class Profile extends DomainObject implements Cloneable {
 	private transient Integer maxLengthToGrepAsInt;
 	private boolean enableMaxLengthGrepLimit = true;
 	private String name;
+	private boolean testHighlightersInInputFilter;
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
@@ -106,6 +112,14 @@ public class Profile extends DomainObject implements Cloneable {
 		return items;
 	}
 
+	public List<GrepExpressionItem> getAllInputFilterExpressionItems() {
+		List<GrepExpressionItem> items = new ArrayList<>();
+		for (GrepExpressionGroup group : inputFilterGroups) {
+			items.addAll(group.getGrepExpressionItems());
+		}
+		return items;
+	}
+
 
 	public List<GrepExpressionGroup> getGrepExpressionGroups() {
 		if (grepExpressionGroups.isEmpty()) {
@@ -115,8 +129,21 @@ public class Profile extends DomainObject implements Cloneable {
 		return grepExpressionGroups;
 	}
 
+
+	public List<GrepExpressionGroup> getInputFilterGroups() {
+		if (inputFilterGroups.isEmpty()) {
+			GrepExpressionGroup expressionGroup = new GrepExpressionGroup("default");
+			inputFilterGroups.add(expressionGroup);
+		}
+		return inputFilterGroups;
+	}
+
 	public void setGrepExpressionGroups(List<GrepExpressionGroup> grepExpressionGroups) {
 		this.grepExpressionGroups = grepExpressionGroups;
+	}
+
+	public void setInputFilterGroups(List<GrepExpressionGroup> inputFilterGroups) {
+		this.inputFilterGroups = inputFilterGroups;
 	}
 
 	public boolean isEnabledHighlighting() {
@@ -303,7 +330,7 @@ public class Profile extends DomainObject implements Cloneable {
 
 	@Override
 	public Profile clone() {
-		return krasa.grepconsole.Cloner.deepClone(this);
+		return Cloner.deepClone(this);
 	}
 
 	@Override
@@ -326,5 +353,26 @@ public class Profile extends DomainObject implements Cloneable {
 		this.setId(id);
 		this.setDefaultProfile(defaultProfile);
 
+	}
+
+	@Transient
+	public GrepExpressionGroup getOrCreateInputFilterGroup(String name) {
+		List<GrepExpressionGroup> inputFilterGroups = getInputFilterGroups();
+		for (GrepExpressionGroup inputFilterGroup : inputFilterGroups) {
+			if (inputFilterGroup.getName().equals("name")) {
+				return inputFilterGroup;
+			}
+		}
+		GrepExpressionGroup grepExpressionGroup = new GrepExpressionGroup(name);
+		inputFilterGroups.add(grepExpressionGroup);
+		return grepExpressionGroup;
+	}
+
+	public boolean isTestHighlightersInInputFilter() {
+		return testHighlightersInInputFilter;
+	}
+
+	public void setTestHighlightersInInputFilter(final boolean testHighlightersInInputFilter) {
+		this.testHighlightersInInputFilter = testHighlightersInInputFilter;
 	}
 }

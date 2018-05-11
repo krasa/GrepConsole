@@ -9,6 +9,9 @@ import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.ExtensionManager;
+import krasa.grepconsole.utils.Notifier;
+import org.apache.commons.lang.StringUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -50,7 +53,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 		FilterState state = super.filter(s, -1);
 		clearConsole(state);
-		return prepareResult(state);
+		return prepareResult(state, consoleViewContentType);
 	}
 
 	public void clearConsole(FilterState state) {
@@ -62,12 +65,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		}
 	}
 
-	@Override
-	protected boolean continueFiltering(FilterState state) {
-		return !state.isMatchesSomething();
-	}
-
-	private List<Pair<String, ConsoleViewContentType>> prepareResult(FilterState state) {
+	private List<Pair<String, ConsoleViewContentType>> prepareResult(FilterState state, ConsoleViewContentType consoleViewContentType) {
 		List<Pair<String, ConsoleViewContentType>> result = null;
 		if (state != null) {
 			if (state.isExclude()) {
@@ -80,6 +78,9 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		if (result == null) {
 			lastLineFiltered = false;
 			removeNextNewLine = false;
+			if (state != null && state.isTextChanged()) {
+				return Collections.singletonList(new Pair<>(state.getText(), consoleViewContentType));
+			}
 			return null;// input is not changed
 		} else {
 			removeNextNewLine = testConsole && state.notTerminatedWithNewline();
@@ -93,23 +94,41 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		lastLineFiltered = false;
 	}
 
-	/**
-	 * just want to see lines that are highlighted. To do this, I add a ".*" item as the last item and set to
-	 * "Whole line" and "Filter out". -> must add all items to grepProcessors TODO separate clearConsole functionality?
-	 */
 	@Override
 	protected void initProcessors() {
 		grepProcessors = new ArrayList<>();
 		if (profile.isEnabledInputFiltering()) {
 			boolean inputFilterExists = false;
-			for (GrepExpressionItem grepExpressionItem : profile.getAllGrepExpressionItems()) {
-				grepProcessors.add(createProcessor(grepExpressionItem));
-				if (grepExpressionItem.isInputFilter() || grepExpressionItem.isClearConsole()) {
-					inputFilterExists = true;
+
+			if (profile.isTestHighlightersInInputFilter()) {
+				grepProcessors.add(new HighlighterTestProcessor(profile.getAllGrepExpressionItems()));
+			}
+
+			for (GrepExpressionItem grepExpressionItem : profile.getAllInputFilterExpressionItems()) {
+				if (!grepExpressionItem.isEnabled()) {
+					continue;
 				}
+				GrepProcessor processor = createProcessor(grepExpressionItem);
+
+				validate(processor);
+
+				grepProcessors.add(processor);
+				inputFilterExists = true;
 			}
 			if (!inputFilterExists) {
 				grepProcessors.clear();
+			}
+		}
+	}
+
+	private void validate(GrepProcessor processor) {
+		String action = processor.getGrepExpressionItem().getAction();
+		if (StringUtils.isNotBlank(action)
+				&& !GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)
+				&& !GrepExpressionItem.ACTION_REMOVE.equals(action)
+				&& !GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
+			if (ExtensionManager.getAction(action) == null) {
+				Notifier.notify_MissingExtension(action, project);
 			}
 		}
 	}

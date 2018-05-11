@@ -36,7 +36,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 			String substring = profile.limitInputLength_andCutNewLine(text);
 			CharSequence charSequence = profile.limitProcessingTime(substring);
 
-			FilterState state = new FilterState(offset, charSequence);
+			FilterState state = new FilterState(offset, text, profile, charSequence);
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				try {
 					state = grepProcessor.process(state);

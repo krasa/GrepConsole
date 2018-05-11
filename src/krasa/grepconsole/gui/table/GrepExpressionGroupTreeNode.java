@@ -1,8 +1,7 @@
 package krasa.grepconsole.gui.table;
 
-import krasa.grepconsole.model.GrepExpressionGroup;
-
 import com.intellij.ui.CheckedTreeNode;
+import krasa.grepconsole.model.GrepExpressionGroup;
 
 /**
  * @author Vojtech Krasa
@@ -16,15 +15,15 @@ public class GrepExpressionGroupTreeNode extends CheckedTreeNode {
 
 	@Override
 	public boolean isChecked() {
-		return getGrepExpressionGroup().isEnabled();
+		return getObject().isEnabled();
 	}
 
 	@Override
 	public void setChecked(boolean checked) {
-		getGrepExpressionGroup().setEnabled(checked);
+		getObject().setEnabled(checked);
 	}
 
-	public GrepExpressionGroup getGrepExpressionGroup() {
+	public GrepExpressionGroup getObject() {
 		return (GrepExpressionGroup) userObject;
 	}
 }

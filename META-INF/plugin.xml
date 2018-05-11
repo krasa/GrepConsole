@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>7.4.162.000.0</version>
+	<version>8.0.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -32,6 +32,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>8.0 (2018-05-12)
+		<br>- Support for manipulating output text, and any custom actions (e.g. notifications) via scripting using <a href="https://github.com/dkandalov/live-plugin">LivePlugin</a> or making own plugin. 
+		<br>- Reworked input filtering logic and gui
         <br>7.4 (2018-04-20)
 		<br>- Tail exception handling      
         <br>7.3 (2018-01-11)
@@ -161,6 +164,9 @@
 				text="GrepConsoleTailDummyAction">
 		</action>
 	</actions>
+	<extensionPoints>
+		<extensionPoint name="krasaTestProvider" interface="krasa.grepconsole.plugin.ExtensionManager"/>
+	</extensionPoints>
 
 	<extensions defaultExtensionNs="com.intellij">
 		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>

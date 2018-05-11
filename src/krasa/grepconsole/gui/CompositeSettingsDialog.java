@@ -109,7 +109,7 @@ public class CompositeSettingsDialog {
 			public void actionPerformed(ActionEvent e) {
 				settings.setDefault(getSelectedProfile());
 				jbList.repaint();
-				profileDetailComponent.foldingsEnabled(true);
+				profileDetailComponent.resetTreeModel(true);
 			}
 		});
 		duplicateButton.addActionListener(new ActionListener() {

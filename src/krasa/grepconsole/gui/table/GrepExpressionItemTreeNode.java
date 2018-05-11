@@ -1,8 +1,7 @@
 package krasa.grepconsole.gui.table;
 
-import krasa.grepconsole.model.GrepExpressionItem;
-
 import com.intellij.ui.CheckedTreeNode;
+import krasa.grepconsole.model.GrepExpressionItem;
 
 /**
  * @author Vojtech Krasa
