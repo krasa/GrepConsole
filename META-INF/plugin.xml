@@ -35,6 +35,7 @@
         <br>8.0 (2018-05-12)
 		<br>- Support for manipulating output text, and any custom actions (e.g. notifications) via scripting using <a href="https://github.com/dkandalov/live-plugin">LivePlugin</a> or making own plugin. 
 		<br>- Reworked input filtering logic and gui
+		<br>- 'Grep' fix for incomplete stream #103
         <br>7.4 (2018-04-20)
 		<br>- Tail exception handling      
         <br>7.3 (2018-01-11)

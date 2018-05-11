@@ -19,7 +19,8 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	private volatile GrepModel.Matcher matcher;
 	private volatile Profile profile;
 	private volatile boolean showLimitNotification = true;
-
+	private ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
+	
 	public GrepCopyingFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
 		this.myProcessHandler = myProcessHandler;
 		this.project = project;
@@ -40,6 +41,20 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	public void process(String s, ConsoleViewContentType type) {
 		if (matcher == null || StringUtils.isEmpty(s)) {
 			return;
+		}
+
+		if (!s.endsWith("\n")) {
+			if (previousIncompleteToken.get() != null) {
+				previousIncompleteToken.set(previousIncompleteToken.get() + s);
+			} else {
+				previousIncompleteToken.set(s);
+			}
+			return;
+		}
+
+		if (previousIncompleteToken.get() != null) {
+			s = previousIncompleteToken.get() + s;
+			previousIncompleteToken.set(null);
 		}
 
 		Key stdout = ProcessOutputTypes.STDOUT;
@@ -73,6 +88,6 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 
 	@Override
 	public void dispose() {
-
+		previousIncompleteToken.set(null);
 	}
 }
