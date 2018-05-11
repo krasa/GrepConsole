@@ -47,7 +47,7 @@ import java.util.*;
 import static krasa.grepconsole.Cloner.deepClone;
 
 public class ProfileDetail {
-	private static final String DIVIDER = "krasa.grepconsole.gui.ProfileDetail.DIVIDER";
+	private static final String DIVIDER = "GrepConsole.ProfileDetail";
 
 	private static final Logger log = Logger.getInstance(ProfileDetail.class);
 	private JPanel rootComponent;
