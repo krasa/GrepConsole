@@ -37,6 +37,7 @@
 		<br>- Reworked input filtering logic and gui
 		<br>- 'Grep' fix for incomplete stream #103
 		<br>- IJ 2018.2 compatibility
+		<br>- New default colors for Darcula
         <br>7.4 (2018-04-20)
 		<br>- Tail exception handling      
         <br>7.3 (2018-01-11)
