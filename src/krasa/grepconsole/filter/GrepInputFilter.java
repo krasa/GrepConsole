@@ -123,7 +123,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	private void validate(GrepProcessor processor) {
 		String action = processor.getGrepExpressionItem().getAction();
-		if (StringUtils.isNotBlank(action)
+		if (StringUtils.isNotBlank(action) //blank == no action
 				&& !GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)
 				&& !GrepExpressionItem.ACTION_REMOVE.equals(action)
 				&& !GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {

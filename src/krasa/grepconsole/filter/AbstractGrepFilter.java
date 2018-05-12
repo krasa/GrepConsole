@@ -1,5 +1,6 @@
 package krasa.grepconsole.filter;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.filter.support.FilterState;
@@ -8,6 +9,7 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Operation;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.utils.Notifier;
+import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractGrepFilter extends AbstractFilter {
-
+	private static final Logger log = Logger.getInstance(AbstractGrepFilter.class);
+	                                
 	protected volatile List<GrepProcessor> grepProcessors;
 	private boolean showLimitNotification = true;
 
@@ -43,10 +46,15 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 					if (!continueFiltering(state))
 						return state;
 				} catch (ProcessCanceledException e) {
+					String message = "processing took too long, aborting to prevent GUI freezing.\n"
+							+ "Consider changing following settings: 'Match only first N characters on each line' or 'Max processing time for a line'\n"
+							+ "Last expression: [" + grepProcessor + "]\n" + "Line: " + Utils.toNiceLineForLog(substring);
 					if (showLimitNotification) {
 						showLimitNotification = false;
-						Notifier.notify_InputAndHighlight(substring, grepProcessor, project);
-					}
+						Notifier.notify_InputAndHighlight(project, message);
+					} else {
+						log.warn(message);
+					} 
 					break;
 				}
 			}

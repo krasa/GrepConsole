@@ -13,7 +13,7 @@ import static support.registerFunction
 registerFunction("myScript", new Function<String, String>() {
     Pattern pattern = Pattern.compile(".*ugly slow regexp.*");
 
-    /** - The text will never be empty, it may or may not end with newline - \n
+    /** - The text will never be empty, it may or may not end with a newline - \n
      *  - It is possible that the stream will flush prematurely and the text will be incomplete: IDEA-70016
      *  - Return null to remove the line
      *  - Processing blocks application output stream, make sure to limit the length and processing time when needed using #limitAndCutNewline

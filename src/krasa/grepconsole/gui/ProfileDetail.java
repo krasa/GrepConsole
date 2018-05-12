@@ -153,9 +153,8 @@ public class ProfileDetail {
 			public void actionPerformed(ActionEvent e) {
 				Messages.showInfoMessage(rootComponent,
 						"You can copy/paste table rows to/from plaintext.\n\n" +
-								"You can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin\n\n" +
-								"Whole line - Matches a whole line, otherwise finds a matching substrings - 'Unless expression' works only for whole lines.\n" +
-								"Continue matching - Matches a line against the next configured items.\n"
+								"You can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin\n\n" 
+								
 						,
 						"Input filtering");
 			}

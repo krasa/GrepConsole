@@ -2,6 +2,7 @@ package krasa.grepconsole.grep.listener;
 
 import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
@@ -9,11 +10,13 @@ import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.utils.Notifier;
+import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener {
-
+	private static final Logger log = Logger.getInstance(GrepCopyingFilterSyncListener.class);
+	                                 
 	private final OpenGrepConsoleAction.LightProcessHandler myProcessHandler;
 	private final Project project;
 	private volatile GrepModel.Matcher matcher;
@@ -74,10 +77,15 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 				myProcessHandler.notifyTextAvailable(s, stdout);
 			}
 		} catch (ProcessCanceledException e) {
+			String message = "Grep to a subconsole took too long, aborting to prevent input freezing.\n"
+					+ "Consider changing following settings: 'Match only first N characters on each line' or 'Max processing time for a line'\n"
+					+ "Matcher: " + matcher + "\n" + "Line: " + Utils.toNiceLineForLog(substring);
 			if (showLimitNotification) {
 				showLimitNotification = false;
-				Notifier.notify_GrepCopyingFilter(substring, matcher, project);
-			}
+				Notifier.notify_GrepCopyingFilter(project, message);
+			} else {
+				log.warn(message);
+			} 
 		}
 	}
 
