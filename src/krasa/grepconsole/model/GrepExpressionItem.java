@@ -43,15 +43,6 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private boolean showCountInConsole = false;
 	private boolean showCountInStatusBar = false;
 
-	public GrepExpressionItem() {
-		this(null);
-	}
-
-	public GrepExpressionItem(String id) {
-		super(id);
-
-	}
-
 	public String getAction() {
 		return action;
 	}

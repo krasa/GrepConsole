@@ -9,16 +9,20 @@ import com.intellij.openapi.actionSystem.DataProvider;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.ColumnInfo;
+import com.intellij.util.xmlb.XmlSerializer;
+import com.intellij.util.xmlb.annotations.XCollection;
 import krasa.grepconsole.gui.ProfileDetail;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,8 +62,8 @@ public class GrepTableBuilder {
 			public int getWidth(JTable table) {
 				return 64;
 			}
-		});                     
-		
+		});
+
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
 				"grepExpression").preferedStringValue("___________________________________")));
 
@@ -79,7 +83,7 @@ public class GrepTableBuilder {
 				"Whole line", "wholeLine").tooltipText("Match a whole line, otherwise find a matching substrings - 'Unless expression' works only for whole lines.")));
 
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
-				"caseInsensitive")));   
+				"caseInsensitive")));
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple highlights")));
 		columns.add(new FolderColumnInfoWrapper(
@@ -220,8 +224,45 @@ public class GrepTableBuilder {
 		public void performPaste(@NotNull DataContext dataContext) {
 			List<DefaultMutableTreeNode> listToAdd = CopyPasteManager.getInstance().getContents(ARRAY_LIST);
 			if (listToAdd == null) {
+				try {
+					String contents = CopyPasteManager.getInstance().getContents(DataFlavor.stringFlavor);
+					if (contents != null) {
+						Element load = JDOMUtil.load(contents);
+						GrepConsoleItems grepConsoleItems = new GrepConsoleItems();
+						listToAdd = new ArrayList<>();
+
+						if (load.getName().equals(GrepExpressionItem.class.getSimpleName())) {
+							listToAdd.add(new GrepExpressionItemTreeNode(XmlSerializer.deserialize(load, GrepExpressionItem.class)));
+						}
+						if (load.getName().equals(GrepExpressionGroup.class.getSimpleName())) {
+							listToAdd.add(new GrepExpressionGroupTreeNode(XmlSerializer.deserialize(load, GrepExpressionGroup.class)));
+						}
+						if (load.getName().equals(GrepConsoleItems.class.getSimpleName())) {
+							XmlSerializer.deserializeInto(grepConsoleItems, load);
+
+							for (Object o : grepConsoleItems.getItems()) {
+								if (o instanceof GrepExpressionItem) {
+									GrepExpressionItem item = (GrepExpressionItem) o;
+									listToAdd.add(new GrepExpressionItemTreeNode(item));
+								} else if (o instanceof GrepExpressionGroup) {
+									GrepExpressionGroup group = (GrepExpressionGroup) o;
+									GrepExpressionGroupTreeNode treeNode = new GrepExpressionGroupTreeNode(group);
+									listToAdd.add(treeNode);
+								}
+							}
+						}
+
+					}
+
+				} catch (Throwable e) {
+					LOG.warn(e);
+				}
+			}
+
+			if (listToAdd == null || listToAdd.isEmpty()) {
 				return;
 			}
+
 			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) getTree().getLastSelectedPathComponent();
 
 			DefaultMutableTreeNode parent = null;
@@ -250,10 +291,6 @@ public class GrepTableBuilder {
 				if (toAdd instanceof GrepExpressionGroupTreeNode) {
 					GrepExpressionGroup grepExpressionGroup = deepClone(((GrepExpressionGroupTreeNode) toAdd).getObject());
 					GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(grepExpressionGroup);
-					for (GrepExpressionItem item : grepExpressionGroup.getGrepExpressionItems()) {
-						GrepExpressionItemTreeNode newItem = new GrepExpressionItemTreeNode(item);
-						newChild.add(newItem);
-					}
 					root.insert(newChild, rootIndex++);
 					nodesToExpand.add(newChild);
 					nodesToSelect.add(newChild);
@@ -316,6 +353,19 @@ public class GrepTableBuilder {
 			return null;
 		}
 
+		public static class GrepConsoleItems {
+			@XCollection(elementTypes = {GrepExpressionItem.class, GrepExpressionGroup.class})
+			Object[] items;
+
+			public void setItems(Object[] items) {
+				this.items = items;
+			}
+
+			public Object[] getItems() {
+				return items;
+			}
+		}
+
 		public class ListTransferable implements Transferable {
 			List data;
 
@@ -332,15 +382,36 @@ public class GrepTableBuilder {
 				if (!isDataFlavorSupported(flavor)) {
 					throw new UnsupportedFlavorException(flavor);
 				}
+				if (flavor.equals(DataFlavor.stringFlavor)) {
+					List s = new ArrayList();
+					for (Object datum : data) {
+						if (datum instanceof GrepExpressionItemTreeNode) {
+							GrepExpressionItemTreeNode grepExpressionItemTreeNode = (GrepExpressionItemTreeNode) datum;
+							GrepExpressionItem grepExpressionItem = grepExpressionItemTreeNode.getGrepExpressionItem();
+							s.add(grepExpressionItem);
+						} else if (datum instanceof GrepExpressionGroupTreeNode) {
+							GrepExpressionGroupTreeNode grepExpressionItemTreeNode = (GrepExpressionGroupTreeNode) datum;
+							GrepExpressionGroup object = grepExpressionItemTreeNode.getObject();
+							s.add(object);
+						}
+					}
+
+					GrepConsoleItems object = new GrepConsoleItems();
+					object.setItems(s.toArray());
+					return JDOMUtil.writeElement(XmlSerializer.serialize(object));
+				}
 				return data;
 			}
 
 			public DataFlavor[] getTransferDataFlavors() {
-				return new DataFlavor[]{ARRAY_LIST};
+				return new DataFlavor[]{ARRAY_LIST, DataFlavor.stringFlavor};
 			}
 
 			public boolean isDataFlavorSupported(DataFlavor flavor) {
 				if (ARRAY_LIST.equals(flavor)) {
+					return true;
+				}
+				if (flavor.equals(DataFlavor.stringFlavor)) {
 					return true;
 				}
 				return false;

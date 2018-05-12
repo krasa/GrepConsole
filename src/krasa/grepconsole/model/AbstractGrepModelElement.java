@@ -1,19 +1,21 @@
 package krasa.grepconsole.model;
 
-import java.util.UUID;
+import com.intellij.util.xmlb.annotations.Transient;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractGrepModelElement extends DomainObject {
+
+	public static AtomicInteger atomicInteger = new AtomicInteger();
+
+	@Transient
 	private String id;
 	private String name;
 	private boolean defaultEnabled;
 	private boolean defaultFilter;
 
-	public AbstractGrepModelElement(String id) {
-		if (id == null) {
-			this.id = generateId();
-		} else {
-			this.id = id;
-		}
+	public AbstractGrepModelElement() {
+		this.id = generateId();
 
 		defaultEnabled = true;
 		defaultFilter = true;
@@ -25,13 +27,15 @@ public abstract class AbstractGrepModelElement extends DomainObject {
 	}
 
 	private static String generateId() {
-		return UUID.randomUUID().toString();
+		return String.valueOf(atomicInteger.incrementAndGet());
 	}
 
+	@Transient
 	public String getId() {
 		return id;
 	}
 
+	@Transient
 	public void setId(String id) {
 		this.id = id;
 	}
