@@ -27,6 +27,7 @@ public class GrepConsoleExtension implements ApplicationComponent {
 	@Override
 	public void initComponent() {
 		try {
+
 			registerFunction("extension", new Function<String, String>() {
 				Pattern pattern = Pattern.compile(".*ugly slow regexp.*");
 
@@ -54,6 +55,7 @@ public class GrepConsoleExtension implements ApplicationComponent {
 					return text;
 				}
 			});
+
 		} catch (Exception e) {
 			LOG.error(e);
 		}
@@ -71,7 +73,7 @@ public class GrepConsoleExtension implements ApplicationComponent {
 	}
 
 	/**
-	 * reflection for easier setup
+	 * reflection for easier project setup
 	 */
 	static void registerFunction(String functionName, Function<String, String> function) {
 		try {
