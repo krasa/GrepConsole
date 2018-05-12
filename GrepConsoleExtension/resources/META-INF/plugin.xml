@@ -1,0 +1,44 @@
+<idea-plugin>
+	<id>GrepConsoleExtensionExample</id>
+	<name>GrepConsole Extension Example</name>
+	<version>1.0</version>
+	<vendor email="support@yourcompany.com" url="http://www.yourcompany.com">YourCompany</vendor>
+
+	<description><![CDATA[
+      Enter short description for your plugin here.<br>
+      <em>most HTML tags may be used</em>
+    ]]></description>
+
+	<change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
+    ]]>
+	</change-notes>
+
+	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+	<idea-version since-build="162.0"/>
+
+	<!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+		 on how to target different products -->
+	<!-- uncomment to enable plugin in all products
+	-->
+	<depends>GrepConsole</depends>
+
+	<application-components>
+		<!-- Add your application components here -->
+		<component>
+			<implementation-class>GrepConsoleExtension</implementation-class>
+		</component>
+	</application-components>
+
+
+	<extensions defaultExtensionNs="com.intellij">
+
+		<!-- Add your extensions here -->
+	</extensions>
+
+	<actions>
+		<!-- Add your actions here -->
+	</actions>
+
+</idea-plugin>

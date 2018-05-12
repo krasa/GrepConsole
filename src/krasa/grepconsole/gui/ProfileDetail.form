@@ -78,22 +78,6 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="4edc5" class="javax.swing.JButton" binding="installLivePlugin">
-                            <constraints>
-                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Install 'Live-Plugin'"/>
-                            </properties>
-                          </component>
-                          <component id="d37b7" class="javax.swing.JButton" binding="addLivePluginScript">
-                            <constraints>
-                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Add 'Live-Plugin' script"/>
-                            </properties>
-                          </component>
                           <component id="95448" class="javax.swing.JCheckBox" binding="testHighlightersFirst">
                             <constraints>
                               <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -105,7 +89,7 @@
                           </component>
                           <component id="dab6c" class="javax.swing.JButton" binding="addNewInputFilterGroup">
                             <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Add new group"/>
@@ -118,6 +102,22 @@
                             <properties>
                               <text value="Filter out not matched lines if the previous one was filtered out"/>
                               <toolTipText value=""/>
+                            </properties>
+                          </component>
+                          <component id="ea3" class="javax.swing.JButton" binding="extensionButton" default-binding="true">
+                            <constraints>
+                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Extension..."/>
+                            </properties>
+                          </component>
+                          <component id="e8905" class="javax.swing.JButton" binding="addNewInputFilterItem">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties>
+                              <text value="Add new item"/>
                             </properties>
                           </component>
                         </children>
@@ -162,7 +162,7 @@
                         <properties/>
                         <border type="none"/>
                         <children>
-                          <component id="a3358" class="javax.swing.JButton" binding="addNewButton" default-binding="true">
+                          <component id="a3358" class="javax.swing.JButton" binding="addNewItem" default-binding="true">
                             <constraints/>
                             <properties>
                               <text value="Add new item"/>

@@ -52,7 +52,7 @@ public class ProfileDetail {
 	private static final Logger log = Logger.getInstance(ProfileDetail.class);
 	private JPanel rootComponent;
 	private CheckboxTreeTable grepTable;
-	private JButton addNewButton;
+	private JButton addNewItem;
 	private JButton resetToDefaultButton;
 	private JCheckBox enableHighlightingCheckBox;
 	private JFormattedTextField maxLengthToMatch;
@@ -76,8 +76,6 @@ public class ProfileDetail {
 	private JCheckBox multilineInputFilter;
 
 	private CheckboxTreeTable inputTable;
-	private JButton installLivePlugin;
-	private JButton addLivePluginScript;
 	private JPanel highlightersPanel;
 	private JPanel transfrormersPanel;
 	private JPanel settings;
@@ -85,6 +83,8 @@ public class ProfileDetail {
 	private JButton resetHighlighters;
 	private JCheckBox testHighlightersFirst;
 	private JButton addNewInputFilterGroup;
+	private JButton extensionButton;
+	private JButton addNewInputFilterItem;
 	// private JCheckBox synchronous;
 	public Profile profile;
 
@@ -130,9 +130,12 @@ public class ProfileDetail {
 		});
 		resetToDefaultButton.addActionListener(new ResetAllToDefaultAction());
 
-		addNewButton.addActionListener(new AddNewItemAction(grepTable, false));
+		addNewItem.addActionListener(new AddNewItemAction(grepTable, false));
+		addNewInputFilterItem.addActionListener(new AddNewItemAction(inputTable, true));
+
 		addNewGroup.addActionListener(new AddNewGroupAction(grepTable));
 		addNewInputFilterGroup.addActionListener(new AddNewGroupAction(inputTable));
+
 		grepTable.addMouseListener(rightClickMenu(grepTable, false));
 		grepTable.addKeyListener(new DeleteListener(grepTable));
 
@@ -153,30 +156,12 @@ public class ProfileDetail {
 			public void actionPerformed(ActionEvent e) {
 				Messages.showInfoMessage(rootComponent,
 						"You can copy/paste table rows to/from plaintext.\n\n" +
-								"You can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin\n\n" 
-								
+								"You can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin\n\n"
 						,
 						"Input filtering");
 			}
 		});
 
-		boolean livePlugin = PluginManager.isPluginInstalled(PluginId.getId("LivePlugin"));
-		installLivePlugin.setEnabled(!livePlugin);
-		addLivePluginScript.setEnabled(livePlugin);
-		installLivePlugin.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				HashSet<String> pluginIds = new HashSet<>();
-				pluginIds.add("LivePlugin");
-				PluginsAdvertiser.installAndEnablePlugins(pluginIds, new Runnable() {
-					@Override
-					public void run() {
-						installLivePlugin.setEnabled(false);
-					}
-				});
-			}
-		});
-		addLivePluginScript.addActionListener(new LivePluginExampleAction(addLivePluginScript));
 		resetHighlighters.addActionListener(new ResetHighlightersToDefaultAction());
 		grepTable.addFocusListener(new FocusListener() {
 			@Override
@@ -200,6 +185,33 @@ public class ProfileDetail {
 
 			}
 		});
+
+		extensionButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JPopupMenu popup = new JBPopupMenu();
+
+				boolean livePluginInstalled = PluginManager.isPluginInstalled(PluginId.getId("LivePlugin"));
+				if (!livePluginInstalled) {
+					popup.add(newMenuItem("Install 'LivePlugin'", new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e1) {
+							HashSet<String> pluginIds = new HashSet<>();
+							pluginIds.add("LivePlugin");
+							PluginsAdvertiser.installAndEnablePlugins(pluginIds, new Runnable() {
+								@Override
+								public void run() {
+								}
+							});
+						}
+					}));
+				}
+				popup.add(newMenuItem("Create 'LivePlugin' example", new LivePluginExampleAction()));
+				popup.add(newMenuItem("Create plugin project example", new CreatePluginProjectExample()));
+				popup.show(extensionButton, 0, extensionButton.getHeight());
+			}
+		});
+		;
 	}
 
 	public MouseAdapter rightClickMenu(CheckboxTreeTable table, boolean input) {
@@ -258,11 +270,6 @@ public class ProfileDetail {
 				}
 			}
 
-			private JBMenuItem newMenuItem(String name, ActionListener l) {
-				final JBMenuItem item = new JBMenuItem(name);
-				item.addActionListener(l);
-				return item;
-			}
 
 			private JBMenuItem getConvertAction(final GrepExpressionItem item, CheckboxTreeTable table) {
 				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
@@ -303,6 +310,12 @@ public class ProfileDetail {
 				return convert;
 			}
 		};
+	}
+
+	private JBMenuItem newMenuItem(String name, ActionListener l) {
+		final JBMenuItem item = new JBMenuItem(name);
+		item.addActionListener(l);
+		return item;
 	}
 
 	private void reloadNode(final DefaultMutableTreeNode selectedNode, CheckboxTreeTable grepTable) {

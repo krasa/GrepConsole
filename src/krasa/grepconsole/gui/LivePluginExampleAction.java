@@ -13,7 +13,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -23,11 +22,6 @@ import java.lang.reflect.Method;
 import static com.intellij.openapi.application.PathManager.getPluginsPath;
 
 class LivePluginExampleAction implements ActionListener {
-	private final JButton addLivePluginScript;
-
-	public LivePluginExampleAction(JButton addLivePluginScript) {
-		this.addLivePluginScript = addLivePluginScript;
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -54,9 +48,6 @@ class LivePluginExampleAction implements ActionListener {
 				}
 			}
 		});
-		if (done) {
-			addLivePluginScript.setEnabled(false);
-		}
 	}
 
 	protected void copy(VirtualFile parentFolder, String source, String destination) throws IOException {
@@ -87,6 +78,9 @@ class LivePluginExampleAction implements ActionListener {
 		public void run() {
 			try {
 				IdeaPluginDescriptorImpl descriptor = (IdeaPluginDescriptorImpl) PluginManager.getPlugin(PluginId.getId("LivePlugin"));
+				if (descriptor == null || !descriptor.isEnabled()) {
+					return;
+				}
 				ClassLoader pluginClassLoader = descriptor.getPluginClassLoader();
 				Class<?> clazz = pluginClassLoader.loadClass("liveplugin.toolwindow.RefreshPluginsPanelAction");
 				Method actionPerformed = clazz.getMethod("actionPerformed", AnActionEvent.class);

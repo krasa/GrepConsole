@@ -7,6 +7,12 @@
         <element id="module-output" name="http-client" />
       </root>
     </artifact>
+    <artifact type="jar" build-on-make="true" name="ExtensionProjectExample">
+      <output-path>$PROJECT_DIR$/resources/example</output-path>
+      <root id="archive" name="ExtensionProjectExample.jar">
+        <element id="dir-copy" path="$PROJECT_DIR$/GrepConsoleExtension" />
+      </root>
+    </artifact>
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Eclipse" />
