@@ -100,7 +100,7 @@
                             </constraints>
                             <properties>
                               <text value="Test highlighters first"/>
-                              <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: KEEP, Continue: false."/>
+                              <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: NO_ACTION, Continue: FALSE."/>
                             </properties>
                           </component>
                           <component id="dab6c" class="javax.swing.JButton" binding="addNewInputFilterGroup">
