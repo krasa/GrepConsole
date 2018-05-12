@@ -179,7 +179,28 @@ public class ProfileDetail {
 		});
 		addLivePluginScript.addActionListener(new LivePluginExampleAction(addLivePluginScript));
 		resetHighlighters.addActionListener(new ResetHighlightersToDefaultAction());
+		grepTable.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				inputTable.clearSelection();
+			}
 
+			@Override
+			public void focusLost(FocusEvent e) {
+
+			}
+		});
+		inputTable.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				grepTable.clearSelection();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+
+			}
+		});
 	}
 
 	public MouseAdapter rightClickMenu(CheckboxTreeTable table, boolean input) {
