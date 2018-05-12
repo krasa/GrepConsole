@@ -5,12 +5,16 @@ import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.projectImport.ProjectImportBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.ActionEvent;
@@ -37,10 +41,16 @@ class LivePluginExampleAction implements ActionListener {
 						return false;
 					}
 
-					copy(parentFolder, "/example/plugin.groovy", "plugin.groovy");
+					VirtualFile copy = copy(parentFolder, "/example/plugin.groovy", "plugin.groovy");
 					copy(parentFolder, "/example/support.groovy", "support.groovy");
 
+					FileEditorManagerEx.getInstanceEx(ProjectImportBuilder.getCurrentProject()).openFile(copy, false);
 
+					ToolWindow plugins = ToolWindowManager.getInstance(ProjectImportBuilder.getCurrentProject()).getToolWindow("Plugins");
+					if (plugins != null) {
+						plugins.show(null);
+					}
+				
 					ApplicationManager.getApplication().invokeLater(new RefreshToolWindow());
 					return true;
 				} catch (Exception e1) {
@@ -50,12 +60,13 @@ class LivePluginExampleAction implements ActionListener {
 		});
 	}
 
-	protected void copy(VirtualFile parentFolder, String source, String destination) throws IOException {
+	protected VirtualFile copy(VirtualFile parentFolder, String source, String destination) throws IOException {
 		InputStream resourceAsStream = LivePluginExampleAction.class.getResourceAsStream(source);
 		String text = FileUtil.loadTextAndClose(resourceAsStream);
 		text = text.replace("//REMOVE_COMMENT ", "");
 		VirtualFile childData = parentFolder.createChildData("GrepConsole", destination);
 		VfsUtil.saveText(childData, text);
+		return childData;
 	}
 
 	@NotNull
