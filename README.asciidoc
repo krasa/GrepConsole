@@ -3,6 +3,7 @@
 - grep output into a new console tab
 - change colors of matching text or lines
 - filter out unwanted lines
+- change output or execute any action using custom groovy scripts or plugins 
 - fold output
 - clear console
 - play sounds
