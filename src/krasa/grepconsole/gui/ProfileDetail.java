@@ -76,7 +76,6 @@ public class ProfileDetail {
 	private JCheckBox multilineInputFilter;
 
 	private CheckboxTreeTable inputTable;
-	private JButton tranformationHelp;
 	private JButton installLivePlugin;
 	private JButton addLivePluginScript;
 	private JPanel highlightersPanel;
@@ -153,17 +152,8 @@ public class ProfileDetail {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Messages.showInfoMessage(rootComponent,
-						"Whole line - Matches a whole line, otherwise finds a matching substrings - 'Unless expression' works only for whole lines.\n" +
-								"Continue matching - Matches a line against the next configured items to apply multiple highlights.\n"
-						,
-						"Columns Caveats");
-			}
-		});
-		tranformationHelp.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Messages.showInfoMessage(rootComponent,
-						"You can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin\n\n" +
+						"You can copy/paste table rows to/from plaintext.\n\n" +
+								"You can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin\n\n" +
 								"Whole line - Matches a whole line, otherwise finds a matching substrings - 'Unless expression' works only for whole lines.\n" +
 								"Continue matching - Matches a line against the next configured items.\n"
 						,

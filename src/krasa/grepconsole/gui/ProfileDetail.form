@@ -70,7 +70,7 @@
                           </component>
                         </children>
                       </scrollpane>
-                      <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                      <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                         <margin top="0" left="0" bottom="0" right="0"/>
                         <constraints>
                           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
@@ -96,11 +96,11 @@
                           </component>
                           <component id="95448" class="javax.swing.JCheckBox" binding="testHighlightersFirst">
                             <constraints>
-                              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Test highlighters first"/>
-                              <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: NO_ACTION, Continue: FALSE."/>
+                              <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else by using REMOVE_UNLESS_PREVIOUSLY_MATCHED action. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: NO_ACTION, Continue: FALSE."/>
                             </properties>
                           </component>
                           <component id="dab6c" class="javax.swing.JButton" binding="addNewInputFilterGroup">
@@ -111,19 +111,9 @@
                               <text value="Add new group"/>
                             </properties>
                           </component>
-                          <component id="bb383" class="javax.swing.JButton" binding="tranformationHelp">
-                            <constraints>
-                              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <icon value="krasa/grepconsole/gui/help.png"/>
-                              <text value=""/>
-                              <toolTipText value=""/>
-                            </properties>
-                          </component>
                           <component id="99e19" class="javax.swing.JCheckBox" binding="multilineInputFilter">
                             <constraints>
-                              <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                             </constraints>
                             <properties>
                               <text value="Filter out not matched lines if the previous one was filtered out"/>
@@ -196,14 +186,6 @@
                             <properties>
                               <text value="Rehighlight all consoles"/>
                               <toolTipText value="Reapply highlighting to all consoles. OK/Apply applies settings to all, but reprocesses a previous output only in the current one."/>
-                            </properties>
-                          </component>
-                          <component id="6c545" class="javax.swing.JButton" binding="help">
-                            <constraints/>
-                            <properties>
-                              <icon value="krasa/grepconsole/gui/help.png"/>
-                              <text value=""/>
-                              <toolTipText value=""/>
                             </properties>
                           </component>
                           <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
@@ -409,6 +391,16 @@
                       <grid row="5" column="4" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
+                  <component id="bb383" class="javax.swing.JButton" binding="help">
+                    <constraints>
+                      <grid row="4" column="3" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <icon value="krasa/grepconsole/gui/help.png"/>
+                      <text value=""/>
+                      <toolTipText value=""/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
             </children>
