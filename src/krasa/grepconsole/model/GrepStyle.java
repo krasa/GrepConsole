@@ -1,14 +1,10 @@
 package krasa.grepconsole.model;
 
-import java.util.UUID;
-
-import org.intellij.lang.annotations.JdkConstants;
-
 import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import org.intellij.lang.annotations.JdkConstants;
 
 public class GrepStyle extends DomainObject {
-	private String id;
 	private String name;
 
 	private GrepColor foregroundColor = new GrepColor();
@@ -21,25 +17,6 @@ public class GrepStyle extends DomainObject {
 	private boolean bold;
 	private boolean italic;
 
-	public GrepStyle() {
-		this(null);
-	}
-
-	public GrepStyle(String id) {
-		if (id == null) {
-			this.id = UUID.randomUUID().toString();
-		} else {
-			this.id = id;
-		}
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getName() {
 		return name;
@@ -88,11 +65,6 @@ public class GrepStyle extends DomainObject {
 		}
 		int fontType = 0 + (bold ? 1 : 0) + (italic ? 2 : 0);
 		attributes.setFontType(fontType);
-	}
-
-	public GrepStyle id(final String id) {
-		this.id = id;
-		return this;
 	}
 
 	public GrepStyle name(final String name) {
