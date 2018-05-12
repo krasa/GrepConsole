@@ -84,7 +84,7 @@
                             </constraints>
                             <properties>
                               <text value="Test highlighters first"/>
-                              <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else by using REMOVE_UNLESS_PREVIOUSLY_MATCHED action. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: NO_ACTION, Continue: FALSE."/>
+                              <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else by using REMOVE_UNLESS_PREVIOUSLY_MATCHED action. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: NO_ACTION, Continue: TRUE."/>
                             </properties>
                           </component>
                           <component id="dab6c" class="javax.swing.JButton" binding="addNewInputFilterGroup">
