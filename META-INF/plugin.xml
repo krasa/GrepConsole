@@ -12,8 +12,9 @@
 		  <ul>
 			<li>Change colors of matching text.</li>
 			<li>Grep output into a new console tab.</li>
-			<li>Fold output.</li>
+			<li>Change output or execute any action using custom groovy scripts or plugins.</li>
 			<li>Filter out unwanted lines.</li>
+			<li>Fold output.</li>
 			<li>Play sounds on matches.</li>
 			<li>Clear Console on matches.</li>
 			<li>Tail files*.</li>
