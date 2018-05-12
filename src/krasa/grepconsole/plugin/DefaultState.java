@@ -47,13 +47,13 @@ public class DefaultState {
 			items.add(newItem().style(
 					getGrepStyle(new Color(0, 0, 0, 255), null).bold(true)).grepExpression(
 					".*FATAL.*"));
-			items.add(newItem().style(getGrepStyle(new Color(86, 0, 0, 169), null)).grepExpression(
+			items.add(newItem().style(getGrepStyle(new Color(55, 0, 0, 200), null)).grepExpression(
 					".*ERROR.*"));
 			Color warnColor;
 //			warnColor = new Color(0, 55, 55, 200);
 //			warnColor = new Color(0, 55, 0, 200);
 //			warnColor = new Color(22, 22, 0, 230);
-			warnColor = new Color(20, 20, 70, 185);
+			warnColor = new Color(26, 0, 55, 200);
 
 			items.add(newItem().style(getGrepStyle(warnColor, null)).grepExpression(
 					".*WARN.*"));
