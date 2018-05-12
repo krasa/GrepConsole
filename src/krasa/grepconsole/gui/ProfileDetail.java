@@ -346,9 +346,6 @@ public class ProfileDetail {
 		root.removeAllChildren();
 		for (GrepExpressionGroup group : grepExpressionGroups) {
 			GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
-			for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
-				newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
-			}
 			root.add(newChild);
 		}
 		TableUtils.reloadTree(grepTable);
@@ -635,9 +632,6 @@ public class ProfileDetail {
 			} else if (selectedNode instanceof GrepExpressionGroupTreeNode) {
 				GrepExpressionGroup group = deepClone((GrepExpressionGroup) selectedNode.getUserObject());
 				GrepExpressionGroupTreeNode newChild = new GrepExpressionGroupTreeNode(group);
-				for (GrepExpressionItem grepExpressionItem : group.getGrepExpressionItems()) {
-					newChild.add(new GrepExpressionItemTreeNode(grepExpressionItem));
-				}
 				DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectedNode.getParent();
 				parent.insert(newChild, parent.getIndex(selectedNode) + 1);
 
