@@ -14,9 +14,10 @@ import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
 import com.intellij.util.PlatformIcons;
+import com.intellij.util.text.CharSequenceReader;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.xmlb.XmlSerializer;
-import com.intellij.util.xmlb.annotations.XCollection;
+import com.intellij.util.xmlb.annotations.AbstractCollection;
 import krasa.grepconsole.gui.ProfileDetail;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
@@ -227,7 +228,7 @@ public class GrepTableBuilder {
 				try {
 					String contents = CopyPasteManager.getInstance().getContents(DataFlavor.stringFlavor);
 					if (contents != null) {
-						Element load = JDOMUtil.load(contents);
+						Element load = JDOMUtil.load(new CharSequenceReader(contents));
 						GrepConsoleItems grepConsoleItems = new GrepConsoleItems();
 						listToAdd = new ArrayList<>();
 
@@ -354,7 +355,8 @@ public class GrepTableBuilder {
 		}
 
 		public static class GrepConsoleItems {
-			@XCollection(elementTypes = {GrepExpressionItem.class, GrepExpressionGroup.class})
+			//			@XCollection(elementTypes = {GrepExpressionItem.class, GrepExpressionGroup.class})
+			@AbstractCollection(surroundWithTag = false, elementTypes = {GrepExpressionItem.class, GrepExpressionGroup.class})   //IJ 2016
 			Object[] items;
 
 			public void setItems(Object[] items) {
