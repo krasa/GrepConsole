@@ -4,6 +4,7 @@ import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.project.Project;
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.support.SoundMode;
 import krasa.grepconsole.gui.CompositeSettingsDialog;
@@ -28,21 +29,29 @@ public class MyConfigurable implements Configurable {
 	private ServiceManager serviceManager = ServiceManager.getInstance();
 	public GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 	HighlightManipulationAction currentAction;
+	private Project project;
 
 	public MyConfigurable() {
 		setDefaultProfileId();
 	}
 
-	public MyConfigurable(@NotNull ConsoleView console) {
+	public MyConfigurable(Project project) {
+		setDefaultProfileId();
+		this.project = project;
+	}
+
+	public MyConfigurable(Project project, @NotNull ConsoleView console) {
 		this.console = console;
 		originalSelectedProfileId = ServiceManager.getInstance().consoles.getSelectedProfileId(console);
 		setDefaultProfileId();
+		this.project = project;
 	}
 
 	public MyConfigurable(RunConfigurationBase runConfigurationBase) {
 		this.runConfigurationBase = runConfigurationBase;
 		originalSelectedProfileId = GrepConsoleData.getGrepConsoleData(runConfigurationBase).getSelectedProfileId();
 		setDefaultProfileId();
+		project = runConfigurationBase.getProject();
 	}
 
 	@Nls
@@ -149,5 +158,9 @@ public class MyConfigurable implements Configurable {
 
 	public void setCurrentAction(HighlightManipulationAction currentEditor) {
 		this.currentAction = currentEditor;
+	}
+
+	public Project getProject() {
+		return project;
 	}
 }

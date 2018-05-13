@@ -1,11 +1,14 @@
 package krasa.grepconsole.gui;
 
+import com.intellij.ide.DataManager;
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -14,7 +17,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.projectImport.ProjectImportBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.event.ActionEvent;
@@ -27,8 +29,14 @@ import static com.intellij.openapi.application.PathManager.getPluginsPath;
 
 class LivePluginExampleAction implements ActionListener {
 
+	private final Project project;
+
+	public LivePluginExampleAction(Project project) {
+		this.project = project;
+	}
+
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(ActionEvent e) {  
 		Boolean done = ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
 			@Override
 			public Boolean compute() {
@@ -44,11 +52,17 @@ class LivePluginExampleAction implements ActionListener {
 					VirtualFile copy = copy(parentFolder, "/example/plugin.groovy", "plugin.groovy");
 					copy(parentFolder, "/example/support.groovy", "support.groovy");
 
-					FileEditorManagerEx.getInstanceEx(ProjectImportBuilder.getCurrentProject()).openFile(copy, false);
-
-					ToolWindow plugins = ToolWindowManager.getInstance(ProjectImportBuilder.getCurrentProject()).getToolWindow("Plugins");
-					if (plugins != null) {
-						plugins.show(null);
+					//does not work properly in IJ 2016
+					Project currentProject = project;
+					if (currentProject == null) {
+						currentProject = (Project) CommonDataKeys.PROJECT.getData(DataManager.getInstance().getDataContext());
+					}
+					if (currentProject != null) {
+						FileEditorManagerEx.getInstanceEx(currentProject).openFile(copy, false);
+						ToolWindow plugins = ToolWindowManager.getInstance(currentProject).getToolWindow("Plugins");
+						if (plugins != null) {
+							plugins.show(null);
+						}
 					}
 				
 					ApplicationManager.getApplication().invokeLater(new RefreshToolWindow());

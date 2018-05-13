@@ -18,7 +18,7 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 		editor = e.getData(PlatformDataKeys.EDITOR);
 		project = e.getProject();
 		if (editor != null && project != null) {
-			MyConfigurable instance = new MyConfigurable();
+			MyConfigurable instance = new MyConfigurable(e.getProject());
 			instance.setCurrentAction(this);
 			boolean b = ShowSettingsUtil.getInstance().editConfigurable(e.getProject(), instance);
 			if (b) {
