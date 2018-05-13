@@ -1,5 +1,28 @@
 package krasa.grepconsole.gui.table;
 
+import static krasa.grepconsole.Cloner.deepClone;
+
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+
+import krasa.grepconsole.gui.ProfileDetail;
+import krasa.grepconsole.gui.table.column.*;
+import krasa.grepconsole.model.GrepExpressionGroup;
+import krasa.grepconsole.model.GrepExpressionItem;
+
+import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.ide.CopyProvider;
 import com.intellij.ide.CutProvider;
 import com.intellij.ide.DefaultTreeExpander;
@@ -18,26 +41,7 @@ import com.intellij.util.text.CharSequenceReader;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
-import krasa.grepconsole.gui.ProfileDetail;
-import krasa.grepconsole.gui.table.column.*;
-import krasa.grepconsole.model.GrepExpressionGroup;
-import krasa.grepconsole.model.GrepExpressionItem;
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
-import static krasa.grepconsole.Cloner.deepClone;
+import com.intellij.util.xmlb.annotations.XCollection;
 
 /**
  * @author Vojtech Krasa
@@ -355,7 +359,8 @@ public class GrepTableBuilder {
 		}
 
 		public static class GrepConsoleItems {
-			//			@XCollection(elementTypes = {GrepExpressionItem.class, GrepExpressionGroup.class})
+
+			@XCollection(elementTypes = { GrepExpressionItem.class, GrepExpressionGroup.class })
 			@AbstractCollection(surroundWithTag = false, elementTypes = {GrepExpressionItem.class, GrepExpressionGroup.class})   //IJ 2016
 			Object[] items;
 
