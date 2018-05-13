@@ -3,16 +3,16 @@ package krasa.grepconsole.gui;
 import com.intellij.ide.actions.ShowFilePathAction;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.fileChooser.FileChooser;
+import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.io.ZipUtil;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.URL;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class CreatePluginProjectExample implements ActionListener {
 
@@ -31,15 +31,22 @@ public class CreatePluginProjectExample implements ActionListener {
 			}
 			outputDir.mkdirs();
 
-			URL resource = CreatePluginProjectExample.class.getResource("/example/ExtensionProjectExample.jar");
+			InputStream resource = CreatePluginProjectExample.class.getResourceAsStream("/example/ExtensionProjectExample.jar");
 			File jar = new File(outputDir, "temp.jar");
-			FileUtils.copyURLToFile(resource, jar);
 
+			FileOutputStream outputStream = new FileOutputStream(jar);
+			try {
+				StreamUtil.copyStreamContent(resource, outputStream);
+			} finally {
+				outputStream.close();
+				resource.close();
+			}
+			
 			boolean exists = jar.exists();
 			if (!exists) {
-				throw new RuntimeException(resource.getPath());
+				throw new RuntimeException(jar.getPath());
 			}
-			ZipUtil.extract(jar, outputDir, TrueFileFilter.TRUE);
+			ZipUtil.extract(jar, outputDir, (dir, name) -> true);
 
 			jar.delete();
 
