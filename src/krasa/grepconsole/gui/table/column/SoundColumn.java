@@ -6,16 +6,15 @@ import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.gui.ProfileDetail;
 import krasa.grepconsole.gui.SoundSettingsForm;
 import krasa.grepconsole.model.GrepExpressionItem;
-import org.jetbrains.annotations.Nullable;
+import krasa.grepconsole.model.Sound;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
 /**
  * @author Vojtech Krasa
  */
-public class SoundColumn extends ButtonColumnInfo<GrepExpressionItem> {
+public class SoundColumn extends IconColumnInfo {
 	public static final Icon SOUND_OFF = IconLoader.getIcon("soundOff.gif", SoundColumn.class);
 	public static final Icon SOUND_ON = IconLoader.getIcon("soundOn.gif", SoundColumn.class);
 	private final ProfileDetail profileDetail;
@@ -45,43 +44,17 @@ public class SoundColumn extends ButtonColumnInfo<GrepExpressionItem> {
 	}
 
 	@Override
-	void onButtonClicked(GrepExpressionItem item) {
-		showDialog(item);
+	protected Icon getIcon(@NotNull GrepExpressionItem value) {
+		Sound sound = value.getSound();
+		if (sound.isEnabled()) {
+			return SOUND_ON;
+		} else {
+			return SOUND_OFF;
+		}
 	}
 
-	@Nullable
 	@Override
-	public TableCellEditor getEditor(GrepExpressionItem o) {
-		return new ButtonEditor<GrepExpressionItem>(new JCheckBox()) {
-			@Override
-			protected void setStyle(GrepExpressionItem grepExpressionItem) {
-				if (grepExpressionItem.getSound().isEnabled()) {
-					button.setIcon(SOUND_ON);
-				} else {
-					button.setIcon(SOUND_OFF);
-				}
-			}
-
-			@Override
-			protected void onButtonClicked(GrepExpressionItem item) {
-				SoundColumn.this.onButtonClicked(item);
-			}
-		};
-	}
-
-	@Nullable
-	@Override
-	public TableCellRenderer getRenderer(GrepExpressionItem aVoid) {
-		return new ButtonRenderer() {
-			@Override
-			protected void setStyle(Object value) {
-				GrepExpressionItem grepExpressionItem = (GrepExpressionItem) value;
-				if (grepExpressionItem.getSound().isEnabled()) {
-					setIcon(SOUND_ON);
-				} else {
-					setIcon(SOUND_OFF);
-				}
-			}
-		};
+	protected void execute(GrepExpressionItem value) {
+		showDialog(value);
 	}
 }

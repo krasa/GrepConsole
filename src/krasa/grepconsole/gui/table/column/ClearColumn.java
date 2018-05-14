@@ -2,67 +2,32 @@ package krasa.grepconsole.gui.table.column;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
-import krasa.grepconsole.gui.ProfileDetail;
 import krasa.grepconsole.model.GrepExpressionItem;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
-public class ClearColumn extends ButtonColumnInfo<GrepExpressionItem> {
+public class ClearColumn extends IconColumnInfo {
 	public static final Icon DISABLED = AllIcons.Actions.GC;
 	public static final Icon ENABLED = IconLoader.getIcon("clearEnabled.png", ClearColumn.class);
-	private final ProfileDetail profileDetail;
 
-	public ClearColumn(String title, ProfileDetail profileDetail) {
+	public ClearColumn(String title) {
 		super(title);
-		this.profileDetail = profileDetail;
 	}
 
-
 	@Override
-	void onButtonClicked(GrepExpressionItem item) {
-		item.setClearConsole(!item.isClearConsole());
-		if (item.isClearConsole()) {
-			profileDetail.profile.setEnabledInputFiltering(true);
-			profileDetail.setData(profileDetail.profile);
+
+	protected Icon getIcon(@NotNull GrepExpressionItem value) {
+		boolean clearConsole = value.isClearConsole();
+		if (clearConsole) {
+			return ENABLED;
+		} else {
+			return DISABLED;
 		}
 	}
 
-	@Nullable
 	@Override
-	public TableCellEditor getEditor(GrepExpressionItem o) {
-		return new ButtonEditor<GrepExpressionItem>(new JCheckBox()) {
-			@Override
-			protected void setStyle(GrepExpressionItem grepExpressionItem) {
-				if (grepExpressionItem.isClearConsole()) {
-					button.setIcon(ENABLED);
-				} else {
-					button.setIcon(DISABLED);
-				}
-			}
-
-			@Override
-			protected void onButtonClicked(GrepExpressionItem item) {
-				ClearColumn.this.onButtonClicked(item);
-			}
-		};
-	}
-
-	@Nullable
-	@Override
-	public TableCellRenderer getRenderer(GrepExpressionItem aVoid) {
-		return new ButtonRenderer() {
-			@Override
-			protected void setStyle(Object value) {
-				GrepExpressionItem grepExpressionItem = (GrepExpressionItem) value;
-				if (grepExpressionItem.isClearConsole()) {
-					setIcon(ENABLED);
-				} else {
-					setIcon(DISABLED);
-				}
-			}
-		};
+	protected void execute(GrepExpressionItem value) {
+		value.setClearConsole(!value.isClearConsole());
 	}
 }

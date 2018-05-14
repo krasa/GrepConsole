@@ -35,7 +35,7 @@ public class DefaultState {
 	private static List<GrepExpressionItem> createDefaultInputFilter() {
 		ArrayList<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
 		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE));
-		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*transform this.*").action("externalScriptReference"));
+		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*").action("externalScriptReference"));
 		return grepExpressionItems;
 	}
 
@@ -67,6 +67,9 @@ public class DefaultState {
 					".*WARN.*"));
 		}
 
+
+		items.add(newItem().enabled(false).style(getGrepStyle(null, null)).grepExpression(
+				".*INFO.*"));
 
 		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.GRAY : Color.GRAY)).grepExpression(
 				".*DEBUG.*"));

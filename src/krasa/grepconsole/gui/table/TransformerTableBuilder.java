@@ -153,11 +153,10 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 
 		columns.add(new FolderColumnInfoWrapper(action));
 		action.preferedStringValue("___________________________________");
-		action.tooltipText("A line will not be filtered out if any previous expression matches first");
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple highlights")));
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple actions")));
 
-		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console", profileDetail).tooltipText("Will not work if any previous non-filtering expression is matched first.")));
+		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console")));
 
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));

@@ -80,6 +80,9 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	}
 
 	protected void setPropertyValue(Item item, Value value) {
+		if (propertyName == null) {
+			return;
+		}
 		try {
 			PropertyUtils.setProperty(item, propertyName, value);
 		} catch (Exception e) {
@@ -88,6 +91,9 @@ public class JavaBeanColumnInfo<Item, Value> extends ColumnInfo<Item, Value> {
 	}
 
 	protected Value getProperty(Item item) {
+		if (propertyName == null) {
+			return (Value) item;
+		}
 		try {
 			return (Value) PropertyUtils.getProperty(item, propertyName);
 		} catch (Exception e) {
