@@ -19,7 +19,7 @@ import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.xmlb.XmlSerializer;
 import com.intellij.util.xmlb.annotations.AbstractCollection;
 import com.intellij.util.xmlb.annotations.XCollection;
-import krasa.grepconsole.gui.ProfileDetail;
+import krasa.grepconsole.gui.ProfileDetailForm;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -51,7 +51,7 @@ public class GrepTableBuilder {
 	protected GrepTableBuilder() {
 	}
 
-	public GrepTableBuilder(final ProfileDetail profileDetail) {
+	public GrepTableBuilder(final ProfileDetailForm profileDetailForm) {
 		List<ColumnInfo> columns = new ArrayList<>();
 		columns.add(new TreeColumnInfo("") {
 			@Nullable
@@ -105,15 +105,15 @@ public class GrepTableBuilder {
 		fold.addListener(new ValueChangedListener<GrepExpressionItem, Boolean>() {
 			@Override
 			public void onValueChanged(GrepExpressionItem grepExpressionItem, Boolean newValue) {
-				if (newValue && !profileDetail.profile.isEnableFoldings()) {
-					profileDetail.profile.setEnableFoldings(true);
-					profileDetail.setData(profileDetail.profile);
+				if (newValue && !profileDetailForm.profile.isEnableFoldings()) {
+					profileDetailForm.profile.setEnableFoldings(true);
+					profileDetailForm.setData(profileDetailForm.profile);
 				}
 			}
 		});
 		FolderColumnInfoWrapper foldC = new FolderColumnInfoWrapper(fold);
 		columns.add(foldC);
-		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetail)));
+		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetailForm)));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {
 			@Override
@@ -131,10 +131,10 @@ public class GrepTableBuilder {
 
 			}
 		};
-		table = new MyCheckboxTreeTable(createRoot(), renderer, columns, foldC, profileDetail);
+		table = new MyCheckboxTreeTable(createRoot(), renderer, columns, foldC, profileDetailForm);
 		table.setDragEnabled(true);
 		table.setDropMode(DropMode.INSERT_ROWS);
-		table.setTransferHandler(new TableRowTransferHandler(table, profileDetail));
+		table.setTransferHandler(new TableRowTransferHandler(table, profileDetailForm));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(table.getTree());
 		treeExpander.expandAll();
@@ -154,13 +154,13 @@ public class GrepTableBuilder {
 		private static final Logger LOG = Logger.getInstance(MyCheckboxTreeTable.class);
 		private static final DataFlavor ARRAY_LIST = new DataFlavor(List.class, "List");
 
-		private final ProfileDetail profileDetail;
+		private final ProfileDetailForm profileDetailForm;
 		private final FolderColumnInfoWrapper foldColumn;
 
-		public MyCheckboxTreeTable(CheckedTreeNode root, CheckboxTreeCellRendererBase renderer, List<ColumnInfo> columns, FolderColumnInfoWrapper foldC, ProfileDetail profileDetail) {
+		public MyCheckboxTreeTable(CheckedTreeNode root, CheckboxTreeCellRendererBase renderer, List<ColumnInfo> columns, FolderColumnInfoWrapper foldC, ProfileDetailForm profileDetailForm) {
 			super(root, renderer, columns.toArray(new ColumnInfo[columns.size()]));
 			foldColumn = foldC;
-			this.profileDetail = profileDetail;
+			this.profileDetailForm = profileDetailForm;
 		}
 
 		public void foldingsEnabled(boolean defaultProfile) {
@@ -193,7 +193,7 @@ public class GrepTableBuilder {
 				LOG.info(ex);
 			}
 			TableUtils.reloadTree(this);
-			profileDetail.rebuildProfile();
+			profileDetailForm.rebuildProfile();
 		}
 
 		@NotNull
@@ -312,7 +312,7 @@ public class GrepTableBuilder {
 			TableUtils.expand(nodesToExpand, this);
 			TableUtils.selectNodes(nodesToSelect, this);
 
-			profileDetail.rebuildProfile();
+			profileDetailForm.rebuildProfile();
 		}
 
 		@Override

@@ -7,7 +7,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.support.SoundMode;
-import krasa.grepconsole.gui.CompositeSettingsDialog;
+import krasa.grepconsole.gui.CompositeSettingsForm;
 import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.Sound;
@@ -25,7 +25,7 @@ public class MyConfigurable implements Configurable {
 	private long originalSelectedProfileId;
 	@Nullable
 	private ConsoleView console;
-	private CompositeSettingsDialog form;
+	private CompositeSettingsForm form;
 	private ServiceManager serviceManager = ServiceManager.getInstance();
 	public GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 	HighlightManipulationAction currentAction;
@@ -75,7 +75,7 @@ public class MyConfigurable implements Configurable {
 	@Override
 	public JComponent createComponent() {
 		if (form == null) {
-			form = new CompositeSettingsDialog(this, applicationComponent.getState(), originalSelectedProfileId);
+			form = new CompositeSettingsForm(this, applicationComponent.getState(), originalSelectedProfileId);
 		}
 		return form.getRootComponent();
 	}
@@ -153,7 +153,7 @@ public class MyConfigurable implements Configurable {
 	}
 
 	public void prepareForm(SettingsContext settingsContext) {
-		form = new CompositeSettingsDialog(this, applicationComponent.getState(), settingsContext, originalSelectedProfileId);
+		form = new CompositeSettingsForm(this, applicationComponent.getState(), settingsContext, originalSelectedProfileId);
 	}
 
 	public void setCurrentAction(HighlightManipulationAction currentEditor) {

@@ -48,10 +48,10 @@ import java.util.*;
 
 import static krasa.grepconsole.Cloner.deepClone;
 
-public class ProfileDetail {
+public class ProfileDetailForm {
 	private static final String DIVIDER = "GrepConsole.ProfileDetail";
 
-	private static final Logger log = Logger.getInstance(ProfileDetail.class);
+	private static final Logger log = Logger.getInstance(ProfileDetailForm.class);
 	private JPanel rootComponent;
 	private CheckboxTreeTable grepTable;
 	private JButton addNewItem;
@@ -90,7 +90,7 @@ public class ProfileDetail {
 	// private JCheckBox synchronous;
 	public Profile profile;
 
-	public ProfileDetail(MyConfigurable myConfigurable, SettingsContext settingsContext) {
+	public ProfileDetailForm(MyConfigurable myConfigurable, SettingsContext settingsContext) {
 		String value = PropertiesComponent.getInstance().getValue(DIVIDER);
 		if (value != null) {
 			try {
@@ -156,7 +156,7 @@ public class ProfileDetail {
 		help.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputStream resourceAsStream = ProfileDetail.class.getResourceAsStream("help.txt");
+				InputStream resourceAsStream = ProfileDetailForm.class.getResourceAsStream("help.txt");
 				try {
 					String text = new String(FileUtilRt.loadBytes(resourceAsStream), "UTF-8");
 					Messages.showInfoMessage(rootComponent, text, "Help");
@@ -304,7 +304,7 @@ public class ProfileDetail {
 									item.grepExpression(item.getGrepExpression() + ".*");
 								}
 							}
-							reloadNode(ProfileDetail.this.getSelectedNode(table), table);
+							reloadNode(ProfileDetailForm.this.getSelectedNode(table), table);
 						}
 
 					});
@@ -617,8 +617,8 @@ public class ProfileDetail {
 	private class ResetAllToDefaultAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Profile profile = ProfileDetail.this.profile;
-			ProfileDetail.this.profile = null;
+			Profile profile = ProfileDetailForm.this.profile;
+			ProfileDetailForm.this.profile = null;
 
 			profile.resetToDefault();
 			importFrom(profile);
@@ -628,7 +628,7 @@ public class ProfileDetail {
 	private class ResetHighlightersToDefaultAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Profile profile = ProfileDetail.this.profile;
+			Profile profile = ProfileDetailForm.this.profile;
 
 			List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 			grepExpressionGroups.clear();

@@ -24,7 +24,7 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class CompositeSettingsDialog {
+public class CompositeSettingsForm {
 	private static final String DIVIDER = "krasa.grepconsole.gui.CompositeSettingsDialog";
 	private boolean runConfigurationDialog;
 	private PluginState settings;
@@ -40,23 +40,23 @@ public class CompositeSettingsDialog {
 	private JButton deleteButton;
 	private JCheckBox enableRunConfigurationProfilesCheckBox;
 	private JSplitPane splitPane;
-	private ProfileDetail profileDetailComponent;
+	private ProfileDetailForm profileDetailFormComponent;
 	private DefaultListModel profilesModel;
 	private long originallySelectedProfileId;
 
 
-	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settings, long originallySelectedProfileId) {
+	public CompositeSettingsForm(MyConfigurable myConfigurable, PluginState settings, long originallySelectedProfileId) {
 		this(myConfigurable, settings, SettingsContext.NONE, originallySelectedProfileId);
 		runConfigurationDialog = true;
 		runConfigurationDialog();
 	}
 
-	public CompositeSettingsDialog(MyConfigurable myConfigurable, PluginState settingsForCloning, SettingsContext settingsContext, long originallySelectedProfileId) {
+	public CompositeSettingsForm(MyConfigurable myConfigurable, PluginState settingsForCloning, SettingsContext settingsContext, long originallySelectedProfileId) {
 		this.settings = settingsForCloning.clone();
 		this.originallySelectedProfileId = originallySelectedProfileId;
 
-		profileDetailComponent = new ProfileDetail(myConfigurable, settingsContext);
-		profileDetail.add(profileDetailComponent.getRootComponent());
+		profileDetailFormComponent = new ProfileDetailForm(myConfigurable, settingsContext);
+		profileDetail.add(profileDetailFormComponent.getRootComponent());
 //		Dimension minimumSize = new Dimension(0, 0);
 //		profiles.setMinimumSize(minimumSize);
 
@@ -92,7 +92,7 @@ public class CompositeSettingsDialog {
 				}
 				Profile selectedValue = (Profile) jbList.getSelectedValue();
 				if (selectedValue != null) {
-					profileDetailComponent.importFrom(selectedValue);
+					profileDetailFormComponent.importFrom(selectedValue);
 				}
 			}
 		});
@@ -109,7 +109,7 @@ public class CompositeSettingsDialog {
 			public void actionPerformed(ActionEvent e) {
 				settings.setDefault(getSelectedProfile());
 				jbList.repaint();
-				profileDetailComponent.resetTreeModel(true);
+				profileDetailFormComponent.resetTreeModel(true);
 			}
 		});
 		duplicateButton.addActionListener(new ActionListener() {
@@ -219,7 +219,7 @@ public class CompositeSettingsDialog {
 
 	public boolean isSettingsModified(PluginState state) {
 		Profile selectedProfile = getSelectedProfile();
-		profileDetailComponent.getData(selectedProfile);
+		profileDetailFormComponent.getData(selectedProfile);
 		return originallySelectedProfileId != selectedProfile.getId()
 				|| !this.settings.equals(state)
 				|| enableRunConfigurationProfilesCheckBox.isSelected() != settings.isAllowRunConfigurationChanges();
@@ -227,14 +227,14 @@ public class CompositeSettingsDialog {
 
 	public PluginState getSettings() {
 		settings.setAllowRunConfigurationChanges(enableRunConfigurationProfilesCheckBox.isSelected());
-		profileDetailComponent.getData(getSelectedProfile());
+		profileDetailFormComponent.getData(getSelectedProfile());
 		return settings;
 	}
 
 	public void importFrom(PluginState pluginState) {
 		this.settings = pluginState.clone();
 		initModel();
-		profileDetailComponent.importFrom(getSelectedProfile());
+		profileDetailFormComponent.importFrom(getSelectedProfile());
 	}
 
 	@Nullable
@@ -259,7 +259,7 @@ public class CompositeSettingsDialog {
 			Profile defaultProfile = settings.getDefaultProfile();
 			jbList.setSelectedValue(defaultProfile, true);
 		}
-		profileDetailComponent.importFrom(getSelectedProfile());
+		profileDetailFormComponent.importFrom(getSelectedProfile());
 	}
 
 	private class FileTailSettingsActionListener implements ActionListener {
@@ -268,7 +268,7 @@ public class CompositeSettingsDialog {
 			final TailIntegrationForm form = new TailIntegrationForm();
 			form.setData(settings.getTailSettings());
 
-			DialogBuilder builder = new DialogBuilder(CompositeSettingsDialog.this.getRootComponent());
+			DialogBuilder builder = new DialogBuilder(CompositeSettingsForm.this.getRootComponent());
 			builder.setCenterPanel(form.getRoot());
 			builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
 			builder.setTitle("Tail File settings");
