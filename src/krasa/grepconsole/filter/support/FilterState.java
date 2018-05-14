@@ -3,6 +3,7 @@ package krasa.grepconsole.filter.support;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.util.text.StringUtil;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Operation;
 import krasa.grepconsole.model.Profile;
@@ -117,16 +118,20 @@ public class FilterState {
 
 		String action = grepExpressionItem.getAction();
 		if (GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
+//		} else if (GrepExpressionItem.ACTION_BUFFER_UNTIL_NEWLINE.equals(action)) {
+//			String originalText = text;
+//			text = grepProcessor.bufferUntilNewLine(text);
+//			update(originalText);
 		} else if (GrepExpressionItem.ACTION_REMOVE.equals(action)) {
 			setExclude(true);
 		} else if (GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)) {
 			if (!isMatchesSomething()) {
 				setExclude(true);
 			}
-		} else if (action != null) {
+		} else if (action != null && !StringUtil.isEmpty(text)) {
 			executeFunction(action);
 		}
-		
+
 		setMatchesSomething(true);
 
 		if (grepExpressionItem.getSound().isEnabled()) {
@@ -148,25 +153,27 @@ public class FilterState {
 			}
 
 
-			if (text == null) {
-				setExclude(true);
-			}
-
-
 			t0 = System.currentTimeMillis() - t0;
 			if (t0 > 1000) {
 				LOG.warn("GrepConsole: script '" + action + "'took " + t0 + " ms on '''" + originalText + "'''");
 			}
 
-			//noinspection StringEquality
-			boolean textChanged = this.textChanged || text != originalText;
-			if (textChanged) {
-				setTextChanged(textChanged);
+			update(originalText);
+		}
+	}
 
-				if (text != null && nextOperation == Operation.CONTINUE_MATCHING) {
-					String substring = profile.limitInputLength_andCutNewLine(text);
-					charSequence = profile.limitProcessingTime(substring);
-				}
+	private void update(String originalText) {
+		if (text == null) {
+			setExclude(true);
+		}
+		//noinspection StringEquality
+		boolean textChanged = this.textChanged || text != originalText;
+		if (textChanged) {
+			setTextChanged(true);
+
+			if (text != null && nextOperation == Operation.CONTINUE_MATCHING) {
+				String substring = profile.limitInputLength_andCutNewLine(text);
+				charSequence = profile.limitProcessingTime(substring);
 			}
 		}
 	}
