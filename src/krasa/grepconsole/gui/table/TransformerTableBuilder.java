@@ -142,9 +142,7 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 			@NotNull
 			private List<String> getOptions() {
 				ArrayList<String> options = new ArrayList<>();
-				options.add(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED);
-				options.add(GrepExpressionItem.ACTION_REMOVE);
-				options.add(GrepExpressionItem.ACTION_NO_ACTION);
+				options.addAll(GrepExpressionItem.getOptions());
 				options.addAll(ExtensionManager.references());
 				return options;
 			}

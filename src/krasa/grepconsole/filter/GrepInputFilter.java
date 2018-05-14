@@ -26,6 +26,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	private volatile boolean lastLineFiltered = false;
 	private volatile boolean removeNextNewLine = false;
 	private boolean testConsole;
+	private volatile GrepCopyingFilter grepFilter;
 
 	public GrepInputFilter(Project project, Profile profile) {
 		super(project, profile);
@@ -52,8 +53,29 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		}
 
 		FilterState state = super.filter(s, -1);
+
 		clearConsole(state);
-		return prepareResult(state, consoleViewContentType);
+
+		List<Pair<String, ConsoleViewContentType>> pairs = prepareResult(state, consoleViewContentType);
+
+
+		grep(pairs, s, consoleViewContentType);
+
+		return pairs;
+	}
+
+	//if we change output, then next InputFilter won't get processed, so Grep it here.
+	private void grep(List<Pair<String, ConsoleViewContentType>> pairs, String s, ConsoleViewContentType consoleViewContentType) {
+		if (grepFilter != null) {
+			if (pairs != REMOVE_OUTPUT) {
+				if (pairs != null) {
+					Pair<String, ConsoleViewContentType> pair = pairs.get(0);
+					grepFilter.applyFilter(pair.first, pair.second);
+				} else {
+					grepFilter.applyFilter(s, consoleViewContentType);
+				}
+			}
+		}
 	}
 
 	public void clearConsole(FilterState state) {
@@ -125,6 +147,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		String action = processor.getGrepExpressionItem().getAction();
 		if (StringUtils.isNotBlank(action) //blank == no action
 				&& !GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)
+				&& !GrepExpressionItem.ACTION_BUFFER_UNTIL_NEWLINE.equals(action)
 				&& !GrepExpressionItem.ACTION_REMOVE.equals(action)
 				&& !GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
 			if (ExtensionManager.getFunction(action) == null) {
@@ -139,4 +162,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		throw new UnsupportedOperationException();
 	}
 
+	public void setGrepFilter(GrepCopyingFilter copyingFilter) {
+		this.grepFilter = copyingFilter;
+	}
 }

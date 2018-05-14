@@ -7,7 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class GrepProcessorImpl implements GrepProcessor {
+public class GrepProcessorImpl extends GrepProcessor {
 	private static final Logger log = Logger.getInstance(GrepProcessorImpl.class);
 
 	private GrepExpressionItem grepExpressionItem;

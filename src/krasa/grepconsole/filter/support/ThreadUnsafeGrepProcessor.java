@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 /**
  * should perform faster than GrepProcessorImpl
  */
-public class ThreadUnsafeGrepProcessor implements GrepProcessor {
+public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 	private static final Logger log = Logger.getInstance(ThreadUnsafeGrepProcessor.class);
 	protected Matcher patternMatcher;
 	protected Matcher unlessMatcher;
@@ -93,4 +93,5 @@ public class ThreadUnsafeGrepProcessor implements GrepProcessor {
 		String unless = grepExpressionItem.getUnlessGrepExpression();
 		return "pattern='" + grepExpression + "', unlessPattern='" + unless + "'";
 	}
+
 }

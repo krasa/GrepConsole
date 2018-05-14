@@ -21,10 +21,11 @@ public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvide
 
 		if (inputFilter != null) {
 			if (defaultProfile.isFilterOutBeforeGrep()) {
-				return new InputFilter[]{inputFilter, copyingFilter};
+				inputFilter.setGrepFilter(copyingFilter);
+				return new InputFilter[]{inputFilter};
 			} else {
 				return new InputFilter[]{copyingFilter, inputFilter};
-			} 
+			}
 		} else {
 			return new InputFilter[]{copyingFilter};
 		}

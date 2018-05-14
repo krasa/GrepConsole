@@ -9,6 +9,7 @@ import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.filter.support.ThreadUnsafeGrepProcessor;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -17,7 +18,21 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	public static final String ACTION_REMOVE_UNLESS_MATCHED = "REMOVE_UNLESS_PREVIOUSLY_MATCHED";
 	public static final String ACTION_REMOVE = "REMOVE";
 	public static final String ACTION_NO_ACTION = "NO_ACTION";
-	
+	/**
+	 * maybe too much of a feature
+	 */
+	@Deprecated
+	public static final String ACTION_BUFFER_UNTIL_NEWLINE = "BUFFER_UNTIL_NEWLINE";
+
+	public static ArrayList<String> getOptions() {
+		ArrayList<String> options = new ArrayList<>();
+		options.add(ACTION_REMOVE_UNLESS_MATCHED);
+		options.add(ACTION_REMOVE);
+		options.add(ACTION_NO_ACTION);
+		return options;
+	}
+
+
 	private boolean enabled = true;
 	/**
 	 * filter out text if matches
@@ -42,6 +57,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	private boolean showCountInConsole = false;
 	private boolean showCountInStatusBar = false;
+
 
 	public String getAction() {
 		return action;
@@ -341,4 +357,5 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.action = action;
 		return this;
 	}
+
 }

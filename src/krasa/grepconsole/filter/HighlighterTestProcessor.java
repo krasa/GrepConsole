@@ -12,7 +12,7 @@ import java.util.List;
  * In case you want to keep lines that are matched by highlighters and remove everything else.
  * This wastes CPU as actual highlighting is done much later.
  */
-public class HighlighterTestProcessor implements GrepProcessor {
+public class HighlighterTestProcessor extends GrepProcessor {
 	private List<GrepProcessor> grepProcessors = new ArrayList<>();
 	private static final GrepExpressionItem DUMMY = new GrepExpressionItem();
 
@@ -49,4 +49,5 @@ public class HighlighterTestProcessor implements GrepProcessor {
 		state.setNextOperation(Operation.CONTINUE_MATCHING);
 		return state;
 	}
+
 }

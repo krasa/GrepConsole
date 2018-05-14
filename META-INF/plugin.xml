@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>8.0.162.000.4</version>
+	<version>8.1.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -33,6 +33,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>8.1 (2018-05-14)
+		<br>- GUI, Help improvements
+		<br>- Various new edge cases fixed.
         <br>8.0 (2018-05-11)
 		<br>- Support for manipulating output text, and any custom actions (e.g. notifications) by scripting using <a href="https://github.com/dkandalov/live-plugin">LivePlugin</a> or making own plugin. 
 		<br>- Reworked input filtering logic and gui
@@ -135,21 +138,21 @@
 				text="Tail File in Console..."
 				description="Tail File in Console..."
 				icon="/krasa/grepconsole/tail/tail.png"
-				>
+		>
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.OpenFileInConsoleProjectViewAction"
 				text="Tail in Console"
 				description="Tail in Console"
 				icon="/krasa/grepconsole/tail/tail.png"
-				>
+		>
 			<add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="RevealIn"/>
 		</action>
 		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
 				text="Tail Current File in Console"
 				description="Tail Current Editor File in Console"
 				icon="/krasa/grepconsole/tail/tail.png"
-				>
+		>
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsoleToolbarAction"
@@ -158,11 +161,11 @@
 				description="Drag and drop to open file in console">
 			<add-to-group group-id="MainToolBar" anchor="last"/>
 		</action>
-		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog" 
+		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog"
 				text="Tail Log in Console"
 				description="Tail Log in Console - by Grep Console plugin"
 				icon="/krasa/grepconsole/tail/tail.png"
-				>
+		>
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>
 		<action id="GrepConsoleTail" class="krasa.grepconsole.action.GrepConsoleTailDummyAction"
