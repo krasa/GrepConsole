@@ -1,6 +1,5 @@
 package krasa.grepconsole.gui.table.column;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.model.GrepExpressionItem;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class ClearColumn extends IconColumnInfo {
-	public static final Icon DISABLED = AllIcons.Actions.GC;
+	public static final Icon DISABLED = IconLoader.getIcon("gc.png", ClearColumn.class);
 	public static final Icon ENABLED = IconLoader.getIcon("clearEnabled.png", ClearColumn.class);
 
 	public ClearColumn(String title) {
