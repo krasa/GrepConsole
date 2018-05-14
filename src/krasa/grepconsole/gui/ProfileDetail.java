@@ -18,6 +18,7 @@ import com.intellij.openapi.ui.JBMenuItem;
 import com.intellij.openapi.ui.JBPopupMenu;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
@@ -42,6 +43,7 @@ import javax.swing.tree.TreePath;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.InputStream;
 import java.util.*;
 
 import static krasa.grepconsole.Cloner.deepClone;
@@ -154,11 +156,13 @@ public class ProfileDetail {
 		help.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Messages.showInfoMessage(rootComponent,
-						"You can copy/paste table rows to/from plaintext.\n\n" +
-								"You can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin\n\n"
-						,
-						"Input filtering");
+				InputStream resourceAsStream = ProfileDetail.class.getResourceAsStream("help.txt");
+				try {
+					String text = new String(FileUtilRt.loadBytes(resourceAsStream), "UTF-8");
+					Messages.showInfoMessage(rootComponent, text, "Help");
+				} catch (Exception e1) {
+					throw new RuntimeException(e1);
+				}
 			}
 		});
 

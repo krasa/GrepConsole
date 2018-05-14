@@ -1,0 +1,8 @@
+You can copy/paste table rows to/from plaintext.
+
+Input filtering: 
+
+- usually a complete line is processed, or a text chunk if you print without a line break, but sometimes the stream is flushed prematurely (IDEA-70016). 
+  Also ANSI coloring breaks the line into chunks, effectively breaking input filtering.
+- you can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin
+
