@@ -1,8 +1,13 @@
 You can copy/paste table rows to/from plaintext.
 
 Input filtering: 
-
-- usually a complete line is processed, or a text chunk if you print without a line break, but sometimes the stream is flushed prematurely (IDEA-70016). 
+ - usually a complete line is processed, or a text chunk if you print without a line break, but sometimes the stream is flushed prematurely (IDEA-70016). 
   Also ANSI coloring breaks the line into chunks, effectively breaking input filtering.
-- you can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin
+ - you can manipulate output text or execute any custom actions (e.g. notifications) by making your own extension plugin or by scripting via LivePlugin - https://github.com/dkandalov/live-plugin
 
+Columns:
+ - Continue matching : If checked and a line/substring is matched, then the processing will continue with next configured items to apply multiple highlights/actions.
+ - Whole line : Matches a whole line (java.util.regex.Matcher#matches), otherwise finds a matching substrings (java.util.regex.Matcher#find). 
+   'Unless expression' works only for the whole lines. 
+
+ 
