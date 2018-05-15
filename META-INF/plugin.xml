@@ -33,9 +33,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>8.1 (2018-05-14)
+        <br>8.1 (2018-05-15)
 		<br>- GUI, Help improvements
-		<br>- Various new edge cases fixed.
+		<br>- Various edge cases fixed
         <br>8.0 (2018-05-11)
 		<br>- Support for manipulating output text, and any custom actions (e.g. notifications) by scripting using <a href="https://github.com/dkandalov/live-plugin">LivePlugin</a> or making own plugin. 
 		<br>- Reworked input filtering logic and gui
