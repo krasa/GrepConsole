@@ -26,6 +26,7 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	private volatile Profile profile;
 	private volatile boolean showLimitNotification = true;
 	private ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
+	private ThreadLocal<Long> previousTimestamp = new ThreadLocal<>();
 
 	public GrepCopyingFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
 		this.myProcessHandler = myProcessHandler;
@@ -53,17 +54,23 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 			String s = split.get(i);
 
 			if (!s.endsWith("\n")) {
-				if (previousIncompleteToken.get() != null) {
-					previousIncompleteToken.set(previousIncompleteToken.get() + s);
-				} else {
-					previousIncompleteToken.set(s);
+				Long lastTimestamp = previousTimestamp.get();
+				if (lastTimestamp == null || System.currentTimeMillis() - lastTimestamp < 1000) {
+					if (previousIncompleteToken.get() != null) {
+						previousIncompleteToken.set(previousIncompleteToken.get() + s);
+						previousTimestamp.set(System.currentTimeMillis());
+					} else {
+						previousIncompleteToken.set(s);
+						previousTimestamp.set(System.currentTimeMillis());
+					}
+					continue;
 				}
-				continue;
 			}
 
 			if (previousIncompleteToken.get() != null) {
 				s = previousIncompleteToken.get() + s;
 				previousIncompleteToken.set(null);
+				previousTimestamp.set(null);
 			}
 
 			Key stdout = ProcessOutputTypes.STDOUT;
