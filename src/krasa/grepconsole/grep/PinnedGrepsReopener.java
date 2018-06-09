@@ -1,12 +1,5 @@
 package krasa.grepconsole.grep;
 
-import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import krasa.grepconsole.utils.FocusUtils;
-
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
@@ -15,6 +8,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.SingleAlarm;
+import krasa.grepconsole.utils.FocusUtils;
+
+import java.lang.ref.WeakReference;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PinnedGrepsReopener {
 	private final SingleAlarm myUpdateAlarm;
@@ -33,6 +32,10 @@ public class PinnedGrepsReopener {
 					return;
 				}
 				AppUIUtil.invokeOnEdt(() -> {
+					if (project.isDisposed()) {
+						return;
+					}
+					
 					Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
 							dom -> FocusUtils.isSameConsole(dom, consoleView, false));
 
