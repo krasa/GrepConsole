@@ -15,8 +15,8 @@ import javax.swing.*;
  * @author Vojtech Krasa
  */
 public class SoundColumn extends IconColumnInfo {
-	public static final Icon SOUND_OFF = IconLoader.getIcon("soundOff.gif", SoundColumn.class);
-	public static final Icon SOUND_ON = IconLoader.getIcon("soundOn.gif", SoundColumn.class);
+	public static final Icon SOUND_OFF = IconLoader.getIcon("/krasa/grepconsole/gui/table/column/soundOff.gif");
+	public static final Icon SOUND_ON = IconLoader.getIcon("/krasa/grepconsole/gui/table/column/soundOn.gif");
 	private final ProfileDetailForm profileDetailForm;
 	protected SoundSettingsForm soundSettingsForm;
 
