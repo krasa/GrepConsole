@@ -15,3 +15,13 @@ image::screenshotGrepSubConsole.png[]
 Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
 Used http://plugins.jetbrains.com/plugin/6027?pr=idea[Remote call plugin] implementation for http integration.
 
+
+---
+
+image::https://www.yourkit.com/images/yklogo.png[]
+
+
+YourKit supports open source projects with its full-featured Java Profiler.
+YourKit, LLC is the creator of https://www.yourkit.com/java/profiler/[YourKit Java Profiler]
+and https://www.yourkit.com/.net/profiler/[YourKit .NET Profiler],
+innovative and intelligent tools for profiling Java and .NET applications.
