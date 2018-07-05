@@ -31,11 +31,15 @@ public class ServiceManager {
 
 	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
 
-	/** for tracking settings change */
+	/**
+	 * for tracking settings change
+	 */
 	private List<WeakReference<GrepHighlightFilter>> highlightFilters = new ArrayList<>();
 	private List<WeakReference<GrepInputFilter>> inputFilters = new ArrayList<>();
 
-	/** to couple console with filters */
+	/**
+	 * to couple console with filters
+	 */
 	private WeakReference<GrepCopyingFilter> lastCopier;
 	private WeakReference<GrepInputFilter> lastGrepInputFilter;
 
@@ -43,7 +47,7 @@ public class ServiceManager {
 	Consoles consoles = new Consoles();
 	private boolean createInputFilter = true;
 	protected RunConfigurationBase lastRunConfiguration;
-	           
+
 	public static ServiceManager getInstance() {
 		return SERVICE_MANAGER;
 	}
@@ -163,8 +167,8 @@ public class ServiceManager {
 		}
 	}
 
-	
-	
+
+
 	public void resetSettings() {
 		iterate(highlightFilters);
 		iterate(inputFilters);
@@ -215,6 +219,11 @@ public class ServiceManager {
 			registerConsole(consoleView);
 		}
 
+		return createHighlightFilter2(project, consoleView);
+	}
+
+	@NotNull
+	private GrepHighlightFilter createHighlightFilter2(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		Profile profile = getProfile(consoleView);
 		GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project, profile);
 		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
@@ -257,6 +266,13 @@ public class ServiceManager {
 			this.lastGrepInputFilter = null;
 		}
 		consoles.put(console, lastRunConfiguration);
+	}
+
+	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
+		if (consoles.getGrepHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
+			GrepHighlightFilter highlightFilter = createHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
+			console.addMessageFilter(highlightFilter);
+		}
 	}
 
 	@Nullable
@@ -308,7 +324,7 @@ public class ServiceManager {
 			consoleViewData.setProfile(selectedProfile);
 		} else {
 			throw new IllegalStateException("console not registered");
-		} 
+		}
 	}
 
 }

@@ -25,7 +25,10 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 	@NotNull
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
-		ServiceManager.getInstance().registerConsole(console);
+		ServiceManager serviceManager = ServiceManager.getInstance();
+		serviceManager.registerConsole(console);
+		serviceManager.createHighlightFilterIfMissing(console);
+
 		if (console instanceof ConsoleViewImpl) {
 			StatisticsManager.createStatisticsPanels((com.intellij.execution.impl.ConsoleViewImpl) console);
 		}
