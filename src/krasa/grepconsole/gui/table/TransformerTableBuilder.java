@@ -156,10 +156,10 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 
 		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console")));
 
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
-		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
+//		columns.add(new FolderColumnInfoWrapper(
+//				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
+//		columns.add(new FolderColumnInfoWrapper(
+//				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetailForm)));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {
