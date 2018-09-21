@@ -1,5 +1,6 @@
 package krasa.grepconsole.grep;
 
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -14,6 +15,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 public class PinnedGrepConsolesState {
+	private static final Logger LOG = Logger.getInstance(PinnedGrepConsolesState.class);
 
 	@Transient
 	private int MAX_SIZE;
@@ -54,12 +56,21 @@ public class PinnedGrepConsolesState {
 	}
 
 	public void pin(OpenGrepConsoleAction.PinAction pinAction) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(">pin " + "pinAction = [" + pinAction + "]");
+		}
 		update(pinAction.getRunConfigurationRef(), pinAction.getParentConsoleUUID(), pinAction.getConsoleUUID(), pinAction.getModel(), true);
 	}
 
 	public void update(@NotNull RunConfigurationRef runContentDescriptor, String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel, boolean add) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(">update " + "runContentDescriptor = [" + runContentDescriptor + "], parentConsoleUUID = [" + parentConsoleUUID + "], consoleUUID = [" + consoleUUID + "], grepModel = [" + grepModel + "], add = [" + add + "]");
+		}
 		Pins pins = map.get(runContentDescriptor);
 
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("#update found: " + pins);
+		}
 		if (pins == null) {
 			if (add) {
 				map.put(runContentDescriptor, new Pins(parentConsoleUUID, consoleUUID, grepModel));
@@ -69,12 +80,17 @@ public class PinnedGrepConsolesState {
 			boolean updated = false;
 			for (Pin pin : pins.pins) {
 				if (pin.consoleUUID.equals(consoleUUID)) {
+					LOG.debug("#update grepModel updated for pin=" + pin);
 					pin.grepModel = grepModel;
 					updated = true;
 				}
 			}
 			if (!updated && add) {
-				pins.pins.add(new Pin(parentConsoleUUID, consoleUUID, grepModel));
+				Pin e = new Pin(parentConsoleUUID, consoleUUID, grepModel);
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("#update adding new pin =" + e);
+				}
+				pins.pins.add(e);
 			}
 		}
 	}
@@ -96,15 +112,27 @@ public class PinnedGrepConsolesState {
 	}
 
 	public void unpin(OpenGrepConsoleAction.PinAction pinAction) {
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(">unpin " + "pinAction = [" + pinAction + "]");
+		}
 		String consoleUUID = pinAction.getConsoleUUID();
 		Pins pins = map.get(pinAction.getRunConfigurationRef());
 
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("found pins =" + pins);
+		}
 		if (pins != null) {
 			for (Iterator<Pin> iterator = pins.pins.iterator(); iterator.hasNext(); ) {
 				Pin pin = iterator.next();
 				if (pin.consoleUUID.equals(consoleUUID)) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("removing pin =" + pin);
+					}
 					iterator.remove();
 				} else if (pin.parentConsoleUUID != null && pin.parentConsoleUUID.equals(consoleUUID)) {
+					if (LOG.isDebugEnabled()) {
+						LOG.debug("removing pin =" + pin);
+					}
 					iterator.remove();
 				}
 			}
@@ -125,9 +153,15 @@ public class PinnedGrepConsolesState {
 	}
 
 
-
 	public Pins getPins(RunConfigurationRef key) {
-		return map.get(key);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(">getPins " + "key = [" + key + "]");
+		}
+		Pins pins = map.get(key);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("<getPins " + "pins = [" + pins + "]");
+		}
+		return pins;
 	}
 
 	public static class Pins {
@@ -146,6 +180,13 @@ public class PinnedGrepConsolesState {
 
 		public List<Pin> getPins() {
 			return pins;
+		}
+
+		@Override
+		public String toString() {
+			return "Pins{" +
+					"pins=" + pins +
+					'}';
 		}
 	}
 

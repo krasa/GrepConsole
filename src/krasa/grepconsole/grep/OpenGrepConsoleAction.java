@@ -108,6 +108,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		quickFilterPanel.setApplyCallback(new Callback() {
 			@Override
 			public void apply(GrepModel grepModel) {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug("apply callback");
+				}
 				copyingListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getExpression()));
 				PinnedGrepConsolesState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, false);
@@ -398,6 +401,16 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		@NotNull
 		public PinnedGrepConsolesState.RunConfigurationRef getRunConfigurationRef() {
 			return runConfigurationRef;
+		}
+
+		@Override
+		public String toString() {
+			return "PinAction{" +
+					"pinned=" + pinned +
+					", parentConsoleUUID='" + parentConsoleUUID + '\'' +
+					", consoleUUID='" + consoleUUID + '\'' +
+					", runConfigurationRef=" + runConfigurationRef +
+					'}';
 		}
 	}
 }

@@ -120,4 +120,15 @@ public class GrepModel {
 					']';
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "GrepModel{" +
+				"caseSensitive=" + caseSensitive +
+				", wholeLine=" + wholeLine +
+				", expression='" + expression + '\'' +
+				", unlessExpression='" + unlessExpression + '\'' +
+				", regex=" + regex +
+				'}';
+	}
 }

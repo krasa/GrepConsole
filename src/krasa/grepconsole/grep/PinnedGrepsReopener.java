@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Alarm;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PinnedGrepsReopener {
+	private static final Logger LOG = Logger.getInstance(PinnedGrepsReopener.class);
+
 	private final SingleAlarm myUpdateAlarm;
 	public static volatile boolean enabled = true;
 
@@ -45,6 +48,7 @@ public class PinnedGrepsReopener {
 							PinnedGrepConsolesState.RunConfigurationRef key = new PinnedGrepConsolesState.RunConfigurationRef(
 									runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 							PinnedGrepConsolesState.Pins state = PinnedGrepConsolesState.getInstance(project).getPins(key);
+
 							if (state != null && !state.getPins().isEmpty() && consoleView instanceof ConsoleViewImpl) {
 								if (project.isDisposed()) {
 									return;
@@ -70,6 +74,9 @@ public class PinnedGrepsReopener {
 			}
 
 			public void initConsole(PinnedGrepConsolesState.Pin pin, ConsoleViewImpl parent, List<PinnedGrepConsolesState.Pin> list) {
+				if (LOG.isDebugEnabled()) {
+					LOG.debug(">initConsole " + "pin = [" + pin + "], parent = [" + parent.hashCode() + "], list = [" + list + "]");
+				}
 				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, parent, pin.getGrepModel(), null, pin.getConsoleUUID());
 				for (PinnedGrepConsolesState.Pin childPin : list) {
 					if (pin.getConsoleUUID().equals(childPin.getParentConsoleUUID())) {
