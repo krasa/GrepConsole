@@ -56,13 +56,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	public void actionPerformed(AnActionEvent e) {
 		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
 		pluginState.getDonationNagger().actionExecuted();
-		
+
 		Project eventProject = getEventProject(e);
 		ConsoleViewImpl parentConsoleView = (ConsoleViewImpl) getConsoleView(e);
 		String expression = getExpression(e);
 		try {
 			PinnedGrepsReopener.enabled = false;
-			createGrepConsole(eventProject, null, parentConsoleView, null, expression, UUID.randomUUID().toString());
+			createGrepConsole(eventProject, null, parentConsoleView, null, expression, UUID.randomUUID().toString(), null);
 		} finally {
 			PinnedGrepsReopener.enabled = true;
 		}
@@ -70,7 +70,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	public ConsoleViewImpl createGrepConsole(Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleViewImpl parentConsoleView, @Nullable GrepModel grepModel, @Nullable String expression,
-											 String consoleUUID) {
+											 String consoleUUID, String contentType) {
 		if (grepModel != null) {
 			expression = grepModel.getExpression();
 		}
@@ -87,6 +87,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (key == null) {
 			key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 		}
+		if (contentType == null) {
+			contentType = getContentType(runnerLayoutUi);
+		}
+		if (contentType == null) {
+			contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
+		}
 
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
@@ -101,7 +107,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView);
-		PinAction pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key);
+		PinAction pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key, contentType);
 		actions.add(pinAction);
 
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
@@ -109,7 +115,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			actions.add(action);
 		}
 
-		final Content tab = runnerLayoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, consolePanel, title(expression),
+		final Content tab = runnerLayoutUi.createContent(contentType, consolePanel, title(expression),
 				AllIcons.General.Filter, consolePanel);
 		runnerLayoutUi.addContent(tab);
 		try {
@@ -128,7 +134,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				}
 				copyingListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getExpression()));
-				PinnedGrepConsolesState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, false);
+				PinnedGrepConsolesState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, pinAction.getContentType(), false);
 			}
 		});
 
@@ -382,17 +388,23 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private String consoleUUID;
 		private Project myProject;
 		private PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef;
+		private final String contentType;
 
-		public PinAction(Project myProject, GrepPanel quickFilterPanel, String parentConsoleUUID, String consoleUUID, Profile profile, @NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef) {
+		public PinAction(Project myProject, GrepPanel quickFilterPanel, String parentConsoleUUID, String consoleUUID, Profile profile, @NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef, String contentType) {
 			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;
 			this.consoleUUID = consoleUUID;
 			this.myProject = myProject;
 			this.runConfigurationRef = runConfigurationRef;
+			this.contentType = contentType;
 			PinnedGrepConsolesState projectComponent = PinnedGrepConsolesState.getInstance(this.myProject);
 			projectComponent.register(this, profile);
 			pinned = projectComponent.isPinned(this);
+		}
+
+		public String getContentType() {
+			return contentType;
 		}
 
 		@Override

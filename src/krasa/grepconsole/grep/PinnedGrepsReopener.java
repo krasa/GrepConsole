@@ -92,7 +92,7 @@ public class PinnedGrepsReopener {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug(">initConsole " + "pin = [" + pin + "], parent = [" + parent.hashCode() + "], list = [" + list + "]");
 				}
-				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, key, parent, pin.getGrepModel(), null, pin.getConsoleUUID());
+				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, key, parent, pin.getGrepModel(), null, pin.getConsoleUUID(), pin.getContentType());
 				for (PinnedGrepConsolesState.Pin childPin : list) {
 					if (pin.getConsoleUUID().equals(childPin.getParentConsoleUUID())) {
 						initConsole(childPin, key, foo, list);

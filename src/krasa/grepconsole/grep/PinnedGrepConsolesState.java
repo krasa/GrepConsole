@@ -59,12 +59,12 @@ public class PinnedGrepConsolesState {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug(">pin " + "pinAction = [" + pinAction + "]");
 		}
-		update(pinAction.getRunConfigurationRef(), pinAction.getParentConsoleUUID(), pinAction.getConsoleUUID(), pinAction.getModel(), true);
+		update(pinAction.getRunConfigurationRef(), pinAction.getParentConsoleUUID(), pinAction.getConsoleUUID(), pinAction.getModel(), pinAction.getContentType(), true);
 	}
 
-	public void update(@NotNull RunConfigurationRef runContentDescriptor, String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel, boolean add) {
+	public void update(@NotNull RunConfigurationRef runContentDescriptor, String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel, String contentType, boolean add) {
 		if (LOG.isDebugEnabled()) {
-			LOG.debug(">update " + "runContentDescriptor = [" + runContentDescriptor + "], parentConsoleUUID = [" + parentConsoleUUID + "], consoleUUID = [" + consoleUUID + "], grepModel = [" + grepModel + "], add = [" + add + "]");
+			LOG.debug(">update " + "runContentDescriptor = [" + runContentDescriptor + "], parentConsoleUUID = [" + parentConsoleUUID + "], consoleUUID = [" + consoleUUID + "], grepModel = [" + grepModel + "], contentType = [" + contentType + "], add = [" + add + "]");
 		}
 		Pins pins = map.get(runContentDescriptor);
 
@@ -73,7 +73,7 @@ public class PinnedGrepConsolesState {
 		}
 		if (pins == null) {
 			if (add) {
-				map.put(runContentDescriptor, new Pins(parentConsoleUUID, consoleUUID, grepModel));
+				map.put(runContentDescriptor, new Pins(parentConsoleUUID, consoleUUID, contentType, grepModel));
 				clean();
 			}
 		} else {
@@ -86,7 +86,7 @@ public class PinnedGrepConsolesState {
 				}
 			}
 			if (!updated && add) {
-				Pin e = new Pin(parentConsoleUUID, consoleUUID, grepModel);
+				Pin e = new Pin(parentConsoleUUID, consoleUUID, contentType, grepModel);
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("#update adding new pin =" + e);
 				}
@@ -167,8 +167,8 @@ public class PinnedGrepConsolesState {
 	public static class Pins {
 		private List<Pin> pins = new ArrayList<>();
 
-		public Pins(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel) {
-			pins.add(new Pin(parentConsoleUUID, consoleUUID, grepModel));
+		public Pins(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, String contentType, @NotNull GrepModel grepModel) {
+			pins.add(new Pin(parentConsoleUUID, consoleUUID, contentType, grepModel));
 		}
 
 		public Pins() {
@@ -197,14 +197,16 @@ public class PinnedGrepConsolesState {
 		@Nullable
 		private String parentConsoleUUID;
 		private String consoleUUID;
+		private String contentType;
 		private GrepModel grepModel;
 
 		public Pin() {
 		}
 
-		public Pin(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel) {
+		public Pin(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, String contentType, @NotNull GrepModel grepModel) {
 			this.parentConsoleUUID = parentConsoleUUID;
 			this.consoleUUID = consoleUUID;
+			this.contentType = contentType;
 			this.grepModel = grepModel;
 		}
 
@@ -218,6 +220,15 @@ public class PinnedGrepConsolesState {
 
 		public void setConsoleUUID(@NotNull String consoleUUID) {
 			this.consoleUUID = consoleUUID;
+		}
+
+		@Nullable
+		public String getContentType() {
+			return contentType;
+		}
+
+		public void setContentType(String contentType) {
+			this.contentType = contentType;
 		}
 
 		@Nullable
