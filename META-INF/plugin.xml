@@ -155,7 +155,7 @@
 				description="Toggle highlight on all occurrences matching the selected text in the editor - without the dialog">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
-			<keyboard-shortcut keymap="$default" first-keystroke="CTRL + ALT + F3"/>
+			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
 		</action>
 		<!-- Add your actions here -->
 		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight Editor"
