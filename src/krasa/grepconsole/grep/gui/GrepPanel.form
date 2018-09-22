@@ -90,7 +90,7 @@
               <iconTextGap value="4"/>
               <margin top="0" left="0" bottom="0" right="0"/>
               <text value="Apply"/>
-              <toolTipText value="[Enter] - with the focus in the textfield"/>
+              <toolTipText value="Apply changes only for future lines [Enter - with the focus in the textfield]"/>
             </properties>
           </component>
           <component id="e205f" class="javax.swing.JButton" binding="reloadButton">
@@ -101,7 +101,7 @@
             </constraints>
             <properties>
               <text value="Reload"/>
-              <toolTipText value="[Alt+Enter] - with the focus in the textfield. Processes the whole source with the new settings"/>
+              <toolTipText value="Apply and reprocess the whole source [Alt+Enter - with the focus in the textfield]"/>
             </properties>
           </component>
           <component id="7f91a" class="javax.swing.JButton" binding="sourceButton">
