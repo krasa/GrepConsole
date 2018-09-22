@@ -1,5 +1,6 @@
 package krasa.grepconsole.grep;
 
+import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
@@ -22,7 +23,10 @@ import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.utils.FocusUtils;
 import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	private static final Logger LOG = Logger.getInstance(OpenGrepConsoleAction.class);
-	
+
 	public OpenGrepConsoleAction() {
 	}
 
@@ -57,14 +62,14 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		String expression = getExpression(e);
 		try {
 			PinnedGrepsReopener.enabled = false;
-			createGrepConsole(eventProject, parentConsoleView, null, expression, UUID.randomUUID().toString());
+			createGrepConsole(eventProject, null, parentConsoleView, null, expression, UUID.randomUUID().toString());
 		} finally {
 			PinnedGrepsReopener.enabled = true;
 		}
 
 	}
 
-	public ConsoleViewImpl createGrepConsole(Project project, ConsoleViewImpl parentConsoleView, @Nullable GrepModel grepModel, @Nullable String expression,
+	public ConsoleViewImpl createGrepConsole(Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleViewImpl parentConsoleView, @Nullable GrepModel grepModel, @Nullable String expression,
 											 String consoleUUID) {
 		if (grepModel != null) {
 			expression = grepModel.getExpression();
@@ -74,11 +79,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (copyingFilter == null) {
 			throw new IllegalStateException("Console not supported: " + parentConsoleView);
 		}
-		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project);
-		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, parentConsoleView);
+		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project, parentConsoleView);
+		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, runContentDescriptor, parentConsoleView);
 		if (runnerLayoutUi == null) {  //should not happen
 			throw new IllegalStateException("runnerLayoutUi == null");
 		}
+		if (key == null) {
+			key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
+		}
+
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
 
@@ -92,7 +101,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView);
-		PinAction pinAction = new PinAction(project, quickFilterPanel, runContentDescriptor, parentConsoleUUID, consoleUUID, profile);
+		PinAction pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key);
 		actions.add(pinAction);
 
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
@@ -146,8 +155,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				}
 			}
 		});
-	  
-		
+
+
 		Disposer.register(consolePanel, newConsole);
 		Disposer.register(consolePanel, copyingListener);
 		Disposer.register(consolePanel, quickFilterPanel);
@@ -216,13 +225,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		void apply(GrepModel grepModel);
 	}
 
-	@Nullable
-	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl parentConsoleView) {
+	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, RunContentDescriptor runContentDescriptor, ConsoleViewImpl parentConsoleView) {
 		RunnerLayoutUi runnerLayoutUi = null;
 
-		final RunContentDescriptor selectedContent = getRunContentDescriptor(eventProject);
-		if (selectedContent != null) {
-			runnerLayoutUi = selectedContent.getRunnerLayoutUi();
+		if (runContentDescriptor != null) {
+			runnerLayoutUi = runContentDescriptor.getRunnerLayoutUi();
 		}
 
 		if (runnerLayoutUi == null) {
@@ -245,12 +252,39 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				runnerLayoutUi = ((MyJPanel) parent).runnerLayoutUi;
 			}
 		}
+		if (runnerLayoutUi == null) {    //probably useless
+			RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
+			RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+			if (selectedContent != null) {
+				runnerLayoutUi = selectedContent.getRunnerLayoutUi();
+			}
+		}
 		return runnerLayoutUi;
 	}
 
-	public static RunContentDescriptor getRunContentDescriptor(Project eventProject) {
-		RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
-		return contentManager.getSelectedContent();
+	public static RunContentDescriptor getRunContentDescriptor(Project project, ConsoleViewImpl consoleView) {
+		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
+				dom -> {
+					return FocusUtils.isSameConsole(dom, consoleView, true);
+				});
+		if (!descriptors.isEmpty()) {
+			if (descriptors.size() == 1) {
+				RunContentDescriptor runContentDescriptor = (RunContentDescriptor) descriptors.toArray()[0];
+				if (runContentDescriptor != null) {
+					return runContentDescriptor;
+				}
+			} else {
+				LOG.warn("more than 1 RunContentDescriptor " + descriptors);
+			}
+		}
+		RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
+		RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+		if (selectedContent != null && LOG.isDebugEnabled()) {
+			LOG.debug("#getRunContentDescriptor not found using ExecutionHelper.findRunningConsole, but found by getSelectedContent");
+
+		}
+
+		return selectedContent;
 	}
 
 	public static class LightProcessHandler extends ProcessHandler {
@@ -308,7 +342,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (parentConsoleView != null) {
 			GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
 			if (eventProject != null && copyingFilter != null) {
-				RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, parentConsoleView);
+				RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(eventProject, parentConsoleView);
+				RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, runContentDescriptor, parentConsoleView);
 				enabled = runnerLayoutUi != null;
 			}
 		}
@@ -348,13 +383,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private Project myProject;
 		private PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef;
 
-		public PinAction(Project myProject, GrepPanel quickFilterPanel, @NotNull RunContentDescriptor runContentDescriptor, String parentConsoleUUID, String consoleUUID, Profile profile) {
+		public PinAction(Project myProject, GrepPanel quickFilterPanel, String parentConsoleUUID, String consoleUUID, Profile profile, @NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef) {
 			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;
 			this.consoleUUID = consoleUUID;
 			this.myProject = myProject;
-			runConfigurationRef = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
+			this.runConfigurationRef = runConfigurationRef;
 			PinnedGrepConsolesState projectComponent = PinnedGrepConsolesState.getInstance(this.myProject);
 			projectComponent.register(this, profile);
 			pinned = projectComponent.isPinned(this);

@@ -58,7 +58,7 @@ public class PinnedGrepsReopener {
 								if (project.isDisposed()) {
 									return;
 								}
-								RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, (ConsoleViewImpl) consoleView);
+								RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, runContentDescriptor, (ConsoleViewImpl) consoleView);
 								if (runnerLayoutUi == null) {
 									if (atomicInteger.incrementAndGet() < 6) {
 										myUpdateAlarm.cancelAndRequest();
@@ -73,7 +73,7 @@ public class PinnedGrepsReopener {
 									List<PinnedGrepConsolesState.Pin> list = state.getPins();
 									for (PinnedGrepConsolesState.Pin pin : list) {
 										if (pin.getParentConsoleUUID() == null) {
-											initConsole(pin, (ConsoleViewImpl) consoleView, list);
+											initConsole(pin, key, (ConsoleViewImpl) consoleView, list);
 										}
 									}
 								} finally {
@@ -88,14 +88,14 @@ public class PinnedGrepsReopener {
 				});
 			}
 
-			public void initConsole(PinnedGrepConsolesState.Pin pin, ConsoleViewImpl parent, List<PinnedGrepConsolesState.Pin> list) {
+			public void initConsole(PinnedGrepConsolesState.Pin pin, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleViewImpl parent, List<PinnedGrepConsolesState.Pin> list) {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug(">initConsole " + "pin = [" + pin + "], parent = [" + parent.hashCode() + "], list = [" + list + "]");
 				}
-				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, parent, pin.getGrepModel(), null, pin.getConsoleUUID());
+				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, key, parent, pin.getGrepModel(), null, pin.getConsoleUUID());
 				for (PinnedGrepConsolesState.Pin childPin : list) {
 					if (pin.getConsoleUUID().equals(childPin.getParentConsoleUUID())) {
-						initConsole(childPin, foo, list);
+						initConsole(childPin, key, foo, list);
 					}
 				}
 			}
