@@ -5,6 +5,8 @@ import com.intellij.ide.dnd.FileCopyPasteUtil;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +50,9 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 						final Project project = CommonDataKeys.PROJECT.getData(context);
 						for (File file : fileList) {
 							if (!file.isDirectory() && project != null) {
+								PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+								pluginState.getDonationNagger().actionExecuted();
+								
 								openFileInConsole(project, file);
 							}
 						}
