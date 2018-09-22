@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.lang.reflect.Method;
 
 public class AddHighlightAction extends HighlightManipulationAction {
 	public AddHighlightAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
@@ -43,24 +42,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 				if (string == null)
 					return;
 
-				Method[] methods = ColorPicker.class.getMethods();
-				Color color = null;
-				boolean found = false;
-				// Color color = ColorPicker.showDialog(rootComponent(getEventProject(e)), "Background color",
-				// Color.CYAN,
-				// true, null, true);
-				for (Method method : methods) {
-					if (method.getName().equals("showDialog")) {
-						color = (Color) method.invoke(null, rootComponent(getEventProject(e)), "Background color",
-								Color.CYAN, true, null, true);
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					throw new IllegalStateException("plugin is broken, please report this");
-				}
-
+				Color color = ColorPicker.showDialog(rootComponent(getEventProject(e)), "Background color", Utils.nextColor(), true, null, true);
 				if (color == null) {
 					return;
 				}

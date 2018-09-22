@@ -19,6 +19,12 @@
 			<li>Clear Console on matches.</li>
 			<li>Tail files*.</li>
 		  </ul>
+		  <br>
+		  Editor actions:
+		  <ul>
+			<li>Apply highlights in the editor according to the plugin's console settings.</li>
+			<li>Toggle highlight on all occurrences matching the selected text in the editor.</li>
+		  </ul>
 		   <br>
 	 		*File Tailing: <br>
 	 		- Main menu | Tools | Open File in Console<br>
@@ -33,7 +39,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>8.4 (2018-09-22)
+        <br>8.5 (2018-09-22)
+		<br>- Toggle highlight on all occurrences matching the selected text in the editor.
 		<br>- NPE workaround
         <br>8.3 (2018-07-05)
 		<br>- Highlighting for Grunt and other consoles.
@@ -135,9 +142,25 @@
 				description="Clear Highlights in Editor">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
+		<action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
+				text="Toggle Highlight on All Occurrences"
+				icon="/krasa/grepconsole/action/highlight.gif"
+				description="Toggle highlight on all occurrences matching the selected text in the editor">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
+			<!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
+		</action>
+		<action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
+				text="Quick Toggle Highlight on All Occurrences"
+				icon="/krasa/grepconsole/action/highlight.gif"
+				description="Toggle highlight on all occurrences matching the selected text in the editor - without the dialog">
+			<add-to-group group-id="ToolsMenu" anchor="last"/>
+			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
+			<keyboard-shortcut keymap="$default" first-keystroke="CTRL + ALT + F3"/>
+		</action>
 		<!-- Add your actions here -->
 		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight Editor"
-				icon="/krasa/grepconsole/action/highlight.gif" description="Grep Highlight Editor">
+				icon="/krasa/grepconsole/action/highlight.gif"
+				description="Highlight Editor using Grep Console settings">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsoleAction"

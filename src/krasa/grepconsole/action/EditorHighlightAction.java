@@ -10,27 +10,33 @@ import krasa.grepconsole.utils.Rehighlighter;
 
 public class EditorHighlightAction extends HighlightManipulationAction {
 
-	protected Editor editor;
-	protected Project project;
-
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		editor = e.getData(PlatformDataKeys.EDITOR);
-		project = e.getProject();
+		Project project = e.getProject();
+		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		if (editor != null && project != null) {
 			MyConfigurable instance = new MyConfigurable(e.getProject());
 			instance.setCurrentAction(this);
 			boolean b = ShowSettingsUtil.getInstance().editConfigurable(e.getProject(), instance);
 			if (b) {
-				applySettings();
+				Rehighlighter rehighlighter = new Rehighlighter();
+				rehighlighter.removeAllHighlighters(editor);
+				rehighlighter.highlight(editor, project);
 			}
 			instance.setCurrentAction(null);
 		}
 	}
+
+	@Override
+	public void update(AnActionEvent e) {
+		super.update(e);
+		Project project = e.getProject();
+		Editor editor = e.getData(PlatformDataKeys.EDITOR);
+		e.getPresentation().setEnabled(project != null && editor != null);
+	}
+
 	@Override
 	public void applySettings() {
-		Rehighlighter rehighlighter = new Rehighlighter();
-		rehighlighter.removeAllHighlighters(editor);
-		rehighlighter.highlight(editor, project);
+
 	}
 }
