@@ -1,4 +1,5 @@
-==== https://plugins.jetbrains.com/plugin/7125[Grep Console - IntelliJ plugin]
+==== https://plugins.jetbrains.com/plugin/7125[Grep Console - IntelliJ plugin] 
+image::https://img.shields.io/badge/donate-paypal-green.svg[link="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin%20%2d%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest"]
 
 - grep output into a new console tab
 - change colors of matching text or lines
