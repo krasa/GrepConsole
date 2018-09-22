@@ -73,6 +73,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project);
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, parentConsoleView);
+		if (runnerLayoutUi == null) {  //should not happen
+			throw new IllegalStateException("runnerLayoutUi == null");
+		}
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
 
@@ -211,7 +214,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	@Nullable
-	private RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl parentConsoleView) {
+	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, ConsoleViewImpl parentConsoleView) {
 		RunnerLayoutUi runnerLayoutUi = null;
 
 		final RunContentDescriptor selectedContent = getRunContentDescriptor(eventProject);
@@ -242,7 +245,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return runnerLayoutUi;
 	}
 
-	private RunContentDescriptor getRunContentDescriptor(Project eventProject) {
+	public static RunContentDescriptor getRunContentDescriptor(Project eventProject) {
 		RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
 		return contentManager.getSelectedContent();
 	}

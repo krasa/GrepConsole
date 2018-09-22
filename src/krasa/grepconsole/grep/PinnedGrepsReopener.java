@@ -4,6 +4,7 @@ import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.AppUIUtil;
@@ -38,7 +39,11 @@ public class PinnedGrepsReopener {
 					if (project.isDisposed()) {
 						return;
 					}
-					
+					if (!(consoleView instanceof ConsoleViewImpl)) {
+						return;
+					}
+
+
 					Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
 							dom -> FocusUtils.isSameConsole(dom, consoleView, false));
 
@@ -49,10 +54,20 @@ public class PinnedGrepsReopener {
 									runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 							PinnedGrepConsolesState.Pins state = PinnedGrepConsolesState.getInstance(project).getPins(key);
 
-							if (state != null && !state.getPins().isEmpty() && consoleView instanceof ConsoleViewImpl) {
+							if (state != null && !state.getPins().isEmpty()) {
 								if (project.isDisposed()) {
 									return;
 								}
+								RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, (ConsoleViewImpl) consoleView);
+								if (runnerLayoutUi == null) {
+									if (atomicInteger.incrementAndGet() < 6) {
+										myUpdateAlarm.cancelAndRequest();
+									} else {
+										LOG.warn("runnerLayoutUi == null for " + key + ", aborting reopening of pins " + state);
+									}
+									return;
+								}
+
 								try {
 									enabled = false;
 									List<PinnedGrepConsolesState.Pin> list = state.getPins();
@@ -88,5 +103,6 @@ public class PinnedGrepsReopener {
 		}, 100, Alarm.ThreadToUse.POOLED_THREAD, project);
 		myUpdateAlarm.request();
 	}
+
 
 }
