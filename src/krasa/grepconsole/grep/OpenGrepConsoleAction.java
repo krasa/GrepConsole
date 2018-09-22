@@ -279,8 +279,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 		RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
 		RunContentDescriptor selectedContent = contentManager.getSelectedContent();
-		if (selectedContent != null && LOG.isDebugEnabled()) {
-			LOG.debug("#getRunContentDescriptor not found using ExecutionHelper.findRunningConsole, but found by getSelectedContent");
+		if (selectedContent != null) {
+			LOG.warn("#getRunContentDescriptor not found using ExecutionHelper.findRunningConsole, but found by getSelectedContent");
 
 		}
 
