@@ -6,7 +6,9 @@ import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.gui.SettingsContext;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.MyConfigurable;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.utils.Rehighlighter;
 
 import javax.swing.*;
@@ -28,6 +30,9 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 	}
 
 	public void actionPerformed(Project project, SettingsContext settingsContext) {
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted();
+		
 		MyConfigurable instance = new MyConfigurable(project, console);
 		instance.setCurrentAction(this);
 		instance.prepareForm(settingsContext);

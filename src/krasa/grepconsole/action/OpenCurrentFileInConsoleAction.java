@@ -7,6 +7,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 
 import java.io.File;
 
@@ -17,6 +19,9 @@ public class OpenCurrentFileInConsoleAction extends OpenFileInConsoleAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted();
+		
 		final Project project = getEventProject(e);
 		if (project == null) return;
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);

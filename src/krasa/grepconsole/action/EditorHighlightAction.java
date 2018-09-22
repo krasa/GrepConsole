@@ -5,13 +5,18 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.MyConfigurable;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.utils.Rehighlighter;
 
 public class EditorHighlightAction extends HighlightManipulationAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted();
+		
 		Project project = e.getProject();
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		if (editor != null && project != null) {

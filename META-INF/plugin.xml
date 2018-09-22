@@ -197,9 +197,6 @@
 		>
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>
-		<action id="GrepConsoleTail" class="krasa.grepconsole.action.GrepConsoleTailDummyAction"
-				text="GrepConsoleTailDummyAction">
-		</action>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">

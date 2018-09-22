@@ -18,6 +18,8 @@ import com.intellij.ui.ColorPicker;
 import com.intellij.util.CommonProcessors;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.model.*;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Rehighlighter;
 import krasa.grepconsole.utils.Utils;
@@ -35,6 +37,9 @@ public class ToggleEditorHighlightAction extends DumbAwareAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted();
+		
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		Project project = e.getProject();
 		if (project == null || editor == null) {
