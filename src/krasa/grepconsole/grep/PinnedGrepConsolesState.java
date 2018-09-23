@@ -3,7 +3,6 @@ package krasa.grepconsole.grep;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepProjectComponent;
@@ -18,17 +17,12 @@ import java.util.*;
 public class PinnedGrepConsolesState {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepConsolesState.class);
 
-	@Transient
-	private int MAX_SIZE;
+	public static int MAX_SIZE = 50;
 	@Transient
 	private List<WeakReference<OpenGrepConsoleAction.PinAction>> actions = new ArrayList<>();
 
 	private Map<RunConfigurationRef, Pins> map = new LinkedHashMap<>();
 
-	public PinnedGrepConsolesState() {
-		//noinspection UnresolvedPropertyKey
-		MAX_SIZE = Registry.intValue("krasa.grepconsole.grep.PinnedGrepConsolesState.MAX_SIZE", 50);
-	}
 
 	public static PinnedGrepConsolesState getInstance(Project project) {
 		return GrepProjectComponent.getInstance(project).getPinnedGreps();
