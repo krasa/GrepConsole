@@ -1,6 +1,8 @@
 ==== https://plugins.jetbrains.com/plugin/7125[Grep Console - IntelliJ plugin] 
 image::https://img.shields.io/badge/donate-paypal-black.svg[link="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin%20%2d%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest"]
 
+Features:
+
 - grep output into a new console tab
 - change colors of matching text or lines
 - filter out unwanted lines
@@ -9,9 +11,12 @@ image::https://img.shields.io/badge/donate-paypal-black.svg[link="https://www.pa
 - clear console
 - play sounds
 - tail files
-         
+- toggle highlight of all occurrences of the selected text in the editor
+- highlight editor according to console settings
+
 image::screenshotColors.png[]
 image::screenshotGrepSubConsole.png[]                 
+image::toggle.png[]                 
                                            
 Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
 Used http://plugins.jetbrains.com/plugin/6027?pr=idea[Remote call plugin] implementation for http integration.

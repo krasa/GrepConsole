@@ -9,6 +9,9 @@
 
 
 	<description><![CDATA[
+		  Grep, tail, filter, highlight... everything you need for a console. Also can highlight the editor - nice for analyzing logs...
+	         <br>
+		  Features:
 		  <ul>
 			<li>Change colors of matching text.</li>
 			<li>Grep output into a new console tab.</li>
@@ -22,8 +25,8 @@
 		  <br>
 		  Editor actions:
 		  <ul>
-			<li>Apply highlights in the editor according to the plugin's console settings.</li>
-			<li>Toggle highlight on all occurrences matching the selected text in the editor.</li>
+			<li>Apply highlights in the editor according to the plugin's console settings. (Main menu | Tools)</li>
+			<li>Toggle highlight on all occurrences of the selected text in the editor. (Ctrl+Alt+F3; Editor Popup Menu; Main menu | Tools)</li>
 		  </ul>
 		   <br>
 	 		*File Tailing: <br>
@@ -35,13 +38,16 @@
 	 		- Encoding auto-detection<br>
 	 		<br>
 			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
-			Used <a href="http://plugins.jetbrains.com/plugin/6027?pr=idea">Remote call plugin</a> implementation for http integration.<br>
+			Used <a href="http://plugins.jetbrains.com/plugin/6027?pr=idea">Remote call plugin</a> implementation for http integration.<br>      
+		   <br> <br>
+			       
+        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin%20%2d%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest">Donations are welcomed.</a>
       ]]></description>
 
 	<change-notes><![CDATA[        
         <br>8.5 (2018-09-22)
-		<br>- Toggle highlight on all occurrences matching the selected text in the editor.
-		<br>- NPE workaround
+		<br>- Added: Toggle highlight of all occurrences of the selected text in the editor.
+		<br>- Various fixes and improvements
         <br>8.3 (2018-07-05)
 		<br>- Highlighting for Grunt and other consoles.
         <br>8.2 (2018-06-15)
@@ -143,24 +149,25 @@
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
-				text="Toggle Highlight on All Occurrences"
+				text="Toggle Highlight of All Occurrences"
 				icon="/krasa/grepconsole/action/highlight.gif"
-				description="Toggle highlight on all occurrences matching the selected text in the editor">
+				description="Toggle highlight of all occurrences of the selected text in the editor">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 			<!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
 		</action>
 		<action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
-				text="Quick Toggle Highlight on All Occurrences"
+				text="Quick Toggle Highlight of All Occurrences"
 				icon="/krasa/grepconsole/action/highlight.gif"
-				description="Toggle highlight on all occurrences matching the selected text in the editor - without the dialog">
+				description="Toggle highlight of all occurrences of the selected text in the editor - without the dialog">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
 		</action>
 		<!-- Add your actions here -->
-		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction" text="Grep Highlight Editor"
+		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction"
+				text="Highlight Editor according to Grep Console settings"
 				icon="/krasa/grepconsole/action/highlight.gif"
-				description="Highlight Editor using Grep Console settings">
+				description="Highlight Editor according to Grep Console settings">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsoleAction"

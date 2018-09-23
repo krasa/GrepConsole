@@ -34,7 +34,6 @@ public class DefaultState {
 
 	private static List<GrepExpressionItem> createDefaultInputFilter() {
 		ArrayList<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
-		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*").action("externalScriptReference"));
 		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE));
 		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED));
 		return grepExpressionItems;
