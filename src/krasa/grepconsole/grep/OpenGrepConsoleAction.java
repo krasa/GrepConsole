@@ -1,7 +1,6 @@
 package krasa.grepconsole.grep;
 
 import com.intellij.execution.ExecutionHelper;
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.ui.*;
@@ -258,13 +257,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				runnerLayoutUi = ((MyJPanel) parent).runnerLayoutUi;
 			}
 		}
-		if (runnerLayoutUi == null) {    //probably useless
-			RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
-			RunContentDescriptor selectedContent = contentManager.getSelectedContent();
-			if (selectedContent != null) {
-				runnerLayoutUi = selectedContent.getRunnerLayoutUi();
-			}
-		}
+		//probably useless
+		// Docker - grep console is opened in other tool window; maybe breaks something
+//		if (runnerLayoutUi == null) {   
+//			RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
+//			RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+//			if (selectedContent != null) {
+//				runnerLayoutUi = selectedContent.getRunnerLayoutUi();
+//			}
+//		}
 		return runnerLayoutUi;
 	}
 
@@ -283,14 +284,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				LOG.warn("more than 1 RunContentDescriptor " + descriptors);
 			}
 		}
-		RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
-		RunContentDescriptor selectedContent = contentManager.getSelectedContent();
-		if (selectedContent != null) {
-			LOG.warn("#getRunContentDescriptor not found using ExecutionHelper.findRunningConsole, but found by getSelectedContent");
+		// Docker - grep console is opened in other tool window; maybe breaks something
+//		RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
+//		RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+//		if (selectedContent != null) {
+//			LOG.warn("#getRunContentDescriptor not found using ExecutionHelper.findRunningConsole, but found by getSelectedContent");
+//
+//		}
 
-		}
-
-		return selectedContent;
+		return null;
 	}
 
 	public static class LightProcessHandler extends ProcessHandler {
