@@ -123,7 +123,7 @@
             </constraints>
             <properties>
               <text value="Clear History"/>
-              <toolTipText value="Navigate to source console"/>
+              <toolTipText value=""/>
             </properties>
           </component>
         </children>
