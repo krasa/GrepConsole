@@ -1,5 +1,6 @@
 package krasa.grepconsole.grep;
 
+import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
@@ -249,6 +250,7 @@ public class PinnedGrepConsolesState {
 			return "Pin{" +
 					"parentConsoleUUID='" + parentConsoleUUID + '\'' +
 					", consoleUUID='" + consoleUUID + '\'' +
+					", contentType='" + contentType + '\'' +
 					", grepModel=" + grepModel +
 					'}';
 		}
@@ -260,6 +262,12 @@ public class PinnedGrepConsolesState {
 		private String icon;
 
 		public RunConfigurationRef() {
+		}
+
+		@NotNull
+		static protected RunConfigurationRef toKey(RunContentDescriptor runContentDescriptor) {
+			return new RunConfigurationRef(
+					runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 		}
 
 		public String getName() {

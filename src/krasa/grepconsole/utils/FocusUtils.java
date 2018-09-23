@@ -3,8 +3,13 @@ package krasa.grepconsole.utils;
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.impl.ConsoleViewImpl;
+import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
+import com.intellij.execution.testframework.ui.TestResultsPanel;
 import com.intellij.execution.ui.*;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ActionCallback;
 import com.intellij.openapi.wm.ToolWindow;
@@ -16,12 +21,14 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.Collection;
 
 /**
  * @author Vojtech Krasa
  */
 public class FocusUtils {
+	private static final Logger LOG = Logger.getInstance(FocusUtils.class);
 
 	public static void requestFocus(Project project) {
 		JFrame frame = WindowManager.getInstance().getFrame(project);
@@ -102,5 +109,23 @@ public class FocusUtils {
 			return isSameConsole(dom, parentConsoleView, orChild);
 		}
 		return executionConsole == consoleView;
+	}
+
+	public static boolean isSameConsole(Content dom, ExecutionConsole consoleView) {
+		JComponent actionsContextComponent = dom.getActionsContextComponent();
+		if (actionsContextComponent == consoleView) {
+			return true;
+		} else if (actionsContextComponent instanceof SMTestRunnerResultsForm) {
+			SMTestRunnerResultsForm resultsForm = (SMTestRunnerResultsForm) actionsContextComponent;
+			try {
+				Field myConsole = TestResultsPanel.class.getDeclaredField("myConsole");
+				myConsole.setAccessible(true);
+				ConsoleView data = DataManager.getInstance().getDataContext((Component) myConsole.get(resultsForm)).getData(LangDataKeys.CONSOLE_VIEW);
+				return data == consoleView;
+			} catch (Throwable e) {
+				LOG.error(e);
+			}
+		}
+		return false;
 	}
 }

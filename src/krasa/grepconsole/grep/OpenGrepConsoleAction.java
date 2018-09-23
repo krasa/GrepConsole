@@ -14,7 +14,6 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import krasa.grepconsole.filter.GrepCopyingFilter;
@@ -79,6 +78,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			throw new IllegalStateException("Console not supported: " + parentConsoleView);
 		}
 		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project, parentConsoleView);
+		if (runContentDescriptor == null) {  //should not happen
+			throw new IllegalStateException("runContentDescriptor == null");
+		}
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, runContentDescriptor, parentConsoleView);
 		if (runnerLayoutUi == null) {  //should not happen
 			throw new IllegalStateException("runnerLayoutUi == null");
@@ -87,7 +89,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 		}
 		if (contentType == null) {
-			contentType = getContentType(runnerLayoutUi);
+			contentType = getContentType(runnerLayoutUi, parentConsoleView);
 		}
 		if (contentType == null) {
 			contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
@@ -217,12 +219,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return s;
 	}
 
-	@Deprecated
 	@Nullable
-	protected String getContentType(@NotNull RunnerLayoutUi runnerLayoutUi) {
-		ContentManager contentManager = runnerLayoutUi.getContentManager();
-		Content selectedContent = contentManager.getSelectedContent();  //not reliable, returns variables for debug sometimes or null
-		return RunnerLayoutUiImpl.CONTENT_TYPE.get(selectedContent);
+	protected String getContentType(@NotNull RunnerLayoutUi runnerLayoutUi, ConsoleViewImpl consoleView) {
+		Content[] contents = runnerLayoutUi.getContents();
+		for (Content content : contents) {
+			if (FocusUtils.isSameConsole(content, consoleView)) {
+				return RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
+			}
+		}
+		return null;
 	}
 
 	public interface Callback {
@@ -272,7 +277,19 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	public static RunContentDescriptor getRunContentDescriptor(Project project, ConsoleViewImpl consoleView) {
 		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
 				dom -> {
-					return FocusUtils.isSameConsole(dom, consoleView, true);
+					if (FocusUtils.isSameConsole(dom, consoleView, true)) {
+						return true;
+					}
+					RunnerLayoutUi runnerLayoutUi = dom.getRunnerLayoutUi();
+					if (runnerLayoutUi != null) {
+						Content[] contents = runnerLayoutUi.getContents();
+						for (Content content : contents) {
+							if (FocusUtils.isSameConsole(content, consoleView)) {
+								return true;
+							}
+						}
+					}
+					return false;
 				});
 		if (!descriptors.isEmpty()) {
 			if (descriptors.size() == 1) {
@@ -351,8 +368,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
 			if (eventProject != null && copyingFilter != null) {
 				RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(eventProject, parentConsoleView);
-				RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, runContentDescriptor, parentConsoleView);
-				enabled = runnerLayoutUi != null;
+				if (runContentDescriptor != null) {
+					RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, runContentDescriptor, parentConsoleView);
+					enabled = runnerLayoutUi != null;
+				}
 			}
 		}
 

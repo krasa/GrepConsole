@@ -1,21 +1,24 @@
 package krasa.grepconsole.grep;
 
-import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.AppUIUtil;
+import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.SingleAlarm;
 import krasa.grepconsole.utils.FocusUtils;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static krasa.grepconsole.grep.PinnedGrepConsolesState.RunConfigurationRef.toKey;
 
 public class PinnedGrepsReopener {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepsReopener.class);
@@ -44,42 +47,45 @@ public class PinnedGrepsReopener {
 					}
 
 
-					Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
-							dom -> FocusUtils.isSameConsole(dom, consoleView, false));
+					RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(project, (ConsoleViewImpl) consoleView);
 
-					if (!descriptors.isEmpty()) {
-						if (descriptors.size() == 1) {
-							RunContentDescriptor runContentDescriptor = (RunContentDescriptor) descriptors.toArray()[0];
-							PinnedGrepConsolesState.RunConfigurationRef key = new PinnedGrepConsolesState.RunConfigurationRef(
-									runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
-							PinnedGrepConsolesState.Pins state = PinnedGrepConsolesState.getInstance(project).getPins(key);
+					if (runContentDescriptor != null) {
+						PinnedGrepConsolesState.RunConfigurationRef key = toKey(runContentDescriptor);
+						PinnedGrepConsolesState.Pins state = PinnedGrepConsolesState.getInstance(project).getPins(key);
 
-							if (state != null && !state.getPins().isEmpty()) {
-								if (project.isDisposed()) {
-									return;
+						if (state != null && !state.getPins().isEmpty()) {
+							if (project.isDisposed()) {
+								return;
+							}
+							RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, runContentDescriptor, (ConsoleViewImpl) consoleView);
+							if (runnerLayoutUi == null) {
+								if (atomicInteger.incrementAndGet() < 6) {
+									myUpdateAlarm.cancelAndRequest();
+								} else {
+									LOG.warn("runnerLayoutUi == null for " + key + ", aborting reopening of pins " + state);
 								}
-								RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, runContentDescriptor, (ConsoleViewImpl) consoleView);
-								if (runnerLayoutUi == null) {
-									if (atomicInteger.incrementAndGet() < 6) {
-										myUpdateAlarm.cancelAndRequest();
-									} else {
-										LOG.warn("runnerLayoutUi == null for " + key + ", aborting reopening of pins " + state);
-									}
-									return;
-								}
+								return;
+							}
 
-								try {
-									enabled = false;
-									List<PinnedGrepConsolesState.Pin> list = state.getPins();
-									for (PinnedGrepConsolesState.Pin pin : list) {
-										if (pin.getParentConsoleUUID() == null) {
-											initConsole(pin, key, (ConsoleViewImpl) consoleView, list);
+							try {
+								enabled = false;
+
+
+								Content[] contents = runnerLayoutUi.getContents();
+								for (Content content : contents) {
+									if (FocusUtils.isSameConsole(content, consoleView)) {
+										String contentType = RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
+
+										List<PinnedGrepConsolesState.Pin> list = state.getPins();
+										for (PinnedGrepConsolesState.Pin pin : list) {
+											if (pin.getParentConsoleUUID() == null && Objects.equals(contentType, pin.getContentType())) {
+												initConsole(pin, key, (ConsoleViewImpl) consoleView, list);
+											}
 										}
 									}
-								} finally {
-									enabled = true;
 								}
-
+							} finally {
+								enabled = true;
 							}
 						}
 					} else if (atomicInteger.incrementAndGet() < 3) {
@@ -87,6 +93,7 @@ public class PinnedGrepsReopener {
 					}
 				});
 			}
+
 
 			public void initConsole(PinnedGrepConsolesState.Pin pin, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleViewImpl parent, List<PinnedGrepConsolesState.Pin> list) {
 				if (LOG.isDebugEnabled()) {
@@ -103,6 +110,5 @@ public class PinnedGrepsReopener {
 		}, 100, Alarm.ThreadToUse.POOLED_THREAD, project);
 		myUpdateAlarm.request();
 	}
-
 
 }
