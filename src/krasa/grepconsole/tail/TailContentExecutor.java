@@ -149,7 +149,7 @@ public class TailContentExecutor implements Disposable {
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 		descriptor.setExecutionId(System.nanoTime());
 
-		ComponentWithActions componentWithActions = new ComponentWithActions.Impl(null, null, (JComponent) consoleView, null, consolePanel);
+		ComponentWithActions componentWithActions = new MyImpl(null, null, (JComponent) consoleView, null, consolePanel);
 		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, componentWithActions, myTitle, AllIcons.Debugger.Console, consolePanel);
 		layoutUi.addContent(content, 0, PlaceInGrid.right, false);
 		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor), "RunnerToolbar");
@@ -323,4 +323,59 @@ public class TailContentExecutor implements Disposable {
 		}
 
 	}
+
+
+	static class MyImpl implements ComponentWithActions {
+		private final ActionGroup myToolbar;
+		private final String myToolbarPlace;
+		private final JComponent myToolbarContext;
+		private final JComponent mySearchComponent;
+		private final JComponent myComponent;
+
+		public MyImpl(final ActionGroup toolbar, final String toolbarPlace, final JComponent toolbarContext,
+					  final JComponent searchComponent,
+					  final JComponent component) {
+			myToolbar = toolbar;
+			myToolbarPlace = toolbarPlace;
+			myToolbarContext = toolbarContext;
+			mySearchComponent = searchComponent;
+			myComponent = component;
+		}
+
+		@Override
+		public boolean isContentBuiltIn() {
+			return false;
+		}
+
+		public MyImpl(final JComponent component) {
+			this(null, null, null, null, component);
+		}
+
+		@Override
+		public ActionGroup getToolbarActions() {
+			return myToolbar;
+		}
+
+		@Override
+		public JComponent getSearchComponent() {
+			return mySearchComponent;
+		}
+
+		@Override
+		public String getToolbarPlace() {
+			return myToolbarPlace;
+		}
+
+		@Override
+		public JComponent getToolbarContextComponent() {
+			return myToolbarContext;
+		}
+
+		@Override
+		@NotNull
+		public JComponent getComponent() {
+			return myComponent;
+		}
+	}
+
 }
