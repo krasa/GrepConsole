@@ -15,6 +15,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.tail.MyProcessHandler;
 import krasa.grepconsole.tail.TailContentExecutor;
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +47,9 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 	}
 
 	public void openFileInConsole(@NotNull final Project project, final File file) {
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted(project);
+	
 		final Process process = new MyProcess(file);
 
 		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), detectEncoding(file)) {

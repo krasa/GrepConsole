@@ -3,11 +3,13 @@ package krasa.grepconsole.plugin;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
+import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -19,11 +21,11 @@ public class DonationNagger {
 	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Grep Console donation",
 			NotificationDisplayType.STICKY_BALLOON, true);
 
-	public static final String DONATE = "Click <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin%20%2d%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest\">" +
-			"here</a> if you would like to make a donation via PayPal.";
-	public static final String TITLE = "Thank you for using Grep Console plugin.";
+	public static final String TITLE = "Support Grep Console plugin development";
+	public static final String DONATE = "If you find this plugin helpful and would like to make a donation via PayPal, <a href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin%20%2d%20Donation&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest\">" +
+			"click here</a>. Thank you.";
 
-	public static final LocalDate MONTH_AFTER_RELEASE = LocalDate.of(2018, 10, 22);
+	public static final LocalDate MONTH_AFTER_RELEASE = LocalDate.of(2018, 10, 26);
 
 	private long actionsExecuted;
 	private Date firstUsage;
@@ -31,13 +33,20 @@ public class DonationNagger {
 	private Date lastDonationDate;
 	private String firstUsedVersion;
 
-
 	public long getActionsExecuted() {
 		return actionsExecuted;
 	}
 
 	public void setActionsExecuted(long actionsExecuted) {
 		this.actionsExecuted = actionsExecuted;
+	}
+
+	public Date getFirstUsage() {
+		return firstUsage;
+	}
+
+	public void setFirstUsage(Date firstUsage) {
+		this.firstUsage = firstUsage;
 	}
 
 	public Date getLastNaggingDate() {
@@ -56,7 +65,15 @@ public class DonationNagger {
 		this.lastDonationDate = lastDonationDate;
 	}
 
-	public void actionExecuted() {
+	public String getFirstUsedVersion() {
+		return firstUsedVersion;
+	}
+
+	public void setFirstUsedVersion(String firstUsedVersion) {
+		this.firstUsedVersion = firstUsedVersion;
+	}
+
+	public void actionExecuted(@Nullable Project project) {
 		try {
 			actionsExecuted++;
 
@@ -65,17 +82,17 @@ public class DonationNagger {
 			}
 
 			if (firstUsedVersion == null) {
-				IdeaPluginDescriptor string_manipulation = PluginManager.getPlugin(PluginId.getId("GrepConsole"));
-				if (string_manipulation != null) {
-					firstUsedVersion = string_manipulation.getVersion();
+				IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.getId("GrepConsole"));
+				if (plugin != null) {
+					firstUsedVersion = plugin.getVersion();
 				}
 			}
 
 			if (notDonatedRecently() && notNaggedRecently()) {
 				if (actionsExecuted == 10 && probablyNotNewUser()) {
-					nag(DONATE);
+					nag(project);
 				} else if (actionsExecuted % 100 == 0) {
-					nag(DONATE);
+					nag(project);
 				}
 			}
 		} catch (Exception e) {
@@ -84,11 +101,10 @@ public class DonationNagger {
 	}
 
 
-	@NotNull
-	protected void nag(String content) {
+	private void nag(Project project) {
 		lastNaggingDate = new Date();
 
-		Notification notification = NOTIFICATION.createNotification(TITLE, content, NotificationType.INFORMATION, new NotificationListener.UrlOpeningListener(true) {
+		Notification notification = NOTIFICATION.createNotification(TITLE, DONATE, NotificationType.INFORMATION, new NotificationListener.UrlOpeningListener(true) {
 			@Override
 			protected void hyperlinkActivated(@NotNull Notification notification1, @NotNull HyperlinkEvent event) {
 				super.hyperlinkActivated(notification1, event);
@@ -96,7 +112,7 @@ public class DonationNagger {
 			}
 		});
 
-		ApplicationManager.getApplication().invokeLater(() -> Notifications.Bus.notify(notification));
+		SwingUtilities.invokeLater(() -> Notifications.Bus.notify(notification, project));
 	}
 
 	private boolean probablyNotNewUser() {
@@ -117,7 +133,7 @@ public class DonationNagger {
 		return lastNag.isBefore(today.minusMonths(12));
 	}
 
-	protected boolean notNaggedRecently() {
+	private boolean notNaggedRecently() {
 		if (lastNaggingDate == null) {
 			return true;
 		}

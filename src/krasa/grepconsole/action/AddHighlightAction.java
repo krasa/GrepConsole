@@ -37,9 +37,6 @@ public class AddHighlightAction extends HighlightManipulationAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted();
-		
 		final ConsoleView consoleView = getConsoleView(e);
 		if (consoleView != null) {
 			try {
@@ -59,6 +56,8 @@ public class AddHighlightAction extends HighlightManipulationAction {
 				return;
 			}
 		}
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted(e.getProject());
 	}
 
 	protected void add(ConsoleView consoleView, String string, Color color) {

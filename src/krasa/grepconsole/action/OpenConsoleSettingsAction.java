@@ -31,7 +31,7 @@ public class OpenConsoleSettingsAction extends HighlightManipulationAction {
 
 	public void actionPerformed(Project project, SettingsContext settingsContext) {
 		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted();
+		pluginState.getDonationNagger().actionExecuted(project);
 		
 		MyConfigurable instance = new MyConfigurable(project, console);
 		instance.setCurrentAction(this);

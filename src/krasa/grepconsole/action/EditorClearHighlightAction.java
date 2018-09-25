@@ -18,13 +18,12 @@ public class EditorClearHighlightAction extends HighlightManipulationAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted();
-
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		if (editor != null) {
 			editor.getMarkupModel().removeAllHighlighters();
 		}
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted(e.getProject());
 	}
 
 	@Override

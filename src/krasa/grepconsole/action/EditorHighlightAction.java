@@ -14,9 +14,6 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted();
-		
 		Project project = e.getProject();
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		if (editor != null && project != null) {
@@ -30,6 +27,9 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 			}
 			instance.setCurrentAction(null);
 		}
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted(e.getProject());
+		
 	}
 
 	@Override

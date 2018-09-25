@@ -58,7 +58,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted();
+		pluginState.getDonationNagger().actionExecuted(e.getProject());
 
 		Project eventProject = getEventProject(e);
 		ConsoleViewImpl parentConsoleView = (ConsoleViewImpl) getConsoleView(e);

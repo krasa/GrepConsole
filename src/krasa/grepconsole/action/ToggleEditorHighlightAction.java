@@ -37,9 +37,6 @@ public class ToggleEditorHighlightAction extends DumbAwareAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted();
-		
 		Editor editor = e.getData(PlatformDataKeys.EDITOR);
 		Project project = e.getProject();
 		if (project == null || editor == null) {
@@ -81,6 +78,9 @@ public class ToggleEditorHighlightAction extends DumbAwareAction {
 				myHyperlinks.highlightHyperlinks(new GrepHighlightFilter(project, profile), 0, lineCount - 1);
 			}
 		}
+
+		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
+		pluginState.getDonationNagger().actionExecuted(e.getProject());
 	}
 
 	protected void removeAll(MarkupModelEx markupModel, RangeHighlighterEx result) {
