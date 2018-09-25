@@ -11,7 +11,6 @@ import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.SingleAlarm;
-import krasa.grepconsole.utils.FocusUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -73,7 +72,7 @@ public class PinnedGrepsReopener {
 
 								Content[] contents = runnerLayoutUi.getContents();
 								for (Content content : contents) {
-									if (FocusUtils.isSameConsole(content, consoleView)) {
+									if (OpenGrepConsoleAction.isSameConsole(content, consoleView)) {
 										String contentType = RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
 
 										List<PinnedGrepConsolesState.Pin> list = state.getPins();

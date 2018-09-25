@@ -3,9 +3,13 @@ package krasa.grepconsole.grep;
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
+import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
+import com.intellij.execution.testframework.ui.TestResultsPanel;
 import com.intellij.execution.ui.*;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.icons.AllIcons;
+import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -16,6 +20,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepCopyingFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
@@ -24,7 +29,6 @@ import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.plugin.ServiceManager;
-import krasa.grepconsole.utils.FocusUtils;
 import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -223,7 +228,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	protected String getContentType(@NotNull RunnerLayoutUi runnerLayoutUi, ConsoleViewImpl consoleView) {
 		Content[] contents = runnerLayoutUi.getContents();
 		for (Content content : contents) {
-			if (FocusUtils.isSameConsole(content, consoleView)) {
+			if (isSameConsole(content, consoleView)) {
 				return RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
 			}
 		}
@@ -262,29 +267,20 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				runnerLayoutUi = ((MyJPanel) parent).runnerLayoutUi;
 			}
 		}
-		//probably useless
-		// Docker - grep console is opened in other tool window; maybe breaks something
-//		if (runnerLayoutUi == null) {   
-//			RunContentManager contentManager = ExecutionManager.getInstance(eventProject).getContentManager();
-//			RunContentDescriptor selectedContent = contentManager.getSelectedContent();
-//			if (selectedContent != null) {
-//				runnerLayoutUi = selectedContent.getRunnerLayoutUi();
-//			}
-//		}
 		return runnerLayoutUi;
 	}
 
 	public static RunContentDescriptor getRunContentDescriptor(Project project, ConsoleViewImpl consoleView) {
 		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
 				dom -> {
-					if (FocusUtils.isSameConsole(dom, consoleView, true)) {
+					if (isSameConsole(dom, consoleView, true)) {
 						return true;
 					}
 					RunnerLayoutUi runnerLayoutUi = dom.getRunnerLayoutUi();
 					if (runnerLayoutUi != null) {
 						Content[] contents = runnerLayoutUi.getContents();
 						for (Content content : contents) {
-							if (FocusUtils.isSameConsole(content, consoleView)) {
+							if (isSameConsole(content, consoleView)) {
 								return true;
 							}
 						}
@@ -301,17 +297,41 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				LOG.warn("more than 1 RunContentDescriptor " + descriptors);
 			}
 		}
-		// Docker - grep console is opened in other tool window; maybe breaks something
-//		RunContentManager contentManager = ExecutionManager.getInstance(project).getContentManager();
-//		RunContentDescriptor selectedContent = contentManager.getSelectedContent();
-//		if (selectedContent != null) {
-//			LOG.warn("#getRunContentDescriptor not found using ExecutionHelper.findRunningConsole, but found by getSelectedContent");
-//
-//		}
 
 		return null;
 	}
 
+	public static boolean isSameConsole(RunContentDescriptor dom, ExecutionConsole consoleView, boolean orChild) {
+		ExecutionConsole executionConsole = dom.getExecutionConsole();
+		if (executionConsole instanceof BaseTestsOutputConsoleView) {
+			executionConsole = ((BaseTestsOutputConsoleView) executionConsole).getConsole();
+		}
+		if (consoleView instanceof MyConsoleViewImpl && orChild) {
+			ConsoleViewImpl parentConsoleView = ((MyConsoleViewImpl) consoleView).getParentConsoleView();
+			return isSameConsole(dom, parentConsoleView, orChild);
+		}
+		return executionConsole == consoleView;
+	}
+
+	public static boolean isSameConsole(Content dom, ExecutionConsole consoleView) {
+		JComponent actionsContextComponent = dom.getActionsContextComponent();
+		if (actionsContextComponent == consoleView) {
+			return true;
+		} else if (actionsContextComponent instanceof SMTestRunnerResultsForm) {
+			SMTestRunnerResultsForm resultsForm = (SMTestRunnerResultsForm) actionsContextComponent;
+			try {
+				Field myConsole = TestResultsPanel.class.getDeclaredField("myConsole");
+				myConsole.setAccessible(true);
+				ConsoleView data = DataManager.getInstance().getDataContext((Component) myConsole.get(resultsForm)).getData(LangDataKeys.CONSOLE_VIEW);
+				return data == consoleView;
+			} catch (Throwable e) {
+				LOG.error(e);
+			}
+		}
+		return false;
+	}
+
+	
 	public static class LightProcessHandler extends ProcessHandler {
 		@Override
 		protected void destroyProcessImpl() {
