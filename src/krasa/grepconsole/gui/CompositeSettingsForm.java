@@ -190,6 +190,14 @@ public class CompositeSettingsForm {
 			duplicateButton.setEnabled(allowRunConfigurationChanges);
 			renameButton.setEnabled(allowRunConfigurationChanges);
 			deleteButton.setEnabled(allowRunConfigurationChanges);
+			if (!allowRunConfigurationChanges) {
+				for (Profile profile : settings.getProfiles()) {
+					if (profile.isDefaultProfile()) {
+						selectProfile(profile.getId());
+						break;
+					}
+				}
+			}
 		}
 	}
 
