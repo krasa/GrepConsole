@@ -28,6 +28,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.ComponentWithActions;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
@@ -148,7 +149,8 @@ public class TailContentExecutor implements Disposable {
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 		descriptor.setExecutionId(System.nanoTime());
 
-		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, consolePanel, myTitle, AllIcons.Debugger.Console, consolePanel);
+		ComponentWithActions componentWithActions = new ComponentWithActions.Impl(null, null, (JComponent) consoleView, null, consolePanel);
+		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, componentWithActions, myTitle, AllIcons.Debugger.Console, consolePanel);
 		layoutUi.addContent(content, 0, PlaceInGrid.right, false);
 		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor), "RunnerToolbar");
 
