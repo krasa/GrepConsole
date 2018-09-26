@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>8.4.162.000.0</version>
+	<version>8.4.162.000.1</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -45,9 +45,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>8.5 (2018-09-22)
+        <br>8.5 (2018-09-26)
 		<br>- Added: Toggle highlight of all occurrences of the selected text in the editor.
-		<br>- Various fixes and improvements
+		<br>- Fixed reopening of pinned grep console
         <br>8.3 (2018-07-05)
 		<br>- Highlighting for Grunt and other consoles.
         <br>8.2 (2018-06-15)
@@ -149,16 +149,16 @@
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
-				text="Toggle Highlight of All Occurrences"
+				text="Toggle Highlight of All Occurrences (custom color)"
 				icon="/krasa/grepconsole/action/highlight.gif"
-				description="Toggle highlight of all occurrences of the selected text in the editor">
+				description="Toggle highlight of all occurrences of the selected text in the editor. Opens a dialog to choose a color.">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 			<!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
 		</action>
 		<action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
-				text="Quick Toggle Highlight of All Occurrences"
+				text="Toggle Highlight of All Occurrences"
 				icon="/krasa/grepconsole/action/highlight.gif"
-				description="Toggle highlight of all occurrences of the selected text in the editor - without the dialog">
+				description="Toggle highlight of all occurrences of the selected text in the editor - with predefined colors">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
 			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
