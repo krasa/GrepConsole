@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>8.4.162.000.1</version>
+	<version>8.5.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -45,7 +45,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>8.5 (2018-09-26)
+        <br>8.5 (2018-10-05)
+		<br>- Exception fix
+        <br>8.4 (2018-09-26)
 		<br>- Added: Toggle highlight of all occurrences of the selected text in the editor.
 		<br>- Fixed reopening of pinned grep console
         <br>8.3 (2018-07-05)

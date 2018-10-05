@@ -1,12 +1,5 @@
 package krasa.grepconsole.stats;
 
-import javax.swing.*;
-
-import krasa.grepconsole.filter.GrepHighlightFilter;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
@@ -14,6 +7,11 @@ import com.intellij.openapi.wm.CustomStatusBarWidget;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
+import krasa.grepconsole.filter.GrepHighlightFilter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
 
 public class GrepConsoleStatusBarWidget implements CustomStatusBarWidget {
 
@@ -63,16 +61,18 @@ public class GrepConsoleStatusBarWidget implements CustomStatusBarWidget {
 
 	@Override
 	public void dispose() {
-		IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
-		if (ideFrame != null) {
-			final StatusBar statusBar = ideFrame.getStatusBar();
-			statusBar.removeWidget(ID());
-			statusBar.getComponent().revalidate();
-		}
+		SwingUtilities.invokeLater(() -> {
+			IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
+			if (ideFrame != null) {
+				final StatusBar statusBar = ideFrame.getStatusBar();
+				statusBar.removeWidget(ID());
+				statusBar.getComponent().revalidate();
+			}
 
-		if (statisticsPanel != null) {
-			statisticsPanel.cancelTimer();
-			statisticsPanel = null;
-		}
+			if (statisticsPanel != null) {
+				statisticsPanel.cancelTimer();
+				statisticsPanel = null;
+			}
+		});
 	}
 }
