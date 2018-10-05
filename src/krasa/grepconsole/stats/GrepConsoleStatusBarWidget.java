@@ -7,6 +7,7 @@ import com.intellij.openapi.wm.CustomStatusBarWidget;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
+import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -61,7 +62,7 @@ public class GrepConsoleStatusBarWidget implements CustomStatusBarWidget {
 
 	@Override
 	public void dispose() {
-		SwingUtilities.invokeLater(() -> {
+		UIUtil.invokeLaterIfNeeded(() -> {
 			IdeFrame ideFrame = WindowManager.getInstance().getIdeFrame(project);
 			if (ideFrame != null) {
 				final StatusBar statusBar = ideFrame.getStatusBar();
