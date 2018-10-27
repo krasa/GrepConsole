@@ -1,6 +1,8 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.execution.configurations.RunConfigurationBase;
+import com.intellij.execution.filters.CompositeInputFilter;
+import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
  * @author Vojtech Krasa
  */
 public class ServiceManager {
-	private static final Logger log = Logger.getInstance(ServiceManager.class);
+	private static final Logger LOG = Logger.getInstance(ServiceManager.class);
 
 	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
 
@@ -168,7 +170,6 @@ public class ServiceManager {
 	}
 
 
-
 	public void resetSettings() {
 		iterate(highlightFilters);
 		iterate(inputFilters);
@@ -255,17 +256,45 @@ public class ServiceManager {
 
 	public void registerConsole(@NotNull ConsoleView console) {
 		GrepCopyingFilter lastCopier = getLastCopier();
+		lastCopier = checkConsistency(console, GrepCopyingFilter.class, lastCopier);
 		if (lastCopier != null) {
 			consoles.put(console, lastCopier);
 			this.lastCopier = null;
 		}
 		GrepInputFilter lastGrepInputFilter = getLastGrepInputFilter();
+		lastGrepInputFilter = checkConsistency(console, GrepInputFilter.class, lastGrepInputFilter);
 		if (lastGrepInputFilter != null) {
 			lastGrepInputFilter.init(new WeakReference<>(console), getProfile(console));
 			consoles.put(console, lastGrepInputFilter);
 			this.lastGrepInputFilter = null;
 		}
 		consoles.put(console, lastRunConfiguration);
+	}
+
+
+	@SuppressWarnings("unchecked")
+	private <T> T checkConsistency(ConsoleView console, Class<T> clazz, InputFilter lastFilter) {
+		if (console instanceof ConsoleViewImpl) {
+			try {
+				CompositeInputFilter myInputMessageFilter = (CompositeInputFilter) ReflectionUtils.getPropertyValue(console, "myInputMessageFilter");
+				if (myInputMessageFilter != null) {
+					List myFilters = (List) ReflectionUtils.getPropertyValue(myInputMessageFilter, "myFilters");
+					for (Object myFilter : myFilters) {
+						Object actualFilter = ReflectionUtils.getPropertyValue(myFilter, "myOriginal");
+						if (actualFilter!=null && actualFilter.getClass().equals(clazz)) {
+							if (actualFilter != lastFilter) {
+								LOG.error("Wrong filter " + lastFilter); //TODO
+								return (T) actualFilter;
+							}
+						}
+					}
+				}
+			} catch (Throwable e) {
+				LOG.error(e);
+			}
+		}
+
+		return (T) lastFilter;
 	}
 
 	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
