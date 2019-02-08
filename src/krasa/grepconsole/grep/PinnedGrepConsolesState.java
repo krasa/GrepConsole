@@ -17,7 +17,7 @@ import java.util.*;
 public class PinnedGrepConsolesState {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepConsolesState.class);
 
-	public static int MAX_SIZE = 50;
+	public static int MAX_SIZE = 100;
 	@Transient
 	private List<WeakReference<OpenGrepConsoleAction.PinAction>> actions = new ArrayList<>();
 
