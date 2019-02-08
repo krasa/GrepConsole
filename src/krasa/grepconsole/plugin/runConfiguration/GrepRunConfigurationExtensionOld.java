@@ -38,7 +38,7 @@ public class GrepRunConfigurationExtensionOld extends RunConfigurationExtension 
 	}
 
 	@Override
-	protected boolean isApplicableFor(@NotNull RunConfigurationBase runConfiguration) {
+	public boolean isApplicableFor(@NotNull RunConfigurationBase runConfiguration) {
 		return true;
 	}
 
