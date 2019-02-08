@@ -97,6 +97,7 @@ public class PinnedGrepConsolesState {
 				if (!isFull()) {
 					break;
 				}
+				iterator.next();
 				iterator.remove();
 			}
 		}
