@@ -279,12 +279,16 @@ public class ServiceManager {
 				CompositeInputFilter myInputMessageFilter = (CompositeInputFilter) ReflectionUtils.getPropertyValue(console, "myInputMessageFilter");
 				if (myInputMessageFilter != null) {
 					List myFilters = (List) ReflectionUtils.getPropertyValue(myInputMessageFilter, "myFilters");
-					for (Object myFilter : myFilters) {
-						Object actualFilter = ReflectionUtils.getPropertyValue(myFilter, "myOriginal");
-						if (actualFilter!=null && actualFilter.getClass().equals(clazz)) {
-							if (actualFilter != lastFilter) {
-								LOG.error("Wrong filter " + lastFilter); //TODO
-								return (T) actualFilter;
+					if (myFilters != null) {
+						for (Object myFilter : myFilters) {
+							if (myFilter instanceof CompositeInputFilter) {        //old API has Pair<>
+								Object actualFilter = ReflectionUtils.getPropertyValue(myFilter, "myOriginal");
+								if (actualFilter != null && actualFilter.getClass().equals(clazz)) {
+									if (actualFilter != lastFilter) {
+//									LOG.error("Wrong filter " + lastFilter + " console="+console); //TODO
+										return (T) actualFilter;
+									}
+								}
 							}
 						}
 					}
