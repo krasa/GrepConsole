@@ -129,7 +129,9 @@ public class ServiceManager {
 
 		public long getSelectedProfileId(ConsoleView console) {
 			ConsoleViewData consoleViewData = get(console);
-			if (consoleViewData.runConfigurationBase != null) {
+			if (consoleViewData == null) {
+				return 0;
+			} else if (consoleViewData.runConfigurationBase != null) {
 				GrepConsoleData grepConsoleData = GrepConsoleData.getGrepConsoleData(consoleViewData.runConfigurationBase);
 				return grepConsoleData.getSelectedProfileId();
 			} else {
