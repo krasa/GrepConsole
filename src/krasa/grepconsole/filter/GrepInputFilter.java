@@ -162,6 +162,10 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		throw new UnsupportedOperationException();
 	}
 
+	public GrepCopyingFilter getGrepFilter() {
+		return grepFilter;
+	}
+
 	public void setGrepFilter(GrepCopyingFilter copyingFilter) {
 		this.grepFilter = copyingFilter;
 	}

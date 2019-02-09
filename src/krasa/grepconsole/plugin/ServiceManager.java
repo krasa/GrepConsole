@@ -255,12 +255,7 @@ public class ServiceManager {
 	}
 
 	public void registerConsole(@NotNull ConsoleView console) {
-		GrepCopyingFilter lastCopier = getLastCopier();
-		lastCopier = checkConsistency(console, GrepCopyingFilter.class, lastCopier);
-		if (lastCopier != null) {
-			consoles.put(console, lastCopier);
-			this.lastCopier = null;
-		}
+
 		GrepInputFilter lastGrepInputFilter = getLastGrepInputFilter();
 		lastGrepInputFilter = checkConsistency(console, GrepInputFilter.class, lastGrepInputFilter);
 		if (lastGrepInputFilter != null) {
@@ -268,6 +263,18 @@ public class ServiceManager {
 			consoles.put(console, lastGrepInputFilter);
 			this.lastGrepInputFilter = null;
 		}
+
+
+		GrepCopyingFilter lastCopier = getLastCopier();
+		lastCopier = checkConsistency(console, GrepCopyingFilter.class, lastCopier);
+		if (lastGrepInputFilter != null && lastGrepInputFilter.getGrepFilter() != null) {
+			lastCopier = lastGrepInputFilter.getGrepFilter();
+		}
+		if (lastCopier != null) {
+			consoles.put(console, lastCopier);
+			this.lastCopier = null;
+		}
+
 		consoles.put(console, lastRunConfiguration);
 	}
 
