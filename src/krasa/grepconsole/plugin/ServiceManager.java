@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -280,21 +281,25 @@ public class ServiceManager {
 		consoles.put(console, lastRunConfiguration);
 	}
 
+	static boolean broken = false;
 
 	@SuppressWarnings("unchecked")
 	private <T> T checkConsistency(ConsoleView console, Class<T> clazz, InputFilter lastFilter) {
 		if (console instanceof ConsoleViewImpl) {
 			try {
-				CompositeInputFilter myInputMessageFilter = (CompositeInputFilter) ReflectionUtils.getPropertyValue(console, "myInputMessageFilter");
+				Field field = getInputFilterField();  //2018.1- is obfucated
+				if (field == null) {
+					return (T) lastFilter;
+				}
+				CompositeInputFilter myInputMessageFilter = (CompositeInputFilter) field.get(console);
 				if (myInputMessageFilter != null) {
 					List myFilters = (List) ReflectionUtils.getPropertyValue(myInputMessageFilter, "myFilters");
 					if (myFilters != null) {
 						for (Object myFilter : myFilters) {
-							if (myFilter instanceof CompositeInputFilter) {        //old API has Pair<>
-								Object actualFilter = ReflectionUtils.getPropertyValue(myFilter, "myOriginal");
-								if (actualFilter != null && actualFilter.getClass().equals(clazz)) {
-									if (actualFilter != lastFilter) {
-//									LOG.error("Wrong filter " + lastFilter + " console="+console); //TODO
+							if (myFilter != null) {
+								if (myFilter.getClass().getSimpleName().equals("InputFilterWrapper")) {        //for 2018+, old API won't work
+									Object actualFilter = ReflectionUtils.getPropertyValue(myFilter, "myOriginal");
+									if (actualFilter != null && actualFilter.getClass().equals(clazz)) {
 										return (T) actualFilter;
 									}
 								}
@@ -303,11 +308,31 @@ public class ServiceManager {
 					}
 				}
 			} catch (Throwable e) {
-				LOG.error(e);
+				if (!broken) {
+					broken = true;
+					LOG.error("Please report this", e);
+				}
 			}
 		}
 
 		return (T) lastFilter;
+	}
+
+	private static Field inputFilterField;
+
+	//field is obfuscated, must find it by type
+	@Nullable
+	private static Field getInputFilterField() {
+		if (inputFilterField == null) {
+			Field[] declaredFields = ConsoleViewImpl.class.getDeclaredFields();
+			for (Field declaredField : declaredFields) {
+				if (declaredField.getType().equals(InputFilter.class)) {
+					inputFilterField = declaredField;
+					inputFilterField.setAccessible(true);
+				}
+			}
+		}
+		return inputFilterField;
 	}
 
 	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
