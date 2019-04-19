@@ -49,6 +49,7 @@ public class CompositeSettingsForm {
 		this(myConfigurable, settings, SettingsContext.NONE, originallySelectedProfileId);
 		runConfigurationDialog = true;
 		runConfigurationDialog();
+
 	}
 
 	public CompositeSettingsForm(MyConfigurable myConfigurable, PluginState settingsForCloning, SettingsContext settingsContext, long originallySelectedProfileId) {
@@ -76,7 +77,6 @@ public class CompositeSettingsForm {
 					}
 				}
 		);
-
 
 		enableRunConfigurationProfilesCheckBox.addActionListener(new ActionListener() {
 			@Override
@@ -205,6 +205,7 @@ public class CompositeSettingsForm {
 		profileDetail = new JPanel(new GridLayout());
 		profilesModel = new DefaultListModel();
 		jbList = new JBList(profilesModel);
+		jbList.getMinimumSize();
 		jbList.setCellRenderer(new DefaultListCellRenderer() {
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -223,6 +224,10 @@ public class CompositeSettingsForm {
 
 	public JPanel getRootComponent() {
 		return root;
+	}
+
+	public JPanel getProfiles() {
+		return profiles;
 	}
 
 	public boolean isSettingsModified(PluginState state) {

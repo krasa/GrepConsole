@@ -25,7 +25,7 @@ public class MyConfigurable implements Configurable {
 	private long originalSelectedProfileId;
 	@Nullable
 	private ConsoleView console;
-	private CompositeSettingsForm form;
+	protected CompositeSettingsForm form;
 	private ServiceManager serviceManager = ServiceManager.getInstance();
 	public GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 	HighlightManipulationAction currentAction;
@@ -77,6 +77,10 @@ public class MyConfigurable implements Configurable {
 		if (form == null) {
 			form = new CompositeSettingsForm(this, applicationComponent.getState(), originalSelectedProfileId);
 		}
+		return getRootComponent();
+	}
+
+	protected JPanel getRootComponent() {
 		return form.getRootComponent();
 	}
 

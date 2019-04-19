@@ -21,7 +21,6 @@ public class GrepSettingsEditor extends SettingsEditor<RunConfigurationBase> {
 
 	@Override
 	protected void resetEditorFrom(RunConfigurationBase runConfigurationBase) {
-
 	}
 
 	@Override
@@ -37,6 +36,9 @@ public class GrepSettingsEditor extends SettingsEditor<RunConfigurationBase> {
 			protected void refreshServices(@Nullable HighlightManipulationAction currentAction) {
 			}
 
+			protected JPanel getRootComponent() {
+				return form.getProfiles();
+			}
 			@Override
 			protected PluginState getClone(PluginState formSettings) {
 				return formSettings;
