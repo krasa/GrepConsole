@@ -30,7 +30,7 @@ import java.nio.charset.Charset;
  */
 public class OpenFileInConsoleAction extends DumbAwareAction {
 	private static final Logger LOG = Logger.getInstance(OpenFileInConsoleAction.class);
-	             
+
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
@@ -49,7 +49,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 	public void openFileInConsole(@NotNull final Project project, final File file) {
 		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
 		pluginState.getDonationNagger().actionExecuted(project);
-	
+
 		final Process process = new MyProcess(file);
 
 		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), detectEncoding(file)) {
@@ -114,12 +114,15 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		private MyProcess(final File file) {
 			try {
 				inputStream = new FileInputStream(file);
-				long size = inputStream.getChannel().size();
-				// close enough, it does not work for binary files very well, but i hope it does at least for text
-				inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
+				if (file.isFile()) {// Illegal seek for a named pipe on Linux #135
+					long size = inputStream.getChannel().size();
+					// close enough, it does not work for binary files very well, but i hope it does at least for text
+					inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
+				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+
 		}
 
 		@Override
