@@ -21,7 +21,7 @@ public abstract class AbstractGrepFilter extends AbstractFilter {
 	private static final Logger log = Logger.getInstance(AbstractGrepFilter.class);
 	                                
 	protected volatile List<GrepProcessor> grepProcessors;
-	private boolean showLimitNotification = true;
+	protected boolean showLimitNotification = true;
 
 	public AbstractGrepFilter(@NotNull Project project, @NotNull Profile profile) {
 		super(project, profile);
