@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+/**
+ * every stream could have its own thread (java), or it could be all on some random pooled thread (debug in CLion)
+ */
 public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	private static final Logger log = Logger.getInstance(GrepInputFilter.class);
 
@@ -31,8 +34,9 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	private WeakReference<ConsoleView> console;
 	private volatile boolean lastLineFiltered = false;
 	private volatile boolean removeNextNewLine = false;
-	private boolean testConsole;
+	private boolean blankLineWorkaround;
 	private volatile GrepCopyingFilter grepFilter;
+
 
 	public GrepInputFilter(Project project, Profile profile) {
 		super(project, profile);
@@ -42,14 +46,16 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		super(profile, grepProcessors);
 	}
 
+	/*todo not reliable */
 	public void init(WeakReference<ConsoleView> console, Profile profile) {
 		this.profile = profile;
 		this.console = console;
 		ConsoleView consoleView = console.get();
 		if (consoleView != null) {
-			testConsole = consoleView.getClass().getName().startsWith("com.intellij.execution.testframework.ui");
+			blankLineWorkaround = consoleView.getClass().getName().startsWith("com.intellij.execution.testframework.ui");
 			log.info("Initializing for " + consoleView.getClass().getName());
 		}
+		blankLineWorkaround = blankLineWorkaround || profile.isInputFilterBlankLineWorkaround();
 	}
 
 	@Override
@@ -153,12 +159,12 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 			if (state.isExclude()) {
 				result.add(REMOVE_OUTPUT_PAIR);
 				lastLineFiltered = true;
-				removeNextNewLine = testConsole && state.notTerminatedWithNewline();
+				removeNextNewLine = blankLineWorkaround && state.notTerminatedWithNewline();
 				return result;
 			} else if (profile.isMultilineInputFilter() && !state.isMatchesSomething() && previousLineFiltered) {
 				result.add(REMOVE_OUTPUT_PAIR);
 				lastLineFiltered = true;
-				removeNextNewLine = testConsole && state.notTerminatedWithNewline();
+				removeNextNewLine = blankLineWorkaround && state.notTerminatedWithNewline();
 				return result;
 			}
 		}

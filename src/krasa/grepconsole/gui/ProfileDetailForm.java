@@ -87,6 +87,7 @@ public class ProfileDetailForm {
 	private JButton addNewInputFilterGroup;
 	private JButton extensionButton;
 	private JButton addNewInputFilterItem;
+	private JCheckBox inputFilterBlankLineCheckBox;
 	// private JCheckBox synchronous;
 	public Profile profile;
 
@@ -427,8 +428,8 @@ public class ProfileDetailForm {
 	}
 
 	public void setData(Profile data) {
-		multilineInputFilter.setSelected(data.isMultilineInputFilter());
 		testHighlightersFirst.setSelected(data.isTestHighlightersInInputFilter());
+		multilineInputFilter.setSelected(data.isMultilineInputFilter());
 		multilineOutput.setSelected(data.isMultiLineOutput());
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		maxProcessingTime.setText(data.getMaxProcessingTime());
@@ -442,11 +443,12 @@ public class ProfileDetailForm {
 		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
 		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
 		alwaysPinGrepConsoles.setSelected(data.isAlwaysPinGrepConsoles());
+		inputFilterBlankLineCheckBox.setSelected(data.isInputFilterBlankLineWorkaround());
 	}
 
 	public void getData(Profile data) {
-		data.setMultilineInputFilter(multilineInputFilter.isSelected());
 		data.setTestHighlightersInInputFilter(testHighlightersFirst.isSelected());
+		data.setMultilineInputFilter(multilineInputFilter.isSelected());
 		data.setMultiLineOutput(multilineOutput.isSelected());
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setMaxProcessingTime(maxProcessingTime.getText());
@@ -460,11 +462,12 @@ public class ProfileDetailForm {
 		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
 		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
 		data.setAlwaysPinGrepConsoles(alwaysPinGrepConsoles.isSelected());
+		data.setInputFilterBlankLineWorkaround(inputFilterBlankLineCheckBox.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
-		if (multilineInputFilter.isSelected() != data.isMultilineInputFilter()) return true;
 		if (testHighlightersFirst.isSelected() != data.isTestHighlightersInInputFilter()) return true;
+		if (multilineInputFilter.isSelected() != data.isMultilineInputFilter()) return true;
 		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
 		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit()) return true;
 		if (maxProcessingTime.getText() != null ? !maxProcessingTime.getText().equals(data.getMaxProcessingTime()) : data.getMaxProcessingTime() != null)
@@ -481,6 +484,7 @@ public class ProfileDetailForm {
 		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault()) return true;
 		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
 		if (alwaysPinGrepConsoles.isSelected() != data.isAlwaysPinGrepConsoles()) return true;
+		if (inputFilterBlankLineCheckBox.isSelected() != data.isInputFilterBlankLineWorkaround()) return true;
 		return false;
 	}
 
