@@ -414,7 +414,7 @@
                     </constraints>
                     <properties>
                       <text value="Input filter blank line workaround"/>
-                      <toolTipText value="Sometimes removing lines leaves a blank line, this should fix it - but not on 100% "/>
+                      <toolTipText value="Sometimes removing lines leaves a blank line, this should fix it - but not on 100% due to stream mixing"/>
                     </properties>
                   </component>
                 </children>
