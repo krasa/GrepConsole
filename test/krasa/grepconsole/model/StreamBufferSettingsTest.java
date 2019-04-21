@@ -12,6 +12,6 @@ public class StreamBufferSettingsTest {
 
 	@Test
 	public void toNano() {
-		Assert.assertEquals(5111111_000_000L, Utils.toNano("5111111", 1));
+		Assert.assertEquals(5111111_000_000L, Utils.toNano("5111111", "1"));
 	}
 }
