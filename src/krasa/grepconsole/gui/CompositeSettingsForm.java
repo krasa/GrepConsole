@@ -59,6 +59,14 @@ public class CompositeSettingsForm {
 
 		profileDetailFormComponent = new ProfileDetailForm(myConfigurable, settingsContext);
 		profileDetail.add(profileDetailFormComponent.getRootComponent());
+		profileDetailFormComponent.bufferStreams.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (profileDetailFormComponent.bufferStreams.isSelected()) {
+					new StreamBufferSettingsActionListener().actionPerformed(null);
+				}
+			}
+		});
 //		Dimension minimumSize = new Dimension(0, 0);
 //		profiles.setMinimumSize(minimumSize);
 

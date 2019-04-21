@@ -88,7 +88,7 @@ public class ProfileDetailForm {
 	private JButton extensionButton;
 	private JButton addNewInputFilterItem;
 	private JCheckBox inputFilterBlankLineCheckBox;
-	private JCheckBox bufferStreams;
+	public JCheckBox bufferStreams;
 	// private JCheckBox synchronous;
 	public Profile profile;
 
@@ -217,7 +217,7 @@ public class ProfileDetailForm {
 				popup.show(extensionButton, 0, extensionButton.getHeight());
 			}
 		});
-		;
+
 	}
 
 	public MouseAdapter rightClickMenu(CheckboxTreeTable table, boolean input) {

@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
@@ -20,6 +22,7 @@ public class StreamBufferSettingsForm {
 	private JEditorPane about;
 	private JPanel root;
 	private JCheckBox useForCheckBox;
+	private JButton resetToDefaultButton;
 
 	public StreamBufferSettingsForm() {
 
@@ -27,15 +30,21 @@ public class StreamBufferSettingsForm {
 				"Experimental and potentially dangerous workaround for <a href=\"https://youtrack.jetbrains.com/issue/IDEA-70016\">IDEA-70016</a>" +
 				"<br/>Inspired by <a href=\"https://youtrack.jetbrains.com/issue/PY-32776\">PY-32776</a>" +
 				"<br/>- Buffers all streams to minimize printing of incomplete lines" +
-				"<br/>- Stderr is delayed until nothing more is being outputted, so that a whole stacktrace is printed together" +
+				"<br/>- Stderr is delayed for a while until nothing is being currently outputted, so that a whole stacktrace is printed together" +
 				"<br/>- JUnit tests are not handled well, as they mix all different stream types when ComparisonFailure happens" +
-				"<br/>- SYSTEM output type is currently not buffered" +
+				"<br/>- SYSTEM output type is not buffered, for now" +
 
-				"<br/>- Does not fix mixed order of stdout/stderr lines." +
+				"<br/>- Does NOT fix mixed order of stdout/stderr lines" +
 				"<br/></body></html>");
 		about.addHyperlinkListener(
 				new BrowseHyperlinkListener()
 		);
+		resetToDefaultButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setData(new StreamBufferSettings());
+			}
+		});
 	}
 
 	public JComponent getRoot() {

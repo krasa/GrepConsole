@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.action.AddHighlightAction;
+import krasa.grepconsole.action.MoveErrorStreamToTheBottomAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 import krasa.grepconsole.plugin.ServiceManager;
@@ -35,8 +36,10 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 
 		ArrayList<AnAction> anActions = new ArrayList<>();
 		anActions.add(new OpenConsoleSettingsAction(console));
+		if (console instanceof ConsoleViewImpl) {
+			anActions.add(new MoveErrorStreamToTheBottomAction((ConsoleViewImpl) console));
+		}
 		anActions.addAll(Arrays.asList(actions));
-
 		replaceClearAction(anActions);
 		return anActions.toArray(new AnAction[anActions.size()]);
 	}
