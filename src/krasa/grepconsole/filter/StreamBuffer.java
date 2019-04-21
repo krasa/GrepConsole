@@ -63,6 +63,7 @@ public class StreamBuffer implements Disposable {
 			checkIfEndsWithNewLine(text);
 			bufferError(text);
 		} else if (consoleViewContentType == ConsoleViewContentType.SYSTEM_OUTPUT) {
+			lastNonErrorNano = System.nanoTime();
 			return false;
 //				bufferSystem(text);
 		} else {
