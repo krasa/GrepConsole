@@ -11,7 +11,9 @@ import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.StreamBufferSettings;
 import krasa.grepconsole.plugin.ExtensionManager;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.utils.Notifier;
 import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -19,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -29,6 +32,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	private static final Logger log = Logger.getInstance(GrepInputFilter.class);
 
 	private static final Pair<String, ConsoleViewContentType> REMOVE_OUTPUT_PAIR = new Pair<>(null, null);
+	public static final List<Pair<String, ConsoleViewContentType>> REMOVE_OUTPUT = Collections.singletonList(REMOVE_OUTPUT_PAIR);
 	private static final Pattern PATTERN = Pattern.compile("(?<=\n)");
 
 	private WeakReference<ConsoleView> console;
@@ -36,6 +40,7 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	private volatile boolean removeNextNewLine = false;
 	private boolean blankLineWorkaround;
 	private volatile GrepCopyingFilter grepFilter;
+	private StreamBuffer streamBuffer;
 
 
 	public GrepInputFilter(Project project, Profile profile) {
@@ -52,14 +57,34 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		this.console = console;
 		ConsoleView consoleView = console.get();
 		if (consoleView != null) {
-			blankLineWorkaround = consoleView.getClass().getName().startsWith("com.intellij.execution.testframework.ui");
+			boolean testConsole = consoleView.getClass().getName().startsWith("com.intellij.execution.testframework.ui");
+			blankLineWorkaround = testConsole;
 			log.info("Initializing for " + consoleView.getClass().getName());
+			if (profile.isBufferStreams()) {
+				StreamBufferSettings streamBufferSettings = GrepConsoleApplicationComponent.getInstance().getState().getStreamBufferSettings();
+				if (testConsole && !streamBufferSettings.isUseForTests()) {
+					//no
+				} else {
+					streamBuffer = new StreamBuffer(consoleView, streamBufferSettings);
+				}
+			}
 		}
 		blankLineWorkaround = blankLineWorkaround || profile.isInputFilterBlankLineWorkaround();
 	}
 
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String text, ConsoleViewContentType consoleViewContentType) {
+		if (consoleViewContentType != ConsoleViewContentType.USER_INPUT
+				&& streamBuffer != null
+				&& !Thread.holdsLock(streamBuffer.LOOP_GUARD)
+				&& text != null) {
+			boolean buffered = streamBuffer.buffer(text, consoleViewContentType);
+			if (buffered) {
+				return REMOVE_OUTPUT;
+			}
+		}
+
+
 		List<Pair<String, ConsoleViewContentType>> result = filter(text, consoleViewContentType);
 
 		grep(result, text, consoleViewContentType);

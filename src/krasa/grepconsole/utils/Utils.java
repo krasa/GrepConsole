@@ -302,5 +302,20 @@ public class Utils {
 		colorList.add(white);
 		Collections.shuffle(colorList);
 	}
-	
+
+	public static int toInt(String s, int i) {
+		try {
+			int p = Integer.parseInt(s);
+			if (p < 0) {
+				p = i;
+			}
+			return p;
+		} catch (NumberFormatException e) {
+			return i;
+		}
+	}
+
+	public static long toNano(String ms, int i) {
+		return toInt(ms, i) * 1_000_000L;
+	}
 }

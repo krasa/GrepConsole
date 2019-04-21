@@ -53,8 +53,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	public OpenGrepConsoleAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
 		super(text, description, icon);
-	}
-
+	}    
+	
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();

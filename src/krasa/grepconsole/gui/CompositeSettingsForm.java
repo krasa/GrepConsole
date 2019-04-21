@@ -40,6 +40,7 @@ public class CompositeSettingsForm {
 	private JButton deleteButton;
 	private JCheckBox enableRunConfigurationProfilesCheckBox;
 	private JSplitPane splitPane;
+	private JButton streamBufferSettingsButton;
 	private ProfileDetailForm profileDetailFormComponent;
 	private DefaultListModel profilesModel;
 	private long originallySelectedProfileId;
@@ -133,6 +134,7 @@ public class CompositeSettingsForm {
 			}
 		});
 		fileTailSettings.addActionListener(new FileTailSettingsActionListener());
+		streamBufferSettingsButton.addActionListener(new StreamBufferSettingsActionListener());
 		jbList.addKeyListener(getKeyListener());
 		initModel();
 	}
@@ -296,5 +298,28 @@ public class CompositeSettingsForm {
 				form.rebind(settings.getTailSettings());
 			}
 		}
+	}
+
+	private class StreamBufferSettingsActionListener implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final StreamBufferSettingsForm form = new StreamBufferSettingsForm();
+			form.setData(settings.getStreamBufferSettings());
+
+			DialogBuilder builder = new DialogBuilder(CompositeSettingsForm.this.getRootComponent());
+			builder.setCenterPanel(form.getRoot());
+			builder.setDimensionServiceKey("GrepConsoleStreamBufferSettingsDialog");
+			builder.setTitle("Stream Buffer settings");
+			builder.removeAllActions();
+			builder.addOkAction();
+			builder.addCancelAction();
+
+			boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+			if (isOk) {
+				form.getData(settings.getStreamBufferSettings());
+				GrepConsoleApplicationComponent.getInstance().getState().setStreamBufferSettings(settings.getStreamBufferSettings());
+			}
+		}
+
 	}
 }

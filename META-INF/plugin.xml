@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>8.7.162.000.0</version>
+	<version>9.0.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -45,7 +45,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>8.7 (2019-04-20)
+        <br>9.0 (2019-04-20)
+		<br>- Added Stream Buffering - disabled by default
 		<br>- Fixed: Main class in Run/Debug Configurations takes too much space
 		<br>- Fixed: Input filtering for CLion  
 		<br>- Added: Input filter blank line workaround option

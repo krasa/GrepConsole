@@ -88,6 +88,7 @@ public class ProfileDetailForm {
 	private JButton extensionButton;
 	private JButton addNewInputFilterItem;
 	private JCheckBox inputFilterBlankLineCheckBox;
+	private JCheckBox bufferStreams;
 	// private JCheckBox synchronous;
 	public Profile profile;
 
@@ -444,6 +445,7 @@ public class ProfileDetailForm {
 		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
 		alwaysPinGrepConsoles.setSelected(data.isAlwaysPinGrepConsoles());
 		inputFilterBlankLineCheckBox.setSelected(data.isInputFilterBlankLineWorkaround());
+		bufferStreams.setSelected(data.isBufferStreams());
 	}
 
 	public void getData(Profile data) {
@@ -463,6 +465,7 @@ public class ProfileDetailForm {
 		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
 		data.setAlwaysPinGrepConsoles(alwaysPinGrepConsoles.isSelected());
 		data.setInputFilterBlankLineWorkaround(inputFilterBlankLineCheckBox.isSelected());
+		data.setBufferStreams(bufferStreams.isSelected());
 	}
 
 	public boolean isModified(Profile data) {
@@ -485,6 +488,7 @@ public class ProfileDetailForm {
 		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
 		if (alwaysPinGrepConsoles.isSelected() != data.isAlwaysPinGrepConsoles()) return true;
 		if (inputFilterBlankLineCheckBox.isSelected() != data.isInputFilterBlankLineWorkaround()) return true;
+		if (bufferStreams.isSelected() != data.isBufferStreams()) return true;
 		return false;
 	}
 

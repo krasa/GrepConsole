@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.StreamBufferSettings;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.utils.Utils;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,7 @@ public class PluginState extends DomainObject implements Cloneable {
 	
 	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;
+	private StreamBufferSettings streamBufferSettings;
 	private boolean allowRunConfigurationChanges = true;
 	private int version;
 	private DonationNagger donationNagger = new DonationNagger();
@@ -73,6 +75,17 @@ public class PluginState extends DomainObject implements Cloneable {
 			tailSettings = new TailSettings();
 		}
 		return tailSettings;
+	}
+
+	public StreamBufferSettings getStreamBufferSettings() {
+		if (streamBufferSettings == null) {
+			streamBufferSettings = new StreamBufferSettings();
+		}
+		return streamBufferSettings;
+	}
+
+	public void setStreamBufferSettings(StreamBufferSettings streamBufferSettings) {
+		this.streamBufferSettings = streamBufferSettings;
 	}
 
 	public void setTailSettings(TailSettings tailSettings) {
@@ -157,6 +170,7 @@ public class PluginState extends DomainObject implements Cloneable {
 		return "PluginState{" +
 				"profiles=" + profiles +
 				", tailSettings=" + tailSettings +
+				", streamBufferSettings=" + streamBufferSettings +
 				", allowRunConfigurationChanges=" + allowRunConfigurationChanges +
 				"} " + super.toString();
 	}

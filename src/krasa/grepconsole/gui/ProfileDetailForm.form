@@ -201,7 +201,7 @@
                   </grid>
                 </children>
               </splitpane>
-              <grid id="a6d7b" binding="settings" layout-manager="GridLayoutManager" row-count="6" column-count="6" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
+              <grid id="a6d7b" binding="settings" layout-manager="GridLayoutManager" row-count="6" column-count="7" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
                   <grid row="0" column="0" row-span="5" col-span="5" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
@@ -220,7 +220,7 @@
                   </component>
                   <component id="394c7" class="javax.swing.JLabel" binding="contextSpecificText">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="6" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="7" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <foreground color="-782848"/>
@@ -340,7 +340,7 @@
                   </component>
                   <component id="71707" class="javax.swing.JButton" binding="DONATEButton" default-binding="true">
                     <constraints>
-                      <grid row="1" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="4" row-span="1" col-span="2" vsize-policy="0" hsize-policy="1" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <background color="-2697514"/>
@@ -354,7 +354,7 @@
                   </component>
                   <hspacer id="47275">
                     <constraints>
-                      <grid row="4" column="5" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                      <grid row="4" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false">
                         <preferred-size width="0" height="0"/>
                       </grid>
                     </constraints>
@@ -368,18 +368,9 @@
                       <toolTipText value="Uncheck if you want to remove output from the main console but still grep it into a sub-console."/>
                     </properties>
                   </component>
-                  <component id="4c78f" class="javax.swing.JButton" binding="web" default-binding="true">
-                    <constraints>
-                      <grid row="2" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="5" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <horizontalTextPosition value="0"/>
-                      <text value="Web page"/>
-                    </properties>
-                  </component>
                   <component id="266fb" class="javax.swing.JButton" binding="resetToDefaultButton" default-binding="true">
                     <constraints>
-                      <grid row="3" column="4" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="3" column="4" row-span="1" col-span="2" vsize-policy="1" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <horizontalTextPosition value="0"/>
@@ -388,19 +379,9 @@
                   </component>
                   <vspacer id="c7d4d">
                     <constraints>
-                      <grid row="5" column="5" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="6" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                     </constraints>
                   </vspacer>
-                  <component id="bb383" class="javax.swing.JButton" binding="help">
-                    <constraints>
-                      <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <icon value="krasa/grepconsole/gui/help.png"/>
-                      <text value=""/>
-                      <toolTipText value=""/>
-                    </properties>
-                  </component>
                   <hspacer id="8d9d0">
                     <constraints>
                       <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
@@ -413,8 +394,46 @@
                       <grid row="4" column="2" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Input filter blank line workaround"/>
+                      <text value="Input filtering - blank line workaround"/>
                       <toolTipText value="Sometimes removing lines leaves a blank line, this should fix it - but not on 100% due to stream mixing"/>
+                    </properties>
+                  </component>
+                  <grid id="d46c8" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="2" column="4" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="4c78f" class="javax.swing.JButton" binding="web" default-binding="true">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="5" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <horizontalTextPosition value="0"/>
+                          <text value="Web page"/>
+                        </properties>
+                      </component>
+                      <component id="bb383" class="javax.swing.JButton" binding="help">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <icon value="krasa/grepconsole/gui/help.png"/>
+                          <text value=""/>
+                          <toolTipText value=""/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <component id="c2997" class="javax.swing.JCheckBox" binding="bufferStreams">
+                    <constraints>
+                      <grid row="4" column="4" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Buffer streams"/>
+                      <toolTipText value="Delays, synchronizes and groups output by streams. "/>
                     </properties>
                   </component>
                 </children>

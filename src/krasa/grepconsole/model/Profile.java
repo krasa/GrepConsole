@@ -49,6 +49,7 @@ public class Profile extends DomainObject implements Cloneable {
 	private String name;
 	private boolean testHighlightersInInputFilter;
 	private boolean inputFilterBlankLineWorkaround = true;
+	private boolean bufferStreams;
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
@@ -383,5 +384,13 @@ public class Profile extends DomainObject implements Cloneable {
 
 	public void setInputFilterBlankLineWorkaround(final boolean inputFilterBlankLineWorkaround) {
 		this.inputFilterBlankLineWorkaround = inputFilterBlankLineWorkaround;
+	}
+
+	public boolean isBufferStreams() {
+		return bufferStreams;
+	}
+
+	public void setBufferStreams(final boolean bufferStreams) {
+		this.bufferStreams = bufferStreams;
 	}
 }
