@@ -23,6 +23,7 @@ public class StreamBufferSettingsForm {
 	private JPanel root;
 	private JCheckBox useForCheckBox;
 	private JButton resetToDefaultButton;
+	private JTextField maxWaitForIncompleteLineNano;
 
 	public StreamBufferSettingsForm() {
 
@@ -57,6 +58,7 @@ public class StreamBufferSettingsForm {
 		currentlyPrintingDelta.setText(data.getCurrentlyPrintingDelta());
 		sleepTimeWhenWasActive.setText(data.getSleepTimeWhenWasActive());
 		useForCheckBox.setSelected(data.isUseForTests());
+		maxWaitForIncompleteLineNano.setText(data.getMaxWaitForIncompleteLine());
 	}
 
 	public void getData(StreamBufferSettings data) {
@@ -65,6 +67,7 @@ public class StreamBufferSettingsForm {
 		data.setCurrentlyPrintingDelta(currentlyPrintingDelta.getText());
 		data.setSleepTimeWhenWasActive(sleepTimeWhenWasActive.getText());
 		data.setUseForTests(useForCheckBox.isSelected());
+		data.setMaxWaitForIncompleteLine(maxWaitForIncompleteLineNano.getText());
 	}
 
 	public boolean isModified(StreamBufferSettings data) {
@@ -77,6 +80,8 @@ public class StreamBufferSettingsForm {
 		if (sleepTimeWhenWasActive.getText() != null ? !sleepTimeWhenWasActive.getText().equals(data.getSleepTimeWhenWasActive()) : data.getSleepTimeWhenWasActive() != null)
 			return true;
 		if (useForCheckBox.isSelected() != data.isUseForTests()) return true;
+		if (maxWaitForIncompleteLineNano.getText() != null ? !maxWaitForIncompleteLineNano.getText().equals(data.getMaxWaitForIncompleteLine()) : data.getMaxWaitForIncompleteLine() != null)
+			return true;
 		return false;
 	}
 

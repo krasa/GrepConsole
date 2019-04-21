@@ -11,6 +11,10 @@ public class StreamBufferSettings extends DomainObject {
 	public static final String SLEEP_TIME_WHEN_WAS_ACTIVE = "10";
 	public static final String SLEEP_TIME_WHEN_IDLE = "50";
 
+	public static final String MAX_WAIT_FOR_INCOMPLETE_LINE = "500";
+
+	private String maxWaitForIncompleteLine = MAX_WAIT_FOR_INCOMPLETE_LINE;
+	                          
 	private String currentlyPrintingDelta = CURRENTLY_PRINTING_DELTA;
 	private String maxWaitTime = MAX_WAIT_TIME;
 
@@ -58,5 +62,13 @@ public class StreamBufferSettings extends DomainObject {
 
 	public void setUseForTests(final boolean useForTests) {
 		this.useForTests = useForTests;
+	}
+
+	public String getMaxWaitForIncompleteLine() {
+		return maxWaitForIncompleteLine;
+	}
+
+	public void setMaxWaitForIncompleteLine(final String maxWaitForIncompleteLine) {
+		this.maxWaitForIncompleteLine = maxWaitForIncompleteLine;
 	}
 }

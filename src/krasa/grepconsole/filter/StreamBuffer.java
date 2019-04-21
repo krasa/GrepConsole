@@ -16,6 +16,7 @@ public class StreamBuffer implements Disposable {
 
 	private final long currentlyPrintingDeltaNano;
 	private final long maxWaitTimeNano;
+	private final long maxWaitForIncompleteLineNano;
 	private final SleepingPolicy sleepingPolicy;
 	private ConsoleView console;
 
@@ -42,6 +43,7 @@ public class StreamBuffer implements Disposable {
 
 		currentlyPrintingDeltaNano = Utils.toNano(streamBufferSettings.getCurrentlyPrintingDelta(), StreamBufferSettings.CURRENTLY_PRINTING_DELTA);
 		maxWaitTimeNano = Utils.toNano(streamBufferSettings.getMaxWaitTime(), StreamBufferSettings.MAX_WAIT_TIME);
+		maxWaitForIncompleteLineNano = Utils.toNano(streamBufferSettings.getMaxWaitForIncompleteLine(), StreamBufferSettings.MAX_WAIT_FOR_INCOMPLETE_LINE);
 		sleepingPolicy = new SleepingPolicy(streamBufferSettings.getSleepTimeWhenWasActive(), streamBufferSettings.getSleepTimeWhenIdle());
 		startWorker();
 	}
@@ -131,7 +133,7 @@ public class StreamBuffer implements Disposable {
 		return anyPolled;
 	}
 
-
+	private long otherOutputTempNano = 0;
 	private boolean flushNonError() {
 		boolean anyPolled = false;
 		Pair<String, ConsoleViewContentType> temp = null;
@@ -145,6 +147,7 @@ public class StreamBuffer implements Disposable {
 			while (poll != null) {
 				if (poll.first.endsWith("\n")) {
 					console.print(poll.first, poll.second);
+					otherOutputTempNano = 0;
 					poll = otherOutput.poll();
 				} else {
 					temp = poll;
@@ -155,6 +158,13 @@ public class StreamBuffer implements Disposable {
 							temp = null;
 						} else {
 							console.print(temp.first, temp.second);
+							otherOutputTempNano = 0;
+							temp = null;
+						}
+					} else {
+						if (otherOutputTempNano != 0 && System.nanoTime() - otherOutputTempNano > maxWaitForIncompleteLineNano) {//just print it
+							console.print(temp.first, temp.second);
+							otherOutputTempNano = 0;
 							temp = null;
 						}
 					}
@@ -163,6 +173,9 @@ public class StreamBuffer implements Disposable {
 		} finally {
 			if (temp != null) {
 				otherOutput.addFirst(temp);
+				if (otherOutputTempNano == 0) {
+					otherOutputTempNano = System.nanoTime();
+				}
 			}
 		}
 		return anyPolled;
@@ -185,6 +198,7 @@ public class StreamBuffer implements Disposable {
 		return flush(systemOutput, ConsoleViewContentType.SYSTEM_OUTPUT);
 	}
 
+	private long errorOutputTempNano = 0;
 	private boolean flush(ConcurrentLinkedDeque<String> queue, ConsoleViewContentType contentType) {
 		String temp = null;
 		String poll = queue.poll();
@@ -194,6 +208,7 @@ public class StreamBuffer implements Disposable {
 			while (poll != null) {
 				if (poll.endsWith("\n")) {
 					console.print(poll, contentType);
+					errorOutputTempNano = 0;
 					poll = queue.poll();
 				} else {
 					temp = poll;
@@ -201,13 +216,23 @@ public class StreamBuffer implements Disposable {
 					if (poll != null) {
 						poll = temp + poll;
 						temp = null;
+					} else {
+						if (errorOutputTempNano != 0 && System.nanoTime() - errorOutputTempNano > maxWaitForIncompleteLineNano) {//just print it
+							console.print(temp, contentType);
+							errorOutputTempNano = 0;
+							temp = null;
+						}
 					}
 				}
 			}
 		} finally {
 			if (temp != null) {
 				queue.addFirst(temp);
+				if (errorOutputTempNano == 0) {
+					errorOutputTempNano = System.nanoTime();
+				}
 			}
+
 
 			if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
 				if (temp != null) {
