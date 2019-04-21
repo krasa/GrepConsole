@@ -303,19 +303,19 @@ public class Utils {
 		Collections.shuffle(colorList);
 	}
 
-	public static int toInt(String s, int i) {
+	public static int toPositiveInt(String s, String def) {
 		try {
 			int p = Integer.parseInt(s);
 			if (p < 0) {
-				p = i;
+				p = Integer.parseInt(def);
 			}
 			return p;
 		} catch (NumberFormatException e) {
-			return i;
+			return Integer.parseInt(def);
 		}
 	}
 
-	public static long toNano(String ms, int i) {
-		return toInt(ms, i) * 1_000_000L;
+	public static long toNano(String ms, String def) {
+		return toPositiveInt(ms, def) * 1_000_000L;
 	}
 }

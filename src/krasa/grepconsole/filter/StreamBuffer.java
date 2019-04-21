@@ -40,8 +40,8 @@ public class StreamBuffer implements Disposable {
 		this.console = console;
 		Disposer.register(console, this);
 
-		currentlyPrintingDeltaNano = Utils.toNano(streamBufferSettings.getCurrentlyPrintingDelta(), 50);
-		maxWaitTimeNano = Utils.toNano(streamBufferSettings.getMaxWaitTime(), 500);
+		currentlyPrintingDeltaNano = Utils.toNano(streamBufferSettings.getCurrentlyPrintingDelta(), StreamBufferSettings.CURRENTLY_PRINTING_DELTA);
+		maxWaitTimeNano = Utils.toNano(streamBufferSettings.getMaxWaitTime(), StreamBufferSettings.MAX_WAIT_TIME);
 		sleepingPolicy = new SleepingPolicy(streamBufferSettings.getSleepTimeWhenWasActive(), streamBufferSettings.getSleepTimeWhenIdle());
 		startWorker();
 	}
@@ -58,6 +58,9 @@ public class StreamBuffer implements Disposable {
 	}
 
 	public boolean buffer(String text, ConsoleViewContentType consoleViewContentType) {
+		if (exit) {
+			return false;
+		}
 		if (consoleViewContentType == ConsoleViewContentType.ERROR_OUTPUT) {
 			checkIfEndsWithNewLine(text);
 			bufferError(text);
@@ -107,6 +110,7 @@ public class StreamBuffer implements Disposable {
 					STICK.wait(sleepingPolicy.getTimeToSleep(worked));
 				} catch (InterruptedException e) {
 					LOG.error(e);
+					exit = true;
 					return;
 				}
 			}
@@ -253,8 +257,8 @@ public class StreamBuffer implements Disposable {
 		private int sleepTimeWhenIdle;
 
 		public SleepingPolicy(String sleepTimeWhenWasActive, String sleepTimeWhenIdle) {
-			this.sleepTimeWhenWasActive = Utils.toInt(sleepTimeWhenWasActive, 1);
-			this.sleepTimeWhenIdle = Utils.toInt(sleepTimeWhenIdle, 5);
+			this.sleepTimeWhenWasActive = Utils.toPositiveInt(sleepTimeWhenWasActive, StreamBufferSettings.SLEEP_TIME_WHEN_WAS_ACTIVE);
+			this.sleepTimeWhenIdle = Utils.toPositiveInt(sleepTimeWhenIdle, StreamBufferSettings.SLEEP_TIME_WHEN_IDLE);
 		}
 
 		public int getTimeToSleep(boolean wasActive) {

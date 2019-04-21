@@ -5,11 +5,17 @@ import com.intellij.openapi.diagnostic.Logger;
 public class StreamBufferSettings extends DomainObject {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(StreamBufferSettings.class);
 
-	private String currentlyPrintingDelta = "50";
-	private String maxWaitTime = "500";
+	public static final String CURRENTLY_PRINTING_DELTA = "50";
+	public static final String MAX_WAIT_TIME = "500";
 
-	private String sleepTimeWhenWasActive = "1";
-	private String sleepTimeWhenIdle = "5";
+	public static final String SLEEP_TIME_WHEN_WAS_ACTIVE = "10";
+	public static final String SLEEP_TIME_WHEN_IDLE = "50";
+
+	private String currentlyPrintingDelta = CURRENTLY_PRINTING_DELTA;
+	private String maxWaitTime = MAX_WAIT_TIME;
+
+	private String sleepTimeWhenWasActive = SLEEP_TIME_WHEN_WAS_ACTIVE;
+	private String sleepTimeWhenIdle = SLEEP_TIME_WHEN_IDLE;
 
 	private boolean useForTests = false;
 
