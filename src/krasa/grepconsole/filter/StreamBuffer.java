@@ -17,12 +17,11 @@ public class StreamBuffer implements Disposable {
 	private final long currentlyPrintingDeltaNano;
 	private final long maxWaitTimeNano;
 	private final SleepingPolicy sleepingPolicy;
-
 	private ConsoleView console;
 
-	private ConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> otherOutput = new ConcurrentLinkedDeque<>();
-	private ConcurrentLinkedDeque<String> errorOutput = new ConcurrentLinkedDeque<>();
-	private ConcurrentLinkedDeque<String> systemOutput = new ConcurrentLinkedDeque<>();
+	private final ConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> otherOutput = new ConcurrentLinkedDeque<>();
+	private final ConcurrentLinkedDeque<String> errorOutput = new ConcurrentLinkedDeque<>();
+	private final ConcurrentLinkedDeque<String> systemOutput = new ConcurrentLinkedDeque<>();
 
 	private volatile long firstErrorNano = 0;
 	private volatile boolean lastErrorMissingNewLine;
@@ -66,6 +65,8 @@ public class StreamBuffer implements Disposable {
 			lastNonErrorNano = System.nanoTime();
 			return false;
 //				bufferSystem(text);
+		} else if (consoleViewContentType == ConsoleViewContentType.USER_INPUT) {
+			return false;
 		} else {
 			bufferOther(text, consoleViewContentType);
 		}
@@ -175,10 +176,6 @@ public class StreamBuffer implements Disposable {
 		return flush(errorOutput, ConsoleViewContentType.ERROR_OUTPUT);
 	}
 
-	private boolean consistencyCheck() {
-		boolean consistent = firstErrorNano != 0 || firstErrorNano == 0 && errorOutput.isEmpty();
-		return consistent;
-	}
 
 	private boolean flushSystem() {
 		return flush(systemOutput, ConsoleViewContentType.SYSTEM_OUTPUT);
@@ -238,6 +235,11 @@ public class StreamBuffer implements Disposable {
 
 	private boolean notWaitingTooLong(long current) {
 		return firstErrorNano != 0 && current - firstErrorNano < maxWaitTimeNano;
+	}
+
+	private boolean consistencyCheck() {
+		boolean consistent = firstErrorNano != 0 || firstErrorNano == 0 && errorOutput.isEmpty();
+		return consistent;
 	}
 
 	@Override
