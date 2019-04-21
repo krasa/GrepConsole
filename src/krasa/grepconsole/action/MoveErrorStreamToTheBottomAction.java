@@ -26,7 +26,7 @@ public class MoveErrorStreamToTheBottomAction extends DumbAwareAction {
 	private final ConsoleViewImpl console;
 
 	public MoveErrorStreamToTheBottomAction(ConsoleViewImpl console) {
-		super("Move error stream to the bottom", "Provided by Grep Console plugin", AllIcons.ObjectBrowser.SortByType);
+		super("Move stderr to the bottom", "Provided by Grep Console plugin", AllIcons.ObjectBrowser.SortByType);
 		this.console = console;
 	}
 
@@ -76,14 +76,31 @@ public class MoveErrorStreamToTheBottomAction extends DumbAwareAction {
 		}
 	}
 
-	protected Key<ConsoleViewContentType> getConsoleViewContentTypeKey() {
+	public static Key<ConsoleViewContentType> getConsoleViewContentTypeKey() {
 		Key<ConsoleViewContentType> contentTypeKey = null;
 		try {
 			Field content_type = ConsoleViewImpl.class.getDeclaredField("CONTENT_TYPE");
 			content_type.setAccessible(true);
 			contentTypeKey = (Key<ConsoleViewContentType>) content_type.get(null);
 
-		} catch (Exception ex) {
+
+		} catch (Throwable ex) {
+			//obfuscated class?
+			Field[] declaredFields = ConsoleViewImpl.class.getDeclaredFields();
+			for (Field declaredField : declaredFields) {
+				Class<?> type = declaredField.getType();
+				if (type == Key.class) {
+					declaredField.setAccessible(true);
+					try {
+						Key key = (Key) declaredField.get(null);
+						String x = key.toString();
+						if (x.equals("ConsoleViewContentType")) {
+							return key;
+						}
+					} catch (Throwable e) {
+					}
+				}
+			}
 			throw new RuntimeException(ex);
 		}
 		return contentTypeKey;

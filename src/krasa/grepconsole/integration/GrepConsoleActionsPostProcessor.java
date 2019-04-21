@@ -37,7 +37,14 @@ public class GrepConsoleActionsPostProcessor extends ConsoleActionsPostProcessor
 		ArrayList<AnAction> anActions = new ArrayList<>();
 		anActions.add(new OpenConsoleSettingsAction(console));
 		if (console instanceof ConsoleViewImpl) {
-			anActions.add(new MoveErrorStreamToTheBottomAction((ConsoleViewImpl) console));
+			try {
+				//API check}
+				if (MoveErrorStreamToTheBottomAction.getConsoleViewContentTypeKey() != null) {
+					anActions.add(new MoveErrorStreamToTheBottomAction((ConsoleViewImpl) console));
+				}
+			} catch (Throwable e) {
+				//ok
+			}
 		}
 		anActions.addAll(Arrays.asList(actions));
 		replaceClearAction(anActions);
