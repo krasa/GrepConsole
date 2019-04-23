@@ -30,7 +30,7 @@ public class StreamBuffer implements Disposable {
 	private volatile long lastNonErrorNano = 0;
 
 	private volatile Thread worker;
-	private boolean lastPolledError;
+	private boolean lastPrintedError;
 	private volatile boolean exit = false;
 
 	private final Object STICK = new Object();
@@ -122,7 +122,7 @@ public class StreamBuffer implements Disposable {
 
 	private boolean flush() {
 		boolean anyPolled = false;
-		if (lastPolledError) {
+		if (lastPrintedError) {
 			anyPolled |= flushError();
 			anyPolled |= flush(otherOutput);
 		} else {
@@ -152,12 +152,11 @@ public class StreamBuffer implements Disposable {
 			Pair<String, ConsoleViewContentType> poll = queue.poll();
 			if (poll != null) {
 				anyPolled = true;
-				lastPolledError = queue.errorQueue;
 			}
 
 			while (poll != null) {
 				if (poll.first.endsWith("\n")) {
-					print(queue, poll, console);
+					print(queue, poll);
 					poll = queue.poll();
 				} else {
 					temp = poll;
@@ -167,12 +166,12 @@ public class StreamBuffer implements Disposable {
 							poll = Pair.create(temp.first + poll.first, poll.second);
 							temp = null;
 						} else {
-							print(queue, temp, console);
+							print(queue, temp);
 							temp = null;
 						}
 					} else {
 						if (queue.tempNano != 0 && System.nanoTime() - queue.tempNano > maxWaitForIncompleteLineNano) {//just print it
-							print(queue, temp, console);
+							print(queue, temp);
 							temp = null;
 						}
 					}
@@ -193,21 +192,16 @@ public class StreamBuffer implements Disposable {
 				} else {
 					firstErrorNano = 0;    //something new could already be in the queue				
 				}
-				if (anyPolled) {
-					lastPolledError = true;
-				}
 			}
 		}
 		return anyPolled;
 	}
 
-	private void print(MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> queue, Pair<String, ConsoleViewContentType> poll, ConsoleView console) {
+	private void print(MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> queue, Pair<String, ConsoleViewContentType> poll) {
 		console.print(poll.first, poll.second);
 		queue.tempNano = 0;
+		lastPrintedError = queue.errorQueue;
 	}
-
-	
-
 
 	protected void checkIfEndsWithNewLine(String text) {
 		//something wrong, better to wait before flushing errors
