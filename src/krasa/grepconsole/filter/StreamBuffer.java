@@ -20,9 +20,9 @@ public class StreamBuffer implements Disposable {
 	private final SleepingPolicy sleepingPolicy;
 	private ConsoleView console;
 
-	private final ConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> otherOutput = new ConcurrentLinkedDeque<>();
-	private final ConcurrentLinkedDeque<String> errorOutput = new ConcurrentLinkedDeque<>();
-	private final ConcurrentLinkedDeque<String> systemOutput = new ConcurrentLinkedDeque<>();
+	private final MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> otherOutput = new MyConcurrentLinkedDeque<>(false);
+	private final MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> errorOutput = new MyConcurrentLinkedDeque<>(true);
+//	private final ConcurrentLinkedDeque<String> systemOutput = new ConcurrentLinkedDeque<>();
 
 	private volatile long firstErrorNano = 0;
 	private volatile boolean lastErrorMissingNewLine;
@@ -65,7 +65,7 @@ public class StreamBuffer implements Disposable {
 		}
 		if (consoleViewContentType == ConsoleViewContentType.ERROR_OUTPUT) {
 			checkIfEndsWithNewLine(text);
-			bufferError(text);
+			bufferError(text, consoleViewContentType);
 		} else if (consoleViewContentType == ConsoleViewContentType.SYSTEM_OUTPUT) {
 			lastNonErrorNano = System.nanoTime();
 			return false;
@@ -81,13 +81,13 @@ public class StreamBuffer implements Disposable {
 		return true;
 	}
 
-	private void bufferSystem(String text) {
-		systemOutput.add(text);
-		lastNonErrorNano = System.nanoTime();
-	}
+//	private void bufferSystem(String text) {
+//		systemOutput.add(text);
+//		lastNonErrorNano = System.nanoTime();
+//	}
 
-	private void bufferError(String text) {
-		errorOutput.add(text);
+	private void bufferError(String text, ConsoleViewContentType consoleViewContentType) {
+		errorOutput.add(Pair.create(text, consoleViewContentType));
 		if (firstErrorNano == 0) {
 			firstErrorNano = System.nanoTime();
 		}
@@ -124,60 +124,12 @@ public class StreamBuffer implements Disposable {
 		boolean anyPolled = false;
 		if (lastPolledError) {
 			anyPolled |= flushError();
-			anyPolled |= flushNonError();
+			anyPolled |= flush(otherOutput);
 		} else {
-			anyPolled |= flushNonError();
+			anyPolled |= flush(otherOutput);
 			anyPolled |= flushError();
 		}
 //		anyPolled |= flushSystem();
-		return anyPolled;
-	}
-
-	private long otherOutputTempNano = 0;
-	private boolean flushNonError() {
-		boolean anyPolled = false;
-		Pair<String, ConsoleViewContentType> temp = null;
-		try {
-			Pair<String, ConsoleViewContentType> poll = otherOutput.poll();
-			if (poll != null) {
-				anyPolled = true;
-				lastPolledError = false;
-			}
-
-			while (poll != null) {
-				if (poll.first.endsWith("\n")) {
-					console.print(poll.first, poll.second);
-					otherOutputTempNano = 0;
-					poll = otherOutput.poll();
-				} else {
-					temp = poll;
-					poll = otherOutput.poll();
-					if (poll != null) {
-						if (poll.second == temp.second) {
-							poll = Pair.create(temp.first + poll.first, poll.second);
-							temp = null;
-						} else {
-							console.print(temp.first, temp.second);
-							otherOutputTempNano = 0;
-							temp = null;
-						}
-					} else {
-						if (otherOutputTempNano != 0 && System.nanoTime() - otherOutputTempNano > maxWaitForIncompleteLineNano) {//just print it
-							console.print(temp.first, temp.second);
-							otherOutputTempNano = 0;
-							temp = null;
-						}
-					}
-				}
-			}
-		} finally {
-			if (temp != null) {
-				otherOutput.addFirst(temp);
-				if (otherOutputTempNano == 0) {
-					otherOutputTempNano = System.nanoTime();
-				}
-			}
-		}
 		return anyPolled;
 	}
 
@@ -190,36 +142,37 @@ public class StreamBuffer implements Disposable {
 			return false;
 		}
 
-		return flush(errorOutput, ConsoleViewContentType.ERROR_OUTPUT);
+		return flush(errorOutput);
 	}
 
-
-	private boolean flushSystem() {
-		return flush(systemOutput, ConsoleViewContentType.SYSTEM_OUTPUT);
-	}
-
-	private long errorOutputTempNano = 0;
-	private boolean flush(ConcurrentLinkedDeque<String> queue, ConsoleViewContentType contentType) {
-		String temp = null;
-		String poll = queue.poll();
-		boolean anyPolled = poll != null;
-
+	private boolean flush(MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> queue) {
+		boolean anyPolled = false;
+		Pair<String, ConsoleViewContentType> temp = null;
 		try {
+			Pair<String, ConsoleViewContentType> poll = queue.poll();
+			if (poll != null) {
+				anyPolled = true;
+				lastPolledError = queue.errorQueue;
+			}
+
 			while (poll != null) {
-				if (poll.endsWith("\n")) {
-					console.print(poll, contentType);
-					errorOutputTempNano = 0;
+				if (poll.first.endsWith("\n")) {
+					print(queue, poll, console);
 					poll = queue.poll();
 				} else {
 					temp = poll;
 					poll = queue.poll();
 					if (poll != null) {
-						poll = temp + poll;
-						temp = null;
+						if (poll.second == temp.second) {
+							poll = Pair.create(temp.first + poll.first, poll.second);
+							temp = null;
+						} else {
+							print(queue, temp, console);
+							temp = null;
+						}
 					} else {
-						if (errorOutputTempNano != 0 && System.nanoTime() - errorOutputTempNano > maxWaitForIncompleteLineNano) {//just print it
-							console.print(temp, contentType);
-							errorOutputTempNano = 0;
+						if (queue.tempNano != 0 && System.nanoTime() - queue.tempNano > maxWaitForIncompleteLineNano) {//just print it
+							print(queue, temp, console);
 							temp = null;
 						}
 					}
@@ -228,13 +181,13 @@ public class StreamBuffer implements Disposable {
 		} finally {
 			if (temp != null) {
 				queue.addFirst(temp);
-				if (errorOutputTempNano == 0) {
-					errorOutputTempNano = System.nanoTime();
+				if (queue.tempNano == 0) {
+					queue.tempNano = System.nanoTime();
 				}
 			}
 
 
-			if (contentType == ConsoleViewContentType.ERROR_OUTPUT) {
+			if (queue.errorQueue) {
 				if (temp != null) {
 					firstErrorNano = System.nanoTime();
 				} else {
@@ -247,6 +200,13 @@ public class StreamBuffer implements Disposable {
 		}
 		return anyPolled;
 	}
+
+	private void print(MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> queue, Pair<String, ConsoleViewContentType> poll, ConsoleView console) {
+		console.print(poll.first, poll.second);
+		queue.tempNano = 0;
+	}
+
+	
 
 
 	protected void checkIfEndsWithNewLine(String text) {
@@ -288,6 +248,15 @@ public class StreamBuffer implements Disposable {
 
 		public int getTimeToSleep(boolean wasActive) {
 			return wasActive ? sleepTimeWhenWasActive : sleepTimeWhenIdle;
+		}
+	}
+
+	class MyConcurrentLinkedDeque<T> extends ConcurrentLinkedDeque<T> {
+		public final boolean errorQueue;
+		private long tempNano = 0;
+
+		public MyConcurrentLinkedDeque(boolean errorQueue) {
+			this.errorQueue = errorQueue;
 		}
 	}
 }
