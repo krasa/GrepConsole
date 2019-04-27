@@ -181,7 +181,8 @@ public class StreamBuffer implements Disposable {
 				if (temp != null) {
 					firstErrorNano = System.nanoTime();
 				} else {
-					firstErrorNano = 0; // something new could already be in the queue
+					firstErrorNano = 0; // something new could already be in the queue - that's why we have
+										// #consistencyCheck
 				}
 			}
 		}
