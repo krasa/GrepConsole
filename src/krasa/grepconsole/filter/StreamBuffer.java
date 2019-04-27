@@ -1,15 +1,16 @@
 package krasa.grepconsole.filter;
 
+import krasa.grepconsole.model.StreamBufferSettings;
+import krasa.grepconsole.utils.Utils;
+
+import org.jctools.queues.MpscChunkedArrayQueue;
+
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
-import krasa.grepconsole.model.StreamBufferSettings;
-import krasa.grepconsole.utils.Utils;
-
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class StreamBuffer implements Disposable {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(StreamBuffer.class);
@@ -20,9 +21,8 @@ public class StreamBuffer implements Disposable {
 	private final SleepingPolicy sleepingPolicy;
 	private ConsoleView console;
 
-	private final MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> otherOutput = new MyConcurrentLinkedDeque<>(false);
-	private final MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> errorOutput = new MyConcurrentLinkedDeque<>(true);
-//	private final ConcurrentLinkedDeque<String> systemOutput = new ConcurrentLinkedDeque<>();
+	private final MyQueue<Pair<String, ConsoleViewContentType>> otherOutput = new MyQueue<>(false);
+	private final MyQueue<Pair<String, ConsoleViewContentType>> errorOutput = new MyQueue<>(true);
 
 	private volatile long firstErrorNano = 0;
 	private volatile boolean lastErrorMissingNewLine;
@@ -35,7 +35,6 @@ public class StreamBuffer implements Disposable {
 
 	private final Object STICK = new Object();
 	public final Object LOOP_GUARD = new Object();
-
 
 	public StreamBuffer(ConsoleView console, StreamBufferSettings streamBufferSettings) {
 		this.console = console;
@@ -69,22 +68,22 @@ public class StreamBuffer implements Disposable {
 		} else if (consoleViewContentType == ConsoleViewContentType.SYSTEM_OUTPUT) {
 			lastNonErrorNano = System.nanoTime();
 			return false;
-//				bufferSystem(text);
+			// bufferSystem(text);
 		} else if (consoleViewContentType == ConsoleViewContentType.USER_INPUT) {
 			return false;
 		} else {
 			bufferOther(text, consoleViewContentType);
 		}
-//		synchronized (STICK) {
-//			STICK.notify();
-//		}
+		// synchronized (STICK) {
+		// STICK.notify();
+		// }
 		return true;
 	}
 
-//	private void bufferSystem(String text) {
-//		systemOutput.add(text);
-//		lastNonErrorNano = System.nanoTime();
-//	}
+	// private void bufferSystem(String text) {
+	// systemOutput.add(text);
+	// lastNonErrorNano = System.nanoTime();
+	// }
 
 	private void bufferError(String text, ConsoleViewContentType consoleViewContentType) {
 		errorOutput.add(Pair.create(text, consoleViewContentType));
@@ -98,7 +97,6 @@ public class StreamBuffer implements Disposable {
 		lastNonErrorNano = System.nanoTime();
 		otherOutput.add(Pair.create(text, consoleViewContentType));
 	}
-
 
 	private void threadWork(StreamBuffer streamBuffer) {
 		while (!exit) {
@@ -129,23 +127,20 @@ public class StreamBuffer implements Disposable {
 			anyPolled |= flush(otherOutput);
 			anyPolled |= flushError();
 		}
-//		anyPolled |= flushSystem();
+		// anyPolled |= flushSystem();
 		return anyPolled;
 	}
 
 	private boolean flushError() {
 		long current = System.nanoTime();
-		if ((nonErrorBeingPrinted(current) || errorsBeingPrinted(current) || lastErrorMissingNewLine
-		)
-				&& notWaitingTooLong(current) && consistencyCheck()
-		) {
+		if ((nonErrorBeingPrinted(current) || errorsBeingPrinted(current) || lastErrorMissingNewLine) && notWaitingTooLong(current) && consistencyCheck()) {
 			return false;
 		}
 
 		return flush(errorOutput);
 	}
 
-	private boolean flush(MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> queue) {
+	private boolean flush(MyQueue<Pair<String, ConsoleViewContentType>> queue) {
 		boolean anyPolled = false;
 		Pair<String, ConsoleViewContentType> temp = null;
 		try {
@@ -170,7 +165,7 @@ public class StreamBuffer implements Disposable {
 							temp = null;
 						}
 					} else {
-						if (queue.tempNano != 0 && System.nanoTime() - queue.tempNano > maxWaitForIncompleteLineNano) {//just print it
+						if (queue.tempNano != 0 && System.nanoTime() - queue.tempNano > maxWaitForIncompleteLineNano) {
 							print(queue, temp);
 							temp = null;
 						}
@@ -179,32 +174,28 @@ public class StreamBuffer implements Disposable {
 			}
 		} finally {
 			if (temp != null) {
-				queue.addFirst(temp);
-				if (queue.tempNano == 0) {
-					queue.tempNano = System.nanoTime();
-				}
+				queue.setTemp(temp);
 			}
-
 
 			if (queue.errorQueue) {
 				if (temp != null) {
 					firstErrorNano = System.nanoTime();
 				} else {
-					firstErrorNano = 0;    //something new could already be in the queue				
+					firstErrorNano = 0; // something new could already be in the queue
 				}
 			}
 		}
 		return anyPolled;
 	}
 
-	private void print(MyConcurrentLinkedDeque<Pair<String, ConsoleViewContentType>> queue, Pair<String, ConsoleViewContentType> poll) {
+	private void print(MyQueue<Pair<String, ConsoleViewContentType>> queue, Pair<String, ConsoleViewContentType> poll) {
 		console.print(poll.first, poll.second);
 		queue.tempNano = 0;
 		lastPrintedError = queue.errorQueue;
 	}
 
 	protected void checkIfEndsWithNewLine(String text) {
-		//something wrong, better to wait before flushing errors
+		// something wrong, better to wait before flushing errors
 		this.lastErrorMissingNewLine = text.length() > 0 && !text.endsWith("\n");
 	}
 
@@ -245,12 +236,40 @@ public class StreamBuffer implements Disposable {
 		}
 	}
 
-	class MyConcurrentLinkedDeque<T> extends ConcurrentLinkedDeque<T> {
+	class MyQueue<T> {
 		public final boolean errorQueue;
 		private long tempNano = 0;
+		private T temp;
+		private MpscChunkedArrayQueue<T> queue;
 
-		public MyConcurrentLinkedDeque(boolean errorQueue) {
+		public MyQueue(boolean errorQueue) {
 			this.errorQueue = errorQueue;
+			queue = new MpscChunkedArrayQueue<T>(100, 1_000_000);
+		}
+
+		public void add(T t) {
+			queue.add(t);
+		}
+
+		public T poll() {
+			if (temp != null) {
+				T t = this.temp;
+				this.temp = null;
+				return t;
+			}
+			return queue.poll();
+		}
+
+		public void setTemp(T temp) {
+			this.temp = temp;
+
+			if (tempNano == 0) {
+				tempNano = System.nanoTime();
+			}
+		}
+
+		public boolean isEmpty() {
+			return temp != null && queue.isEmpty();
 		}
 	}
 }
