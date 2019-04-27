@@ -1,16 +1,14 @@
 package krasa.grepconsole.filter;
 
-import krasa.grepconsole.model.StreamBufferSettings;
-import krasa.grepconsole.utils.Utils;
-
-import org.jctools.queues.MpscChunkedArrayQueue;
-
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import krasa.grepconsole.model.StreamBufferSettings;
+import krasa.grepconsole.utils.Utils;
+import org.jctools.queues.MpscUnboundedArrayQueue;
 
 public class StreamBuffer implements Disposable {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(StreamBuffer.class);
@@ -241,11 +239,11 @@ public class StreamBuffer implements Disposable {
 		public final boolean errorQueue;
 		private long tempNano = 0;
 		private T temp;
-		private MpscChunkedArrayQueue<T> queue;
+		private MpscUnboundedArrayQueue<T> queue;
 
 		public MyQueue(boolean errorQueue) {
 			this.errorQueue = errorQueue;
-			queue = new MpscChunkedArrayQueue<T>(100, 1_000_000);
+			queue = new MpscUnboundedArrayQueue<T>(1000);
 		}
 
 		public void add(T t) {
