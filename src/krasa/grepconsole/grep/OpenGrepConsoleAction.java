@@ -1,6 +1,7 @@
 package krasa.grepconsole.grep;
 
 import com.intellij.execution.ExecutionHelper;
+import com.intellij.execution.console.DuplexConsoleView;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
@@ -305,6 +306,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		ExecutionConsole executionConsole = dom.getExecutionConsole();
 		if (executionConsole instanceof BaseTestsOutputConsoleView) {
 			executionConsole = ((BaseTestsOutputConsoleView) executionConsole).getConsole();
+		} else if (executionConsole instanceof DuplexConsoleView) {
+			DuplexConsoleView duplexConsoleView = (DuplexConsoleView) executionConsole;
+			if (duplexConsoleView.isPrimaryConsoleEnabled()) {
+				executionConsole = duplexConsoleView.getPrimaryConsoleView();
+			} else {
+				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
+			}
 		}
 		if (consoleView instanceof MyConsoleViewImpl && orChild) {
 			ConsoleViewImpl parentConsoleView = ((MyConsoleViewImpl) consoleView).getParentConsoleView();
@@ -327,6 +335,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			} catch (Throwable e) {
 				LOG.error(e);
 			}
+		} else if (actionsContextComponent instanceof DuplexConsoleView) {
+			DuplexConsoleView duplexConsoleView = (DuplexConsoleView) actionsContextComponent;
+			ExecutionConsole executionConsole;
+			if (duplexConsoleView.isPrimaryConsoleEnabled()) {
+				executionConsole = duplexConsoleView.getPrimaryConsoleView();
+			} else {
+				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
+			}
+			return executionConsole == consoleView;
 		}
 		return false;
 	}

@@ -5,7 +5,6 @@ import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.projectImport.ProjectImportBuilder;
 import com.intellij.util.io.ZipUtil;
 
 import java.awt.event.ActionEvent;
@@ -19,7 +18,8 @@ public class CreatePluginProjectExample implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {
-			VirtualFile virtualFile = FileChooser.chooseFile(BrowseFilesListener.SINGLE_DIRECTORY_DESCRIPTOR, ProjectImportBuilder.getCurrentProject(), null);
+//			VirtualFile virtualFile =null;
+			VirtualFile virtualFile = FileChooser.chooseFile(BrowseFilesListener.SINGLE_DIRECTORY_DESCRIPTOR, com.intellij.projectImport.ProjectImportBuilder.getCurrentProject(), null);
 			if (virtualFile == null) {
 				return;
 			}

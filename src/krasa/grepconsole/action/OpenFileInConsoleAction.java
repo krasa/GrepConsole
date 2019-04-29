@@ -1,6 +1,5 @@
 package krasa.grepconsole.action;
 
-import com.intellij.compiler.server.BuildManager;
 import com.intellij.execution.impl.ConsoleBuffer;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.BrowseFilesListener;
@@ -59,7 +58,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 			}
 		};
 		try {
-			osProcessHandler.putUserDataIfAbsent(BuildManager.ALLOW_AUTOMAKE, true);
+			osProcessHandler.putUserDataIfAbsent(com.intellij.compiler.server.BuildManager.ALLOW_AUTOMAKE, true);
 		} catch (NoClassDefFoundError e) {
 			//phpstorm does not have it
 		}
