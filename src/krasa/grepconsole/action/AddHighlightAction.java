@@ -9,8 +9,6 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.ColorPicker;
 import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Rehighlighter;
 import krasa.grepconsole.utils.Utils;
@@ -56,8 +54,6 @@ public class AddHighlightAction extends HighlightManipulationAction {
 				return;
 			}
 		}
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted(e.getProject());
 	}
 
 	protected void add(ConsoleView consoleView, String string, Color color) {

@@ -27,8 +27,6 @@ import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -58,9 +56,6 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted(e.getProject());
-
 		Project eventProject = getEventProject(e);
 		ConsoleViewImpl parentConsoleView = (ConsoleViewImpl) getConsoleView(e);
 		String expression = getExpression(e);

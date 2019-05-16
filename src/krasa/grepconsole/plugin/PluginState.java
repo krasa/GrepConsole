@@ -20,16 +20,6 @@ public class PluginState extends DomainObject implements Cloneable {
 	private StreamBufferSettings streamBufferSettings;
 	private boolean allowRunConfigurationChanges = true;
 	private int version;
-	private DonationNagger donationNagger = new DonationNagger();
-
-	public DonationNagger getDonationNagger() {
-		return donationNagger;
-	}
-
-	public void setDonationNagger(DonationNagger donationNagger) {
-		this.donationNagger = donationNagger;
-	}
-
 	public int getVersion() {
 		return version;
 	}

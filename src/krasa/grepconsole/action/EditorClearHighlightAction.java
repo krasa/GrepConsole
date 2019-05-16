@@ -4,8 +4,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.PluginState;
 
 public class EditorClearHighlightAction extends HighlightManipulationAction {
 
@@ -22,8 +20,6 @@ public class EditorClearHighlightAction extends HighlightManipulationAction {
 		if (editor != null) {
 			editor.getMarkupModel().removeAllHighlighters();
 		}
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted(e.getProject());
 	}
 
 	@Override

@@ -18,8 +18,6 @@ import com.intellij.ui.ColorPicker;
 import com.intellij.util.CommonProcessors;
 import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.model.*;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Rehighlighter;
 import krasa.grepconsole.utils.Utils;
@@ -78,9 +76,6 @@ public class ToggleEditorHighlightAction extends DumbAwareAction {
 				myHyperlinks.highlightHyperlinks(new GrepHighlightFilter(project, profile), 0, lineCount - 1);
 			}
 		}
-
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted(e.getProject());
 	}
 
 	protected void removeAll(MarkupModelEx markupModel, RangeHighlighterEx result) {

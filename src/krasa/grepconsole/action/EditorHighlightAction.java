@@ -5,9 +5,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.MyConfigurable;
-import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.utils.Rehighlighter;
 
 public class EditorHighlightAction extends HighlightManipulationAction {
@@ -27,9 +25,6 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 			}
 			instance.setCurrentAction(null);
 		}
-		PluginState pluginState = GrepConsoleApplicationComponent.getInstance().getState();
-		pluginState.getDonationNagger().actionExecuted(e.getProject());
-		
 	}
 
 	@Override
