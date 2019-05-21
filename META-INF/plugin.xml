@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.1.162.000.1</version>
+	<version>9.2.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -46,6 +46,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>9.2 (2019-05-21)
+		<br>- Highlighting disabled table rows
         <br>9.1 (2019-04-29)
 		<br>- Grep action support for Python Debug
         <br>9.0 (2019-04-20)

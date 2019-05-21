@@ -4,6 +4,8 @@ import com.intellij.ui.CheckedTreeNode;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 
+import java.util.List;
+
 /**
  * @author Vojtech Krasa
  */
@@ -17,15 +19,16 @@ public class GrepExpressionGroupTreeNode extends CheckedTreeNode {
 		}
 	}
 
-	@Override
-	public boolean isChecked() {
-		return getObject().isEnabled();
+	public boolean hasUncheckedChildren() {
+		List<GrepExpressionItem> grepExpressionItems = getObject().getGrepExpressionItems();
+		for (GrepExpressionItem grepExpressionItem : grepExpressionItems) {
+			if (!grepExpressionItem.isEnabled()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
-	@Override
-	public void setChecked(boolean checked) {
-		getObject().setEnabled(checked);
-	}
 
 	public GrepExpressionGroup getObject() {
 		return (GrepExpressionGroup) userObject;

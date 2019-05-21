@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.util.JDOMUtil;
+import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeColumnInfo;
@@ -115,7 +116,7 @@ public class GrepTableBuilder {
 		columns.add(foldC);
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetailForm)));
 
-		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {
+		CheckboxTree.CheckboxTreeCellRenderer renderer = new CheckboxTree.CheckboxTreeCellRenderer() {
 			@Override
 			public void customizeRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
 										  int row, boolean hasFocus) {
@@ -157,7 +158,7 @@ public class GrepTableBuilder {
 		private final ProfileDetailForm profileDetailForm;
 		private final FolderColumnInfoWrapper foldColumn;
 
-		public MyCheckboxTreeTable(CheckedTreeNode root, CheckboxTreeCellRendererBase renderer, List<ColumnInfo> columns, FolderColumnInfoWrapper foldC, ProfileDetailForm profileDetailForm) {
+		public MyCheckboxTreeTable(CheckedTreeNode root, CheckboxTree.CheckboxTreeCellRenderer renderer, List<ColumnInfo> columns, FolderColumnInfoWrapper foldC, ProfileDetailForm profileDetailForm) {
 			super(root, renderer, columns.toArray(new ColumnInfo[columns.size()]));
 			foldColumn = foldC;
 			this.profileDetailForm = profileDetailForm;

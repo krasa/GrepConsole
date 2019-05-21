@@ -1,6 +1,7 @@
 package krasa.grepconsole.gui.table;
 
 import com.intellij.ide.DefaultTreeExpander;
+import com.intellij.ui.CheckboxTree;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.ColoredTreeCellRenderer;
 import com.intellij.ui.JBColor;
@@ -162,7 +163,7 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 //				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetailForm)));
 
-		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {
+		CheckboxTree.CheckboxTreeCellRenderer renderer = new CheckboxTree.CheckboxTreeCellRenderer() {
 			@Override
 			public void customizeRenderer(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf,
 										  int row, boolean hasFocus) {
