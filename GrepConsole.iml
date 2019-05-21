@@ -8,10 +8,6 @@
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
     </content>
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" scope="TEST" name="test" level="project" />
-    <orderEntry type="library" scope="TEST" name="test (2)" level="project" />
-    <orderEntry type="library" name="jfm" level="project" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
@@ -28,35 +24,36 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="test">
+      <library name="async">
         <CLASSES>
-          <root url="file://$MODULE_DIR$/lib/test" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/lib/test" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/lib/test" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/lib/test" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../intellij-community/plugins/maven/lib/plexus-utils-2.0.6.jar!/" />
+          <root url="file://$MODULE_DIR$/lib/async" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
+        <jarDirectory url="file://$MODULE_DIR$/lib/async" recursive="false" />
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="JMF">
+      <library name="jmf">
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib/JMF-2.1.1e/lib" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
         <jarDirectory url="file://$MODULE_DIR$/lib/JMF-2.1.1e/lib" recursive="false" />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library" scope="TEST">
+      <library name="libTest">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/libTest" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/libTest" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/libTest" recursive="false" />
+        <jarDirectory url="file://$MODULE_DIR$/libTest" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
   </component>
