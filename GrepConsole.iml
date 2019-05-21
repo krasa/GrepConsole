@@ -24,16 +24,6 @@
       </library>
     </orderEntry>
     <orderEntry type="module-library">
-      <library name="async">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/lib/async" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-        <jarDirectory url="file://$MODULE_DIR$/lib/async" recursive="false" />
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
       <library name="jmf">
         <CLASSES>
           <root url="file://$MODULE_DIR$/lib/JMF-2.1.1e/lib" />

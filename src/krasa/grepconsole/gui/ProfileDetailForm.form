@@ -347,7 +347,7 @@
                       <font/>
                       <hideActionText value="false"/>
                       <horizontalTextPosition value="0"/>
-                      <icon value="krasa/grepconsole/gui/btn_donate_LG.gif"/>
+                      <icon value="krasa/grepconsole/gui/donate.gif"/>
                       <text value=""/>
                       <toolTipText value="Donate via PayPal"/>
                     </properties>

@@ -1,6 +1,6 @@
 package krasa.grepconsole.gui;
 
-import com.centerkey.utils.BareBonesBrowserLaunch;
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.CopyAction;
 import com.intellij.ide.actions.CutAction;
@@ -110,19 +110,11 @@ public class ProfileDetailForm {
 				}
 		);
 
-
-		DONATEButton.setBorder(null);
-		DONATEButton.setContentAreaFilled(false);
-		DONATEButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
-			}
-		});
+		Donate.init(rootComponent, DONATEButton);
 		web.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				BareBonesBrowserLaunch.openURL("https://plugins.jetbrains.com/plugin/7125-grep-console");
+				BrowserUtil.browse("https://plugins.jetbrains.com/plugin/7125-grep-console");
 			}
 		});
 		rehighlightAll.addActionListener(new ActionListener() {
