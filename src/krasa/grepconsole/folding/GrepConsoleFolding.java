@@ -1,16 +1,14 @@
 package krasa.grepconsole.folding;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ConsoleFolding;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.text.StringUtil;
+import krasa.grepconsole.model.GrepExpressionItem;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * @author Vojtech Krasa
@@ -18,8 +16,8 @@ import com.intellij.openapi.util.text.StringUtil;
 public class GrepConsoleFolding extends ConsoleFolding {
 	private GrepConsoleApplicationComponent grepConsoleApplicationComponent;
 
-	public GrepConsoleFolding(GrepConsoleApplicationComponent grepConsoleApplicationComponent) {
-		this.grepConsoleApplicationComponent = grepConsoleApplicationComponent;
+	public GrepConsoleFolding() {
+		this.grepConsoleApplicationComponent = GrepConsoleApplicationComponent.getInstance();
 	}
 
 	@Override
