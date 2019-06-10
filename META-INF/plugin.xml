@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.2.162.000.0</version>
+	<version>9.3.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -46,74 +46,76 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>9.2 (2019-05-21)
+        <br>9.3
+		<br>- IntelliJ 2019.2 compatibility
+        <br>9.2
 		<br>- Highlighting disabled table rows
-        <br>9.1 (2019-04-29)
+        <br>9.1
 		<br>- Grep action support for Python Debug
-        <br>9.0 (2019-04-20)
+        <br>9.0
 		<br>- Added Stream Buffering - disabled by default
 		<br>- Added: 'Move error stream to the bottom' action
 		<br>- Fixed: Main class in Run/Debug Configurations takes too much space
 		<br>- Fixed: Input filtering for CLion  
 		<br>- Added: Input filter blank line workaround option
 		<br>- Hopefully Fixed: Tail - Illegal seek for a named pipe on Linux
-        <br>8.6 (2019-02-08)
+        <br>8.6
 		<br>- Exception fix     
-        <br>8.5 (2018-10-05)
+        <br>8.5
 		<br>- Exception fix
-        <br>8.4 (2018-09-26)
+        <br>8.4
 		<br>- Added: Toggle highlight of all occurrences of the selected text in the editor.
 		<br>- Fixed reopening of pinned grep console
-        <br>8.3 (2018-07-05)
+        <br>8.3
 		<br>- Highlighting for Grunt and other consoles.
-        <br>8.2 (2018-06-15)
+        <br>8.2
 		<br>- IJ 2018.2 EAP icons fix
-        <br>8.1 (2018-05-15)
+        <br>8.1
 		<br>- GUI, Help improvements
 		<br>- Various edge cases fixed
-        <br>8.0 (2018-05-11)
+        <br>8.0
 		<br>- Support for manipulating output text, and any custom actions (e.g. notifications) by scripting using <a href="https://github.com/dkandalov/live-plugin">LivePlugin</a> or making own plugin. 
 		<br>- Reworked input filtering logic and gui
 		<br>- 'Grep' fix for incomplete stream #103
 		<br>- IJ 2018.2 compatibility
 		<br>- New default colors for Darcula - for readable links
 		<br>- Plaintext copy&paste for table rows
-        <br>7.4 (2018-04-20)
+        <br>7.4
 		<br>- Tail exception handling      
-        <br>7.3 (2018-01-11)
+        <br>7.3
 		<br>- Various fixes
-        <br>7.2 (2017-11-04)
+        <br>7.2
 		<br>- Fixed "Runner GrepConsoleTail is not registered" exception on startup
-        <br>7.1 (2017-11-03)
+        <br>7.1
 		<br>- Option to disable Run Configuration profile settings
 		<br>- Fixed filtering of test console #55
-        <br>7.0 (2017-10-21)
+        <br>7.0
 		<br>- Run Configuration settings and profiles 
 		<br>- Multiline input filtering - filter out not matched lines if the previous one was filtered out
 		<br>- Restored old filtering behaviour prior to v6.9 - Sometimes you may want to see only lines that are highlighted. To do this, add a ".*" as the last item and set to "Whole line" and "Filter out".
-        <br>6.10 (2017-09-27)
+        <br>6.10
 		<br>- Tail encoding settings and auto-detection
-        <br>6.9 (2017-09-18)
+        <br>6.9
 		<br>- Console clearing on match
-        <br>6.8 (2017-08-07)
+        <br>6.8
 		<br>- Unpinning of a grep console on closing of the tab
 		<br>- Jumping to a console from the status bar on a left click
 		<br>- Status bar colors
 		<br>- Added a separate grep limit settings
 		<br>- Gui improvements, rehighlight all button
-        <br>6.7 (2017-08-02)
+        <br>6.7
 		<br>- Grep Consoles pinning
 		<br>- file tail integration fix for Win 10
-        <br>6.6 (2017-02-09)
+        <br>6.6
 		<br>- Tail tabs pinning (reopening with a project)
-        <br>6.5 (2017-02-05)
+        <br>6.5
 		<br>- Grep sub-console improvements 
-        <br>6.4 (2017-02-04)
+        <br>6.4
 		<br>- ANSI support deleted, for IJ 2016+  
 		<br>- more strict performance checks
-        <br>6.3 (2016-08-26)
+        <br>6.3
 		<br>- grep improvements    
-        <br>6.0 (2016-08-23)
+        <br>6.0
 		<br>- ability to filter/grep the console output into a new console tab
         <br>0.1 (2012-11-13)
         <br>- Initial release
@@ -139,6 +141,8 @@
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
 	<depends>com.intellij.modules.lang</depends>
+	<!--suppress PluginXmlValidity -->
+	<depends optional="true">com.intellij.modules.java</depends>
 
 	<application-components>
 		<!-- Add your application components here -->
