@@ -24,19 +24,19 @@ public class Rehighlighter {
 	}
 
 
-	public void removeAllHighlighters(Editor editor) {
-		if (editor != null) {
-			editor.getMarkupModel().removeAllHighlighters();
-		} 
-	}
-
 	private void reset(ConsoleViewImpl consoleViewImpl) {
 		Editor editor = consoleViewImpl.getEditor();
 		if (editor != null) {//disposed are null - may be bug
 			removeAllHighlighters(editor);
 			highlightAll(consoleViewImpl, editor);
 			StatisticsManager.resetStatisticsPanels(consoleViewImpl);
-		} 
+		}
+	}
+
+	public void removeAllHighlighters(Editor editor) {
+		if (editor != null) {
+			editor.getMarkupModel().removeAllHighlighters();
+		}
 	}
 
 	private void highlightAll(ConsoleViewImpl consoleViewImpl, Editor editor) {
