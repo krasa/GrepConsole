@@ -34,7 +34,7 @@ public class GrepUtils {
 					Object invoke = getEditorDocument.invoke(_originalConsole);
 
 //					WebConsoleView originalConsole = (WebConsoleView) _originalConsole;
-//							Document document = originalConsole.getEditorDocument();
+//					Document document = originalConsole.getEditorDocument();
 //					originalConsole.flushDeferredText();           //TODO?
 
 					Document document = (Document) invoke;
