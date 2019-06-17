@@ -11,9 +11,6 @@ import krasa.grepconsole.filter.GrepHighlightFilter;
 import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.StatisticsManager;
-import org.jetbrains.annotations.Nullable;
-
-import static krasa.grepconsole.action.HighlightManipulationAction.FILTER;
 
 public class Rehighlighter {
 
@@ -45,10 +42,11 @@ public class Rehighlighter {
 	private void highlightAll(ConsoleViewImpl consoleViewImpl, Editor editor) {
 		try {
 			Filter myCustomFilter = (Filter) ReflectionUtils.getPropertyValue(consoleViewImpl, "myFilters");
-
-			int lineCount = editor.getDocument().getLineCount();
-			if (lineCount > 0) {
-				consoleViewImpl.getHyperlinks().highlightHyperlinks(myCustomFilter, FILTER, 0, lineCount - 1);
+			if (myCustomFilter != null) {
+				int lineCount = editor.getDocument().getLineCount();
+				if (lineCount > 0) {
+					consoleViewImpl.getHyperlinks().highlightHyperlinks(myCustomFilter, 0, lineCount - 1);
+				}
 			}
 		} catch (NoSuchFieldException e1) {
 			throw new RuntimeException("IJ API was probably changed, update the plugin or report it", e1);
@@ -60,7 +58,7 @@ public class Rehighlighter {
 		EditorHyperlinkSupport myHyperlinks = new EditorHyperlinkSupport(editor, project);
 		int lineCount = editor.getDocument().getLineCount();
 		if (lineCount > 0) {
-			myHyperlinks.highlightHyperlinks(getGrepFilter(project), getPredefinedMessageFilter(), 0, lineCount - 1);
+			myHyperlinks.highlightHyperlinks(getGrepFilter(project), 0, lineCount - 1);
 		}
 	}
 
@@ -68,14 +66,5 @@ public class Rehighlighter {
 		return ServiceManager.getInstance().createHighlightFilter(project, null);
 	}
 
-	private Filter getPredefinedMessageFilter() {
-		return new Filter() {
-			@Nullable
-			@Override
-			public Result applyFilter(String line, int entireLength) {
-				return null;
-			}
-		};
-	}
 
 }
