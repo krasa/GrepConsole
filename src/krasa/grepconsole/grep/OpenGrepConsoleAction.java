@@ -7,7 +7,10 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.testframework.ui.TestResultsPanel;
-import com.intellij.execution.ui.*;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.ExecutionConsole;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
@@ -24,6 +27,7 @@ import com.intellij.xdebugger.XDebuggerManager;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepCopyingFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
+import krasa.grepconsole.grep.gui.GrepUtils;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
 import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
 import krasa.grepconsole.model.Profile;
@@ -57,7 +61,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		Project eventProject = getEventProject(e);
-		ConsoleViewImpl parentConsoleView = (ConsoleViewImpl) getConsoleView(e);
+		ConsoleView parentConsoleView = (ConsoleView) getConsoleView(e);
 		String expression = getExpression(e);
 		try {
 			PinnedGrepsReopener.enabled = false;
@@ -68,12 +72,16 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	}
 
-	public ConsoleViewImpl createGrepConsole(Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleViewImpl parentConsoleView, @Nullable GrepModel grepModel, @Nullable String expression,
+	public ConsoleViewImpl createGrepConsole(Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parentConsoleView, @Nullable GrepModel grepModel, @Nullable String expression,
 											 String consoleUUID, String contentType) {
 		if (grepModel != null) {
 			expression = grepModel.getExpression();
 		}
-
+		if (!(parentConsoleView instanceof JComponent)) {
+			throw new RuntimeException("console not supported, must be instance of JComponent: " + parentConsoleView);
+		}
+		JComponent parentConsoleView_JComponent = (JComponent) parentConsoleView;
+	   
 		final GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
 		if (copyingFilter == null) {
 			throw new IllegalStateException("Console not supported: " + parentConsoleView);
@@ -108,7 +116,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 
 		DefaultActionGroup actions = new DefaultActionGroup();
-		String parentConsoleUUID = getConsoleUUID(parentConsoleView);
+		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
 		PinAction pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key, contentType);
 		actions.add(pinAction);
 
@@ -140,10 +148,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		});
 
-		parentConsoleView.flushDeferredText();
-		for (String s : parentConsoleView.getEditor().getDocument().getText().split("\n")) {
-			copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
-		}
+
+		GrepUtils.grepThroughExistingText(parentConsoleView, copyingListener);
+		
 		copyingFilter.addListener(copyingListener);
 
 		Disposer.register(runContentDescriptor, tab);
@@ -177,7 +184,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 
 		Disposable inactiveTitleDisposer;
-		Container parent = parentConsoleView.getParent();
+		Container parent = parentConsoleView_JComponent.getParent();
 		if (parent instanceof MyJPanel && !Disposer.isDisposed((MyJPanel) parent)) {
 			inactiveTitleDisposer = (MyJPanel) parent;
 		} else {
@@ -196,7 +203,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	@Nullable
-	public String getConsoleUUID(ConsoleViewImpl parentConsoleView) {
+	public String getConsoleUUID(JComponent parentConsoleView) {
 		String parentConsoleUUID = null;
 		Container parent = parentConsoleView.getParent();
 		if (parent instanceof MyJPanel) {
@@ -221,7 +228,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	@Nullable
-	protected String getContentType(@NotNull RunnerLayoutUi runnerLayoutUi, ConsoleViewImpl consoleView) {
+	protected String getContentType(@NotNull RunnerLayoutUi runnerLayoutUi, ConsoleView consoleView) {
 		Content[] contents = runnerLayoutUi.getContents();
 		for (Content content : contents) {
 			if (isSameConsole(content, consoleView)) {
@@ -236,7 +243,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		void apply(GrepModel grepModel);
 	}
 
-	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, RunContentDescriptor runContentDescriptor, ConsoleViewImpl parentConsoleView) {
+	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, RunContentDescriptor runContentDescriptor, ConsoleView parentConsoleView) {
 		RunnerLayoutUi runnerLayoutUi = null;
 
 		if (runContentDescriptor != null) {
@@ -257,8 +264,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		}
 
-		if (runnerLayoutUi == null) {
-			Container parent = parentConsoleView.getParent();
+		if (runnerLayoutUi == null && parentConsoleView instanceof JComponent) {
+			Container parent = ((JComponent) parentConsoleView).getParent();
 			if (parent instanceof MyJPanel) {
 				runnerLayoutUi = ((MyJPanel) parent).runnerLayoutUi;
 			}
@@ -266,7 +273,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return runnerLayoutUi;
 	}
 
-	public static RunContentDescriptor getRunContentDescriptor(Project project, ConsoleViewImpl consoleView) {
+	public static RunContentDescriptor getRunContentDescriptor(Project project, ConsoleView consoleView) {
 		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
 				dom -> {
 					if (isSameConsole(dom, consoleView, true)) {
@@ -310,7 +317,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		}
 		if (consoleView instanceof MyConsoleViewImpl && orChild) {
-			ConsoleViewImpl parentConsoleView = ((MyConsoleViewImpl) consoleView).getParentConsoleView();
+			ConsoleView parentConsoleView = ((MyConsoleViewImpl) consoleView).getParentConsoleView();
 			return isSameConsole(dom, parentConsoleView, orChild);
 		}
 		return executionConsole == consoleView;
@@ -379,7 +386,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return panel;
 	}
 
-	private ConsoleView createConsole(@NotNull Project project, ConsoleViewImpl parentConsoleView, @NotNull ProcessHandler processHandler) {
+	private ConsoleView createConsole(@NotNull Project project, ConsoleView parentConsoleView, @NotNull ProcessHandler processHandler) {
 		ConsoleView console = ServiceManager.getInstance().createConsoleWithoutInputFilter(project, parentConsoleView);
 		console.attachToProcess(processHandler);
 		return console;

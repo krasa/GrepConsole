@@ -361,7 +361,7 @@ public class ServiceManager {
 		}
 	}
 
-	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleViewImpl parentConsoleView) {
+	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleView parentConsoleView) {
 		try {
 			createInputFilter = false;
 			return new MyConsoleViewImpl(project, false, parentConsoleView);

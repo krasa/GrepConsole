@@ -1,14 +1,13 @@
 package krasa.grepconsole.grep.gui;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.ui.ConsoleViewContentType;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.JBDimension;
@@ -25,12 +24,13 @@ import java.awt.event.*;
 import java.util.regex.PatternSyntaxException;
 
 public class GrepPanel extends JPanel implements Disposable {
+	private static final Logger LOG = Logger.getInstance(GrepPanel.class);
 
 	public static final NotificationGroup GROUP_DISPLAY_ID_ERROR = new NotificationGroup("Grep Console error",
 			NotificationDisplayType.BALLOON, false);
 
 	@Nullable
-	private ConsoleViewImpl originalConsole;
+	private ConsoleView originalConsole;
 	private final ConsoleViewImpl newConsole;
 	private final GrepCopyingFilterListener copyingListener;
 	private final RunnerLayoutUi runnerLayoutUi;
@@ -64,7 +64,7 @@ public class GrepPanel extends JPanel implements Disposable {
 		// this.unlessExpression.setBorder(JBUI.Borders.empty());
 	}
 
-	public GrepPanel(final ConsoleViewImpl originalConsole, final ConsoleViewImpl newConsole,
+	public GrepPanel(final ConsoleView originalConsole, final ConsoleViewImpl newConsole,
 					 GrepCopyingFilterListener copyingListener, GrepModel grepModel, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
@@ -183,14 +183,7 @@ public class GrepPanel extends JPanel implements Disposable {
 	protected void reload() {
 		apply();
 		newConsole.clear();
-		if (originalConsole != null) {
-			Editor editor = originalConsole.getEditor();
-			Document document = editor.getDocument();
-			String text = document.getText();
-			for (String s : text.split("\n")) {
-				copyingListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
-			}
-		}
+		GrepUtils.grepThroughExistingText(originalConsole, copyingListener);
 	}
 
 	public GrepModel getModel() {

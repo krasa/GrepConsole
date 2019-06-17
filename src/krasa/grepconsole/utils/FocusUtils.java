@@ -44,27 +44,35 @@ public class FocusUtils {
 		frame.requestFocus();
 	}
 
-	public static ActionCallback selectAndFocusSubTab(RunnerLayoutUi runnerLayoutUi, ConsoleViewImpl originalConsole) {
+	public static ActionCallback selectAndFocusSubTab(RunnerLayoutUi runnerLayoutUi, ConsoleView originalConsole) {
+		JComponent originalConsoleComponent = null;
+		if (originalConsole instanceof JComponent) {
+			originalConsoleComponent = (JComponent) originalConsole;
+		} else {
+			LOG.error("console not supported " + originalConsole);
+		} 
+		
+		
 		Content[] contents = runnerLayoutUi.getContents();
 		for (Content content : contents) {
 			JComponent component = content.getComponent();
-			if (component == originalConsole) {
+			if (component == originalConsoleComponent) {
 				return runnerLayoutUi.selectAndFocus(content, true, true);
-			} else if (isChild(component, originalConsole, -1)) {
+			} else if (isChild(component, originalConsoleComponent, -1)) {
 				return runnerLayoutUi.selectAndFocus(content, true, true);
 			}
 		}
 		// for testng console
 		for (Content content : contents) {
 			JComponent component = content.getComponent();
-			if (isChild(component, originalConsole, -2)) {
+			if (isChild(component, originalConsoleComponent, -2)) {
 				return runnerLayoutUi.selectAndFocus(content, true, true);
 			}
 		}
 		return null;
 	}
 
-	private static boolean isChild(JComponent component, ConsoleViewImpl originalConsole, int i) {
+	private static boolean isChild(JComponent component, JComponent originalConsole, int i) {
 		return component.getComponentZOrder(originalConsole) != i;
 	}
 

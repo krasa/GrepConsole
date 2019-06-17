@@ -1,17 +1,18 @@
 package krasa.grepconsole;
 
 import com.intellij.execution.impl.ConsoleViewImpl;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 
 public class MyConsoleViewImpl extends ConsoleViewImpl {
-	private final ConsoleViewImpl parentConsoleView;
+	private final ConsoleView parentConsoleView;
 
-	public MyConsoleViewImpl(Project project, boolean viewer, ConsoleViewImpl parentConsoleView) {
+	public MyConsoleViewImpl(Project project, boolean viewer, ConsoleView parentConsoleView) {
 		super(project, viewer);
 		this.parentConsoleView = parentConsoleView;
 	}
 
-	public ConsoleViewImpl getParentConsoleView() {
+	public ConsoleView getParentConsoleView() {
 		return parentConsoleView;
 	}
 }
