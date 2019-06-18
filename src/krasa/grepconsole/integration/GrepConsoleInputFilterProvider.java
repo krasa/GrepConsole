@@ -3,8 +3,9 @@ package krasa.grepconsole.integration;
 import com.intellij.execution.filters.ConsoleInputFilterProvider;
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.filter.GrepCopyingFilter;
-import krasa.grepconsole.filter.GrepInputFilter;
+import krasa.grepconsole.filter.GrepFilter;
+import krasa.grepconsole.filter.LockingInputFilterWrapper;
+import krasa.grepconsole.filter.MainInputFilter;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
@@ -16,18 +17,13 @@ public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvide
 	@Override
 	public InputFilter[] getDefaultFilters(@NotNull Project project) {
 		Profile defaultProfile = GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
-		GrepInputFilter inputFilter = ServiceManager.getInstance().createInputFilter(project, defaultProfile);
-		GrepCopyingFilter copyingFilter = ServiceManager.getInstance().createCopyingFilter(project, defaultProfile);
+		GrepFilter grepFilter = ServiceManager.getInstance().createGrepFilter(project, defaultProfile);
+		MainInputFilter inputFilter = ServiceManager.getInstance().createInputFilter(project, defaultProfile, grepFilter);
 
 		if (inputFilter != null) {
-			if (defaultProfile.isFilterOutBeforeGrep()) {
-				inputFilter.setGrepFilter(copyingFilter);
-				return new InputFilter[]{inputFilter};
-			} else {
-				return new InputFilter[]{copyingFilter, inputFilter};
-			}
+			return new InputFilter[]{new LockingInputFilterWrapper(inputFilter)};
 		} else {
-			return new InputFilter[]{copyingFilter};
+			return new InputFilter[]{new LockingInputFilterWrapper(grepFilter)};
 		}
 	}
 

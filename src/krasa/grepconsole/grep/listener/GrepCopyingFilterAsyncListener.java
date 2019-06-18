@@ -7,29 +7,29 @@
 //import krasa.grepconsole.grep.OpenGrepConsoleAction;
 //import krasa.grepconsole.model.Profile;
 //
-//public class GrepCopyingFilterAsyncListener implements GrepCopyingFilterListener {
+//public class GrepFilterAsyncListener implements GrepFilterListener {
 //
 //	private HybridQueue consoleBuffer;
-//	private GrepCopyingFilterSyncListener grepCopyingFilterSyncListener;
+//	private GrepFilterSyncListener grepGrepFilterSyncListener;
 //
-//	public GrepCopyingFilterAsyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project eventProject, Profile profile) {
-//		grepCopyingFilterSyncListener = new GrepCopyingFilterSyncListener(myProcessHandler, eventProject, profile);
+//	public GrepFilterAsyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project eventProject, Profile profile) {
+//		grepGrepFilterSyncListener = new GrepFilterSyncListener(myProcessHandler, eventProject, profile);
 //		this.consoleBuffer = new HybridQueue(new EventConsumer() {
 //			@Override
 //			public void processEvent(String s) {
-//				grepCopyingFilterSyncListener.process(s, ConsoleViewContentType.NORMAL_OUTPUT);
+//				grepGrepFilterSyncListener.process(s, ConsoleViewContentType.NORMAL_OUTPUT);
 //			}
 //		});
 //	}
 //
 //	@Override
 //	public void modelUpdated(GrepModel grepModel) {
-//		grepCopyingFilterSyncListener.modelUpdated(grepModel);
+//		grepGrepFilterSyncListener.modelUpdated(grepModel);
 //	}
 //
 //	@Override
 //	public void profileUpdated(Profile profile) {
-//		grepCopyingFilterSyncListener.profileUpdated(profile);
+//		grepGrepFilterSyncListener.profileUpdated(profile);
 //	}
 //
 //	@Override

@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
 /**
  * every stream could have its own thread (java), or it could be all on some random pooled thread (debug in CLion)
  */
-public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
-	private static final Logger log = Logger.getInstance(GrepInputFilter.class);
+public class MainInputFilter extends AbstractGrepFilter implements InputFilter {
+	private static final Logger log = Logger.getInstance(MainInputFilter.class);
 
 	private static final Pair<String, ConsoleViewContentType> REMOVE_OUTPUT_PAIR = new Pair<>(null, null);
 	public static final List<Pair<String, ConsoleViewContentType>> REMOVE_OUTPUT = Collections.singletonList(REMOVE_OUTPUT_PAIR);
@@ -39,16 +39,23 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 	private volatile boolean lastLineFiltered = false;
 	private volatile boolean removeNextNewLine = false;
 	private boolean blankLineWorkaround;
-	private volatile GrepCopyingFilter grepFilter;
+
+	private final GrepFilter grepFilter;
+	private final boolean filterBeforeGrepping;
+
 	private StreamBuffer streamBuffer;
 
 
-	public GrepInputFilter(Project project, Profile profile) {
+	public MainInputFilter(Project project, Profile profile, boolean filterBeforeGrepping, GrepFilter grepFilter) {
 		super(project, profile);
+		this.filterBeforeGrepping = filterBeforeGrepping;
+		this.grepFilter = grepFilter;
 	}
 
-	public GrepInputFilter(Profile profile, List<GrepProcessor> grepProcessors) {
+	public MainInputFilter(Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile, grepProcessors);
+		this.filterBeforeGrepping = false;
+		this.grepFilter = null;
 	}
 
 	/*todo not reliable */
@@ -74,6 +81,11 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String text, ConsoleViewContentType consoleViewContentType) {
+		if (!filterBeforeGrepping) {
+			grep(null, text, consoleViewContentType);
+		}
+
+
 		if (consoleViewContentType != ConsoleViewContentType.USER_INPUT
 				&& streamBuffer != null
 				&& !Thread.holdsLock(streamBuffer.LOOP_GUARD)
@@ -87,9 +99,13 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 
 		List<Pair<String, ConsoleViewContentType>> result = filter(text, consoleViewContentType);
 
-		grep(result, text, consoleViewContentType);
+
+		if (filterBeforeGrepping) {
+			grep(result, text, consoleViewContentType);
+		}
 
 		return result;
+
 	}
 
 	@Nullable
@@ -256,11 +272,23 @@ public class GrepInputFilter extends AbstractGrepFilter implements InputFilter {
 		throw new UnsupportedOperationException();
 	}
 
-	public GrepCopyingFilter getGrepFilter() {
+	public GrepFilter getGrepFilter() {
 		return grepFilter;
 	}
 
-	public void setGrepFilter(GrepCopyingFilter copyingFilter) {
-		this.grepFilter = copyingFilter;
+	@Override
+	public void setLockingInputFilterWrapper(LockingInputFilterWrapper lockingInputFilterWrapper) {
+		super.setLockingInputFilterWrapper(lockingInputFilterWrapper);
+		if (grepFilter != null) {
+			grepFilter.setLockingInputFilterWrapper(lockingInputFilterWrapper);
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "MainInputFilter{" +
+				"console=" + console +
+				", grepFilter=" + grepFilter +
+				'}';
 	}
 }

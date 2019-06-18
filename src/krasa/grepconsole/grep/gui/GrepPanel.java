@@ -11,9 +11,10 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.util.ui.JBDimension;
+import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
+import krasa.grepconsole.grep.listener.GrepFilterListener;
 import krasa.grepconsole.utils.FocusUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +33,8 @@ public class GrepPanel extends JPanel implements Disposable {
 	@Nullable
 	private ConsoleView originalConsole;
 	private final ConsoleViewImpl newConsole;
-	private final GrepCopyingFilterListener copyingListener;
+	private final GrepFilter grepFilter;
+	private final GrepFilterListener grepListener;
 	private final RunnerLayoutUi runnerLayoutUi;
 	private MyTextFieldWithStoredHistory expressionTextField;
 	private TextFieldWithStoredHistory unlessExpressionTextField;
@@ -65,10 +67,11 @@ public class GrepPanel extends JPanel implements Disposable {
 	}
 
 	public GrepPanel(final ConsoleView originalConsole, final ConsoleViewImpl newConsole,
-					 GrepCopyingFilterListener copyingListener, GrepModel grepModel, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
+					 GrepFilter grepFilter, GrepFilterListener grepListener, GrepModel grepModel, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
-		this.copyingListener = copyingListener;
+		this.grepFilter = grepFilter;
+		this.grepListener = grepListener;
 		this.runnerLayoutUi = runnerLayoutUi;
 		initModel(pattern, grepModel);
 		actions();
@@ -183,7 +186,7 @@ public class GrepPanel extends JPanel implements Disposable {
 	protected void reload() {
 		apply();
 		newConsole.clear();
-		GrepUtils.grepThroughExistingText(originalConsole, copyingListener);
+		GrepUtils.grepThroughExistingText(originalConsole, grepFilter, grepListener);
 	}
 
 	public GrepModel getModel() {

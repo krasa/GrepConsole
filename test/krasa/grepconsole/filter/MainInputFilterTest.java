@@ -19,18 +19,18 @@ import static com.intellij.execution.ui.ConsoleViewContentType.NORMAL_OUTPUT;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
-public class GrepInputFilterTest {
+public class MainInputFilterTest {
 
-	protected GrepInputFilter service;
-	protected GrepInputFilter service2;
+	protected MainInputFilter service;
+	protected MainInputFilter service2;
 
 	@Before
 	public void setUp() throws Exception {
 		ArrayList<GrepProcessor> grepProcessors = new ArrayList<>();
 		grepProcessors.add(getFilter(".*ERROR.*", Color.RED));
 		grepProcessors.add(getFilter(".*INFO.*", Color.BLUE));
-		service = new GrepInputFilter(new Profile(), grepProcessors);
-		service2 = new GrepInputFilter(new Profile(), new ArrayList<>());
+		service = new MainInputFilter(new Profile(), grepProcessors);
+		service2 = new MainInputFilter(new Profile(), new ArrayList<>());
 	}
 
 	@Test

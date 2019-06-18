@@ -22,7 +22,7 @@ public class Notifier {
 		});
 	}
 
-	public static void notify_GrepCopyingFilter(final Project project, String message) {
+	public static void notify_GrepFilter(final Project project, String message) {
 		final Notification notification = GrepConsoleApplicationComponent.NOTIFICATION.createNotification(
 				"GrepConsole plugin: " + message
 						+ "\n(More notifications will not be displayed for this console filter. Notification can be disabled at File | Settings | Appearance & Behavior | Notifications`)"

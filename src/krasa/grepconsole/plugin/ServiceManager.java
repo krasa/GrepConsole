@@ -9,9 +9,9 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.AbstractFilter;
-import krasa.grepconsole.filter.GrepCopyingFilter;
+import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.GrepHighlightFilter;
-import krasa.grepconsole.filter.GrepInputFilter;
+import krasa.grepconsole.filter.MainInputFilter;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.SoundMode;
 import krasa.grepconsole.model.Profile;
@@ -38,13 +38,13 @@ public class ServiceManager {
 	 * for tracking settings change
 	 */
 	private List<WeakReference<GrepHighlightFilter>> highlightFilters = new ArrayList<>();
-	private List<WeakReference<GrepInputFilter>> inputFilters = new ArrayList<>();
+	private List<WeakReference<MainInputFilter>> inputFilters = new ArrayList<>();
 
 	/**
 	 * to couple console with filters
 	 */
-	private WeakReference<GrepCopyingFilter> lastCopier;
-	private WeakReference<GrepInputFilter> lastGrepInputFilter;
+	private WeakReference<GrepFilter> lastCopier;
+	private WeakReference<MainInputFilter> lastGrepInputFilter;
 
 
 	Consoles consoles = new Consoles();
@@ -72,16 +72,16 @@ public class ServiceManager {
 			consoleViewData.grepHighlightFilter = grepHighlightFilter;
 		}
 
-		public void put(ConsoleView console, GrepCopyingFilter lastCopier) {
-			getOrCreateData(console).grepCopyingFilter = lastCopier;
+		public void put(ConsoleView console, GrepFilter lastCopier) {
+			getOrCreateData(console).grepFilter = lastCopier;
 		}
 
 		public void put(ConsoleView console, RunConfigurationBase lastRunConfiguration) {
 			getOrCreateData(console).runConfigurationBase = lastRunConfiguration;
 		}
 
-		public void put(ConsoleView console, GrepInputFilter lastGrepInputFilter) {
-			getOrCreateData(console).grepInputFilter = lastGrepInputFilter;
+		public void put(ConsoleView console, MainInputFilter lastMainInputFilter) {
+			getOrCreateData(console).mainInputFilter = lastMainInputFilter;
 		}
 
 
@@ -98,12 +98,12 @@ public class ServiceManager {
 			return getOrCreateData(console).grepHighlightFilter;
 		}
 
-		public GrepCopyingFilter getGrepCopyingFilter(ConsoleView console) {
-			return getOrCreateData(console).grepCopyingFilter;
+		public GrepFilter getGrepFilter(ConsoleView console) {
+			return getOrCreateData(console).grepFilter;
 		}
 
-		public Collection<GrepCopyingFilter> getCopiers() {
-			return consoleDataMap.values().stream().map(value -> value.grepCopyingFilter).collect(Collectors.toCollection(ArrayList::new));
+		public Collection<GrepFilter> getCopiers() {
+			return consoleDataMap.values().stream().map(value -> value.grepFilter).collect(Collectors.toCollection(ArrayList::new));
 		}
 
 		public RunConfigurationBase getRunConfigurationBase(@NotNull ConsoleView console) {
@@ -151,22 +151,22 @@ public class ServiceManager {
 			Profile profile;
 
 			GrepHighlightFilter grepHighlightFilter;
-			GrepCopyingFilter grepCopyingFilter;
-			GrepInputFilter grepInputFilter;
+			GrepFilter grepFilter;
+			MainInputFilter mainInputFilter;
 
 			public void setProfile(@NotNull Profile selectedProfile) {
 				profile = selectedProfile;
-				GrepCopyingFilter grepCopyingFilter = this.grepCopyingFilter;
-				if (grepCopyingFilter != null) {
-					grepCopyingFilter.setProfile(selectedProfile);
+				GrepFilter grepFilter = this.grepFilter;
+				if (grepFilter != null) {
+					grepFilter.setProfile(selectedProfile);
 				}
 				GrepHighlightFilter grepHighlightFilter = this.grepHighlightFilter;
 				if (grepHighlightFilter != null) {
 					grepHighlightFilter.setProfile(selectedProfile);
 				}
-				GrepInputFilter grepInputFilter = this.grepInputFilter;
-				if (grepInputFilter != null) {
-					grepInputFilter.setProfile(selectedProfile);
+				MainInputFilter mainInputFilter = this.mainInputFilter;
+				if (mainInputFilter != null) {
+					mainInputFilter.setProfile(selectedProfile);
 				}
 			}
 		}
@@ -182,8 +182,8 @@ public class ServiceManager {
 
 	}
 
-	private void iterate(Collection<GrepCopyingFilter> values) {
-		for (GrepCopyingFilter filter : values) {
+	private void iterate(Collection<GrepFilter> values) {
+		for (GrepFilter filter : values) {
 			if (filter != null) {
 				filter.onChange();
 			}
@@ -207,12 +207,13 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	public GrepInputFilter createInputFilter(@NotNull Project project, @NotNull Profile profile) {
+	public MainInputFilter createInputFilter(@NotNull Project project, @NotNull Profile profile, GrepFilter grepFilter) {
 		if (!createInputFilter) {
 			return null;
 		}
-		GrepInputFilter lastInputFilter = new GrepInputFilter(project, profile);
-		WeakReference<GrepInputFilter> weakReference = new WeakReference<>(lastInputFilter);
+		Profile defaultProfile = GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
+		MainInputFilter lastInputFilter = new MainInputFilter(project, profile, defaultProfile.isFilterOutBeforeGrep(), grepFilter);
+		WeakReference<MainInputFilter> weakReference = new WeakReference<>(lastInputFilter);
 		inputFilters.add(weakReference);
 		lastGrepInputFilter = weakReference;
 		return lastInputFilter;
@@ -237,8 +238,8 @@ public class ServiceManager {
 		return grepHighlightFilter;
 	}
 
-	public GrepCopyingFilter createCopyingFilter(@NotNull Project project, Profile profile) {
-		final GrepCopyingFilter grepInputFilter = new GrepCopyingFilter(project, profile);
+	public GrepFilter createGrepFilter(@NotNull Project project, Profile profile) {
+		final GrepFilter grepInputFilter = new GrepFilter(project, profile);
 		lastCopier = new WeakReference<>(grepInputFilter);
 		return grepInputFilter;
 	}
@@ -249,8 +250,8 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	public GrepCopyingFilter getCopyingFilter(@NotNull ConsoleView console) {
-		return consoles.getGrepCopyingFilter(console);
+	public GrepFilter getGrepFilter(@NotNull ConsoleView console) {
+		return consoles.getGrepFilter(console);
 	}
 
 	public boolean isRegistered(@NotNull ConsoleView console) {
@@ -259,19 +260,19 @@ public class ServiceManager {
 
 	public void registerConsole(@NotNull ConsoleView console) {
 
-		GrepInputFilter lastGrepInputFilter = getLastGrepInputFilter();
-		lastGrepInputFilter = checkConsistency(console, GrepInputFilter.class, lastGrepInputFilter);
-		if (lastGrepInputFilter != null) {
-			lastGrepInputFilter.init(new WeakReference<>(console), getProfile(console));
-			consoles.put(console, lastGrepInputFilter);
+		MainInputFilter lastMainInputFilter = getLastGrepInputFilter();
+		lastMainInputFilter = checkConsistency(console, MainInputFilter.class, lastMainInputFilter);
+		if (lastMainInputFilter != null) {
+			lastMainInputFilter.init(new WeakReference<>(console), getProfile(console));
+			consoles.put(console, lastMainInputFilter);
 			this.lastGrepInputFilter = null;
 		}
 
 
-		GrepCopyingFilter lastCopier = getLastCopier();
-		lastCopier = checkConsistency(console, GrepCopyingFilter.class, lastCopier);
-		if (lastGrepInputFilter != null && lastGrepInputFilter.getGrepFilter() != null) {
-			lastCopier = lastGrepInputFilter.getGrepFilter();
+		GrepFilter lastCopier = getLastCopier();
+		lastCopier = checkConsistency(console, GrepFilter.class, lastCopier);
+		if (lastMainInputFilter != null && lastMainInputFilter.getGrepFilter() != null) {
+			lastCopier = lastMainInputFilter.getGrepFilter();
 		}
 		if (lastCopier != null) {
 			consoles.put(console, lastCopier);
@@ -343,7 +344,7 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	private GrepCopyingFilter getLastCopier() {
+	private GrepFilter getLastCopier() {
 		if (lastCopier != null) {
 			return lastCopier.get();
 		} else {
@@ -353,7 +354,7 @@ public class ServiceManager {
 
 
 	@Nullable
-	private GrepInputFilter getLastGrepInputFilter() {
+	private MainInputFilter getLastGrepInputFilter() {
 		if (lastGrepInputFilter != null) {
 			return lastGrepInputFilter.get();
 		} else {

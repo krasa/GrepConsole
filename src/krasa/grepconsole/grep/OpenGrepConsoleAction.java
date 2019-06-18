@@ -25,11 +25,11 @@ import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import krasa.grepconsole.MyConsoleViewImpl;
-import krasa.grepconsole.filter.GrepCopyingFilter;
+import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.gui.GrepUtils;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterListener;
-import krasa.grepconsole.grep.listener.GrepCopyingFilterSyncListener;
+import krasa.grepconsole.grep.listener.GrepFilterListener;
+import krasa.grepconsole.grep.listener.GrepFilterSyncListener;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
@@ -45,7 +45,7 @@ import java.util.Collection;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//import krasa.grepconsole.grep.listener.GrepCopyingFilterAsyncListener;
+//import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
 
 public class OpenGrepConsoleAction extends DumbAwareAction {
 
@@ -81,9 +81,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			throw new RuntimeException("console not supported, must be instance of JComponent: " + parentConsoleView);
 		}
 		JComponent parentConsoleView_JComponent = (JComponent) parentConsoleView;
-	   
-		final GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
-		if (copyingFilter == null) {
+
+		final GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(parentConsoleView);
+		if (grepFilter == null) {
 			throw new IllegalStateException("Console not supported: " + parentConsoleView);
 		}
 		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project, parentConsoleView);
@@ -111,8 +111,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		Profile profile = ServiceManager.getInstance().getProfile(parentConsoleView);
 		ServiceManager.getInstance().profileChanged(newConsole, profile);
 
-		final GrepCopyingFilterListener copyingListener = new GrepCopyingFilterSyncListener(myProcessHandler, project, profile);
-		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, copyingListener, grepModel, expression, runnerLayoutUi);
+		final GrepFilterListener grepListener = new GrepFilterSyncListener(myProcessHandler, project, profile);
+		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression, runnerLayoutUi);
 
 
 		DefaultActionGroup actions = new DefaultActionGroup();
@@ -142,16 +142,16 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("apply callback");
 				}
-				copyingListener.modelUpdated(grepModel);
+				grepListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getExpression()));
 				PinnedGrepConsolesState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, pinAction.getContentType(), false);
 			}
 		});
 
 
-		GrepUtils.grepThroughExistingText(parentConsoleView, copyingListener);
-		
-		copyingFilter.addListener(copyingListener);
+		GrepUtils.grepThroughExistingText(parentConsoleView, grepFilter, grepListener);
+
+		grepFilter.addListener(grepListener);
 
 		Disposer.register(runContentDescriptor, tab);
 		Disposer.register(tab, consolePanel);
@@ -173,12 +173,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 
 		Disposer.register(consolePanel, newConsole);
-		Disposer.register(consolePanel, copyingListener);
+		Disposer.register(consolePanel, grepListener);
 		Disposer.register(consolePanel, quickFilterPanel);
 		Disposer.register(consolePanel, new Disposable() {
 			@Override
 			public void dispose() {
-				copyingFilter.removeListener(copyingListener);
+				grepFilter.removeListener(grepListener);
 			}
 		});
 
@@ -404,8 +404,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		Project eventProject = getEventProject(e);
 		ConsoleView parentConsoleView = getConsoleView(e);
 		if (parentConsoleView != null) {
-			GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
-			if (eventProject != null && copyingFilter != null) {
+			GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(parentConsoleView);
+			if (eventProject != null && grepFilter != null) {
 				RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(eventProject, parentConsoleView);
 				if (runContentDescriptor != null) {
 					RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(eventProject, runContentDescriptor, parentConsoleView);

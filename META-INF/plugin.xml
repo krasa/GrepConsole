@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.3.162.000.0</version>
+	<version>9.4.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -46,6 +46,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>9.4
+		<br>- Fixed a race condition for grepping, to make sure all output is processed
         <br>9.3
 		<br>- IntelliJ 2019.2 compatibility
         <br>9.2

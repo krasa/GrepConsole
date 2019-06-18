@@ -17,8 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener {
-	private static final Logger log = Logger.getInstance(GrepCopyingFilterSyncListener.class);
+public class GrepFilterSyncListener implements GrepFilterListener {
+	private static final Logger log = Logger.getInstance(GrepFilterSyncListener.class);
 
 	private final OpenGrepConsoleAction.LightProcessHandler myProcessHandler;
 	private final Project project;
@@ -28,7 +28,7 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	private ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
 	private ThreadLocal<Long> previousTimestamp = new ThreadLocal<>();
 
-	public GrepCopyingFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
+	public GrepFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
 		this.myProcessHandler = myProcessHandler;
 		this.project = project;
 		this.profile = profile;
@@ -95,7 +95,7 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 						+ "Matcher: " + matcher + "\n" + "Line: " + Utils.toNiceLineForLog(substring);
 				if (showLimitNotification) {
 					showLimitNotification = false;
-					Notifier.notify_GrepCopyingFilter(project, message);
+					Notifier.notify_GrepFilter(project, message);
 				} else {
 					log.warn(message);
 				}
@@ -113,5 +113,12 @@ public class GrepCopyingFilterSyncListener implements GrepCopyingFilterListener 
 	@Override
 	public void dispose() {
 		previousIncompleteToken.set(null);
+	}
+
+	@Override
+	public String toString() {
+		return "GrepFilterSyncListener{" +
+				"matcher=" + matcher +
+				'}';
 	}
 }

@@ -5,7 +5,7 @@ import com.intellij.openapi.Disposable;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.model.Profile;
 
-public interface GrepCopyingFilterListener extends Disposable {
+public interface GrepFilterListener extends Disposable {
 	void modelUpdated(GrepModel grepModel);
 
 	void profileUpdated(Profile profile);

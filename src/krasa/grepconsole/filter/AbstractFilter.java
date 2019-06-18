@@ -10,6 +10,7 @@ public abstract class AbstractFilter implements DumbAware {
 	protected Project project;
 	@NotNull
 	protected volatile Profile profile;
+	protected LockingInputFilterWrapper lockingInputFilterWrapper;
 
 	public AbstractFilter(@NotNull Project project, @NotNull Profile profile) {
 		this.project = project;
@@ -38,4 +39,11 @@ public abstract class AbstractFilter implements DumbAware {
 		refreshProfile();
 	}
 
+	public LockingInputFilterWrapper getLockingInputFilterWrapper() {
+		return lockingInputFilterWrapper;
+	}
+
+	public void setLockingInputFilterWrapper(LockingInputFilterWrapper lockingInputFilterWrapper) {
+		this.lockingInputFilterWrapper = lockingInputFilterWrapper;
+	}
 }
