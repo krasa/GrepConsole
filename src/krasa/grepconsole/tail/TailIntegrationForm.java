@@ -7,7 +7,7 @@ import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.util.PathUtil;
 import krasa.grepconsole.model.TailSettings;
-import krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent;
+import krasa.grepconsole.tail.remotecall.RemoteCallService;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -89,7 +89,7 @@ public class TailIntegrationForm {
 	}
 
 	public boolean rebind(TailSettings tailSettings) {
-		final GrepConsoleRemoteCallComponent instance = GrepConsoleRemoteCallComponent.getInstance();
+		final RemoteCallService instance = RemoteCallService.getInstance();
 		return instance.rebind(tailSettings);
 	}
 

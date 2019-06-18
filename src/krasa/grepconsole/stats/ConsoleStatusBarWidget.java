@@ -8,20 +8,20 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.ui.UIUtil;
-import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.HighlightingFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class GrepConsoleStatusBarWidget implements CustomStatusBarWidget {
+public class ConsoleStatusBarWidget implements CustomStatusBarWidget {
 
 	private final String id;
 	private final Project project;
 	protected StatisticsStatusBarPanel statisticsPanel;
 
-	public GrepConsoleStatusBarWidget(ConsoleViewImpl console, GrepHighlightFilter lastGrepHighlightFilter) {
-		statisticsPanel = new StatisticsStatusBarPanel(console, lastGrepHighlightFilter) {
+	public ConsoleStatusBarWidget(ConsoleViewImpl console, HighlightingFilter lastHighlightingFilter) {
+		statisticsPanel = new StatisticsStatusBarPanel(console, lastHighlightingFilter) {
 			@Override
 			protected void hideStatusBar() {
 				dispose();

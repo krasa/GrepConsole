@@ -11,7 +11,7 @@ import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
-public class GrepConsoleInputFilterProvider implements ConsoleInputFilterProvider {
+public class MyConsoleInputFilterProvider implements ConsoleInputFilterProvider {
 
 	@NotNull
 	@Override

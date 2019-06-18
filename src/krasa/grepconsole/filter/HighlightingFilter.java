@@ -14,15 +14,15 @@ import java.util.Collections;
 import java.util.List;
 
 /** must be executed in single thread, see #createProcessor */
-public class GrepHighlightFilter extends AbstractGrepFilter implements Filter {
+public class HighlightingFilter extends AbstractMatchingFilter implements Filter {
 
 	protected ConsoleViewContentType lastTextAttributes = null;
 
-	public GrepHighlightFilter(Project project, Profile profile) {
+	public HighlightingFilter(Project project, Profile profile) {
 		super(project, profile);
 	}
 
-	protected GrepHighlightFilter(Profile profile, List<GrepProcessor> grepProcessors) {
+	protected HighlightingFilter(Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile, grepProcessors);
 	}
 

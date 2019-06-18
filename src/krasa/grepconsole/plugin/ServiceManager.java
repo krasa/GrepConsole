@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.AbstractFilter;
 import krasa.grepconsole.filter.GrepFilter;
-import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.MainInputFilter;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.SoundMode;
@@ -37,7 +37,7 @@ public class ServiceManager {
 	/**
 	 * for tracking settings change
 	 */
-	private List<WeakReference<GrepHighlightFilter>> highlightFilters = new ArrayList<>();
+	private List<WeakReference<HighlightingFilter>> highlightFilters = new ArrayList<>();
 	private List<WeakReference<MainInputFilter>> inputFilters = new ArrayList<>();
 
 	/**
@@ -67,9 +67,9 @@ public class ServiceManager {
 	static class Consoles {
 		private WeakHashMap<ConsoleView, ConsoleViewData> consoleDataMap = new WeakHashMap<>();
 
-		public void put(ConsoleView consoleView, GrepHighlightFilter grepHighlightFilter) {
+		public void put(ConsoleView consoleView, HighlightingFilter highlightingFilter) {
 			ConsoleViewData consoleViewData = getOrCreateData(consoleView);
-			consoleViewData.grepHighlightFilter = grepHighlightFilter;
+			consoleViewData.highlightingFilter = highlightingFilter;
 		}
 
 		public void put(ConsoleView console, GrepFilter lastCopier) {
@@ -94,8 +94,8 @@ public class ServiceManager {
 			return consoleViewData;
 		}
 
-		public GrepHighlightFilter getGrepHighlightFilter(ConsoleView console) {
-			return getOrCreateData(console).grepHighlightFilter;
+		public HighlightingFilter getHighlightFilter(ConsoleView console) {
+			return getOrCreateData(console).highlightingFilter;
 		}
 
 		public GrepFilter getGrepFilter(ConsoleView console) {
@@ -150,7 +150,7 @@ public class ServiceManager {
 			 */
 			Profile profile;
 
-			GrepHighlightFilter grepHighlightFilter;
+			HighlightingFilter highlightingFilter;
 			GrepFilter grepFilter;
 			MainInputFilter mainInputFilter;
 
@@ -160,9 +160,9 @@ public class ServiceManager {
 				if (grepFilter != null) {
 					grepFilter.setProfile(selectedProfile);
 				}
-				GrepHighlightFilter grepHighlightFilter = this.grepHighlightFilter;
-				if (grepHighlightFilter != null) {
-					grepHighlightFilter.setProfile(selectedProfile);
+				HighlightingFilter highlightingFilter = this.highlightingFilter;
+				if (highlightingFilter != null) {
+					highlightingFilter.setProfile(selectedProfile);
 				}
 				MainInputFilter mainInputFilter = this.mainInputFilter;
 				if (mainInputFilter != null) {
@@ -219,7 +219,7 @@ public class ServiceManager {
 		return lastInputFilter;
 	}
 
-	public GrepHighlightFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
+	public HighlightingFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		if (consoleView != null) {
 			registerConsole(consoleView);
 		}
@@ -228,14 +228,14 @@ public class ServiceManager {
 	}
 
 	@NotNull
-	private GrepHighlightFilter createHighlightFilter2(@NotNull Project project, @Nullable ConsoleView consoleView) {
+	private HighlightingFilter createHighlightFilter2(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		Profile profile = getProfile(consoleView);
-		GrepHighlightFilter grepHighlightFilter = new GrepHighlightFilter(project, profile);
-		highlightFilters.add(new WeakReference<>(grepHighlightFilter));
+		HighlightingFilter highlightingFilter = new HighlightingFilter(project, profile);
+		highlightFilters.add(new WeakReference<>(highlightingFilter));
 		if (consoleView != null) {
-			consoles.put(consoleView, grepHighlightFilter);
+			consoles.put(consoleView, highlightingFilter);
 		}
-		return grepHighlightFilter;
+		return highlightingFilter;
 	}
 
 	public GrepFilter createGrepFilter(@NotNull Project project, Profile profile) {
@@ -245,8 +245,8 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	public GrepHighlightFilter getHighlightFilter(@NotNull ConsoleView console) {
-		return consoles.getGrepHighlightFilter(console);
+	public HighlightingFilter getHighlightFilter(@NotNull ConsoleView console) {
+		return consoles.getHighlightFilter(console);
 	}
 
 	@Nullable
@@ -337,9 +337,9 @@ public class ServiceManager {
 	}
 
 	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
-		if (consoles.getGrepHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
-			GrepHighlightFilter highlightFilter = createHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
-			console.addMessageFilter(highlightFilter);
+		if (consoles.getHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
+			HighlightingFilter highlightingFilter = createHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
+			console.addMessageFilter(highlightingFilter);
 		}
 	}
 

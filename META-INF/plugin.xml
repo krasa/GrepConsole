@@ -151,10 +151,6 @@
 		<component>
 			<implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
 		</component>
-		<component>
-			<implementation-class>krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent
-			</implementation-class>
-		</component>
 	</application-components>
 
 	<project-components>
@@ -229,12 +225,13 @@
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<applicationService serviceImplementation="krasa.grepconsole.tail.remotecall.RemoteCallService"/>
 		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
 
-		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.GrepConsoleActionsPostProcessor"/>
-		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.GrepConsoleFilterProvider"/>
-		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.GrepConsoleInputFilterProvider"/>
-		<console.folding implementation="krasa.grepconsole.folding.GrepConsoleFolding"/>
+		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.MyConsoleActionsPostProcessor"/>
+		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.MyConsoleFilterProvider"/>
+		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.MyConsoleInputFilterProvider"/>
+		<console.folding implementation="krasa.grepconsole.folding.MyConsoleFolding"/>
 		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
 								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
 		<!-- Add your extensions here -->

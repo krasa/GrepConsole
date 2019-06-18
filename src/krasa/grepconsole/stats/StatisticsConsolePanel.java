@@ -12,7 +12,7 @@ import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
-import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.model.GrepColor;
@@ -34,12 +34,12 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<>();
 	private java.util.Timer timer;
 	private final JPanel jPanel;
-	private GrepHighlightFilter grepHighlightFilter;
+	private HighlightingFilter highlightingFilter;
 	private ConsoleViewImpl consoleView;
 
-	public StatisticsConsolePanel(GrepHighlightFilter filter, ConsoleViewImpl consoleView) {
+	public StatisticsConsolePanel(HighlightingFilter filter, ConsoleViewImpl consoleView) {
 		super(new BorderLayout());
-		this.grepHighlightFilter = filter;
+		this.highlightingFilter = filter;
 		this.consoleView = consoleView;
 		setBorder(new EmptyBorder(0, 0, 0, 0));
 		final FlowLayout layout = new FlowLayout();
@@ -59,11 +59,11 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 	}
 
 	public Project getProject() {
-		return grepHighlightFilter.getProject();
+		return highlightingFilter.getProject();
 	}
 
 	private void init() {
-		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
+		final List<GrepProcessor> grepProcessors = highlightingFilter.getGrepProcessors();
 		MouseInputAdapter mouseInputAdapter = new MouseInputAdapter() {
 
 			@Override
@@ -85,7 +85,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		jPanel.add(createActionLabel("Reset", new Runnable() {
 			@Override
 			public void run() {
-				StatisticsManager.clearCount(grepHighlightFilter);
+				StatisticsManager.clearCount(highlightingFilter);
 				reset();
 			}
 		}));

@@ -1,7 +1,5 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.components.*;
@@ -9,6 +7,8 @@ import krasa.grepconsole.Cloner;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.TailSettings;
+import krasa.grepconsole.tail.remotecall.RemoteCallService;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -20,9 +20,6 @@ import java.util.List;
 public class GrepConsoleApplicationComponent
 		implements ApplicationComponent,
 		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
-
-	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Grep Console",
-			NotificationDisplayType.BALLOON, true);
 
 	protected List<GrepExpressionItem> foldingsCache;
 	private PluginState settings;
@@ -79,6 +76,10 @@ public class GrepConsoleApplicationComponent
 
 	@Override
 	public void initComponent() {
+		final TailSettings tailSettings = getState().getTailSettings();
+		if (tailSettings.isEnabled()) {
+			RemoteCallService.getInstance().rebind(tailSettings);
+		}
 	}
 
 	@Override

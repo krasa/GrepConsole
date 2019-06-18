@@ -7,7 +7,7 @@ import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.StatisticsManager;
@@ -62,7 +62,7 @@ public class Rehighlighter {
 		}
 	}
 
-	private GrepHighlightFilter getGrepFilter(Project project) {
+	private HighlightingFilter getGrepFilter(Project project) {
 		return ServiceManager.getInstance().createHighlightFilter(project, null);
 	}
 

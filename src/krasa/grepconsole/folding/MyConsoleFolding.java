@@ -13,10 +13,10 @@ import java.util.regex.Pattern;
 /**
  * @author Vojtech Krasa
  */
-public class GrepConsoleFolding extends ConsoleFolding {
+public class MyConsoleFolding extends ConsoleFolding {
 	private GrepConsoleApplicationComponent grepConsoleApplicationComponent;
 
-	public GrepConsoleFolding() {
+	public MyConsoleFolding() {
 		this.grepConsoleApplicationComponent = GrepConsoleApplicationComponent.getInstance();
 	}
 

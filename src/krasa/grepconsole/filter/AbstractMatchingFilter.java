@@ -17,18 +17,18 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractGrepFilter extends AbstractFilter {
-	private static final Logger log = Logger.getInstance(AbstractGrepFilter.class);
+public abstract class AbstractMatchingFilter extends AbstractFilter {
+	private static final Logger log = Logger.getInstance(AbstractMatchingFilter.class);
 	                                
 	protected volatile List<GrepProcessor> grepProcessors;
 	protected boolean showLimitNotification = true;
 
-	public AbstractGrepFilter(@NotNull Project project, @NotNull Profile profile) {
+	public AbstractMatchingFilter(@NotNull Project project, @NotNull Profile profile) {
 		super(project, profile);
 		initProcessors();
 	}
 
-	public AbstractGrepFilter(@NotNull Profile profile, List<GrepProcessor> grepProcessors) {
+	public AbstractMatchingFilter(@NotNull Profile profile, List<GrepProcessor> grepProcessors) {
 		super(profile);
 		this.grepProcessors = grepProcessors;
 	}

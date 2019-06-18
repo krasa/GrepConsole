@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 import static junit.framework.Assert.*;
 
-public class GrepHighlightFilterTest {
+public class HighlightingFilterTest {
 
 	@Test
 	public void testWithoutFilters() throws Exception {
-		GrepHighlightFilter grepConsoleService = new GrepHighlightFilter(new Profile(), new ArrayList<>());
+		HighlightingFilter grepConsoleService = new HighlightingFilter(new Profile(), new ArrayList<>());
 		Filter.Result result = grepConsoleService.applyFilter("input", 10);
 		assertNull(result);
 	}
@@ -25,7 +25,7 @@ public class GrepHighlightFilterTest {
 		ArrayList<GrepProcessor> grepProcessors = new ArrayList<>();
 		grepProcessors.add(getFilterB(".*ERROR.*", Color.RED, Operation.EXIT));
 		grepProcessors.add(getFilterB(".*INFO.*", Color.BLUE, Operation.EXIT));
-		GrepHighlightFilter grepFilter = new GrepHighlightFilter(new Profile(), grepProcessors);
+		HighlightingFilter grepFilter = new HighlightingFilter(new Profile(), grepProcessors);
 
 		assertNull(grepFilter.applyFilter("[WARN]", 10));
 
@@ -52,7 +52,7 @@ public class GrepHighlightFilterTest {
 		ArrayList<GrepProcessor> grepProcessors = new ArrayList<>();
 		grepProcessors.add(getFilterF(".*BLACK FOREGROUND.*", Color.BLACK, Operation.CONTINUE_MATCHING));
 		grepProcessors.add(getFilterB(".*RED BACKGROUND.*", Color.RED, Operation.CONTINUE_MATCHING));
-		GrepHighlightFilter grepFilter = new GrepHighlightFilter(new Profile(), grepProcessors);
+		HighlightingFilter grepFilter = new HighlightingFilter(new Profile(), grepProcessors);
 
 		Filter.Result result = grepFilter.applyFilter("BLACK FOREGROUND RED BACKGROUND", 10);
 		assertNotNull(result);
@@ -76,7 +76,7 @@ public class GrepHighlightFilterTest {
 		assertEquals(null, resultItem.highlightAttributes.getForegroundColor());
 	}
 
-	private void testVariousText(GrepHighlightFilter grepFilter) {
+	private void testVariousText(HighlightingFilter grepFilter) {
 		grepFilter.applyFilter("[INFO]\n", 10);
 		grepFilter.applyFilter("\n", 10);
 		grepFilter.applyFilter("\n\n", 10);

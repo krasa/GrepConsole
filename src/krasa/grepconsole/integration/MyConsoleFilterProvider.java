@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.ref.WeakReference;
 
-public class GrepConsoleFilterProvider extends ConsoleDependentFilterProvider {
+public class MyConsoleFilterProvider extends ConsoleDependentFilterProvider {
 
 	@NotNull
 	@Override

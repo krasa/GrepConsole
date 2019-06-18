@@ -1,21 +1,19 @@
 package krasa.grepconsole.stats.action;
 
-import javax.swing.*;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAwareAction;
-
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
-import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.StatisticsConsolePanel;
 import krasa.grepconsole.stats.StatisticsManager;
+import org.jetbrains.annotations.NotNull;
+
+import javax.swing.*;
 
 /**
  * @author Vojtech Krasa
@@ -29,29 +27,29 @@ public class ShowHideStatisticsConsolePanelAction extends DumbAwareAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent anActionEvent) {
-		GrepHighlightFilter highlightFilter = ServiceManager.getInstance().getHighlightFilter(console);
-		if (highlightFilter == null) {
+		HighlightingFilter highlightingFilter = ServiceManager.getInstance().getHighlightFilter(console);
+		if (highlightingFilter == null) {
 			return;
 		}
 		StatisticsConsolePanel statisticsConsolePanel = StatisticsManager.getConsolePanel((JPanel) console);
 		if (statisticsConsolePanel == null) {
 
-			if (!hasStatusItems(highlightFilter)) {
+			if (!hasStatusItems(highlightingFilter)) {
 				new OpenConsoleSettingsAction(console).actionPerformed(getEventProject(anActionEvent),
 						SettingsContext.CONSOLE);
 			}
-			if (!hasStatusItems(highlightFilter)) {
+			if (!hasStatusItems(highlightingFilter)) {
 				return;
 			}
-			StatisticsManager.createConsolePanel((ConsoleViewImpl) console, highlightFilter);
+			StatisticsManager.createConsolePanel((ConsoleViewImpl) console, highlightingFilter);
 		} else {
 			statisticsConsolePanel.dispose();
 		}
 	}
 
-	public boolean hasStatusItems(@NotNull GrepHighlightFilter highlightFilter) {
+	public boolean hasStatusItems(@NotNull HighlightingFilter highlightingFilter) {
 		boolean showCountInStatusBar = false;
-		for (GrepProcessor grepProcessor : highlightFilter.getGrepProcessors()) {
+		for (GrepProcessor grepProcessor : highlightingFilter.getGrepProcessors()) {
 			showCountInStatusBar = grepProcessor.getGrepExpressionItem().isShowCountInConsole();
 			if (showCountInStatusBar) {
 				break;

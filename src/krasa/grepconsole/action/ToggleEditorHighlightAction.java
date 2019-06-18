@@ -16,7 +16,7 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColorPicker;
 import com.intellij.util.CommonProcessors;
-import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.model.*;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Rehighlighter;
@@ -73,7 +73,7 @@ public class ToggleEditorHighlightAction extends DumbAwareAction {
 				profile.setEnableMaxLengthLimit(false);
 				profile.setMaxProcessingTime(String.valueOf(Integer.MAX_VALUE));
 				addExpressionItem(Pattern.quote(selectionModel.getSelectedText()), color, profile);
-				myHyperlinks.highlightHyperlinks(new GrepHighlightFilter(project, profile), 0, lineCount - 1);
+				myHyperlinks.highlightHyperlinks(new HighlightingFilter(project, profile), 0, lineCount - 1);
 			}
 		}
 	}

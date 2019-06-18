@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 /**
  * every stream could have its own thread (java), or it could be all on some random pooled thread (debug in CLion)
  */
-public class MainInputFilter extends AbstractGrepFilter implements InputFilter {
+public class MainInputFilter extends AbstractMatchingFilter implements InputFilter {
 	private static final Logger log = Logger.getInstance(MainInputFilter.class);
 
 	private static final Pair<String, ConsoleViewContentType> REMOVE_OUTPUT_PAIR = new Pair<>(null, null);

@@ -34,8 +34,8 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.GrepProjectComponent;
+import krasa.grepconsole.utils.Notifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -257,7 +257,7 @@ public class TailContentExecutor implements Disposable {
 			try {
 				myRerunAction.run();
 			} catch (Exception e1) {
-				Notification notification = GrepConsoleApplicationComponent.NOTIFICATION.createNotification(e1.getMessage(), MessageType.WARNING);
+				Notification notification = Notifier.NOTIFICATION.createNotification(e1.getMessage(), MessageType.WARNING);
 				Notifications.Bus.notify(notification, e.getProject());
 			}
 		}

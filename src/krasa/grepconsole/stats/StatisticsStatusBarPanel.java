@@ -13,7 +13,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SeparatorComponent;
 import com.intellij.util.ui.UIUtil;
-import krasa.grepconsole.filter.GrepHighlightFilter;
+import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.stats.common.ColorPanel;
@@ -41,13 +41,14 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	private List<Pair<JLabel, GrepProcessor>> pairs = new ArrayList<>();
 	private java.util.Timer timer;
 	private WeakReference<ConsoleView> consoleView;
-	private GrepHighlightFilter grepHighlightFilter;
+	private HighlightingFilter highlightingFilter;
 	private static Color[] bgs = getColors();
-	static int i = 5; 
-	public StatisticsStatusBarPanel(ConsoleView consoleView, GrepHighlightFilter filter) {
+	static int i = 5;
+
+	public StatisticsStatusBarPanel(ConsoleView consoleView, HighlightingFilter filter) {
 		super(new BorderLayout());
 		this.consoleView = new WeakReference<>(consoleView);
-		this.grepHighlightFilter = filter;
+		this.highlightingFilter = filter;
 		add(new SeparatorComponent(7), BorderLayout.WEST);
 		final FlowLayout layout = new FlowLayout();
 		layout.setVgap(0);
@@ -202,7 +203,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	}
 
 	public Project getProject() {
-		return grepHighlightFilter.getProject();
+		return highlightingFilter.getProject();
 	}
 
 	private void initComponents() {
@@ -213,7 +214,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 				mouse(e);
 			}
 		};
-		final List<GrepProcessor> grepProcessors = grepHighlightFilter.getGrepProcessors();
+		final List<GrepProcessor> grepProcessors = highlightingFilter.getGrepProcessors();
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInStatusBar()) {
 				add(grepProcessor, mouseInputAdapter);
