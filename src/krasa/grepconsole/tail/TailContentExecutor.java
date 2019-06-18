@@ -148,12 +148,17 @@ public class TailContentExecutor implements Disposable {
 			}
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 		descriptor.setExecutionId(System.nanoTime());
-		descriptor.setFocusComputable(() -> (JComponent) consoleView);
+		descriptor.setFocusComputable(() -> consoleView.getPreferredFocusableComponent());
+		descriptor.setAutoFocusContent(true);
+
+  
+  
 		ComponentWithActions componentWithActions = new MyImpl(null, null, (JComponent) consoleView, null, consolePanel);
 		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, componentWithActions, myTitle, AllIcons.Debugger.Console, consolePanel);
 		layoutUi.addContent(content, 0, PlaceInGrid.right, false);
 		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor), "RunnerToolbar");
 
+		Disposer.register(myProject, descriptor);
 		Disposer.register(descriptor, this);
 		Disposer.register(descriptor, content);
 
