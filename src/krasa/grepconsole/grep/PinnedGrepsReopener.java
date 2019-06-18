@@ -41,12 +41,9 @@ public class PinnedGrepsReopener {
 					if (project.isDisposed()) {
 						return;
 					}
-					if (!(consoleView instanceof ConsoleViewImpl)) {
-						return;
-					}
 
 
-					RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(project, (ConsoleViewImpl) consoleView);
+					RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(project, consoleView);
 
 					if (runContentDescriptor != null) {
 						PinnedGrepConsolesState.RunConfigurationRef key = toKey(runContentDescriptor);
@@ -56,7 +53,7 @@ public class PinnedGrepsReopener {
 							if (project.isDisposed()) {
 								return;
 							}
-							RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, runContentDescriptor, (ConsoleViewImpl) consoleView);
+							RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, runContentDescriptor, consoleView);
 							if (runnerLayoutUi == null) {
 								if (atomicInteger.incrementAndGet() < 6) {
 									myUpdateAlarm.cancelAndRequest();
@@ -78,7 +75,7 @@ public class PinnedGrepsReopener {
 										List<PinnedGrepConsolesState.Pin> list = state.getPins();
 										for (PinnedGrepConsolesState.Pin pin : list) {
 											if (pin.getParentConsoleUUID() == null && Objects.equals(contentType, pin.getContentType())) {
-												initConsole(pin, key, (ConsoleViewImpl) consoleView, list);
+												initConsole(pin, key, consoleView, list);
 											}
 										}
 									}
@@ -94,7 +91,7 @@ public class PinnedGrepsReopener {
 			}
 
 
-			public void initConsole(PinnedGrepConsolesState.Pin pin, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleViewImpl parent, List<PinnedGrepConsolesState.Pin> list) {
+			public void initConsole(PinnedGrepConsolesState.Pin pin, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parent, List<PinnedGrepConsolesState.Pin> list) {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug(">initConsole " + "pin = [" + pin + "], parent = [" + parent.hashCode() + "], list = [" + list + "]");
 				}

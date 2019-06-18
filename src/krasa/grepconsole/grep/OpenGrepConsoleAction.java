@@ -402,7 +402,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		boolean enabled = false;
 
 		Project eventProject = getEventProject(e);
-		ConsoleViewImpl parentConsoleView = (ConsoleViewImpl) getConsoleView(e);
+		ConsoleView parentConsoleView = getConsoleView(e);
 		if (parentConsoleView != null) {
 			GrepCopyingFilter copyingFilter = ServiceManager.getInstance().getCopyingFilter(parentConsoleView);
 			if (eventProject != null && copyingFilter != null) {
