@@ -1,8 +1,10 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.components.*;
+import com.intellij.openapi.components.ApplicationComponent;
+import com.intellij.openapi.components.PersistentStateComponent;
+import com.intellij.openapi.components.State;
+import com.intellij.openapi.components.Storage;
 import krasa.grepconsole.Cloner;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -11,15 +13,14 @@ import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.tail.remotecall.RemoteCallService;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@State(name = "GrepConsole", storages = {@Storage(file = "$APP_CONFIG$/GrepConsole.xml")})
+@State(name = "GrepConsole", storages = {@Storage("GrepConsole.xml")})
 public class GrepConsoleApplicationComponent
 		implements ApplicationComponent,
-		PersistentStateComponent<PluginState>, ExportableApplicationComponent {
+		PersistentStateComponent<PluginState> {
 
 	protected List<GrepExpressionItem> foldingsCache;
 	private PluginState settings;
@@ -135,18 +136,5 @@ public class GrepConsoleApplicationComponent
 			settings.setVersion(1);
 		}
 	}
-
-	@NotNull
-	@Override
-	public File[] getExportFiles() {
-		return new File[]{PathManager.getOptionsFile("grepConsole")};
-	}
-
-	@NotNull
-	@Override
-	public String getPresentableName() {
-		return "Grep Console";
-	}
-
 
 }

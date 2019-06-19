@@ -29,8 +29,9 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 		comp.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				actionPerformed(AnActionEvent.createFromInputEvent(OpenFileInConsoleToolbarAction.this, e,
-						ActionPlaces.UNKNOWN));
+				actionPerformed(AnActionEvent.createFromInputEvent(e,
+						ActionPlaces.UNKNOWN,
+						presentation, DataManager.getInstance().getDataContext(e.getComponent())));
 			}
 		});
 		comp.setToolTipText(getTemplatePresentation().getDescription());

@@ -56,7 +56,7 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
     myProcess = process;
     myCharset = charset;
     myPresentableName = commandLine;
-    myWaitFor = new ProcessWaitFor(process, this);
+	  myWaitFor = new ProcessWaitFor(process, this, "Tail " + commandLine);
   }
 
   /**
@@ -260,7 +260,7 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
     private final Key myProcessOutputType;
 
     private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
-      super(reader, sleepingPolicy);
+		super(reader, BaseOutputReader.Options.withPolicy(sleepingPolicy));
       myProcessOutputType = processOutputType;
       try {
         java.lang.reflect.Method method;
