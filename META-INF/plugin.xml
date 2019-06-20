@@ -47,7 +47,7 @@
 
 	<change-notes><![CDATA[        
         <br>9.4
-		<br>- Fixed a race condition for grepping, to make sure all output is processed
+		<br>- Minimized a race condition for grepping, to make sure all output is processed
         <br>9.3
 		<br>- IntelliJ 2019.2 compatibility
         <br>9.2

@@ -81,11 +81,6 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 
 	@Override
 	public List<Pair<String, ConsoleViewContentType>> applyFilter(String text, ConsoleViewContentType consoleViewContentType) {
-		if (!filterBeforeGrepping) {
-			grep(null, text, consoleViewContentType);
-		}
-
-
 		if (consoleViewContentType != ConsoleViewContentType.USER_INPUT
 				&& streamBuffer != null
 				&& !Thread.holdsLock(streamBuffer.LOOP_GUARD)
@@ -96,6 +91,11 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 			}
 		}
 
+
+		if (!filterBeforeGrepping) {
+			grep(null, text, consoleViewContentType);
+		}
+		       
 
 		List<Pair<String, ConsoleViewContentType>> result = filter(text, consoleViewContentType);
 

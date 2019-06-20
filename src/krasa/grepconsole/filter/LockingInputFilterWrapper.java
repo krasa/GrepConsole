@@ -49,7 +49,7 @@ public class LockingInputFilterWrapper implements InputFilter {
 	}
 
 	public void unlock() {
-		LOG.info("Unlocking console input, locked= " + (System.currentTimeMillis() - getLockedSince()) + "ms " + this);
+		LOG.info("Unlocking console input, locked=" + (System.currentTimeMillis() - getLockedSince()) + "ms " + this);
 		lock.writeLock().unlock();
 	}
 
