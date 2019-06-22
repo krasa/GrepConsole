@@ -10,8 +10,6 @@ import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
 
-import java.lang.reflect.Method;
-
 public class GrepUtils {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(GrepUtils.class);
 	public static final int MINIMAL_RACE_CONDITION_SAFETY_MS = 5;
@@ -44,31 +42,29 @@ public class GrepUtils {
 					}
 
 
-				} else if (_originalConsole.getClass().getCanonicalName().equals("com.intellij.javascript.debugger.console.WebConsoleView")) {
-
-					try {
-						//TODO NOT TESTED
-						//TODO need API
-						Class clazz = Class.forName("com.intellij.javascript.debugger.console.WebConsoleView");
-						Method getEditorDocument = clazz.getMethod("getEditorDocument");
-						Object invoke = getEditorDocument.invoke(_originalConsole);
-
-						//					WebConsoleView originalConsole = (WebConsoleView) _originalConsole;
-						//					Document document = originalConsole.getEditorDocument();
-						//					originalConsole.flushDeferredText();           //TODO?
-
-						Document document = (Document) invoke;
-
-						String text = document.getText();
-						for (String s : text.split("\n")) {
-							grepListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
-						}
-
-					} catch (Throwable e) {
-						throw new RuntimeException(e);
-					}
+//				} else if (_originalConsole.getClass().getCanonicalName().equals("com.intellij.javascript.debugger.console.WebConsoleView")) {
+//
+//					try {
+//						Class clazz = Class.forName("com.intellij.javascript.debugger.console.WebConsoleView");
+//						Method getEditorDocument = clazz.getMethod("getEditorDocument");
+//						Object invoke = getEditorDocument.invoke(_originalConsole);
+//
+//						//					WebConsoleView originalConsole = (WebConsoleView) _originalConsole;
+//						//					Document document = originalConsole.getEditorDocument();
+//						//					originalConsole.flushDeferredText();           //TODO?
+//
+//						Document document = (Document) invoke;
+//
+//						String text = document.getText();
+//						for (String s : text.split("\n")) {
+//							grepListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
+//						}
+//
+//					} catch (Throwable e) {
+//						throw new RuntimeException(e);
+//					}
 				} else {
-					LOG.error("console not supported " + _originalConsole);
+					LOG.error("Report this: console not supported, existing text not grepped " + _originalConsole);
 				}
 			}
 		} finally {

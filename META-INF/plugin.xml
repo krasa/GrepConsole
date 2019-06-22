@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.4.163.000.0</version>
+	<version>9.4.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -124,20 +124,8 @@
 			]]>
 	</change-notes>
 
-	<!--branch 143 - IntelliJ IDEA 15, WebStorm 11, PyCharm 5, PhpStorm 10, RubyMine 8, AppCode 3.3, CLion 1.2, DataGrip 1.0-->
-	<!--branch 141 - IntelliJ IDEA 14.1, WebStorm 10, PyCharm 4.1, Android Studio 1.3-->
-	<!--branch 139 - IntelliJ IDEA 14, WebStorm 9, PyCharm 4, PhpStorm 8, RubyMine 7-->
-	<!--branch 135 - IntelliJ IDEA 13.1, WebStorm 8-->
-	<!--branch 133 - IntelliJ IDEA 13, PyCharm 3.1, WebStorm 7, PhpStorm 7-->
-	<!--branch 131 - WebStorm 7, PyCharm 3.0, PhpStorm 7-->
 
-	<!--Branch number	IntelliJ Platform version-->
-	<!--171	2017.1-->
-	<!--163	2016.3-->
-	<!--162	2016.2, AS 2.3.3-->
-	<!--141.3056.4 = 14.1.6-->
-
-	<idea-version since-build="163"/>
+	<idea-version since-build="162"/>
 
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products

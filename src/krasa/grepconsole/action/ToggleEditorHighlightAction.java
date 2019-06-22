@@ -9,7 +9,6 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
-import com.intellij.openapi.editor.markup.HighlighterLayer;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -29,6 +28,9 @@ import java.util.regex.Pattern;
 
 @SuppressWarnings("UseJBColor")
 public class ToggleEditorHighlightAction extends DumbAwareAction {
+	//HighlighterLayer.CONSOLE_FILTER not in IJ 2016
+	int CONSOLE_FILTER = 5800;
+	
 	public ToggleEditorHighlightAction() {
 	}
 
@@ -98,7 +100,7 @@ public class ToggleEditorHighlightAction extends DumbAwareAction {
 		CommonProcessors.CollectProcessor<RangeHighlighterEx> processor = new CommonProcessors.CollectProcessor<RangeHighlighterEx>() {
 			@Override
 			protected boolean accept(RangeHighlighterEx o) {
-				return o.getLayer() == HighlighterLayer.CONSOLE_FILTER;
+				return o.getLayer() == CONSOLE_FILTER;
 			}
 		};
 		markupModel.processRangeHighlightersOverlappingWith(from, to, processor);
@@ -134,7 +136,7 @@ public class ToggleEditorHighlightAction extends DumbAwareAction {
 				CommonProcessors.FindFirstProcessor<RangeHighlighterEx> processor1 = new CommonProcessors.FindFirstProcessor<RangeHighlighterEx>() {
 					@Override
 					protected boolean accept(RangeHighlighterEx rangeHighlighterEx) {
-						return rangeHighlighterEx.getLayer() == HighlighterLayer.CONSOLE_FILTER;
+						return rangeHighlighterEx.getLayer() == CONSOLE_FILTER;
 					}
 				};
 				int offset = editor.getCaretModel().getOffset();

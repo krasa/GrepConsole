@@ -64,6 +64,7 @@ public class CompositeSettingsForm {
 			public void actionPerformed(ActionEvent e) {
 				if (profileDetailFormComponent.bufferStreams.isSelected()) {
 					new StreamBufferSettingsActionListener().actionPerformed(null);
+					profileDetailFormComponent.enableFiltering.setSelected(true);
 				}
 			}
 		});

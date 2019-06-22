@@ -59,7 +59,7 @@ public class ProfileDetailForm {
 	private JCheckBox enableHighlightingCheckBox;
 	private JFormattedTextField maxLengthToMatch;
 	private JCheckBox enableMaxLength;
-	private JCheckBox enableFiltering;
+	protected JCheckBox enableFiltering;
 	private JCheckBox multilineOutput;
 	private JButton DONATEButton;
 	private JCheckBox showStatsInConsole;
