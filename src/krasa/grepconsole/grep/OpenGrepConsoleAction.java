@@ -86,11 +86,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (grepFilter == null) {
 			throw new IllegalStateException("Console not supported: " + parentConsoleView);
 		}
-		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project, parentConsoleView);
+		ConsoleView topParentConsoleView = getTopParentConsoleView(parentConsoleView);
+
+		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project, topParentConsoleView);
 		if (runContentDescriptor == null) {  //should not happen
 			throw new IllegalStateException("runContentDescriptor == null");
 		}
-		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, runContentDescriptor, parentConsoleView);
+		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, runContentDescriptor, topParentConsoleView);
 		if (runnerLayoutUi == null) {  //should not happen
 			throw new IllegalStateException("runnerLayoutUi == null");
 		}
@@ -98,7 +100,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 		}
 		if (contentType == null) {
-			contentType = getContentType(runnerLayoutUi, parentConsoleView);
+			contentType = getContentType(runnerLayoutUi, topParentConsoleView);
 		}
 		if (contentType == null) {
 			contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
@@ -402,7 +404,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		boolean enabled = false;
 
 		Project eventProject = getEventProject(e);
-		ConsoleView parentConsoleView = getConsoleView(e);
+		ConsoleView parentConsoleView = getTopParentConsoleView(e.getData(LangDataKeys.CONSOLE_VIEW));
 		if (parentConsoleView != null) {
 			GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(parentConsoleView);
 			if (eventProject != null && grepFilter != null) {
@@ -416,6 +418,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		presentation.setEnabled(enabled);
 
+	}
+
+	private ConsoleView getTopParentConsoleView(ConsoleView data) {
+		if (data instanceof MyConsoleViewImpl) {
+			data = getTopParentConsoleView(((MyConsoleViewImpl) data).getParentConsoleView());
+		}
+		return data;
 	}
 
 	static class MyJPanel extends JPanel implements Disposable {
