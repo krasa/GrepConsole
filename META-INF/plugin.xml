@@ -46,8 +46,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
-        <br>9.4
-		<br>- Grep - fixed disabled action when chaining
+        <br>9.5
+		<br>- Grep - fixed disabled action in some cases
         <br>9.4
 		<br>- Minimized a race condition for grepping, to make sure all the output is processed
         <br>9.3
