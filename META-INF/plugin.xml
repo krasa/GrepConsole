@@ -46,6 +46,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>9.6
+		<br>- Fixed: Opening recent project leads to crash #149
         <br>9.5
 		<br>- Grep - fixed disabled action in some cases
         <br>9.4
