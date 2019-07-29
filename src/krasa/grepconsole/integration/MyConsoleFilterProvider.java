@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
 import krasa.grepconsole.grep.PinnedGrepsReopener;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +19,7 @@ public class MyConsoleFilterProvider extends ConsoleDependentFilterProvider {
 	@Override
 	public Filter[] getDefaultFilters(@NotNull ConsoleView consoleView, @NotNull Project project,
 			@NotNull GlobalSearchScope globalSearchScope) {
-		if (PinnedGrepsReopener.enabled) {
+		if (GrepProjectComponent.getInstance(project).pinReopenerEnabled) {
 			new PinnedGrepsReopener(project, new WeakReference<ConsoleView>(consoleView));
 		}
 		

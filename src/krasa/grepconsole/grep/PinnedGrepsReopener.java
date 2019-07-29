@@ -13,6 +13,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.SingleAlarm;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
+import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 
 import java.lang.ref.WeakReference;
@@ -27,7 +28,6 @@ public class PinnedGrepsReopener {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepsReopener.class);
 
 	private final SingleAlarm myUpdateAlarm;
-	public static volatile boolean enabled = true;
 
 	public PinnedGrepsReopener(Project project, WeakReference<ConsoleView> consoleViewWeakReference) {
 		AtomicInteger atomicInteger = new AtomicInteger();
@@ -67,8 +67,9 @@ public class PinnedGrepsReopener {
 								return;
 							}
 
+							GrepProjectComponent grepProjectComponent = GrepProjectComponent.getInstance(project);
 							try {
-								enabled = false;
+								grepProjectComponent.pinReopenerEnabled = false;
 
 
 								Content[] contents = runnerLayoutUi.getContents();
@@ -85,7 +86,7 @@ public class PinnedGrepsReopener {
 									}
 								}
 							} finally {
-								enabled = true;
+								grepProjectComponent.pinReopenerEnabled = true;
 							}
 						}
 					} else if (atomicInteger.incrementAndGet() < 3) {

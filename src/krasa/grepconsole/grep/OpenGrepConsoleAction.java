@@ -31,6 +31,7 @@ import krasa.grepconsole.grep.gui.GrepUtils;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
 import krasa.grepconsole.grep.listener.GrepFilterSyncListener;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -63,11 +64,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		Project eventProject = getEventProject(e);
 		ConsoleView parentConsoleView = (ConsoleView) getConsoleView(e);
 		String expression = getExpression(e);
+		GrepProjectComponent grepProjectComponent = GrepProjectComponent.getInstance(eventProject);
 		try {
-			PinnedGrepsReopener.enabled = false;
+			grepProjectComponent.pinReopenerEnabled = false;
 			createGrepConsole(eventProject, null, parentConsoleView, null, expression, UUID.randomUUID().toString(), null);
 		} finally {
-			PinnedGrepsReopener.enabled = true;
+			grepProjectComponent.pinReopenerEnabled = true;
 		}
 
 	}

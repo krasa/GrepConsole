@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.5.162.000.0</version>
+	<version>9.6.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -215,6 +215,7 @@
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<postStartupActivity implementation="krasa.grepconsole.grep.PinnedGrepsReopenerEnabler" order="last"/>
 		<applicationService serviceImplementation="krasa.grepconsole.tail.remotecall.RemoteCallService"/>
 		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
 

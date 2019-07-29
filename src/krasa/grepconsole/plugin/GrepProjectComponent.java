@@ -33,6 +33,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	private GrepProjectState grepProjectState = new GrepProjectState();
 	private List<WeakReference<TailContentExecutor.PinAction>> tailPinActions = new ArrayList<>();
 	private List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
+	public volatile boolean pinReopenerEnabled = false;
 
 	public static GrepProjectComponent getInstance(Project project) {
 		return project.getComponent(GrepProjectComponent.class);
