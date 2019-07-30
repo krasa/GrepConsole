@@ -8,10 +8,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.MyConsoleViewImpl;
-import krasa.grepconsole.filter.AbstractFilter;
-import krasa.grepconsole.filter.GrepFilter;
-import krasa.grepconsole.filter.HighlightingFilter;
-import krasa.grepconsole.filter.MainInputFilter;
+import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.SoundMode;
 import krasa.grepconsole.model.Profile;
@@ -43,7 +40,7 @@ public class ServiceManager {
 	/**
 	 * to couple console with filters
 	 */
-	private WeakReference<GrepFilter> lastCopier;
+	private WeakReference<GrepFilter> lastGrepFilter;
 	private WeakReference<MainInputFilter> lastGrepInputFilter;
 
 
@@ -240,7 +237,7 @@ public class ServiceManager {
 
 	public GrepFilter createGrepFilter(@NotNull Project project, Profile profile) {
 		final GrepFilter grepInputFilter = new GrepFilter(project, profile);
-		lastCopier = new WeakReference<>(grepInputFilter);
+		lastGrepFilter = new WeakReference<>(grepInputFilter);
 		return grepInputFilter;
 	}
 
@@ -269,14 +266,14 @@ public class ServiceManager {
 		}
 
 
-		GrepFilter lastCopier = getLastCopier();
-		lastCopier = checkConsistency(console, GrepFilter.class, lastCopier);
+		GrepFilter grepFilter = getLastGrepFilter();
+		grepFilter = checkConsistency(console, GrepFilter.class, grepFilter);
 		if (lastMainInputFilter != null && lastMainInputFilter.getGrepFilter() != null) {
-			lastCopier = lastMainInputFilter.getGrepFilter();
+			grepFilter = lastMainInputFilter.getGrepFilter();
 		}
-		if (lastCopier != null) {
-			consoles.put(console, lastCopier);
-			this.lastCopier = null;
+		if (grepFilter != null) {
+			consoles.put(console, grepFilter);
+			this.lastGrepFilter = null;
 		}
 
 		consoles.put(console, lastRunConfiguration);
@@ -300,6 +297,9 @@ public class ServiceManager {
 							if (myFilter != null) {
 								if (myFilter.getClass().getSimpleName().equals("InputFilterWrapper")) {        //for 2018+, old API won't work
 									Object actualFilter = ReflectionUtils.getPropertyValue(myFilter, "myOriginal");
+									if (actualFilter instanceof LockingInputFilterWrapper) {
+										actualFilter = ((LockingInputFilterWrapper) actualFilter).getInputFilter();
+									}
 									if (actualFilter != null && actualFilter.getClass().equals(clazz)) {
 										return (T) actualFilter;
 									}
@@ -344,9 +344,9 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	private GrepFilter getLastCopier() {
-		if (lastCopier != null) {
-			return lastCopier.get();
+	private GrepFilter getLastGrepFilter() {
+		if (lastGrepFilter != null) {
+			return lastGrepFilter.get();
 		} else {
 			return null;
 		}

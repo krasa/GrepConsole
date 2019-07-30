@@ -96,9 +96,14 @@ public class PinnedGrepsReopener {
 			}
 
 			protected void lockAndInitAllConsoles(ConsoleView consoleView, PinnedGrepConsolesState.RunConfigurationRef key, List<PinnedGrepConsolesState.Pin> list, Predicate<PinnedGrepConsolesState.Pin> predicate) {
+				if (list.isEmpty()) {
+					return;
+				}
 				final GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(consoleView);
 				if (grepFilter == null) {
-					throw new IllegalStateException("Console not supported: " + consoleView);
+//					throw new IllegalStateException("Console not supported: " + consoleView);
+					LOG.warn("Console not supported: " + consoleView);
+					return;
 				}
 				LockingInputFilterWrapper lockingInputFilterWrapper = grepFilter.getLockingInputFilterWrapper();
 

@@ -60,4 +60,8 @@ public class LockingInputFilterWrapper implements InputFilter {
 				", inputFilter=" + inputFilter +
 				'}';
 	}
+
+	public InputFilter getInputFilter() {
+		return inputFilter;
+	}
 }
