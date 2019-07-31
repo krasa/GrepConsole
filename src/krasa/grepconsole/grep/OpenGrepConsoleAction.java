@@ -1,6 +1,7 @@
 package krasa.grepconsole.grep;
 
 import com.intellij.execution.ExecutionHelper;
+import com.intellij.execution.console.ConsoleViewWrapperBase;
 import com.intellij.execution.console.DuplexConsoleView;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.process.ProcessHandler;
@@ -319,6 +320,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			} else {
 				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
 			}
+		} else if (executionConsole instanceof ConsoleViewWrapperBase) {
+			executionConsole = ((ConsoleViewWrapperBase) executionConsole).getDelegate();
 		}
 		if (consoleView instanceof MyConsoleViewImpl && orChild) {
 			ConsoleView parentConsoleView = ((MyConsoleViewImpl) consoleView).getParentConsoleView();

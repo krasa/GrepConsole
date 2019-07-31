@@ -248,7 +248,12 @@ public class ServiceManager {
 
 	@Nullable
 	public GrepFilter getGrepFilter(@NotNull ConsoleView console) {
-		return consoles.getGrepFilter(console);
+		GrepFilter grepFilter = consoles.getGrepFilter(console);
+		if (grepFilter == null) {
+			registerConsole(console);
+			grepFilter = consoles.getGrepFilter(console);
+		}
+		return grepFilter;
 	}
 
 	public boolean isRegistered(@NotNull ConsoleView console) {
