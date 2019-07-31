@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.6.162.000.1</version>
+    <version>9.7.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -46,6 +46,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>9.7
+		<br>- Better Grep action compatibility
         <br>9.6
 		<br>- Fixed: Opening recent project leads to crash #149
         <br>9.5
