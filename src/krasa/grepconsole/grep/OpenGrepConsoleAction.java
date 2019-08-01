@@ -343,6 +343,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	public static boolean isSameConsole(Content dom, ExecutionConsole consoleView) {
 		JComponent actionsContextComponent = dom.getActionsContextComponent();
+		if (actionsContextComponent == null) {
+			return false;
+		}
 		if (actionsContextComponent == consoleView) {
 			return true;
 		} else if (actionsContextComponent instanceof SMTestRunnerResultsForm) {
