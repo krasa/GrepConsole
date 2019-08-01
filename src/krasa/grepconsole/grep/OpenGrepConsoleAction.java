@@ -1,5 +1,6 @@
 package krasa.grepconsole.grep;
 
+import com.intellij.build.BuildView;
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.console.ConsoleViewWrapperBase;
 import com.intellij.execution.console.DuplexConsoleView;
@@ -324,7 +325,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		} else if (executionConsole instanceof ConsoleViewWrapperBase) { //javaee like google app
 			executionConsole = ((ConsoleViewWrapperBase) executionConsole).getDelegate();
-		} else if (executionConsole.getClass().getName().startsWith("org.jetbrains.idea.maven.buildtool.BuildViewMavenConsole")) {
+		} else if (executionConsole instanceof BuildView) {
 			try {
 				executionConsole = (ExecutionConsole) ReflectionUtils.getPropertyValue(executionConsole, "myExecutionConsole");
 			} catch (Exception e) {
@@ -367,7 +368,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
 			}
 			return executionConsole == consoleView;
-		} else if (actionsContextComponent.getClass().getName().startsWith("org.jetbrains.idea.maven.buildtool.BuildViewMavenConsole")) {
+		} else if (actionsContextComponent instanceof BuildView) {
 			try {
 				Object myExecutionConsole = ReflectionUtils.getPropertyValue(actionsContextComponent, "myExecutionConsole");
 				if (myExecutionConsole == consoleView) {
