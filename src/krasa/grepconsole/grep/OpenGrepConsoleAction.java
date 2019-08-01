@@ -33,6 +33,7 @@ import krasa.grepconsole.grep.listener.GrepFilterListener;
 import krasa.grepconsole.grep.listener.GrepFilterSyncListener;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepProjectComponent;
+import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang.StringUtils;
@@ -58,8 +59,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	public OpenGrepConsoleAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
 		super(text, description, icon);
-	}    
-	
+	}
+
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		Project eventProject = getEventProject(e);
@@ -309,6 +310,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return null;
 	}
 
+	static boolean broken = false;
 	public static boolean isSameConsole(RunContentDescriptor dom, ExecutionConsole consoleView, boolean orChild) {
 		ExecutionConsole executionConsole = dom.getExecutionConsole();
 		if (executionConsole instanceof BaseTestsOutputConsoleView) {
@@ -320,8 +322,17 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			} else {
 				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
 			}
-		} else if (executionConsole instanceof ConsoleViewWrapperBase) {
+		} else if (executionConsole instanceof ConsoleViewWrapperBase) { //javaee like google app
 			executionConsole = ((ConsoleViewWrapperBase) executionConsole).getDelegate();
+		} else if (executionConsole.getClass().getName().startsWith("org.jetbrains.idea.maven.buildtool.BuildViewMavenConsole")) {
+			try {
+				executionConsole = (ExecutionConsole) ReflectionUtils.getPropertyValue(executionConsole, "myExecutionConsole");
+			} catch (Exception e) {
+				if (!broken) {
+					LOG.error(e);
+					broken = true;
+				}
+			}
 		}
 		if (consoleView instanceof MyConsoleViewImpl && orChild) {
 			ConsoleView parentConsoleView = ((MyConsoleViewImpl) consoleView).getParentConsoleView();
@@ -353,11 +364,23 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
 			}
 			return executionConsole == consoleView;
+		} else if (actionsContextComponent.getClass().getName().startsWith("org.jetbrains.idea.maven.buildtool.BuildViewMavenConsole")) {
+			try {
+				Object myExecutionConsole = ReflectionUtils.getPropertyValue(actionsContextComponent, "myExecutionConsole");
+				if (myExecutionConsole == consoleView) {
+					return true;
+				}
+			} catch (Exception e) {
+				if (!broken) {
+					LOG.error(e);
+					broken = true;
+				}
+			}
 		}
 		return false;
 	}
 
-	
+
 	public static class LightProcessHandler extends ProcessHandler {
 		@Override
 		protected void destroyProcessImpl() {
