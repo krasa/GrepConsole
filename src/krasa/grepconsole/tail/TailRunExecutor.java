@@ -1,19 +1,20 @@
 package krasa.grepconsole.tail;
 
-import javax.swing.*;
-
+import com.intellij.execution.Executor;
+import com.intellij.execution.ExecutorRegistry;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.util.IconLoader;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-import com.intellij.execution.*;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.util.IconLoader;
+import javax.swing.*;
 
 /**
  * @author Vojtech Krasa
  */
 public class TailRunExecutor extends Executor {
 	public static final Icon ToolWindowRun = IconLoader.getIcon("/krasa/grepconsole/tail/tail.png"); // 13x13
+	public static final Icon disabledRun = IconLoader.getIcon("/krasa/grepconsole/tail/disabledRun.png"); // 13x13
 
 	public static final String TOOLWINDOWS_ID = "Tail";
 	@NonNls
@@ -43,7 +44,7 @@ public class TailRunExecutor extends Executor {
 
 	@Override
 	public Icon getDisabledIcon() {
-		return AllIcons.Process.DisabledRun;
+		return disabledRun;
 	}
 
 	@Override

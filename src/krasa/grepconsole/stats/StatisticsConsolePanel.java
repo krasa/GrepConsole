@@ -111,7 +111,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 		final JLabel label = new JLabel("0");
 		label.setForeground(JBColor.BLACK);
-		pairs.add(new Pair<>(label, processor));
+		pairs.add(Pair.create(label, processor));
 
 		final krasa.grepconsole.stats.common.ColorPanel color = new krasa.grepconsole.stats.common.ColorPanel(
 				processor.getGrepExpressionItem().getGrepExpression());

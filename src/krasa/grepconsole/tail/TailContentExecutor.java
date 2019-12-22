@@ -144,7 +144,7 @@ public class TailContentExecutor implements Disposable {
 			@Nullable
 			@Override
 			public Icon getIcon() {
-				return AllIcons.Process.DisabledRun;
+				return TailRunExecutor.disabledRun;
 			}
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 		descriptor.setExecutionId(System.nanoTime());

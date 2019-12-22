@@ -79,7 +79,7 @@ public class OpenFileInConsoleMessageHandler implements MessageHandler {
 
 					// current frame
 					if (initialProject == null && focusedWindow instanceof IdeFrameImpl) {
-						Project project = ((IdeFrameImpl) focusedWindow).getProject();
+						Project project = ((IdeFrame) focusedWindow).getProject();
 						if (project != null) {
 							initialProject = project.getName();
 							FocusUtils.requestFocus(project);

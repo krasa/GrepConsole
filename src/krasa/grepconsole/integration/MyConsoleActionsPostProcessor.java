@@ -1,5 +1,6 @@
 package krasa.grepconsole.integration;
 
+import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
@@ -75,14 +76,14 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 	private void replaceClearAction(ArrayList<AnAction> anActions) {
 		for (int i = 0; i < anActions.size(); i++) {
 			AnAction anAction = anActions.get(i);
-			if (anAction instanceof ConsoleViewImpl.ClearAllAction) {
+			if (anAction instanceof ClearConsoleAction) {
 				anActions.set(i, clearAction());
 			}
 		}
 	}
 
-	private ConsoleViewImpl.ClearAllAction clearAction() {
-		return new ConsoleViewImpl.ClearAllAction() {
+	private ClearConsoleAction clearAction() {
+		return new ClearConsoleAction() {
 			@Override
 			public void actionPerformed(AnActionEvent e) {
 				super.actionPerformed(e);
