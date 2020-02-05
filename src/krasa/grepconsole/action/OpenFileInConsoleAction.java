@@ -91,6 +91,7 @@ public class OpenFileInConsoleAction extends DumbAwareAction {
 		if (tailSettings.isAutodetectEncoding()) {
 			try {
 				encoding = UniversalDetector.detectCharset(file);
+				LOG.debug("AutoDetected encoding: " + encoding);
 				Charset.forName(encoding);
 			} catch (Throwable e) {
 				LOG.debug(e);

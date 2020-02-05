@@ -46,6 +46,10 @@
       ]]></description>
 
 	<change-notes><![CDATA[        
+        <br>9.9
+		<br>- IntelliJ 2020.1 compatibility
+		<br>- Tail from editor context menu
+		<br>- Fixed: UnsupportedCharsetException when using charset autodetection 
         <br>9.8
 		<br>- Grep support for new build tool window in IntelliJ 2019.2
         <br>9.7
