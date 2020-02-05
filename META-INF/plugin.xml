@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-    <version>9.8.162.000.1</version>
+    <version>9.9.162.000.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -196,7 +196,7 @@
 				description="Tail in Console"
 				icon="/krasa/grepconsole/tail/tail.png"
 		>
-			<add-to-group group-id="ProjectViewPopupMenu" anchor="before" relative-to-action="RevealIn"/>
+			<add-to-group group-id="RevealGroup"/>
 		</action>
 		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
 				text="Tail Current File in Console"
