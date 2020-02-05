@@ -10,7 +10,6 @@ import com.intellij.openapi.wm.WindowManager;
 import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.filter.HighlightingFilter;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -46,11 +45,6 @@ public class ConsoleStatusBarWidget implements CustomStatusBarWidget {
 		return id;
 	}
 
-	@Nullable
-	@Override
-	public WidgetPresentation getPresentation(@NotNull PlatformType platformType) {
-		return null;
-	}
 
 	@Override
 	public void install(@NotNull StatusBar statusBar) {
