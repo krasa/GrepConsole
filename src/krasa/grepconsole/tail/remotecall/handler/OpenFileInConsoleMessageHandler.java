@@ -7,7 +7,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
-import com.intellij.openapi.wm.impl.IdeFrameImpl;
 import krasa.grepconsole.action.OpenFileInConsoleAction;
 import krasa.grepconsole.utils.FocusUtils;
 
@@ -78,7 +77,7 @@ public class OpenFileInConsoleMessageHandler implements MessageHandler {
 					}
 
 					// current frame
-					if (initialProject == null && focusedWindow instanceof IdeFrameImpl) {
+					if (initialProject == null && focusedWindow instanceof IdeFrame) {
 						Project project = ((IdeFrame) focusedWindow).getProject();
 						if (project != null) {
 							initialProject = project.getName();
