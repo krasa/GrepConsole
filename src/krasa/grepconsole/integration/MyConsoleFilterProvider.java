@@ -1,17 +1,19 @@
 package krasa.grepconsole.integration;
 
+import java.lang.ref.WeakReference;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.execution.filters.ConsoleDependentFilterProvider;
 import com.intellij.execution.filters.Filter;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.GlobalSearchScope;
+
 import krasa.grepconsole.grep.PinnedGrepsReopener;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
-import org.jetbrains.annotations.NotNull;
-
-import java.lang.ref.WeakReference;
 
 public class MyConsoleFilterProvider extends ConsoleDependentFilterProvider {
 
@@ -19,7 +21,8 @@ public class MyConsoleFilterProvider extends ConsoleDependentFilterProvider {
 	@Override
 	public Filter[] getDefaultFilters(@NotNull ConsoleView consoleView, @NotNull Project project,
 			@NotNull GlobalSearchScope globalSearchScope) {
-		if (GrepProjectComponent.getInstance(project).pinReopenerEnabled) {
+		GrepProjectComponent projectComponent = GrepProjectComponent.getInstance(project);
+		if (projectComponent != null && projectComponent.pinReopenerEnabled) {
 			new PinnedGrepsReopener(project, new WeakReference<ConsoleView>(consoleView));
 		}
 		
