@@ -150,9 +150,9 @@ public class TailContentExecutor implements Disposable {
 		descriptor.setExecutionId(System.nanoTime());
 		descriptor.setFocusComputable(() -> consoleView.getPreferredFocusableComponent());
 		descriptor.setAutoFocusContent(true);
+		descriptor.setContentToolWindowId(TailRunExecutor.TOOLWINDOWS_ID);
 
-  
-  
+
 		ComponentWithActions componentWithActions = new MyImpl(null, null, (JComponent) consoleView, null, consolePanel);
 		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, componentWithActions, myTitle, AllIcons.Debugger.Console, consolePanel);
 		layoutUi.addContent(content, 0, PlaceInGrid.right, false);

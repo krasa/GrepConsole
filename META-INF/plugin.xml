@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-    <version>9.9.193.4697.1</version>
+    <version>9.10.193.4697.0</version>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -45,7 +45,10 @@
         <a href="https://www.paypal.me/VojtechKrasa">Donations are welcomed.</a>
       ]]></description>
 
-	<change-notes><![CDATA[        
+	<change-notes><![CDATA[       
+        <br>9.10
+		<br>- Fixed Grep action in Tail toolwindow
+		<br>- NPE fix
         <br>9.9
 		<br>- IntelliJ 2020.1 compatibility
 		<br>- Tail from editor context menu
