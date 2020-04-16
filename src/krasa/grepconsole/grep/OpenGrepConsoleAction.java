@@ -1,5 +1,18 @@
 package krasa.grepconsole.grep;
 
+import java.awt.*;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.swing.*;
+
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.build.BuildView;
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.console.ConsoleViewWrapperBase;
@@ -26,6 +39,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.content.Content;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
@@ -37,17 +51,6 @@ import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
 
@@ -328,6 +331,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		} else if (executionConsole instanceof BuildView) {
 			try {
 				executionConsole = (ExecutionConsole) ReflectionUtils.getPropertyValue(executionConsole, "myExecutionConsole");
+				if (executionConsole instanceof BaseTestsOutputConsoleView) {
+					executionConsole = ((BaseTestsOutputConsoleView) executionConsole).getConsole();
+				}
 			} catch (Exception e) {
 				if (!broken) {
 					LOG.error(e);
@@ -371,6 +377,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		} else if (actionsContextComponent instanceof BuildView) {
 			try {
 				Object myExecutionConsole = ReflectionUtils.getPropertyValue(actionsContextComponent, "myExecutionConsole");
+				if (myExecutionConsole instanceof BaseTestsOutputConsoleView) {
+					myExecutionConsole = ((BaseTestsOutputConsoleView) myExecutionConsole).getConsole();
+				}
 				if (myExecutionConsole == consoleView) {
 					return true;
 				}
