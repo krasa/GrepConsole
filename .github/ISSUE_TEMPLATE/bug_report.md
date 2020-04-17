@@ -21,7 +21,7 @@ Steps to reproduce the behavior:
 A clear and concise description of what you expected to happen.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+If applicable, add screenshots to help explain your problem, do not needlessly crop it (space is free and  e.g. toolwindow title is important).
 
 **Environment :**
  - use a copy button in Help | About dialog
