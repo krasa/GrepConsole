@@ -1,5 +1,13 @@
 package krasa.grepconsole.grep;
 
+import static krasa.grepconsole.grep.PinnedGrepConsolesState.RunConfigurationRef.toKey;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -11,17 +19,11 @@ import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.SingleAlarm;
+
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
-
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-
-import static krasa.grepconsole.grep.PinnedGrepConsolesState.RunConfigurationRef.toKey;
 
 public class PinnedGrepsReopener {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepsReopener.class);
@@ -79,7 +81,7 @@ public class PinnedGrepsReopener {
 										List<PinnedGrepConsolesState.Pin> list = state.getPins();
 										lockAndInitAllConsoles(consoleView, key, list, new Predicate<PinnedGrepConsolesState.Pin>() {
 											public boolean test(PinnedGrepConsolesState.Pin pin) {
-												return pin.getParentConsoleUUID() == null && true;
+												return pin.getParentConsoleUUID() == null && Objects.equals(contentType, pin.getContentType());
 											}
 										});
 									}
