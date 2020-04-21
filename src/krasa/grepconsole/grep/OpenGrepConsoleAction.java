@@ -1,18 +1,5 @@
 package krasa.grepconsole.grep;
 
-import java.awt.*;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.swing.*;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.build.BuildView;
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.console.ConsoleViewWrapperBase;
@@ -36,10 +23,12 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.content.Content;
+import com.intellij.ui.content.ContentFactory;
+import com.intellij.ui.content.ContentManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
@@ -51,6 +40,17 @@ import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
 
@@ -73,15 +73,15 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		GrepProjectComponent grepProjectComponent = GrepProjectComponent.getInstance(eventProject);
 		try {
 			grepProjectComponent.pinReopenerEnabled = false;
-			createGrepConsole(eventProject, null, parentConsoleView, null, expression, UUID.randomUUID().toString(), null);
+			createGrepConsole(e, eventProject, null, parentConsoleView, null, expression, UUID.randomUUID().toString(), null);
 		} finally {
 			grepProjectComponent.pinReopenerEnabled = true;
 		}
 
 	}
 
-	public ConsoleViewImpl createGrepConsole(Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parentConsoleView, @Nullable GrepModel grepModel, @Nullable String expression,
-											 String consoleUUID, String contentType) {
+	public ConsoleViewImpl createGrepConsole(AnActionEvent e, Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parentConsoleView,
+											 @Nullable GrepModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
 		if (grepModel != null) {
 			expression = grepModel.getExpression();
 		}
@@ -97,18 +97,26 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		ConsoleView topParentConsoleView = getTopParentConsoleView(parentConsoleView);
 
 		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project, topParentConsoleView);
-		if (runContentDescriptor == null) {  //should not happen
-			throw new IllegalStateException("runContentDescriptor == null");
+		ToolWindow toolWindow = null;
+
+		if (runContentDescriptor != null) {
+			if (key == null) {
+				key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
+			}
+		} else {
+			if (e != null) {
+				toolWindow = e.getData(PlatformDataKeys.TOOL_WINDOW);
+			}
 		}
+
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, runContentDescriptor, topParentConsoleView);
-		if (runnerLayoutUi == null) {  //should not happen
-			throw new IllegalStateException("runnerLayoutUi == null");
+		if (runnerLayoutUi == null && toolWindow == null) { // should not happen
+			throw new IllegalStateException("runnerLayoutUi, toolWindow == null");
 		}
-		if (key == null) {
-			key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
-		}
-		if (contentType == null) {
-			contentType = getContentType(runnerLayoutUi, topParentConsoleView);
+
+
+		if (contentType == null && runnerLayoutUi != null) {
+			contentType = getContentType(topParentConsoleView, runnerLayoutUi.getContents());
 		}
 		if (contentType == null) {
 			contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
@@ -116,36 +124,55 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
-
 		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(project, parentConsoleView, myProcessHandler);
 		Profile profile = ServiceManager.getInstance().getProfile(parentConsoleView);
 		ServiceManager.getInstance().profileChanged(newConsole, profile);
 
 		final GrepFilterListener grepListener = new GrepFilterSyncListener(myProcessHandler, project, profile);
-		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression, runnerLayoutUi);
 
+		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi, toolWindow);
+		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression, selectSourceActionListener);
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
-		PinAction pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key, contentType);
-		actions.add(pinAction);
+
+		PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef = null;
+		PinAction pinAction = null;
+		if (key != null) {
+			pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key, contentType);
+			runConfigurationRef = pinAction.getRunConfigurationRef();
+			actions.add(pinAction);
+		}
+
 
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
 		for (AnAction action : newConsole.createConsoleActions()) {
 			actions.add(action);
 		}
 
-		final Content tab = runnerLayoutUi.createContent(contentType, consolePanel, title(expression),
-				AllIcons.General.Filter, consolePanel);
-		runnerLayoutUi.addContent(tab);
-		try {
-			runnerLayoutUi.selectAndFocus(tab, true, true);
-		} catch (Exception e) {
-			LOG.warn(e);
+
+		Disposable parentDisposable;
+		final Content tab;
+		if (runnerLayoutUi != null) {
+			parentDisposable = runContentDescriptor;
+			tab = runnerLayoutUi.createContent(contentType, consolePanel, title(expression), AllIcons.General.Filter, consolePanel);
+			runnerLayoutUi.addContent(tab);
+			try {
+				runnerLayoutUi.selectAndFocus(tab, true, true);
+			} catch (Exception ex) {
+				LOG.warn(ex);
+			}
+		} else {
+			tab = ContentFactory.SERVICE.getInstance().createContent(consolePanel, title(expression), true);
+			tab.setDisposer(new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title(expression)));
+			ContentManager contentManager = toolWindow.getContentManager();
+			contentManager.addContent(tab);
+			contentManager.setSelectedContent(tab);
+			parentDisposable = contentManager;
 		}
 
-
-		PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef = pinAction.getRunConfigurationRef();
+		String finalContentType = contentType;
+		PinnedGrepConsolesState.RunConfigurationRef finalRunConfigurationRef = runConfigurationRef;
 		quickFilterPanel.setApplyCallback(new Callback() {
 			@Override
 			public void apply(GrepModel grepModel) {
@@ -154,33 +181,36 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				}
 				grepListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getExpression()));
-				PinnedGrepConsolesState.getInstance(project).update(runConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, pinAction.getContentType(), false);
+				if (finalRunConfigurationRef != null) {
+					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType, false);
+				}
 			}
 		});
-
 
 		GrepUtils.grepThroughExistingText(parentConsoleView, grepFilter, grepListener);
 
 		grepFilter.addListener(grepListener);
 
-		Disposer.register(runContentDescriptor, tab);
+		Disposer.register(parentDisposable, tab);
 		Disposer.register(tab, consolePanel);
-		AtomicBoolean exit = new AtomicBoolean();
-		Disposer.register(runContentDescriptor, new Disposable() {
+		AtomicBoolean parentDisposed = new AtomicBoolean();
+		Disposer.register(parentDisposable, new Disposable() {
 			@Override
 			public void dispose() {
-				exit.set(true);
+				parentDisposed.set(true);
 			}
 		});
+		PinAction finalPinAction = pinAction;
 		Disposer.register(tab, new Disposable() {
 			@Override
 			public void dispose() {
-				if (!exit.get()) {
-					pinAction.setSelected(false);
+				if (!parentDisposed.get()) {
+					if (finalPinAction != null) {
+						finalPinAction.setSelected(false);
+					}
 				}
 			}
 		});
-
 
 		Disposer.register(consolePanel, newConsole);
 		Disposer.register(consolePanel, grepListener);
@@ -191,7 +221,6 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				grepFilter.removeListener(grepListener);
 			}
 		});
-
 
 		Disposable inactiveTitleDisposer;
 		Container parent = parentConsoleView_JComponent.getParent();
@@ -238,8 +267,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	@Nullable
-	protected String getContentType(@NotNull RunnerLayoutUi runnerLayoutUi, ConsoleView consoleView) {
-		Content[] contents = runnerLayoutUi.getContents();
+	protected String getContentType(ConsoleView consoleView, Content[] contents) {
 		for (Content content : contents) {
 			if (isSameConsole(content, consoleView)) {
 				return RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
@@ -253,7 +281,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		void apply(GrepModel grepModel);
 	}
 
-	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, RunContentDescriptor runContentDescriptor, ConsoleView parentConsoleView) {
+	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, @Nullable RunContentDescriptor runContentDescriptor, ConsoleView parentConsoleView) {
 		RunnerLayoutUi runnerLayoutUi = null;
 
 		if (runContentDescriptor != null) {
@@ -261,8 +289,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 
 		if (runnerLayoutUi == null) {
-			XDebugSession debugSession = XDebuggerManager.getInstance(eventProject).getDebugSession(
-					parentConsoleView);
+			XDebugSession debugSession = XDebuggerManager.getInstance(eventProject).getDebugSession(parentConsoleView);
 			if (debugSession != null) {
 				runnerLayoutUi = debugSession.getUI();
 			}
@@ -284,22 +311,21 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	public static RunContentDescriptor getRunContentDescriptor(Project project, ConsoleView consoleView) {
-		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project,
-				dom -> {
-					if (isSameConsole(dom, consoleView, true)) {
+		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project, dom -> {
+			if (isSameConsole(dom, consoleView, true)) {
+				return true;
+			}
+			RunnerLayoutUi runnerLayoutUi = dom.getRunnerLayoutUi();
+			if (runnerLayoutUi != null) {
+				Content[] contents = runnerLayoutUi.getContents();
+				for (Content content : contents) {
+					if (isSameConsole(content, consoleView)) {
 						return true;
 					}
-					RunnerLayoutUi runnerLayoutUi = dom.getRunnerLayoutUi();
-					if (runnerLayoutUi != null) {
-						Content[] contents = runnerLayoutUi.getContents();
-						for (Content content : contents) {
-							if (isSameConsole(content, consoleView)) {
-								return true;
-							}
-						}
-					}
-					return false;
-				});
+				}
+			}
+			return false;
+		});
 		if (!descriptors.isEmpty()) {
 			if (descriptors.size() == 1) {
 				RunContentDescriptor runContentDescriptor = (RunContentDescriptor) descriptors.toArray()[0];
@@ -315,6 +341,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	static boolean broken = false;
+
 	public static boolean isSameConsole(RunContentDescriptor dom, ExecutionConsole consoleView, boolean orChild) {
 		ExecutionConsole executionConsole = dom.getExecutionConsole();
 		if (executionConsole instanceof BaseTestsOutputConsoleView) {
@@ -324,9 +351,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			if (duplexConsoleView.isPrimaryConsoleEnabled()) {
 				executionConsole = duplexConsoleView.getPrimaryConsoleView();
 			} else {
-				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
+				executionConsole = duplexConsoleView.getSecondaryConsoleView(); // no idea what that is
 			}
-		} else if (executionConsole instanceof ConsoleViewWrapperBase) { //javaee like google app
+		} else if (executionConsole instanceof ConsoleViewWrapperBase) { // javaee like google app
 			executionConsole = ((ConsoleViewWrapperBase) executionConsole).getDelegate();
 		} else if (executionConsole instanceof BuildView) {
 			try {
@@ -350,6 +377,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	public static boolean isSameConsole(Content dom, ExecutionConsole consoleView) {
 		JComponent actionsContextComponent = dom.getActionsContextComponent();
+
+		Disposable disposer = dom.getDisposer();
+		if (disposer instanceof RunContentDescriptor) {
+			if (isSameConsole((RunContentDescriptor) disposer, consoleView, false)) {
+				return true;
+			}
+		}
 		if (actionsContextComponent == null) {
 			return false;
 		}
@@ -371,7 +405,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			if (duplexConsoleView.isPrimaryConsoleEnabled()) {
 				executionConsole = duplexConsoleView.getPrimaryConsoleView();
 			} else {
-				executionConsole = duplexConsoleView.getSecondaryConsoleView(); //no idea what that is
+				executionConsole = duplexConsoleView.getSecondaryConsoleView(); // no idea what that is
 			}
 			return executionConsole == consoleView;
 		} else if (actionsContextComponent instanceof BuildView) {
@@ -392,7 +426,6 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 		return false;
 	}
-
 
 	public static class LightProcessHandler extends ProcessHandler {
 		@Override
@@ -417,14 +450,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 	}
 
-	private static MyJPanel createConsolePanel(RunnerLayoutUi runnerLayoutUi, ConsoleView view, ActionGroup actions,
-											   GrepPanel comp, String consoleUUID) {
+	private static MyJPanel createConsolePanel(RunnerLayoutUi runnerLayoutUi, ConsoleView view, ActionGroup actions, GrepPanel comp, String consoleUUID) {
 		MyJPanel panel = new MyJPanel(runnerLayoutUi, consoleUUID);
 		panel.setLayout(new BorderLayout());
 		panel.add(comp.getRootComponent(), BorderLayout.NORTH);
 		panel.add(view.getComponent(), BorderLayout.CENTER);
-		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions,
-				false);
+		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions, false);
 		panel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 		return panel;
 	}
@@ -457,8 +488,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		}
 
-		presentation.setEnabled(enabled);
-
+		presentation.setEnabled(enabled || e.getData(PlatformDataKeys.TOOL_WINDOW) != null);
 	}
 
 	private ConsoleView getTopParentConsoleView(ConsoleView data) {
@@ -472,7 +502,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private RunnerLayoutUi runnerLayoutUi;
 		private final String consoleUUID;
 
-		public MyJPanel(RunnerLayoutUi runnerLayoutUi, String consoleUUID) {
+		public MyJPanel(@Nullable RunnerLayoutUi runnerLayoutUi, String consoleUUID) {
 			this.runnerLayoutUi = runnerLayoutUi;
 			this.consoleUUID = consoleUUID;
 		}
@@ -484,8 +514,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		@Override
 		public void dispose() {
 			runnerLayoutUi = null;
-			//TODO leak when closing tail by Close button
-//			myPreferredFocusableComponent com.intellij.ui.tabs.TabInfo    
+			// TODO leak when closing tail by Close button
+			// myPreferredFocusableComponent com.intellij.ui.tabs.TabInfo
 
 			removeAll();
 		}
@@ -500,7 +530,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef;
 		private final String contentType;
 
-		public PinAction(Project myProject, GrepPanel quickFilterPanel, String parentConsoleUUID, String consoleUUID, Profile profile, @NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef, String contentType) {
+		public PinAction(Project myProject, GrepPanel quickFilterPanel, String parentConsoleUUID, String consoleUUID, Profile profile,
+						 @NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef, String contentType) {
 			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;
@@ -568,13 +599,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		@Override
 		public String toString() {
-			return "PinAction{" +
-					"pinned=" + pinned +
-					", parentConsoleUUID='" + parentConsoleUUID + '\'' +
-					", consoleUUID='" + consoleUUID + '\'' +
-					", runConfigurationRef=" + runConfigurationRef +
-					'}';
+			return "PinAction{" + "pinned=" + pinned + ", parentConsoleUUID='" + parentConsoleUUID + '\'' + ", consoleUUID='" + consoleUUID + '\''
+					+ ", runConfigurationRef=" + runConfigurationRef + '}';
 		}
 	}
 }
-

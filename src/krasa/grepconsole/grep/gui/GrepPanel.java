@@ -8,8 +8,10 @@ import com.intellij.notification.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
+import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepModel;
@@ -35,7 +37,6 @@ public class GrepPanel extends JPanel implements Disposable {
 	private final ConsoleViewImpl newConsole;
 	private final GrepFilter grepFilter;
 	private final GrepFilterListener grepListener;
-	private final RunnerLayoutUi runnerLayoutUi;
 	private MyTextFieldWithStoredHistory expressionTextField;
 	private TextFieldWithStoredHistory unlessExpressionTextField;
 	private JBCheckBox matchCase;
@@ -67,15 +68,14 @@ public class GrepPanel extends JPanel implements Disposable {
 	}
 
 	public GrepPanel(final ConsoleView originalConsole, final ConsoleViewImpl newConsole,
-					 GrepFilter grepFilter, GrepFilterListener grepListener, GrepModel grepModel, final String pattern, final RunnerLayoutUi runnerLayoutUi) {
+					 GrepFilter grepFilter, GrepFilterListener grepListener, GrepModel grepModel, final String pattern, SelectSourceActionListener selectSourceActionListener) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
 		this.grepFilter = grepFilter;
 		this.grepListener = grepListener;
-		this.runnerLayoutUi = runnerLayoutUi;
 		initModel(pattern, grepModel);
 		actions();
-		buttons();
+		buttons(selectSourceActionListener);
 		expressionTextField.addItemListener(new ItemChangeListener());
 
 	}
@@ -121,6 +121,7 @@ public class GrepPanel extends JPanel implements Disposable {
 			}
 		}
 	}
+
 	protected void updateGrepOptions(GrepOptionsItem selectedItem) {
 		if (selectedItem != null) {
 			wholeLine.setSelected(selectedItem.isWholeLine());
@@ -146,7 +147,7 @@ public class GrepPanel extends JPanel implements Disposable {
 		unlessExpressionTextField.addKeyboardListener(reload);
 	}
 
-	protected void buttons() {
+	protected void buttons(SelectSourceActionListener selectSourceActionListener) {
 		applyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -169,15 +170,10 @@ public class GrepPanel extends JPanel implements Disposable {
 				unlessExpressionTextField.reset();
 			}
 		});
-		sourceButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				FocusUtils.selectAndFocusSubTab(runnerLayoutUi, originalConsole);
-
-			}
-
-		});
-		buttonSize(sourceButton);
+		if (selectSourceActionListener != null) {
+			sourceButton.addActionListener(selectSourceActionListener);
+			buttonSize(sourceButton);
+		}
 		buttonSize(reloadButton);
 		buttonSize(applyButton);
 		buttonSize(clearHistory);
@@ -192,7 +188,7 @@ public class GrepPanel extends JPanel implements Disposable {
 	public GrepModel getModel() {
 		return grepModel;
 	}
-	
+
 	public void apply() {
 		if (applyCallback != null) {
 			GrepModel grepModel = new GrepModel(matchCase.isSelected(),
@@ -235,5 +231,32 @@ public class GrepPanel extends JPanel implements Disposable {
 	public void setApplyCallback(OpenGrepConsoleAction.Callback applyCallback) {
 		this.applyCallback = applyCallback;
 		apply();
+	}
+
+	public static class SelectSourceActionListener implements ActionListener {
+		private RunnerLayoutUi runnerLayoutUi;
+		private ConsoleView originalConsole;
+		private ToolWindow toolWindow;
+
+		public SelectSourceActionListener(ConsoleView originalConsole, RunnerLayoutUi runnerLayoutUi, ToolWindow toolWindow) {
+			this.runnerLayoutUi = runnerLayoutUi;
+			this.originalConsole = originalConsole;
+			this.toolWindow = toolWindow;
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (runnerLayoutUi != null) {
+				FocusUtils.selectAndFocusSubTab(runnerLayoutUi, originalConsole);
+			} else {
+				Content[] contents = toolWindow.getContentManager().getContents();
+				for (Content content : contents) {
+					if (OpenGrepConsoleAction.isSameConsole(content, originalConsole)) {
+						toolWindow.getContentManager().setSelectedContent(content);
+					}
+				}
+			}
+		}
+
 	}
 }

@@ -18,7 +18,6 @@ import krasa.grepconsole.plugin.ServiceManager;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
@@ -80,7 +79,7 @@ public class PinnedGrepsReopener {
 										List<PinnedGrepConsolesState.Pin> list = state.getPins();
 										lockAndInitAllConsoles(consoleView, key, list, new Predicate<PinnedGrepConsolesState.Pin>() {
 											public boolean test(PinnedGrepConsolesState.Pin pin) {
-												return pin.getParentConsoleUUID() == null && Objects.equals(contentType, pin.getContentType());
+												return pin.getParentConsoleUUID() == null && true;
 											}
 										});
 									}
@@ -126,7 +125,7 @@ public class PinnedGrepsReopener {
 					LOG.debug(">initConsole " + "pin = [" + pin + "], parent = [" + parent.hashCode() + "], list = [" + list + "]");
 				}
 				String thisConsoleUUID = pin.getConsoleUUID();
-				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(project, key, parent, pin.getGrepModel(), null, thisConsoleUUID, pin.getContentType());
+				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(null, project, key, parent, pin.getGrepModel(), null, thisConsoleUUID, pin.getContentType());
 
 
 				lockAndInitAllConsoles(foo, key, list, new Predicate<PinnedGrepConsolesState.Pin>() {
