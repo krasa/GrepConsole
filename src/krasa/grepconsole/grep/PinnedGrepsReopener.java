@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -15,6 +17,7 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
@@ -47,33 +50,39 @@ public class PinnedGrepsReopener {
 						return;
 					}
 
-
 					RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(project, consoleView);
+					ToolWindow toolWindow = null;
 
+					PinnedGrepConsolesState.RunConfigurationRef key = null;
 					if (runContentDescriptor != null) {
-						PinnedGrepConsolesState.RunConfigurationRef key = toKey(runContentDescriptor);
+						key = toKey(runContentDescriptor);
+					} else {
+						toolWindow = OpenGrepConsoleAction.findToolWindow(consoleView, project);
+						if (toolWindow != null) {
+							key = toKey(toolWindow);
+						}
+					}
+					System.err.println(toolWindow);
+					if (key != null) {
+
 						PinnedGrepConsolesState.Pins state = PinnedGrepConsolesState.getInstance(project).getPins(key);
+						Content[] contents = new Content[0];
 
 						if (state != null && !state.getPins().isEmpty()) {
 							if (project.isDisposed()) {
 								return;
 							}
-							RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, runContentDescriptor, consoleView);
-							if (runnerLayoutUi == null) {
-								if (atomicInteger.incrementAndGet() < 6) {
-									myUpdateAlarm.cancelAndRequest();
-								} else {
-									LOG.warn("runnerLayoutUi == null for " + key + ", aborting reopening of pins " + state);
-								}
-								return;
-							}
-
 							GrepProjectComponent grepProjectComponent = GrepProjectComponent.getInstance(project);
 							try {
 								grepProjectComponent.pinReopenerEnabled = false;
 
-
-								Content[] contents = runnerLayoutUi.getContents();
+								if (runContentDescriptor != null) {
+									contents = getContents(consoleView, runContentDescriptor, key, state);
+									if (contents == null)
+										return;
+								} else if (toolWindow != null) {
+									contents = toolWindow.getContentManager().getContents();
+								}
 								for (Content content : contents) {
 									if (OpenGrepConsoleAction.isSameConsole(content, consoleView)) {
 										String contentType = RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
@@ -90,19 +99,35 @@ public class PinnedGrepsReopener {
 								grepProjectComponent.pinReopenerEnabled = true;
 							}
 						}
-					} else if (atomicInteger.incrementAndGet() < 3) {
+					} else if (atomicInteger.incrementAndGet() < 20) {
 						myUpdateAlarm.cancelAndRequest();
 					}
 				});
 			}
 
-			protected void lockAndInitAllConsoles(ConsoleView consoleView, PinnedGrepConsolesState.RunConfigurationRef key, List<PinnedGrepConsolesState.Pin> list, Predicate<PinnedGrepConsolesState.Pin> predicate) {
+			@Nullable
+			public Content[] getContents(ConsoleView consoleView, RunContentDescriptor runContentDescriptor, PinnedGrepConsolesState.RunConfigurationRef key,
+					PinnedGrepConsolesState.Pins state) {
+				RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(project, runContentDescriptor, consoleView);
+				if (runnerLayoutUi == null) {
+					if (atomicInteger.incrementAndGet() < 6) {
+						myUpdateAlarm.cancelAndRequest();
+					} else {
+						LOG.warn("runnerLayoutUi == null for " + key + ", aborting reopening of pins " + state);
+					}
+					return null;
+				}
+				return runnerLayoutUi.getContents();
+			}
+
+			protected void lockAndInitAllConsoles(ConsoleView consoleView, PinnedGrepConsolesState.RunConfigurationRef key,
+					List<PinnedGrepConsolesState.Pin> list, Predicate<PinnedGrepConsolesState.Pin> predicate) {
 				if (list.isEmpty()) {
 					return;
 				}
 				final GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(consoleView);
 				if (grepFilter == null) {
-//					throw new IllegalStateException("Console not supported: " + consoleView);
+					// throw new IllegalStateException("Console not supported: " + consoleView);
 					LOG.warn("Console not supported: " + consoleView);
 					return;
 				}
@@ -121,14 +146,14 @@ public class PinnedGrepsReopener {
 				}
 			}
 
-
-			public void initConsole(PinnedGrepConsolesState.Pin pin, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parent, List<PinnedGrepConsolesState.Pin> list) {
+			public void initConsole(PinnedGrepConsolesState.Pin pin, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parent,
+					List<PinnedGrepConsolesState.Pin> list) {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug(">initConsole " + "pin = [" + pin + "], parent = [" + parent.hashCode() + "], list = [" + list + "]");
 				}
 				String thisConsoleUUID = pin.getConsoleUUID();
-				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(null, project, key, parent, pin.getGrepModel(), null, thisConsoleUUID, pin.getContentType());
-
+				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(null, project, key, parent, pin.getGrepModel(), null, thisConsoleUUID,
+						pin.getContentType());
 
 				lockAndInitAllConsoles(foo, key, list, new Predicate<PinnedGrepConsolesState.Pin>() {
 					public boolean test(PinnedGrepConsolesState.Pin childPin) {
@@ -136,7 +161,6 @@ public class PinnedGrepsReopener {
 					}
 				});
 			}
-
 
 		}, 100, Alarm.ThreadToUse.POOLED_THREAD, project);
 		myUpdateAlarm.request();

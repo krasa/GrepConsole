@@ -1,5 +1,18 @@
 package krasa.grepconsole.grep;
 
+import java.awt.*;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.swing.*;
+
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.build.BuildView;
 import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.console.ConsoleViewWrapperBase;
@@ -24,11 +37,13 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
+
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
@@ -40,17 +55,6 @@ import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
 
@@ -81,10 +85,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	public ConsoleViewImpl createGrepConsole(AnActionEvent e, Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parentConsoleView,
-											 @Nullable GrepModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
+			@Nullable GrepModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
 		if (grepModel != null) {
 			expression = grepModel.getExpression();
 		}
+		boolean focusTab = e != null;
 		if (!(parentConsoleView instanceof JComponent)) {
 			throw new RuntimeException("console not supported, must be instance of JComponent: " + parentConsoleView);
 		}
@@ -106,6 +111,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		} else {
 			if (e != null) {
 				toolWindow = e.getData(PlatformDataKeys.TOOL_WINDOW);
+			} else {
+				toolWindow = findToolWindow(parentConsoleView, project);
+			}
+			if (key == null && toolWindow != null) {
+				key = PinnedGrepConsolesState.RunConfigurationRef.toKey(toolWindow);
 			}
 		}
 
@@ -114,11 +124,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			throw new IllegalStateException("runnerLayoutUi, toolWindow == null");
 		}
 
-
 		if (contentType == null && runnerLayoutUi != null) {
 			contentType = getContentType(topParentConsoleView, runnerLayoutUi.getContents());
 		}
-		if (contentType == null) {
+		if (contentType == null && runnerLayoutUi != null) {
 			contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
 		}
 
@@ -130,8 +139,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		final GrepFilterListener grepListener = new GrepFilterSyncListener(myProcessHandler, project, profile);
 
-		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi, toolWindow);
-		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression, selectSourceActionListener);
+		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi,
+				toolWindow);
+		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression,
+				selectSourceActionListener);
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
@@ -144,12 +155,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			actions.add(pinAction);
 		}
 
-
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
 		for (AnAction action : newConsole.createConsoleActions()) {
 			actions.add(action);
 		}
-
 
 		Disposable parentDisposable;
 		final Content tab;
@@ -158,7 +167,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			tab = runnerLayoutUi.createContent(contentType, consolePanel, title(expression), AllIcons.General.Filter, consolePanel);
 			runnerLayoutUi.addContent(tab);
 			try {
-				runnerLayoutUi.selectAndFocus(tab, true, true);
+				if (focusTab) {
+					runnerLayoutUi.selectAndFocus(tab, true, true);
+				}
 			} catch (Exception ex) {
 				LOG.warn(ex);
 			}
@@ -167,8 +178,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			tab.setDisposer(new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title(expression)));
 			ContentManager contentManager = toolWindow.getContentManager();
 			contentManager.addContent(tab);
-			contentManager.setSelectedContent(tab);
-			parentDisposable = contentManager;
+			if (focusTab) {
+				contentManager.setSelectedContent(tab);
+			}
+			parentDisposable = parentConsoleView;
 		}
 
 		String finalContentType = contentType;
@@ -182,7 +195,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				grepListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getExpression()));
 				if (finalRunConfigurationRef != null) {
-					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType, false);
+					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
+							false);
 				}
 			}
 		});
@@ -191,7 +205,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		grepFilter.addListener(grepListener);
 
-		Disposer.register(parentDisposable, tab);
+		// Disposer.register(parentDisposable, tab);
 		Disposer.register(tab, consolePanel);
 		AtomicBoolean parentDisposed = new AtomicBoolean();
 		Disposer.register(parentDisposable, new Disposable() {
@@ -531,7 +545,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private final String contentType;
 
 		public PinAction(Project myProject, GrepPanel quickFilterPanel, String parentConsoleUUID, String consoleUUID, Profile profile,
-						 @NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef, String contentType) {
+				@NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef, String contentType) {
 			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;
@@ -603,4 +617,29 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 					+ ", runConfigurationRef=" + runConfigurationRef + '}';
 		}
 	}
+
+	public static ToolWindow findToolWindow(ConsoleView consoleView, Project project) {
+		ToolWindowManager instance = ToolWindowManager.getInstance(project);
+		String activeToolWindowId = instance.getActiveToolWindowId();
+		ToolWindow toolWindow = instance.getToolWindow(activeToolWindowId);
+		if (toolWindow != null) {
+			String[] toolWindowIds = instance.getToolWindowIds();
+			for (String toolWindowId : toolWindowIds) {
+				ToolWindow t = instance.getToolWindow(toolWindowId);
+				if (t != null) {
+					ContentManager contentManager = t.getContentManager();
+					Content[] contents = contentManager.getContents();
+					for (Content content : contents) {
+						if (isSameConsole(content, consoleView)) {
+							return t;
+						}
+					}
+				}
+			}
+			return null;
+		} else {
+			return toolWindow;
+		}
+	}
+
 }

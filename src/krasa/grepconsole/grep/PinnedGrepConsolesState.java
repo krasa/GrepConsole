@@ -1,18 +1,22 @@
 package krasa.grepconsole.grep;
 
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.xmlb.annotations.Transient;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.GrepProjectComponent;
+import java.lang.ref.WeakReference;
+import java.util.*;
+
+import javax.swing.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.lang.ref.WeakReference;
-import java.util.*;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.util.xmlb.annotations.Transient;
+
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepProjectComponent;
 
 public class PinnedGrepConsolesState {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepConsolesState.class);
@@ -259,6 +263,10 @@ public class PinnedGrepConsolesState {
 		public RunConfigurationRef() {
 		}
 
+		@NotNull
+		static protected RunConfigurationRef toKey(ToolWindow toolWindow) {
+			return new RunConfigurationRef(toolWindow.getId(), null);
+		}
 		@NotNull
 		static protected RunConfigurationRef toKey(RunContentDescriptor runContentDescriptor) {
 			return new RunConfigurationRef(
