@@ -1,15 +1,16 @@
 package krasa.grepconsole.filter;
 
+import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Pair;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LockingInputFilterWrapper implements InputFilter {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(LockingInputFilterWrapper.class);
@@ -40,7 +41,7 @@ public class LockingInputFilterWrapper implements InputFilter {
 		if (!lock.isWriteLocked()) {
 			lockedSince = System.currentTimeMillis();
 		}
-		LOG.info("Locking console input " + this);
+		LOG.debug("Locking console input " + this);
 		lock.writeLock().lock();
 	}
 
@@ -49,7 +50,7 @@ public class LockingInputFilterWrapper implements InputFilter {
 	}
 
 	public void unlock() {
-		LOG.info("Unlocking console input, locked=" + (System.currentTimeMillis() - getLockedSince()) + "ms " + this);
+		LOG.debug("Unlocking console input, locked=" + (System.currentTimeMillis() - getLockedSince()) + "ms " + this);
 		lock.writeLock().unlock();
 	}
 
