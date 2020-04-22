@@ -1,15 +1,5 @@
 package krasa.grepconsole.grep;
 
-import static krasa.grepconsole.grep.PinnedGrepConsolesState.RunConfigurationRef.toKey;
-
-import java.lang.ref.WeakReference;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunContentDescriptor;
@@ -22,11 +12,19 @@ import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.util.Alarm;
 import com.intellij.util.SingleAlarm;
-
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+
+import static krasa.grepconsole.grep.PinnedGrepConsolesState.RunConfigurationRef.toKey;
 
 public class PinnedGrepsReopener {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepsReopener.class);
@@ -62,7 +60,6 @@ public class PinnedGrepsReopener {
 							key = toKey(toolWindow);
 						}
 					}
-					System.err.println(toolWindow);
 					if (key != null) {
 
 						PinnedGrepConsolesState.Pins state = PinnedGrepConsolesState.getInstance(project).getPins(key);
