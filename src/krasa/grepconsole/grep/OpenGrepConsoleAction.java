@@ -627,11 +627,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			for (String toolWindowId : toolWindowIds) {
 				ToolWindow t = instance.getToolWindow(toolWindowId);
 				if (t != null) {
-					ContentManager contentManager = t.getContentManager();
-					Content[] contents = contentManager.getContents();
-					for (Content content : contents) {
-						if (isSameConsole(content, consoleView)) {
-							return t;
+					ContentManager contentManager = t.getContentManagerIfCreated();
+					if (contentManager != null) {
+						Content[] contents = contentManager.getContents();
+						for (Content content : contents) {
+							if (isSameConsole(content, consoleView)) {
+								return t;
+							}
 						}
 					}
 				}

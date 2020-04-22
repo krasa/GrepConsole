@@ -1,5 +1,14 @@
 package krasa.grepconsole.filter;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -7,6 +16,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+
 import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -16,14 +26,6 @@ import krasa.grepconsole.plugin.ExtensionManager;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.utils.Notifier;
 import krasa.grepconsole.utils.Utils;
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * every stream could have its own thread (java), or it could be all on some random pooled thread (debug in CLion)
@@ -66,7 +68,7 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 		if (consoleView != null) {
 			boolean testConsole = consoleView.getClass().getName().startsWith("com.intellij.execution.testframework.ui");
 			blankLineWorkaround = testConsole;
-			log.info("Initializing for " + consoleView.getClass().getName());
+			log.debug("Initializing for " + consoleView.getClass().getName());
 			if (profile.isBufferStreams()) {
 				StreamBufferSettings streamBufferSettings = GrepConsoleApplicationComponent.getInstance().getState().getStreamBufferSettings();
 				if (testConsole && !streamBufferSettings.isUseForTests()) {
