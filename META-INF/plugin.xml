@@ -1,7 +1,8 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-    <version>9.12.193.4697.0</version>
+	<version>9.12.201.000.0</version>
+	<idea-version since-build="201.000"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -144,7 +145,6 @@
 	</change-notes>
 
 
-	<idea-version since-build="193.4697"/>
 
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
