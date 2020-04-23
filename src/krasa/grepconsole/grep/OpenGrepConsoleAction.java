@@ -1,20 +1,6 @@
 package krasa.grepconsole.grep;
 
-import java.awt.*;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.swing.*;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.build.BuildView;
-import com.intellij.execution.ExecutionHelper;
 import com.intellij.execution.console.ConsoleViewWrapperBase;
 import com.intellij.execution.console.DuplexConsoleView;
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -22,28 +8,28 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.testframework.sm.runner.ui.SMTestRunnerResultsForm;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
 import com.intellij.execution.testframework.ui.TestResultsPanel;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.*;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.NotNullFunction;
+import com.intellij.util.SmartList;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
-
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.gui.GrepPanel;
@@ -55,6 +41,19 @@ import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
 
@@ -85,7 +84,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	public ConsoleViewImpl createGrepConsole(AnActionEvent e, Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parentConsoleView,
-			@Nullable GrepModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
+											 @Nullable GrepModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
 		if (grepModel != null) {
 			expression = grepModel.getExpression();
 		}
@@ -325,7 +324,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	public static RunContentDescriptor getRunContentDescriptor(Project project, ConsoleView consoleView) {
-		Collection<RunContentDescriptor> descriptors = ExecutionHelper.findRunningConsole(project, dom -> {
+		Collection<RunContentDescriptor> descriptors = findRunningConsole(project, dom -> {
 			if (isSameConsole(dom, consoleView, true)) {
 				return true;
 			}
@@ -352,6 +351,49 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 
 		return null;
+	}
+
+	/**
+	 * com.intellij.execution.ExecutionHelper#findRunningConsole
+	 */
+	public static Collection<RunContentDescriptor> findRunningConsole(@NotNull Project project,
+																	  @NotNull NotNullFunction<? super RunContentDescriptor, Boolean> descriptorMatcher) {
+		final Ref<Collection<RunContentDescriptor>> ref = new Ref<>();
+
+		final Runnable computeDescriptors = () -> {
+			RunContentManager contentManager = RunContentManager.getInstanceIfCreated(project);
+			if (contentManager == null) {
+				ref.set(Collections.emptyList());
+				return;
+			}
+			final RunContentDescriptor selectedContent = contentManager.getSelectedContent();
+			if (selectedContent != null) {
+				final ToolWindow toolWindow = contentManager.getToolWindowByDescriptor(selectedContent);
+				if (toolWindow != null && toolWindow.isVisible()) {
+					if (descriptorMatcher.fun(selectedContent)) {
+						ref.set(Collections.singletonList(selectedContent));
+						return;
+					}
+				}
+			}
+
+			final List<RunContentDescriptor> result = new SmartList<>();
+			for (RunContentDescriptor runContentDescriptor : contentManager.getAllDescriptors()) {
+				if (descriptorMatcher.fun(runContentDescriptor)) {
+					result.add(runContentDescriptor);
+				}
+			}
+			ref.set(result);
+		};
+
+		if (ApplicationManager.getApplication().isDispatchThread()) {
+			computeDescriptors.run();
+		} else {
+			LOG.assertTrue(!ApplicationManager.getApplication().isReadAccessAllowed());
+			ApplicationManager.getApplication().invokeAndWait(computeDescriptors);
+		}
+
+		return ref.get();
 	}
 
 	static boolean broken = false;
@@ -545,7 +587,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		private final String contentType;
 
 		public PinAction(Project myProject, GrepPanel quickFilterPanel, String parentConsoleUUID, String consoleUUID, Profile profile,
-				@NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef, String contentType) {
+						 @NotNull PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef, String contentType) {
 			super("Pin", "Reopen on the next run (API allowed matching of the Run Configuration based only on the name&icon)", AllIcons.General.Pin_tab);
 			this.quickFilterPanel = quickFilterPanel;
 			this.parentConsoleUUID = parentConsoleUUID;

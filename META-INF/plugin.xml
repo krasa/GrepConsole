@@ -1,8 +1,8 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.12.201.000.3</version>
-	<idea-version since-build="201.000"/>
+	<version>9.13.201.4515.0</version>
+	<idea-version since-build="201.4515"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -47,6 +47,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>9.13
+		<br>- Reopening of pinned grep consoles at startup - might not work flawlessly, please report bugs 
         <br>9.12
 		<br>- Enabled Grep for other toolwindows (Python Console, CMake...).
         <br>9.11

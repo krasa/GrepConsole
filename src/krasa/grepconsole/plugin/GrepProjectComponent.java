@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-@State(name = "GrepConsole", storages = { @Storage(value = "GrepConsole.xml") })
+@State(name = "GrepConsole", storages = {@Storage(value = "GrepConsole.xml")})
 public class GrepProjectComponent implements ProjectComponent, PersistentStateComponent<GrepProjectState> {
 	private static final Logger LOG = Logger.getInstance(GrepProjectComponent.class);
 
@@ -33,7 +33,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	private GrepProjectState grepProjectState = new GrepProjectState();
 	private List<WeakReference<TailContentExecutor.PinAction>> tailPinActions = new ArrayList<>();
 	private List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
-	public volatile boolean pinReopenerEnabled = false;
+	public volatile boolean pinReopenerEnabled = true;  //#149 , might have to be false
 
 	public static GrepProjectComponent getInstance(Project project) {
 		return project.getComponent(GrepProjectComponent.class);
