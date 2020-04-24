@@ -45,7 +45,8 @@
         <a href="https://www.paypal.me/VojtechKrasa">Donations are welcomed.</a>
       ]]></description>
 
-	<change-notes><![CDATA[    
+	<change-notes><![CDATA[   
+	 
         <br>9.12
 		<br>- Fixed grepping
 		<br>- Added a settings button to a console context menu
@@ -72,7 +73,7 @@
 	</change-notes>
 
 
-	<idea-version since-build="193.4697"/>
+	<idea-version since-build="193.4697" until-build="201.4514"/>
 
 
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
