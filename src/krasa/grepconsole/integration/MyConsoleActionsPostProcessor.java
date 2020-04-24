@@ -8,6 +8,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.action.AddHighlightAction;
 import krasa.grepconsole.action.MoveErrorStreamToTheBottomAction;
@@ -65,9 +66,10 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 		if (manager.isRegistered(console)) {
 			anActions.add(new ShowHideStatisticsConsolePanelAction(console));
 			anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
-		} else {
-			anActions.add(new OpenConsoleSettingsAction(console));
 		}
+		anActions.add(new OpenConsoleSettingsAction(console));
+		anActions.add(new Separator());
+
 		anActions.addAll(Arrays.asList(super.postProcessPopupActions(console, actions)));
 		replaceClearAction(anActions);
 		return anActions.toArray(new AnAction[anActions.size()]);
