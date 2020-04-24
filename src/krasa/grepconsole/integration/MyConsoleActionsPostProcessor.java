@@ -1,5 +1,10 @@
 package krasa.grepconsole.integration;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.jetbrains.annotations.NotNull;
+
 import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.impl.ConsoleViewImpl;
@@ -10,6 +15,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.util.IconLoader;
+
 import krasa.grepconsole.action.AddHighlightAction;
 import krasa.grepconsole.action.MoveErrorStreamToTheBottomAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
@@ -18,10 +24,6 @@ import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.StatisticsManager;
 import krasa.grepconsole.stats.action.ShowHideStatisticsConsolePanelAction;
 import krasa.grepconsole.stats.action.ShowHideStatisticsStatusBarPanelAction;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 
@@ -66,8 +68,6 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 		if (manager.isRegistered(console)) {
 			anActions.add(new ShowHideStatisticsConsolePanelAction(console));
 			anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
-		} else {
-			anActions.add(new OpenConsoleSettingsAction(console));
 		}
 		anActions.add(new OpenConsoleSettingsAction(console));
 		anActions.add(new Separator());
