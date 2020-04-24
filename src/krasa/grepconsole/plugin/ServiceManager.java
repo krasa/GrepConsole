@@ -37,13 +37,6 @@ public class ServiceManager {
 	private List<WeakReference<HighlightingFilter>> highlightFilters = new ArrayList<>();
 	private List<WeakReference<MainInputFilter>> inputFilters = new ArrayList<>();
 
-	/**
-	 * to couple console with filters
-	 */
-	private WeakReference<GrepFilter> lastGrepFilter;
-	private WeakReference<MainInputFilter> lastGrepInputFilter;
-
-
 	Consoles consoles = new Consoles();
 	private boolean createInputFilter = true;
 	protected RunConfigurationBase lastRunConfiguration;
@@ -209,11 +202,10 @@ public class ServiceManager {
 			return null;
 		}
 		Profile defaultProfile = GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
-		MainInputFilter lastInputFilter = new MainInputFilter(project, profile, defaultProfile.isFilterOutBeforeGrep(), grepFilter);
-		WeakReference<MainInputFilter> weakReference = new WeakReference<>(lastInputFilter);
+		MainInputFilter inputFilter = new MainInputFilter(project, profile, defaultProfile.isFilterOutBeforeGrep(), grepFilter);
+		WeakReference<MainInputFilter> weakReference = new WeakReference<>(inputFilter);
 		inputFilters.add(weakReference);
-		lastGrepInputFilter = weakReference;
-		return lastInputFilter;
+		return inputFilter;
 	}
 
 	public HighlightingFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
@@ -236,9 +228,7 @@ public class ServiceManager {
 	}
 
 	public GrepFilter createGrepFilter(@NotNull Project project, Profile profile) {
-		final GrepFilter grepInputFilter = new GrepFilter(project, profile);
-		lastGrepFilter = new WeakReference<>(grepInputFilter);
-		return grepInputFilter;
+		return new GrepFilter(project, profile);
 	}
 
 	@Nullable
@@ -261,24 +251,18 @@ public class ServiceManager {
 	}
 
 	public void registerConsole(@NotNull ConsoleView console) {
-
-		MainInputFilter lastMainInputFilter = getLastGrepInputFilter();
-		lastMainInputFilter = checkConsistency(console, MainInputFilter.class, lastMainInputFilter);
-		if (lastMainInputFilter != null) {
-			lastMainInputFilter.init(new WeakReference<>(console), getProfile(console));
-			consoles.put(console, lastMainInputFilter);
-			this.lastGrepInputFilter = null;
+		MainInputFilter mainInputFilter = getInputFilter(console, MainInputFilter.class);
+		if (mainInputFilter != null) {
+			mainInputFilter.init(new WeakReference<>(console), getProfile(console));
+			consoles.put(console, mainInputFilter);
 		}
 
-
-		GrepFilter grepFilter = getLastGrepFilter();
-		grepFilter = checkConsistency(console, GrepFilter.class, grepFilter);
-		if (lastMainInputFilter != null && lastMainInputFilter.getGrepFilter() != null) {
-			grepFilter = lastMainInputFilter.getGrepFilter();
+		GrepFilter grepFilter = getInputFilter(console, GrepFilter.class);
+		if (mainInputFilter != null && mainInputFilter.getGrepFilter() != null) {
+			grepFilter = mainInputFilter.getGrepFilter();
 		}
 		if (grepFilter != null) {
 			consoles.put(console, grepFilter);
-			this.lastGrepFilter = null;
 		}
 
 		consoles.put(console, lastRunConfiguration);
@@ -287,12 +271,13 @@ public class ServiceManager {
 	static boolean broken = false;
 
 	@SuppressWarnings("unchecked")
-	private <T> T checkConsistency(ConsoleView console, Class<T> clazz, InputFilter lastFilter) {
+	private <T> T getInputFilter(ConsoleView console, Class<T> clazz) {
 		if (console instanceof ConsoleViewImpl) {
 			try {
 				Field field = getInputFilterField();  //2018.1- is obfucated
 				if (field == null) {
-					return (T) lastFilter;
+					LOG.error("PLEASE REPORT THIS: InputFilter field not found in " + console);
+					return (T) null;
 				}
 				CompositeInputFilter myInputMessageFilter = (CompositeInputFilter) field.get(console);
 				if (myInputMessageFilter != null) {
@@ -321,7 +306,7 @@ public class ServiceManager {
 			}
 		}
 
-		return (T) lastFilter;
+		return (T) null;
 	}
 
 	private static Field inputFilterField;
@@ -345,25 +330,6 @@ public class ServiceManager {
 		if (consoles.getHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
 			HighlightingFilter highlightingFilter = createHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
 			console.addMessageFilter(highlightingFilter);
-		}
-	}
-
-	@Nullable
-	private GrepFilter getLastGrepFilter() {
-		if (lastGrepFilter != null) {
-			return lastGrepFilter.get();
-		} else {
-			return null;
-		}
-	}
-
-
-	@Nullable
-	private MainInputFilter getLastGrepInputFilter() {
-		if (lastGrepInputFilter != null) {
-			return lastGrepInputFilter.get();
-		} else {
-			return null;
 		}
 	}
 

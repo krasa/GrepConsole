@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>9.13.201.4515.0</version>
+	<version>10.0.201.4515.0</version>
 	<idea-version since-build="201.4515"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -47,9 +47,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
-        <br>9.13
+        <br>10.0
+		<br>- Fixed grepping
 		<br>- Reopening of pinned grep consoles at startup - might not work flawlessly, please report bugs 
-        <br>9.12
 		<br>- Enabled Grep for other toolwindows (Python Console, CMake...).
         <br>9.11
 		<br>- Fixed Grep for Gradle
