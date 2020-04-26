@@ -163,7 +163,7 @@ public class ServiceManager {
 	}
 
 
-	public void resetSettings() {
+	public synchronized void resetSettings() {
 		iterate(highlightFilters);
 		iterate(inputFilters);
 		iterate(consoles.getCopiers());
@@ -197,7 +197,7 @@ public class ServiceManager {
 	}
 
 	@Nullable
-	public MainInputFilter createInputFilter(@NotNull Project project, @NotNull Profile profile, GrepFilter grepFilter) {
+	public synchronized MainInputFilter createInputFilter(@NotNull Project project, @NotNull Profile profile, GrepFilter grepFilter) {
 		if (!createInputFilter) {
 			return null;
 		}
@@ -208,7 +208,7 @@ public class ServiceManager {
 		return inputFilter;
 	}
 
-	public HighlightingFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
+	public synchronized HighlightingFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		if (consoleView != null) {
 			registerConsole(consoleView);
 		}
@@ -217,7 +217,7 @@ public class ServiceManager {
 	}
 
 	@NotNull
-	private HighlightingFilter createHighlightFilter2(@NotNull Project project, @Nullable ConsoleView consoleView) {
+	private synchronized HighlightingFilter createHighlightFilter2(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		Profile profile = getProfile(consoleView);
 		HighlightingFilter highlightingFilter = new HighlightingFilter(project, profile);
 		highlightFilters.add(new WeakReference<>(highlightingFilter));
@@ -250,7 +250,7 @@ public class ServiceManager {
 		return consoles.contains(console);
 	}
 
-	public void registerConsole(@NotNull ConsoleView console) {
+	public synchronized void registerConsole(@NotNull ConsoleView console) {
 		MainInputFilter mainInputFilter = getInputFilter(console, MainInputFilter.class);
 		if (mainInputFilter != null) {
 			mainInputFilter.init(new WeakReference<>(console), getProfile(console));
