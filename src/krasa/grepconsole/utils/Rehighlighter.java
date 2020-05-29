@@ -8,9 +8,10 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.filter.HighlightingFilter;
-import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.StatisticsManager;
+
+import java.lang.reflect.Method;
 
 public class Rehighlighter {
 
@@ -41,14 +42,14 @@ public class Rehighlighter {
 
 	private void highlightAll(ConsoleViewImpl consoleViewImpl, Editor editor) {
 		try {
-			Filter myCustomFilter = (Filter) ReflectionUtils.getPropertyValue(consoleViewImpl, "myFilters");
-			if (myCustomFilter != null) {
-				int lineCount = editor.getDocument().getLineCount();
-				if (lineCount > 0) {
-					consoleViewImpl.getHyperlinks().highlightHyperlinks(myCustomFilter, 0, lineCount - 1);
-				}
+			int lineCount = editor.getDocument().getLineCount();
+			if (lineCount > 0) {
+				Method createCompositeFilter = ConsoleViewImpl.class.getDeclaredMethod("createCompositeFilter");
+				createCompositeFilter.setAccessible(true);
+				Object createCompositeFilter1 = createCompositeFilter.invoke(consoleViewImpl);
+				consoleViewImpl.getHyperlinks().highlightHyperlinks((Filter) createCompositeFilter1, 0, lineCount - 1);
 			}
-		} catch (NoSuchFieldException e1) {
+		} catch (Throwable e1) {
 			throw new RuntimeException("IJ API was probably changed, update the plugin or report it", e1);
 		}
 	}

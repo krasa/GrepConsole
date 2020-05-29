@@ -362,7 +362,7 @@ public class ServiceManager {
 		if (consoleViewData != null) {
 			consoleViewData.setProfile(selectedProfile);
 		} else {
-			throw new IllegalStateException("console not registered");
+//			throw new IllegalStateException("console not registered");//TODO
 		}
 	}
 
