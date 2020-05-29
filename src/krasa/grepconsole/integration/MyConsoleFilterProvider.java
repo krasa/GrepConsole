@@ -23,7 +23,7 @@ public class MyConsoleFilterProvider extends ConsoleDependentFilterProvider {
 		}
 		
 		if (!GrepConsoleApplicationComponent.getInstance().getState().isSynchronousHighlighting()) {
-			return new Filter[]{ServiceManager.getInstance().createHighlightFilter(project, consoleView)};
+			return new Filter[]{ServiceManager.getInstance().createOrGetHighlightFilter(project, consoleView)};
 		} else {
 			return Filter.EMPTY_ARRAY;
 		}

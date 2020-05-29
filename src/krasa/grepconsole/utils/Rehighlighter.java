@@ -64,7 +64,7 @@ public class Rehighlighter {
 	}
 
 	private HighlightingFilter getGrepFilter(Project project) {
-		return ServiceManager.getInstance().createHighlightFilter(project, null);
+		return ServiceManager.getInstance().createOrGetHighlightFilter(project, null);
 	}
 
 

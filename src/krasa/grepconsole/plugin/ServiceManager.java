@@ -208,21 +208,19 @@ public class ServiceManager {
 		return inputFilter;
 	}
 
-	public synchronized HighlightingFilter createHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
-		if (consoleView != null) {
+	public synchronized HighlightingFilter createOrGetHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
+		if (consoleView != null && consoles.get(consoleView) == null) {
 			registerConsole(consoleView);
 		}
 
-		return createHighlightFilter2(project, consoleView);
-	}
-
-	@NotNull
-	private synchronized HighlightingFilter createHighlightFilter2(@NotNull Project project, @Nullable ConsoleView consoleView) {
-		Profile profile = getProfile(consoleView);
-		HighlightingFilter highlightingFilter = new HighlightingFilter(project, profile);
-		highlightFilters.add(new WeakReference<>(highlightingFilter));
-		if (consoleView != null) {
-			consoles.put(consoleView, highlightingFilter);
+		HighlightingFilter highlightingFilter = consoles.getHighlightFilter(consoleView);
+		if (highlightingFilter == null) {
+			Profile profile = getProfile(consoleView);
+			highlightingFilter = new HighlightingFilter(project, profile);
+			highlightFilters.add(new WeakReference<>(highlightingFilter));
+			if (consoleView != null) {
+				consoles.put(consoleView, highlightingFilter);
+			}
 		}
 		return highlightingFilter;
 	}
@@ -326,12 +324,12 @@ public class ServiceManager {
 		return inputFilterField;
 	}
 
-	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
-		if (consoles.getHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
-			HighlightingFilter highlightingFilter = createHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
-			console.addMessageFilter(highlightingFilter);
-		}
-	}
+//	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
+//		if (consoles.getHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
+//			HighlightingFilter highlightingFilter = createHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
+//			console.addMessageFilter(highlightingFilter);
+//		}
+//	}
 
 	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleView parentConsoleView) {
 		try {
