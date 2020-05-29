@@ -36,7 +36,7 @@ public class PinnedGrepsReopener {
 
     public PinnedGrepsReopener(Project project, ConsoleView console) {
         Boolean aBoolean = processed.get(console);
-        if (aBoolean != null) {
+        if (aBoolean == null) {
             processed.put(console, true);
         } else {
             return;
