@@ -119,6 +119,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 	@Override
 	public void projectClosed() {
+		ServiceManager.getInstance().projectClosed(project);
 	}
 
 	@NotNull

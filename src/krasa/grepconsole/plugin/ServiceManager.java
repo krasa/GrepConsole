@@ -7,6 +7,7 @@ import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Disposer;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.*;
 import krasa.grepconsole.filter.support.Cache;
@@ -53,6 +54,10 @@ public class ServiceManager {
 		return consoles.getProfile(consoleView);
 	}
 
+	public void projectClosed(Project project) {
+		consoles.projectClosed(project);
+	}
+
 
 	static class Consoles {
 		private WeakHashMap<ConsoleView, ConsoleViewData> consoleDataMap = new WeakHashMap<>();
@@ -79,6 +84,7 @@ public class ServiceManager {
 			ConsoleViewData consoleViewData = consoleDataMap.get(consoleView);
 			if (consoleViewData == null) {
 				consoleViewData = new ConsoleViewData();
+				Disposer.register(consoleView, () -> consoleDataMap.remove(consoleView));
 				consoleDataMap.put(consoleView, consoleViewData);
 			}
 			return consoleViewData;
@@ -133,6 +139,19 @@ public class ServiceManager {
 			}
 		}
 
+		public void projectClosed(Project project) {
+			consoleDataMap.entrySet()
+					.stream()
+					.filter(entry -> {
+						ConsoleViewData value = entry.getValue();
+						return (value.highlightingFilter != null && value.highlightingFilter.getProject() == project)
+								|| (value.mainInputFilter != null && value.mainInputFilter.getProject() == project)
+								|| (value.grepFilter != null && value.grepFilter.getProject() == project);
+					})
+					.collect(Collectors.toList())
+					.forEach(entry -> consoleDataMap.remove(entry.getKey()));
+		}
+
 		static class ConsoleViewData {
 			RunConfigurationBase runConfigurationBase;
 			/**
@@ -143,6 +162,9 @@ public class ServiceManager {
 			HighlightingFilter highlightingFilter;
 			GrepFilter grepFilter;
 			MainInputFilter mainInputFilter;
+
+			public ConsoleViewData() {
+			}
 
 			public void setProfile(@NotNull Profile selectedProfile) {
 				profile = selectedProfile;
