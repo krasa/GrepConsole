@@ -10,7 +10,7 @@
 
 
 	<description><![CDATA[
-		  Grep, tail, filter, highlight... everything you need for a console. Also can highlight the editor - nice for analyzing logs...
+		  Grep, tail, filter, highlight... everything you need for a console (not supporting terminals). Also can highlight the editor...
 	         <br>
 		  Features:
 		  <ul>
