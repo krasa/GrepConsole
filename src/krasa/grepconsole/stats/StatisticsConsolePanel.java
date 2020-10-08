@@ -62,6 +62,8 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		pairs.clear();
 		jPanel.removeAll();
 		init();
+		revalidate();
+		repaint();
 	}
 
 	public Project getProject() {
