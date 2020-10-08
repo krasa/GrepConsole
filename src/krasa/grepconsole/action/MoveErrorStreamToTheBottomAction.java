@@ -48,7 +48,7 @@ public class MoveErrorStreamToTheBottomAction extends DumbAwareAction {
 				@Override
 				protected boolean accept(RangeHighlighter rangeHighlighter) {
 					ConsoleViewContentType contentType = rangeHighlighter.getUserData(finalContentTypeKey);
-					return contentType == ConsoleViewContentType.ERROR_OUTPUT;
+					return rangeHighlighter.isValid() && contentType == ConsoleViewContentType.ERROR_OUTPUT;
 				}
 			};
 			model.processRangeHighlightersOverlappingWith(0, document.getTextLength(), processor);

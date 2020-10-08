@@ -204,7 +204,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 				CommonProcessors.CollectProcessor<RangeHighlighter> processor = new CommonProcessors.CollectProcessor<RangeHighlighter>() {
 					@Override
 					protected boolean accept(RangeHighlighter rangeHighlighter) {
-						if (rangeHighlighter.getLayer() == HighlighterLayer.CONSOLE_FILTER) {
+						if (rangeHighlighter.isValid() && rangeHighlighter.getLayer() == HighlighterLayer.CONSOLE_FILTER) {
 							//won't work when multiple processorItems combine attributes
 							return rangeHighlighter.getTextAttributes() == grepExpressionItem.getConsoleViewContentType(null).getAttributes();
 						}
