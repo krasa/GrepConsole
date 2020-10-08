@@ -299,8 +299,8 @@ public class ServiceManager {
 					LOG.error("PLEASE REPORT THIS: InputFilter field not found in " + console);
 					return (T) null;
 				}
-				CompositeInputFilter myInputMessageFilter = (CompositeInputFilter) field.get(console);
-				if (myInputMessageFilter != null) {
+				Object myInputMessageFilter = field.get(console);
+				if (myInputMessageFilter instanceof CompositeInputFilter) {
 					List myFilters = (List) ReflectionUtils.getPropertyValue(myInputMessageFilter, "myFilters");
 					if (myFilters != null) {
 						for (Object myFilter : myFilters) {
