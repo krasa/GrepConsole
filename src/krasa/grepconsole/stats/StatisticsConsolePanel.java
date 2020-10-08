@@ -3,19 +3,25 @@ package krasa.grepconsole.stats;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ScrollType;
 import com.intellij.openapi.editor.colors.EditorColors;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.ex.MarkupModelEx;
+import com.intellij.openapi.editor.markup.HighlighterLayer;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.HyperlinkAdapter;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.JBColor;
+import com.intellij.util.CommonProcessors;
 import com.intellij.util.ui.UIUtil;
-import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
-import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.model.GrepColor;
+import krasa.grepconsole.model.GrepExpressionItem;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -64,18 +70,10 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 	private void init() {
 		final List<GrepProcessor> grepProcessors = highlightingFilter.getGrepProcessors();
-		MouseInputAdapter mouseInputAdapter = new MouseInputAdapter() {
 
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if (e.getButton() == MouseEvent.BUTTON1) {
-					new OpenConsoleSettingsAction(consoleView).actionPerformed(getProject(), SettingsContext.NONE);
-				}
-			}
-		};
 		for (GrepProcessor grepProcessor : grepProcessors) {
 			if (grepProcessor.getGrepExpressionItem().isShowCountInConsole()) {
-				add(grepProcessor, mouseInputAdapter);
+				add(grepProcessor, new MyMouseInputAdapter(grepProcessor));
 			}
 		}
 		addButtons();
@@ -187,4 +185,46 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 		}
 	}
 
+	private class MyMouseInputAdapter extends MouseInputAdapter {
+		private final GrepProcessor grepProcessor;
+
+		public MyMouseInputAdapter(GrepProcessor grepProcessor) {
+			this.grepProcessor = grepProcessor;
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (e.getButton() == MouseEvent.BUTTON1) {
+				Editor myEditor = consoleView.getEditor();
+				MarkupModelEx model = (MarkupModelEx) myEditor.getMarkupModel();
+				CommonProcessors.CollectProcessor<RangeHighlighter> processor = new CommonProcessors.CollectProcessor<RangeHighlighter>() {
+					@Override
+					protected boolean accept(RangeHighlighter rangeHighlighter) {
+						GrepExpressionItem grepExpressionItem = grepProcessor.getGrepExpressionItem();
+						if (rangeHighlighter.getLayer() == HighlighterLayer.CONSOLE_FILTER) {
+							//won't work when multiple processorItems combine attributes
+							return rangeHighlighter.getTextAttributes() == grepExpressionItem.getConsoleViewContentType(null).getAttributes();
+						}
+						return false;
+					}
+				};
+				int to = myEditor.getCaretModel().getPrimaryCaret().getOffset() - 1;
+				model.processRangeHighlightersOverlappingWith(0, to, processor);
+				ArrayList<RangeHighlighter> highlighters = (ArrayList<RangeHighlighter>) processor.getResults();
+
+				if (highlighters.isEmpty() && to + 1 < myEditor.getDocument().getTextLength()) {
+					to = myEditor.getDocument().getTextLength();
+					model.processRangeHighlightersOverlappingWith(0, to, processor);
+					highlighters = (ArrayList<RangeHighlighter>) processor.getResults();
+				}
+
+				if (!highlighters.isEmpty()) {
+					RangeHighlighter rangeHighlighter = highlighters.get(highlighters.size() - 1);
+					myEditor.getCaretModel().getPrimaryCaret().moveToOffset(rangeHighlighter.getStartOffset());
+					myEditor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
+					IdeFocusManager.getGlobalInstance().doWhenFocusSettlesDown(() -> IdeFocusManager.getGlobalInstance().requestFocus(myEditor.getContentComponent(), true));
+				}
+			}
+		}
+	}
 }
