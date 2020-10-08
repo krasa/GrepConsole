@@ -189,9 +189,11 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 
 	private class MyMouseInputAdapter extends MouseInputAdapter {
 		private final GrepProcessor grepProcessor;
+		private final GrepExpressionItem grepExpressionItem;
 
 		public MyMouseInputAdapter(GrepProcessor grepProcessor) {
 			this.grepProcessor = grepProcessor;
+			this.grepExpressionItem = grepProcessor.getGrepExpressionItem();
 		}
 
 		@Override
@@ -202,7 +204,6 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 				CommonProcessors.CollectProcessor<RangeHighlighter> processor = new CommonProcessors.CollectProcessor<RangeHighlighter>() {
 					@Override
 					protected boolean accept(RangeHighlighter rangeHighlighter) {
-						GrepExpressionItem grepExpressionItem = grepProcessor.getGrepExpressionItem();
 						if (rangeHighlighter.getLayer() == HighlighterLayer.CONSOLE_FILTER) {
 							//won't work when multiple processorItems combine attributes
 							return rangeHighlighter.getTextAttributes() == grepExpressionItem.getConsoleViewContentType(null).getAttributes();
@@ -212,12 +213,12 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 				};
 				int to = myEditor.getCaretModel().getPrimaryCaret().getOffset() - 1;
 				model.processRangeHighlightersOverlappingWith(0, to, processor);
-				ArrayList<RangeHighlighter> highlighters = (ArrayList<RangeHighlighter>) processor.getResults();
+				List<RangeHighlighter> highlighters = (List<RangeHighlighter>) processor.getResults();
 
 				if (highlighters.isEmpty() && to + 1 < myEditor.getDocument().getTextLength()) {
 					to = myEditor.getDocument().getTextLength();
 					model.processRangeHighlightersOverlappingWith(0, to, processor);
-					highlighters = (ArrayList<RangeHighlighter>) processor.getResults();
+					highlighters = (List<RangeHighlighter>) processor.getResults();
 				}
 
 				if (!highlighters.isEmpty()) {
