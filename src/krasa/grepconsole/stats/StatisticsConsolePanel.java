@@ -216,8 +216,7 @@ public class StatisticsConsolePanel extends JPanel implements Disposable {
 				List<RangeHighlighter> highlighters = (List<RangeHighlighter>) processor.getResults();
 
 				if (highlighters.isEmpty() && to + 1 < myEditor.getDocument().getTextLength()) {
-					to = myEditor.getDocument().getTextLength();
-					model.processRangeHighlightersOverlappingWith(0, to, processor);
+					model.processRangeHighlightersOverlappingWith(to, myEditor.getDocument().getTextLength(), processor);
 					highlighters = (List<RangeHighlighter>) processor.getResults();
 				}
 
