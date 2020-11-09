@@ -139,9 +139,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		final GrepFilterListener grepListener = new GrepFilterSyncListener(myProcessHandler, project, profile);
 
 		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi,
-				toolWindow);
+			toolWindow);
 		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression,
-				selectSourceActionListener);
+			selectSourceActionListener);
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
@@ -159,10 +159,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			actions.add(action);
 		}
 
-		Disposable parentDisposable;
 		final Content tab;
 		if (runnerLayoutUi != null) {
-			parentDisposable = runContentDescriptor;
 			tab = runnerLayoutUi.createContent(contentType, consolePanel, title(expression), AllIcons.General.Filter, consolePanel);
 			runnerLayoutUi.addContent(tab);
 			try {
@@ -180,7 +178,6 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			if (focusTab) {
 				contentManager.setSelectedContent(tab);
 			}
-			parentDisposable = parentConsoleView;
 		}
 
 		String finalContentType = contentType;
@@ -195,7 +192,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				tab.setDisplayName(title(grepModel.getExpression()));
 				if (finalRunConfigurationRef != null) {
 					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
-							false);
+						false);
 				}
 			}
 		});
@@ -206,6 +203,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		// Disposer.register(parentDisposable, tab);
 		Disposer.register(tab, consolePanel);
+
+		Disposable parentDisposable;
+		if (runContentDescriptor != null) {
+			parentDisposable = runContentDescriptor;
+		} else {
+			parentDisposable = parentConsoleView;
+		}
 		AtomicBoolean parentDisposed = new AtomicBoolean();
 		Disposer.register(parentDisposable, new Disposable() {
 			@Override
@@ -656,7 +660,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		@Override
 		public String toString() {
 			return "PinAction{" + "pinned=" + pinned + ", parentConsoleUUID='" + parentConsoleUUID + '\'' + ", consoleUUID='" + consoleUUID + '\''
-					+ ", runConfigurationRef=" + runConfigurationRef + '}';
+				+ ", runConfigurationRef=" + runConfigurationRef + '}';
 		}
 	}
 
