@@ -102,20 +102,17 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		RunContentDescriptor runContentDescriptor = getRunContentDescriptor(project, topParentConsoleView);
 		ToolWindow toolWindow = null;
-
+		if (e != null) {
+			toolWindow = e.getData(PlatformDataKeys.TOOL_WINDOW);
+		} else {
+			toolWindow = findToolWindow(parentConsoleView, project);
+		}
 		if (runContentDescriptor != null) {
 			if (key == null) {
 				key = new PinnedGrepConsolesState.RunConfigurationRef(runContentDescriptor.getDisplayName(), runContentDescriptor.getIcon());
 			}
-		} else {
-			if (e != null) {
-				toolWindow = e.getData(PlatformDataKeys.TOOL_WINDOW);
-			} else {
-				toolWindow = findToolWindow(parentConsoleView, project);
-			}
-			if (key == null && toolWindow != null) {
-				key = PinnedGrepConsolesState.RunConfigurationRef.toKey(toolWindow);
-			}
+		} else if (key == null && toolWindow != null) {
+			key = PinnedGrepConsolesState.RunConfigurationRef.toKey(toolWindow);
 		}
 
 		RunnerLayoutUi runnerLayoutUi = getRunnerLayoutUi(project, runContentDescriptor, topParentConsoleView);
