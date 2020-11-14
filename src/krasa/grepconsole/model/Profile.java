@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Profile extends DomainObject implements Cloneable {
-	public static final String DEFAULT = "120";
+	public static final String DEFAULT = "200";
 	public static final String DEFAULT_GREP = "1000";
 	private static final String MAX_PROCESSING_TIME_DEFAULT = "1000";
 

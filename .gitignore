@@ -2,3 +2,6 @@
 *.iws
 *.ipr
 *.zip
+.shelf
+.idea
+
