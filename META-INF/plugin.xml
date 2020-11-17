@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.1.202.000.0</version>
+	<version>11.2.202.000.0</version>
 	<idea-version since-build="202.000"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -47,6 +47,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>11.2
+		<br>- icons fix for 2020.3
         <br>11.1
 		<br>- Fixed memory leak
         <br>11.0
@@ -183,14 +185,14 @@
 		</action>
 		<action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
 				text="Toggle Highlight of All Occurrences (custom color)"
-				icon="/krasa/grepconsole/action/highlight.gif"
+				icon="/krasa/grepconsole/icons/highlight.png"
 				description="Toggle highlight of all occurrences of the selected text in the editor. Opens a dialog to choose a color.">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 			<!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
 		</action>
 		<action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
 				text="Toggle Highlight of All Occurrences"
-				icon="/krasa/grepconsole/action/highlight.gif"
+				icon="/krasa/grepconsole/icons/highlight.png"
 				description="Toggle highlight of all occurrences of the selected text in the editor - with predefined colors">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
@@ -199,28 +201,28 @@
 		<!-- Add your actions here -->
 		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction"
 				text="Highlight Editor according to Grep Console settings"
-				icon="/krasa/grepconsole/action/highlight.gif"
+				icon="/krasa/grepconsole/icons/highlight.png"
 				description="Highlight Editor according to Grep Console settings">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsoleAction"
 				text="Tail File in Console..."
 				description="Tail File in Console..."
-				icon="/krasa/grepconsole/tail/tail.png"
+				icon="/krasa/grepconsole/icons/tail.png"
 		>
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.OpenFileInConsoleProjectViewAction"
 				text="Tail in Console"
 				description="Tail in Console"
-				icon="/krasa/grepconsole/tail/tail.png"
+				icon="/krasa/grepconsole/icons/tail.png"
 		>
 			<add-to-group group-id="RevealGroup"/>
 		</action>
 		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
 				text="Tail Current File in Console"
 				description="Tail Current Editor File in Console"
-				icon="/krasa/grepconsole/tail/tail.png"
+				icon="/krasa/grepconsole/icons/tail.png"
 		>
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
@@ -233,7 +235,7 @@
 		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog"
 				text="Tail Log in Console"
 				description="Tail Log in Console - by Grep Console plugin"
-				icon="/krasa/grepconsole/tail/tail.png"
+				icon="/krasa/grepconsole/icons/tail.png"
 		>
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>

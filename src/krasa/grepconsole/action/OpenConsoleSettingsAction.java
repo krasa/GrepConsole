@@ -12,7 +12,7 @@ import krasa.grepconsole.utils.Rehighlighter;
 import javax.swing.*;
 
 public class OpenConsoleSettingsAction extends HighlightManipulationAction {
-	public static final Icon ICON = IconLoader.getIcon("/krasa/grepconsole/action/highlight.gif");
+	public static final Icon ICON = IconLoader.getIcon("/krasa/grepconsole/icons/highlight.png");
 	private ConsoleView console;
 
 

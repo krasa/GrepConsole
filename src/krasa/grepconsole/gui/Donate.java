@@ -19,7 +19,7 @@ public class Donate {
 
 	public static void init(JPanel donatePanel, JButton donate) {
 		donate.setBorder(null);
-		donate.setIcon(IconLoader.getIcon("donate.gif", Donate.class));
+		donate.setIcon(IconLoader.getIcon("/krasa/grepconsole/icons/donate.png"));
 		donate.setContentAreaFilled(false);
 		donate.addActionListener(new ActionListener() {
 			@Override

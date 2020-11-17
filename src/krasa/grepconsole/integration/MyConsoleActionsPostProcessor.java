@@ -62,7 +62,7 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 		ServiceManager manager = ServiceManager.getInstance();
 		ArrayList<AnAction> anActions = new ArrayList<>();
 		anActions.add(new OpenGrepConsoleAction("Grep", "Open a new filter/grep console", AllIcons.General.Filter));
-		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", IconLoader.findIcon("/krasa/grepconsole/action/highlight.gif")));
+		anActions.add(new AddHighlightAction("Add highlight", "Add highlight for this selected text", IconLoader.findIcon("/krasa/grepconsole/icons/highlight.png")));
 		if (manager.isRegistered(console)) {
 			anActions.add(new ShowHideStatisticsConsolePanelAction(console));
 			anActions.add(new ShowHideStatisticsStatusBarPanelAction(console));
