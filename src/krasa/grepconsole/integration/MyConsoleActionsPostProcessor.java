@@ -1,27 +1,19 @@
 package krasa.grepconsole.integration;
 
-import com.intellij.execution.actions.ClearConsoleAction;
-import com.intellij.execution.actions.ConsoleActionsPostProcessor;
-import com.intellij.execution.impl.ConsoleViewImpl;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.actionSystem.Separator;
-import com.intellij.openapi.util.IconLoader;
-import krasa.grepconsole.action.AddHighlightAction;
-import krasa.grepconsole.action.MoveErrorStreamToTheBottomAction;
-import krasa.grepconsole.action.OpenConsoleSettingsAction;
-import krasa.grepconsole.grep.OpenGrepConsoleAction;
-import krasa.grepconsole.plugin.ServiceManager;
-import krasa.grepconsole.stats.StatisticsManager;
-import krasa.grepconsole.stats.action.ShowHideStatisticsConsolePanelAction;
-import krasa.grepconsole.stats.action.ShowHideStatisticsStatusBarPanelAction;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.execution.actions.*;
+import com.intellij.execution.impl.*;
+import com.intellij.execution.ui.*;
+import com.intellij.icons.*;
+import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.util.*;
+import krasa.grepconsole.action.*;
+import krasa.grepconsole.grep.*;
+import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.stats.*;
+import krasa.grepconsole.stats.action.*;
+import org.jetbrains.annotations.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 
@@ -38,6 +30,8 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 
 		ArrayList<AnAction> anActions = new ArrayList<>();
 		anActions.add(new OpenConsoleSettingsAction(console));
+		anActions.add(new PreviousHighlightAction(console));
+		anActions.add(new NextHighlightAction(console));
 		if (console instanceof ConsoleViewImpl) {
 			try {
 				//API check}

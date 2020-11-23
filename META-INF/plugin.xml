@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.2.202.000.0</version>
+	<version>11.3.202.000.0</version>
 	<idea-version since-build="202.000"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -47,6 +47,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>11.3
+		<br>- Added: Next Console Highlight, Previous Console Highlight actions
         <br>11.2
 		<br>- icons fix for 2020.3
         <br>11.1
@@ -239,6 +241,16 @@
 		>
 			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
 		</action>
+		<action id="krasa.grepconsole.action.NextHighlight"
+				class="krasa.grepconsole.action.NextHighlightAction"
+				text="Next Console Highlight"
+				icon="/krasa/grepconsole/icons/next.svg"
+		/>
+		<action id="krasa.grepconsole.action.PreviousHighlight"
+				class="krasa.grepconsole.action.PreviousHighlightAction"
+				text="Previous Console Highlight"
+				icon="/krasa/grepconsole/icons/previous.svg"
+		/>
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">

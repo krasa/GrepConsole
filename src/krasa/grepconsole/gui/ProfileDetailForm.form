@@ -214,8 +214,8 @@
                       <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value="Match only first N characters on each line (recommended)"/>
-                      <toolTipText value="Applies for filtering, folding, highlighting"/>
+                      <text value="Match only first N characters on each line"/>
+                      <toolTipText value="Applies for filtering, folding, highlighting. Big values might impact performance."/>
                     </properties>
                   </component>
                   <component id="394c7" class="javax.swing.JLabel" binding="contextSpecificText">
@@ -232,7 +232,7 @@
                       <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
-                      <text value=" Max processing time for a line (to prevent GUI freeezes) [ms]"/>
+                      <text value=" Max processing time for a line [ms]"/>
                     </properties>
                   </component>
                   <component id="6a419" class="javax.swing.JFormattedTextField" binding="maxProcessingTime" custom-create="true">
@@ -314,7 +314,7 @@
                         </constraints>
                         <properties>
                           <text value="Filter before grepping"/>
-                          <toolTipText value="Uncheck if you want to remove output from the main console but still grep it into a sub-console."/>
+                          <toolTipText value="Uncheck to grep before filtering - if you want to remove output from the main console but still grep it into a sub-console."/>
                         </properties>
                       </component>
                     </children>
