@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 
 public class GrepSettingsEditor extends SettingsEditor<RunConfigurationBase> {
 	private final RunConfigurationBase configuration;
@@ -37,7 +38,9 @@ public class GrepSettingsEditor extends SettingsEditor<RunConfigurationBase> {
 			}
 
 			protected JPanel getRootComponent() {
-				return form.getProfiles();
+				JPanel profiles = form.getProfiles();
+				profiles.setBorder(new TitledBorder("Grep Console"));
+				return profiles;
 			}
 			@Override
 			protected PluginState getClone(PluginState formSettings) {
