@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.3.202.000.1</version>
+	<version>11.4.202.000.0</version>
 	<idea-version since-build="202.000"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -47,6 +47,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>11.4
+		<br>- Run Configuration - added labeled border
         <br>11.3
 		<br>- Added: Next Console Highlight, Previous Console Highlight actions
         <br>11.2
