@@ -138,6 +138,8 @@ public class GrepPanel extends JPanel implements Disposable {
 				final int keyCode = e.getKeyCode();
 				if (keyCode == KeyEvent.VK_ENTER && e.isAltDown()) {
 					reloadButton.doClick();
+				} else if (keyCode == KeyEvent.VK_ENTER && e.isControlDown()) {
+					reloadButton.doClick();
 				} else if (keyCode == KeyEvent.VK_ENTER) {
 					applyButton.doClick();
 				}
