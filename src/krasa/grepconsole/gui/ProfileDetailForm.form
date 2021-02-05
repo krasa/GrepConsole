@@ -347,7 +347,6 @@
                       <font/>
                       <hideActionText value="false"/>
                       <horizontalTextPosition value="0"/>
-                      <icon value="/krasa/grepconsole/icons/donate.png"/>
                       <text value=""/>
                       <toolTipText value="Donate via PayPal"/>
                     </properties>
@@ -420,7 +419,7 @@
                           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                         </constraints>
                         <properties>
-                          <icon value="/krasa/grepconsole/icons/help.png"/>
+                          <icon value="krasa/grepconsole/icons/help.png"/>
                           <text value=""/>
                           <toolTipText value=""/>
                         </properties>
