@@ -1,7 +1,6 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.StreamBufferSettings;
@@ -14,12 +13,13 @@ import java.util.List;
 
 public class PluginState extends DomainObject implements Cloneable {
 	private static final Logger LOG = Logger.getInstance(PluginState.class);
-	
+
 	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;
 	private StreamBufferSettings streamBufferSettings;
 	private boolean allowRunConfigurationChanges = true;
 	private int version;
+
 	public int getVersion() {
 		return version;
 	}
@@ -60,6 +60,7 @@ public class PluginState extends DomainObject implements Cloneable {
 		}
 		return result;
 	}
+
 	public TailSettings getTailSettings() {
 		if (tailSettings == null) {
 			tailSettings = new TailSettings();
@@ -101,11 +102,6 @@ public class PluginState extends DomainObject implements Cloneable {
 
 	public void setAllowRunConfigurationChanges(final boolean allowRunConfigurationChanges) {
 		this.allowRunConfigurationChanges = allowRunConfigurationChanges;
-	}
-
-	@Transient
-	public boolean isSynchronousHighlighting() {
-		return getDefaultProfile().isSynchronous();
 	}
 
 	public Profile createProfile() {
@@ -164,6 +160,6 @@ public class PluginState extends DomainObject implements Cloneable {
 				", allowRunConfigurationChanges=" + allowRunConfigurationChanges +
 				"} " + super.toString();
 	}
-	          
+
 
 }

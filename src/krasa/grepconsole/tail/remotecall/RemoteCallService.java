@@ -39,7 +39,7 @@ public class RemoteCallService implements Disposable {
 			serverSocket.bind(new InetSocketAddress("localhost", port));
 			log.info("Listening " + port);
 		} catch (final Exception e) {
-			SwingUtilities.invokeLater(() -> Notifications.Bus.notify(Notifier.NOTIFICATION.createNotification("GrepConsole plugin - Tail integration", "Can't bind port " + tailSettings.getPort()
+			SwingUtilities.invokeLater(() -> Notifications.Bus.notify(Notifier.getNotificationGroup().createNotification("GrepConsole plugin - Tail integration", "Can't bind port " + tailSettings.getPort()
 					+ ". </br>Error: " + e.toString(), NotificationType.WARNING, null)));
 			;
 			log.info("GrepConsole Plugin Error", e);

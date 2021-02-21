@@ -1,29 +1,31 @@
 package krasa.grepconsole.integration;
 
-import com.intellij.execution.actions.*;
-import com.intellij.execution.impl.*;
-import com.intellij.execution.ui.*;
-import com.intellij.icons.*;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.util.*;
+import com.intellij.execution.actions.ClearConsoleAction;
+import com.intellij.execution.actions.ConsoleActionsPostProcessor;
+import com.intellij.execution.impl.ConsoleViewImpl;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.action.*;
-import krasa.grepconsole.grep.*;
-import krasa.grepconsole.plugin.*;
-import krasa.grepconsole.stats.*;
-import krasa.grepconsole.stats.action.*;
-import org.jetbrains.annotations.*;
+import krasa.grepconsole.grep.OpenGrepConsoleAction;
+import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.stats.StatisticsManager;
+import krasa.grepconsole.stats.action.ShowHideStatisticsConsolePanelAction;
+import krasa.grepconsole.stats.action.ShowHideStatisticsStatusBarPanelAction;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 
 	@NotNull
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
-		ServiceManager serviceManager = ServiceManager.getInstance();
-		serviceManager.registerConsole(console);
-//		serviceManager.createHighlightFilterIfMissing(console);
-
 		if (console instanceof ConsoleViewImpl) {
 			StatisticsManager.createStatisticsPanels((com.intellij.execution.impl.ConsoleViewImpl) console);
 		}

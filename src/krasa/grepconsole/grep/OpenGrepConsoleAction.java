@@ -129,16 +129,16 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
-		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsole(project, parentConsoleView, myProcessHandler);
+		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsoleWithoutInputFilter(project, parentConsoleView, myProcessHandler);
 		Profile profile = ServiceManager.getInstance().getProfile(parentConsoleView);
 		ServiceManager.getInstance().profileChanged(newConsole, profile);
 
 		final GrepFilterListener grepListener = new GrepFilterSyncListener(myProcessHandler, project, profile);
 
 		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi,
-			toolWindow);
+				toolWindow);
 		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression,
-			selectSourceActionListener);
+				selectSourceActionListener);
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
@@ -189,7 +189,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				tab.setDisplayName(title(grepModel.getExpression()));
 				if (finalRunConfigurationRef != null) {
 					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
-						false);
+							false);
 				}
 			}
 		});
@@ -517,7 +517,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return panel;
 	}
 
-	private ConsoleView createConsole(@NotNull Project project, ConsoleView parentConsoleView, @NotNull ProcessHandler processHandler) {
+	private ConsoleView createConsoleWithoutInputFilter(@NotNull Project project, ConsoleView parentConsoleView, @NotNull ProcessHandler processHandler) {
 		ConsoleView console = ServiceManager.getInstance().createConsoleWithoutInputFilter(project, parentConsoleView);
 		console.attachToProcess(processHandler);
 		return console;
@@ -657,7 +657,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		@Override
 		public String toString() {
 			return "PinAction{" + "pinned=" + pinned + ", parentConsoleUUID='" + parentConsoleUUID + '\'' + ", consoleUUID='" + consoleUUID + '\''
-				+ ", runConfigurationRef=" + runConfigurationRef + '}';
+					+ ", runConfigurationRef=" + runConfigurationRef + '}';
 		}
 	}
 

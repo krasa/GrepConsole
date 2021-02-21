@@ -15,9 +15,8 @@ import org.jetbrains.annotations.Nullable;
 public class GrepRunConfigurationExtensionNew extends RunConfigurationExtension {
 
 	@Override
-	public <T extends RunConfigurationBase> void updateJavaParameters(T runConfiguration, JavaParameters javaParameters, RunnerSettings runnerSettings) throws ExecutionException {
+	public <T extends RunConfigurationBase<?>> void updateJavaParameters(@NotNull T runConfiguration, @NotNull JavaParameters javaParameters, RunnerSettings runnerSettings) throws ExecutionException {
 		GrepConsoleData userData = GrepConsoleData.getGrepConsoleData(runConfiguration);
-
 	}
 
 	@Override

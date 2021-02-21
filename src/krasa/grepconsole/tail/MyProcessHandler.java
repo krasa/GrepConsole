@@ -38,254 +38,242 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import static com.intellij.util.io.BaseDataReader.AdaptiveSleepingPolicy;
-
 /*from com.intellij.execution.process.BaseOSProcessHandler*/
 public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
-  private static final Logger LOG = Logger.getInstance(MyProcessHandler.class);
+	private static final Logger LOG = Logger.getInstance(MyProcessHandler.class);
 
-  protected final Process myProcess;
-  protected final Charset myCharset;
-  protected final String myPresentableName;
-  protected final ProcessWaitFor myWaitFor;
+	protected final Process myProcess;
+	protected final Charset myCharset;
+	protected final String myPresentableName;
+	protected final ProcessWaitFor myWaitFor;
 
-  /**
-   * {@code commandLine} must not be not empty (for correct thread attribution in the stacktrace)
-   */
-  public MyProcessHandler(@NotNull Process process, /*@NotNull*/ String commandLine, @Nullable Charset charset) {
-    myProcess = process;
-    myCharset = charset;
-    myPresentableName = commandLine;
-	  myWaitFor = new ProcessWaitFor(process, this, "Tail " + commandLine);
-  }
+	/**
+	 * {@code commandLine} must not be not empty (for correct thread attribution in the stacktrace)
+	 */
+	public MyProcessHandler(@NotNull Process process, /*@NotNull*/ String commandLine, @Nullable Charset charset) {
+		myProcess = process;
+		myCharset = charset;
+		myPresentableName = commandLine;
+		myWaitFor = new ProcessWaitFor(process, this, "Tail " + commandLine);
+	}
 
-  /**
-   * Override this method in order to execute the task with a custom pool
-   *
-   * @param task a task to run
-   */
-  @NotNull
-  protected Future<?> executeOnPooledThread(@NotNull Runnable task) {
-    return ExecutorServiceHolder.ourThreadExecutorsService.submit(task);
-  }
+	/**
+	 * Override this method in order to execute the task with a custom pool
+	 *
+	 * @param task a task to run
+	 */
+	@NotNull
+	protected Future<?> executeOnPooledThread(@NotNull Runnable task) {
+		return ExecutorServiceHolder.ourThreadExecutorsService.submit(task);
+	}
 
-  @Override
-  @NotNull
-  public Future<?> executeTask(@NotNull Runnable task) {
-    return executeOnPooledThread(task);
-  }
+	@Override
+	@NotNull
+	public Future<?> executeTask(@NotNull Runnable task) {
+		return executeOnPooledThread(task);
+	}
 
-  @NotNull
-  public Process getProcess() {
-    return myProcess;
-  }
+	@NotNull
+	public Process getProcess() {
+		return myProcess;
+	}
 
-  protected boolean useAdaptiveSleepingPolicyWhenReadingOutput() {
-    return false;
-  }
+	protected boolean useAdaptiveSleepingPolicyWhenReadingOutput() {
+		return false;
+	}
 
-  /**
-   * Override this method to read process output and error streams in blocking mode
-   *
-   * @return true to read non-blocking but sleeping, false for blocking read
-   */
-  protected boolean useNonBlockingRead() {
-    return !Registry.is("output.reader.blocking.mode", false);
-  }
+	/**
+	 * Override this method to read process output and error streams in blocking mode
+	 *
+	 * @return true to read non-blocking but sleeping, false for blocking read
+	 */
+	protected boolean useNonBlockingRead() {
+		return !Registry.is("output.reader.blocking.mode", false);
+	}
 
-  protected boolean processHasSeparateErrorStream() {
-    return true;
-  }
+	protected boolean processHasSeparateErrorStream() {
+		return true;
+	}
 
-  @Override
-  public void startNotify() {
-    addProcessListener(new ProcessAdapter() {
-      @Override
-      public void startNotified(final ProcessEvent event) {
-        try {
-          final BaseDataReader stdOutReader = createOutputDataReader(getPolicy());
-          final BaseDataReader stdErrReader = processHasSeparateErrorStream() ? createErrorDataReader(getPolicy()) : null;
+	@Override
+	public void startNotify() {
+		addProcessListener(new ProcessAdapter() {
+			@Override
+			public void startNotified(final ProcessEvent event) {
+				try {
+					final BaseDataReader stdOutReader = createOutputDataReader(getPolicy());
+					final BaseDataReader stdErrReader = processHasSeparateErrorStream() ? createErrorDataReader(getPolicy()) : null;
 
-          myWaitFor.setTerminationCallback(new Consumer<Integer>() {
-            @Override
-            public void consume(Integer exitCode) {
-              try {
-                // tell readers that no more attempts to read process' output should be made
-                if (stdErrReader != null) stdErrReader.stop();
-                stdOutReader.stop();
+					myWaitFor.setTerminationCallback(new Consumer<Integer>() {
+						@Override
+						public void consume(Integer exitCode) {
+							try {
+								// tell readers that no more attempts to read process' output should be made
+								if (stdErrReader != null) stdErrReader.stop();
+								stdOutReader.stop();
 
-                try {
-                  if (stdErrReader != null) stdErrReader.waitFor();
-                  stdOutReader.waitFor();
-                }
-                catch (InterruptedException ignore) { }
-              }
-              finally {
-                onOSProcessTerminated(exitCode);
-              }
-            }
-          });
-        }
-        finally {
-          removeProcessListener(this);
-        }
-      }
-    });
+								try {
+									if (stdErrReader != null) stdErrReader.waitFor();
+									stdOutReader.waitFor();
+								} catch (InterruptedException ignore) {
+								}
+							} finally {
+								onOSProcessTerminated(exitCode);
+							}
+						}
+					});
+				} finally {
+					removeProcessListener(this);
+				}
+			}
+		});
 
-    super.startNotify();
-  }
+		super.startNotify();
+	}
 
-  @NotNull
-  private BaseDataReader.SleepingPolicy getPolicy() {
-    if (useNonBlockingRead()) {
-      return useAdaptiveSleepingPolicyWhenReadingOutput() ? new AdaptiveSleepingPolicy() : BaseDataReader.SleepingPolicy.SIMPLE;
-    }
-    else {
-      //use blocking read policy
-      return BaseDataReader.SleepingPolicy.BLOCKING;
-    }
-  }
+	@NotNull
+	private BaseDataReader.SleepingPolicy getPolicy() {
+		if (useNonBlockingRead()) {
+			return BaseDataReader.SleepingPolicy.NON_BLOCKING;
+		} else {
+			//use blocking read policy
+			return BaseDataReader.SleepingPolicy.BLOCKING;
+		}
+	}
 
-  @NotNull
-  protected BaseDataReader createErrorDataReader(@NotNull BaseDataReader.SleepingPolicy sleepingPolicy) {
-    return new SimpleOutputReader(createProcessErrReader(), ProcessOutputTypes.STDERR, sleepingPolicy, "error stream of " + myPresentableName);
-  }
+	@NotNull
+	protected BaseDataReader createErrorDataReader(@NotNull BaseDataReader.SleepingPolicy sleepingPolicy) {
+		return new SimpleOutputReader(createProcessErrReader(), ProcessOutputTypes.STDERR, sleepingPolicy, "error stream of " + myPresentableName);
+	}
 
-  @NotNull
-  protected BaseDataReader createOutputDataReader(@NotNull BaseDataReader.SleepingPolicy sleepingPolicy) {
-    return new SimpleOutputReader(createProcessOutReader(), ProcessOutputTypes.STDOUT, sleepingPolicy, "output stream of " + myPresentableName);
-  }
+	@NotNull
+	protected BaseDataReader createOutputDataReader(@NotNull BaseDataReader.SleepingPolicy sleepingPolicy) {
+		return new SimpleOutputReader(createProcessOutReader(), ProcessOutputTypes.STDOUT, sleepingPolicy, "output stream of " + myPresentableName);
+	}
 
-  protected void onOSProcessTerminated(final int exitCode) {
-    notifyProcessTerminated(exitCode);
-  }
+	protected void onOSProcessTerminated(final int exitCode) {
+		notifyProcessTerminated(exitCode);
+	}
 
-  @NotNull
-  protected Reader createProcessOutReader() {
-    return createInputStreamReader(myProcess.getInputStream());
-  }
+	@NotNull
+	protected Reader createProcessOutReader() {
+		return createInputStreamReader(myProcess.getInputStream());
+	}
 
-  @NotNull
-  protected Reader createProcessErrReader() {
-    return createInputStreamReader(myProcess.getErrorStream());
-  }
+	@NotNull
+	protected Reader createProcessErrReader() {
+		return createInputStreamReader(myProcess.getErrorStream());
+	}
 
-  @NotNull
-  private Reader createInputStreamReader(@NotNull InputStream streamToRead) {
-    Charset charset = charsetNotNull();
-    return new BaseInputStreamReader(streamToRead, charset);
-  }
+	@NotNull
+	private Reader createInputStreamReader(@NotNull InputStream streamToRead) {
+		Charset charset = charsetNotNull();
+		return new BaseInputStreamReader(streamToRead, charset);
+	}
 
-  @NotNull
-  private Charset charsetNotNull() {
-    Charset charset = getCharset();
-    if (charset == null) {
-      // use default charset
-      charset = Charset.defaultCharset();
-    }
-    return charset;
-  }
+	@NotNull
+	private Charset charsetNotNull() {
+		Charset charset = getCharset();
+		if (charset == null) {
+			// use default charset
+			charset = Charset.defaultCharset();
+		}
+		return charset;
+	}
 
-  @Override
-  protected void destroyProcessImpl() {
-    try {
-      closeStreams();
-    }
-    finally {
-      doDestroyProcess();
-    }
-  }
+	@Override
+	protected void destroyProcessImpl() {
+		try {
+			closeStreams();
+		} finally {
+			doDestroyProcess();
+		}
+	}
 
-  protected void doDestroyProcess() {
-    getProcess().destroy();
-  }
+	protected void doDestroyProcess() {
+		getProcess().destroy();
+	}
 
-  @Override
-  protected void detachProcessImpl() {
-    final Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        closeStreams();
+	@Override
+	protected void detachProcessImpl() {
+		final Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				closeStreams();
 
-        myWaitFor.detach();
-        notifyProcessDetached();
-      }
-    };
+				myWaitFor.detach();
+				notifyProcessDetached();
+			}
+		};
 
-    executeOnPooledThread(runnable);
-  }
+		executeOnPooledThread(runnable);
+	}
 
-  protected void closeStreams() {
-    try {
-      myProcess.getOutputStream().close();
-    }
-    catch (IOException e) {
-      LOG.warn(e);
-    }
-  }
+	protected void closeStreams() {
+		try {
+			myProcess.getOutputStream().close();
+		} catch (IOException e) {
+			LOG.warn(e);
+		}
+	}
 
-  @Override
-  public boolean detachIsDefault() {
-    return false;
-  }
+	@Override
+	public boolean detachIsDefault() {
+		return false;
+	}
 
-  @Override
-  public OutputStream getProcessInput() {
-    return myProcess.getOutputStream();
-  }
+	@Override
+	public OutputStream getProcessInput() {
+		return myProcess.getOutputStream();
+	}
 
-  @Nullable
-  public Charset getCharset() {
-    return myCharset;
-  }
+	@Nullable
+	public Charset getCharset() {
+		return myCharset;
+	}
 
-  public static class ExecutorServiceHolder {
-    private static final ThreadPoolExecutor ourThreadExecutorsService =
-            new ThreadPoolExecutor(0, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<>(),
-                             ConcurrencyUtil.newNamedThreadFactory("OSProcessHandler pooled thread"));
+	public static class ExecutorServiceHolder {
+		private static final ThreadPoolExecutor ourThreadExecutorsService =
+				new ThreadPoolExecutor(0, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<>(),
+						ConcurrencyUtil.newNamedThreadFactory("OSProcessHandler pooled thread"));
 
-    /** @deprecated use {@link MyProcessHandler#submit(Runnable)} instead (to be removed in IDEA 16) */
-    @Deprecated
-    public static Future<?> submit(@NotNull Runnable task) {
-      return MyProcessHandler.submit(task);
-    }
-  }
+		/**
+		 * @deprecated use {@link MyProcessHandler#submit(Runnable)} instead (to be removed in IDEA 16)
+		 */
+		@Deprecated
+		public static Future<?> submit(@NotNull Runnable task) {
+			return MyProcessHandler.submit(task);
+		}
+	}
 
-  @NotNull
-  public static Future<?> submit(@NotNull Runnable task) {
-    return ExecutorServiceHolder.ourThreadExecutorsService.submit(task);
-  }
+	@NotNull
+	public static Future<?> submit(@NotNull Runnable task) {
+		return ExecutorServiceHolder.ourThreadExecutorsService.submit(task);
+	}
 
-  private class SimpleOutputReader extends BaseOutputReader {
-    private final Key myProcessOutputType;
+	private class SimpleOutputReader extends BaseOutputReader {
+		private final Key myProcessOutputType;
 
-    private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
-		super(reader, BaseOutputReader.Options.withPolicy(sleepingPolicy));
-      myProcessOutputType = processOutputType;
-      try {
-        java.lang.reflect.Method method;
-        method = BaseDataReader.class.getDeclaredMethod("start", String.class);
-        method.invoke(this, presentableName);
-      } catch (Exception e) {
-        //IJ 14,15
-        start();
-      }
-    }
+		private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
+			super(reader, BaseOutputReader.Options.withPolicy(sleepingPolicy));
+			myProcessOutputType = processOutputType;
+			start(presentableName);
+		}
 
-    @NotNull
-    @Override
-    protected Future<?> executeOnPooledThread(@NotNull Runnable runnable) {
-      return MyProcessHandler.this.executeOnPooledThread(runnable);
-    }
+		@NotNull
+		@Override
+		protected Future<?> executeOnPooledThread(@NotNull Runnable runnable) {
+			return MyProcessHandler.this.executeOnPooledThread(runnable);
+		}
 
-    @Override
-    protected void onTextAvailable(@NotNull String text) {
-      notifyTextAvailable(text, myProcessOutputType);
-    }
-  }
+		@Override
+		protected void onTextAvailable(@NotNull String text) {
+			notifyTextAvailable(text, myProcessOutputType);
+		}
+	}
 
-  @Override
-  public String toString() {
-    return myPresentableName;
-  }
+	@Override
+	public String toString() {
+		return myPresentableName;
+	}
 }

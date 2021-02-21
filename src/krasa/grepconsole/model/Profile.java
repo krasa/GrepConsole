@@ -39,7 +39,6 @@ public class Profile extends DomainObject implements Cloneable {
 	private String maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
 	@Transient
 	private transient Integer maxProcessingTimeAsInt;
-	private boolean synchronous;
 	private boolean filterOutBeforeGrep;
 	private boolean alwaysPinGrepConsoles = true;
 	private String maxLengthToGrep = DEFAULT_GREP;
@@ -269,13 +268,6 @@ public class Profile extends DomainObject implements Cloneable {
 		return s.trim().replaceAll("[\u00A0 ,.]", "");
 	}
 
-	public boolean isSynchronous() {
-		return synchronous;
-	}
-
-	public void setSynchronous(final boolean synchronous) {
-		this.synchronous = synchronous;
-	}
 
 	public boolean isFilterOutBeforeGrep() {
 		return filterOutBeforeGrep;

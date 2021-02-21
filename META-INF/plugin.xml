@@ -1,8 +1,8 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.5.202.000.0</version>
-	<idea-version since-build="202.000"/>
+	<version>11.5.211.6085.0</version>
+	<idea-version since-build="211.6085"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -159,8 +159,6 @@
 	</change-notes>
 
 
-
-
 	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
 		   on how to target different products -->
 	<depends>com.intellij.modules.lang</depends>
@@ -256,6 +254,9 @@
 	</actions>
 
 	<extensions defaultExtensionNs="com.intellij">
+		<notificationGroup id="Grep Console error" displayType="BALLOON" isLogByDefault="false"/>
+		<notificationGroup id="Grep Console" displayType="BALLOON" isLogByDefault="true"/>
+
 		<postStartupActivity implementation="krasa.grepconsole.grep.PinnedGrepsReopenerEnabler" order="last"/>
 		<applicationService serviceImplementation="krasa.grepconsole.tail.remotecall.RemoteCallService"/>
 		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
@@ -269,7 +270,5 @@
 		<!-- Add your extensions here -->
 		<runConfigurationExtension
 				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionNew"/>
-		<runConfigurationExtension
-				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionOld"/>
 	</extensions>
 </idea-plugin>

@@ -1,14 +1,5 @@
 package krasa.grepconsole.filter;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.ConsoleViewContentType;
@@ -16,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
-
 import krasa.grepconsole.filter.support.FilterState;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -26,6 +16,14 @@ import krasa.grepconsole.plugin.ExtensionManager;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.utils.Notifier;
 import krasa.grepconsole.utils.Utils;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * every stream could have its own thread (java), or it could be all on some random pooled thread (debug in CLion)
@@ -52,12 +50,6 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 		super(project, profile);
 		this.filterBeforeGrepping = filterBeforeGrepping;
 		this.grepFilter = grepFilter;
-	}
-
-	public MainInputFilter(Profile profile, List<GrepProcessor> grepProcessors) {
-		super(profile, grepProcessors);
-		this.filterBeforeGrepping = false;
-		this.grepFilter = null;
 	}
 
 	/*todo not reliable */
@@ -97,7 +89,7 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 		if (!filterBeforeGrepping) {
 			grep(null, text, consoleViewContentType);
 		}
-		       
+
 
 		List<Pair<String, ConsoleViewContentType>> result = filter(text, consoleViewContentType);
 

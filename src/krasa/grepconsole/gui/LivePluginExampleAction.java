@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 
 import static com.intellij.openapi.application.PathManager.getPluginsPath;
 
+@Deprecated
 class LivePluginExampleAction implements ActionListener {
 
 	private final Project project;
@@ -36,7 +37,7 @@ class LivePluginExampleAction implements ActionListener {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {  
+	public void actionPerformed(ActionEvent e) {
 		Boolean done = ApplicationManager.getApplication().runWriteAction(new Computable<Boolean>() {
 			@Override
 			public Boolean compute() {
@@ -64,7 +65,7 @@ class LivePluginExampleAction implements ActionListener {
 							plugins.show(null);
 						}
 					}
-				
+
 					ApplicationManager.getApplication().invokeLater(new RefreshToolWindow());
 					return true;
 				} catch (Exception e1) {

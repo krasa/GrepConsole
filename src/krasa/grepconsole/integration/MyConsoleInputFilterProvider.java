@@ -1,30 +1,36 @@
 package krasa.grepconsole.integration;
 
-import com.intellij.execution.filters.ConsoleInputFilterProvider;
+import com.intellij.execution.filters.ConsoleDependentInputFilterProvider;
 import com.intellij.execution.filters.InputFilter;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.GlobalSearchScope;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
 import krasa.grepconsole.filter.MainInputFilter;
 import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
-public class MyConsoleInputFilterProvider implements ConsoleInputFilterProvider {
+import java.util.List;
 
-	@NotNull
+public class MyConsoleInputFilterProvider extends ConsoleDependentInputFilterProvider {
+
 	@Override
-	public InputFilter[] getDefaultFilters(@NotNull Project project) {
-		Profile defaultProfile = GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
-		GrepFilter grepFilter = ServiceManager.getInstance().createGrepFilter(project, defaultProfile);
-		MainInputFilter inputFilter = ServiceManager.getInstance().createInputFilter(project, defaultProfile, grepFilter);
+	public @NotNull
+	List<InputFilter> getDefaultFilters(@NotNull ConsoleView consoleView, @NotNull Project project, @NotNull GlobalSearchScope globalSearchScope) {
+		ServiceManager serviceManager = ServiceManager.getInstance();
+		serviceManager.registerConsole(consoleView);
+		Profile profile = serviceManager.getProfile(consoleView);
+		GrepFilter grepFilter = serviceManager.createGrepFilter(project, profile, consoleView);
+		MainInputFilter inputFilter = serviceManager.createInputFilter(project, profile, grepFilter, consoleView);
 
 		if (inputFilter != null) {
-			return new InputFilter[]{new LockingInputFilterWrapper(inputFilter)};
+			return List.of(new LockingInputFilterWrapper(inputFilter));
 		} else {
-			return new InputFilter[]{new LockingInputFilterWrapper(grepFilter)};
+			return List.of(new LockingInputFilterWrapper(grepFilter));
 		}
 	}
+
 
 }

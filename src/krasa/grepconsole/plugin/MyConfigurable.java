@@ -42,7 +42,7 @@ public class MyConfigurable implements Configurable {
 
 	public MyConfigurable(Project project, @NotNull ConsoleView console) {
 		this.console = console;
-		originalSelectedProfileId = ServiceManager.getInstance().consoles.getSelectedProfileId(console);
+		originalSelectedProfileId = ServiceManager.getInstance().getSelectedProfileId(console);
 		setDefaultProfileId();
 		this.project = project;
 	}

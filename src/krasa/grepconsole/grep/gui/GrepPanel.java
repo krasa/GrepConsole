@@ -4,7 +4,10 @@ import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.ide.util.PropertiesComponent;
-import com.intellij.notification.*;
+import com.intellij.notification.Notification;
+import com.intellij.notification.NotificationGroupManager;
+import com.intellij.notification.NotificationType;
+import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -28,9 +31,6 @@ import java.util.regex.PatternSyntaxException;
 
 public class GrepPanel extends JPanel implements Disposable {
 	private static final Logger LOG = Logger.getInstance(GrepPanel.class);
-
-	public static final NotificationGroup GROUP_DISPLAY_ID_ERROR = new NotificationGroup("Grep Console error",
-			NotificationDisplayType.BALLOON, false);
 
 	@Nullable
 	private ConsoleView originalConsole;
@@ -203,8 +203,8 @@ public class GrepPanel extends JPanel implements Disposable {
 				unlessExpressionTextField.addCurrentTextToHistory();
 				this.grepModel = grepModel;
 			} catch (PatternSyntaxException e) {
-				final Notification notification = GROUP_DISPLAY_ID_ERROR.createNotification(
-						"Grep: invalid regexp", NotificationType.WARNING);
+				Notification notification = NotificationGroupManager.getInstance().getNotificationGroup("Grep Console error")
+						.createNotification("Grep: invalid regexp", NotificationType.WARNING);
 				ApplicationManager.getApplication().invokeLater(new Runnable() {
 					@Override
 					public void run() {

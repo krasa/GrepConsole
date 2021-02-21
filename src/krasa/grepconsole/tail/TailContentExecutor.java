@@ -257,7 +257,7 @@ public class TailContentExecutor implements Disposable {
 			try {
 				myRerunAction.run();
 			} catch (Exception e1) {
-				Notification notification = Notifier.NOTIFICATION.createNotification(e1.getMessage(), MessageType.WARNING);
+				Notification notification = Notifier.getNotificationGroup().createNotification(e1.getMessage(), MessageType.WARNING);
 				Notifications.Bus.notify(notification, e.getProject());
 			}
 		}

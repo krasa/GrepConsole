@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="extension">
+    <output-path>$PROJECT_DIR$/resources/example</output-path>
+    <root id="root">
+      <element id="archive" name="ExtensionProjectExample.jar">
+        <element id="dir-copy" path="$PROJECT_DIR$/GrepConsoleExtension" />
+      </element>
+    </root>
+  </artifact>
+</component>

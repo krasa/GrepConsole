@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GrepConsole.iml" filepath="$PROJECT_DIR$/GrepConsole.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GrepConsoleExtension/GrepConsoleExtension.iml" filepath="$PROJECT_DIR$/GrepConsoleExtension/GrepConsoleExtension.iml" />
     </modules>
   </component>
 </project>

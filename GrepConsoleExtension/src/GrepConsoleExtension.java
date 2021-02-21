@@ -21,8 +21,8 @@ public class GrepConsoleExtension implements ApplicationComponent {
 
 	private static final Logger LOG = Logger.getInstance(GrepConsoleExtension.class);
 
-	public static final NotificationGroup NOTIFICATION = new NotificationGroup("Grep Console Extension",
-			NotificationDisplayType.BALLOON, true);
+	public static final NotificationGroup NOTIFICATION = NotificationGroup.create("Grep Console Extension",
+			NotificationDisplayType.BALLOON, true, null, null, null, null);
 
 	@Override
 	public void initComponent() {
