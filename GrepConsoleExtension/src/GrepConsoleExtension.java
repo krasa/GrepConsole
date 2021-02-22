@@ -1,8 +1,7 @@
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationDisplayType;
-import com.intellij.notification.NotificationGroup;
+import com.intellij.notification.NotificationGroupManager;
 import com.intellij.notification.Notifications;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
@@ -21,13 +20,9 @@ public class GrepConsoleExtension implements ApplicationComponent {
 
 	private static final Logger LOG = Logger.getInstance(GrepConsoleExtension.class);
 
-	public static final NotificationGroup NOTIFICATION = NotificationGroup.create("Grep Console Extension",
-			NotificationDisplayType.BALLOON, true, null, null, null, null);
-
 	@Override
 	public void initComponent() {
 		try {
-
 			registerFunction("extension", new Function<String, String>() {
 				Pattern pattern = Pattern.compile(".*ugly slow regexp.*");
 
@@ -48,7 +43,7 @@ public class GrepConsoleExtension implements ApplicationComponent {
 
 					} catch (com.intellij.openapi.progress.ProcessCanceledException ex) {
 						ApplicationManager.getApplication().invokeLater(() -> {
-							Notification notification = NOTIFICATION.createNotification("Extension processing took too long for: " + text, MessageType.WARNING);
+							Notification notification = NotificationGroupManager.getInstance().getNotificationGroup("Grep Console").createNotification("Extension processing took too long for: " + text, MessageType.WARNING);
 							Notifications.Bus.notify(notification);
 						});
 					}
