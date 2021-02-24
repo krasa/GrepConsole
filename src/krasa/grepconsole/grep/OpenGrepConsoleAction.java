@@ -167,14 +167,17 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			} catch (Exception ex) {
 				LOG.warn(ex);
 			}
+			actions.add(new MyCloseAction(tab, runnerLayoutUi));
 		} else {
 			tab = ContentFactory.SERVICE.getInstance().createContent(consolePanel, title(expression), true);
-			tab.setDisposer(new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title(expression)));
+			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title(expression));
+			tab.setDisposer(contentDescriptor);
 			ContentManager contentManager = toolWindow.getContentManager();
 			contentManager.addContent(tab);
 			if (focusTab) {
 				contentManager.setSelectedContent(tab);
 			}
+			actions.add(new MyCloseAction(tab, contentManager));
 		}
 
 		String finalContentType = contentType;
