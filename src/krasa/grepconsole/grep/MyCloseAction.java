@@ -1,6 +1,5 @@
 package krasa.grepconsole.grep;
 
-import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -30,7 +29,7 @@ public class MyCloseAction extends DumbAwareAction {
 	public void init() {
 		final Presentation templatePresentation = getTemplatePresentation();
 		templatePresentation.setIcon(AllIcons.Actions.Cancel);
-		templatePresentation.setText(ExecutionBundle.messagePointer("close.tab.action.name"));
+		templatePresentation.setText("Close");
 		templatePresentation.setDescription(Presentation.NULL_STRING);
 	}
 
