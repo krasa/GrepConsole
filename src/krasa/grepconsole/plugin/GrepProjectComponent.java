@@ -56,11 +56,14 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 
 			@Override
 			public void processStarting(String executorId, @NotNull ExecutionEnvironment env) {
-				instance.lastRunConfiguration = getRunConfigurationBase(env);
+				RunConfigurationBase runConfigurationBase = getRunConfigurationBase(env);
+				LOG.debug("lastRunConfiguration=", runConfigurationBase);
+				instance.lastRunConfiguration = runConfigurationBase;
 			}
 
 			@Override
 			public void processStarted(@NotNull String executorId, @NotNull ExecutionEnvironment env, @NotNull ProcessHandler handler) {
+				LOG.debug("processStarted, lastRunConfiguration=null");
 				instance.lastRunConfiguration = null;
 			}
 

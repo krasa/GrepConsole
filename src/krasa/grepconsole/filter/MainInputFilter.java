@@ -60,7 +60,7 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 		if (consoleView != null) {
 			boolean testConsole = consoleView.getClass().getName().startsWith("com.intellij.execution.testframework.ui");
 			blankLineWorkaround = testConsole;
-			log.debug("Initializing for " + consoleView.getClass().getName());
+			log.debug("Initializing for ", consoleView.hashCode(), " ", consoleView.getClass().getName());
 			if (profile.isBufferStreams()) {
 				StreamBufferSettings streamBufferSettings = GrepConsoleApplicationComponent.getInstance().getState().getStreamBufferSettings();
 				if (testConsole && !streamBufferSettings.isUseForTests()) {
