@@ -1,8 +1,8 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.5.202.000.0</version>
-	<idea-version since-build="202.000"/>
+	<version>11.6.202.000.0</version>
+	<idea-version since-build="202.000" until-build="211.6084"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -10,7 +10,7 @@
 
 
 	<description><![CDATA[
-		  Grep, tail, filter, highlight... everything you need for a console (<a href="https://youtrack.jetbrains.com/issue/IDEA-216442">JS/NPM/GoLand/... Terminals are not supported by IntelliJ!<a/>). Also can highlight the editor...
+		  Grep, tail, filter, highlight... everything you need for a console (JS/NPM/GoLand/... Terminals are not supported - <a href="https://youtrack.jetbrains.com/issue/IDEA-216442">IDEA-216442<a/>). Also can highlight the editor...
 	         <br>
 		  Features:
 		  <ul>
@@ -47,6 +47,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>11.6
+		<br>- Added Close action to Grep tabs
         <br>11.5
 		<br>- Icons fix for 2021
         <br>11.3
