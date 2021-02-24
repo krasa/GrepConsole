@@ -72,7 +72,11 @@ public class ServiceManager {
 		}
 
 		public void put(ConsoleView console, RunConfigurationBase lastRunConfiguration) {
+			LOG.debug("runConfigurationBase=", lastRunConfiguration);
 			getOrCreateData(console).runConfigurationBase = lastRunConfiguration;
+			if (LOG.isDebugEnabled()) {
+				LOG.debug("getSelectedProfileId=", getSelectedProfileId(console));
+			}
 		}
 
 		public void put(ConsoleView console, MainInputFilter lastMainInputFilter) {

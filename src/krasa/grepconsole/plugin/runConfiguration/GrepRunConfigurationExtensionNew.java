@@ -8,6 +8,8 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,6 +44,12 @@ public class GrepRunConfigurationExtensionNew extends RunConfigurationExtension 
 	@Override
 	public boolean isApplicableFor(@NotNull RunConfigurationBase runConfiguration) {
 		return true;
+	}
+
+	@Override
+	public boolean isEnabledFor(@NotNull RunConfigurationBase applicableConfiguration, @Nullable RunnerSettings runnerSettings) {
+		PluginState state = GrepConsoleApplicationComponent.getInstance().getState();
+		return state.isAllowRunConfigurationChanges();
 	}
 
 	@Nullable

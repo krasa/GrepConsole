@@ -4,6 +4,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
@@ -18,6 +19,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AddHighlightAction extends HighlightManipulationAction {
+
+	private static final Logger LOG = Logger.getInstance(AddHighlightAction.class);
+
 	public AddHighlightAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
 		super(text, description, icon);
 	}
@@ -37,6 +41,7 @@ public class AddHighlightAction extends HighlightManipulationAction {
 	public void actionPerformed(AnActionEvent e) {
 		final ConsoleView consoleView = getConsoleView(e);
 		if (consoleView != null) {
+			LOG.debug("actionPerformed for ", consoleView.hashCode(), " ", consoleView.getClass().getName());
 			try {
 				String string = Utils.getString(e);
 				if (string == null)
