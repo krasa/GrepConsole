@@ -13,7 +13,7 @@ import java.io.File;
 /**
  * @author Vojtech Krasa
  */
-public class OpenCurrentFileInConsoleAction extends OpenFileInConsoleAction {
+public class TailCurrentFileInConsoleAction extends TailFileInConsoleAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
@@ -26,7 +26,8 @@ public class OpenCurrentFileInConsoleAction extends OpenFileInConsoleAction {
 			if (psiFile != null) {
 				final VirtualFile virtualFile = psiFile.getVirtualFile();
 				final String path = virtualFile.getPath();
-				openFileInConsole(project, new File(path));
+				final File file = new File(path);
+				openFileInConsole(project, file, resolveEncoding(file));
 			}
 		}
 	}

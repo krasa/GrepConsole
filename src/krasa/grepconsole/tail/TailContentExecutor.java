@@ -32,6 +32,7 @@ import com.intellij.openapi.ui.ComponentWithActions;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import krasa.grepconsole.plugin.GrepProjectComponent;
@@ -52,6 +53,12 @@ import java.util.List;
  * @author yole
  */
 public class TailContentExecutor implements Disposable {
+
+	public static final @NotNull
+	Key<String> FILE_PATH = Key.create("FilePath");
+	public static final @NotNull
+	Key<PinAction> PIN_ACTION = Key.create("PinAction");
+
 	private final Project myProject;
 	private final ProcessHandler myProcess;
 	private final List<Filter> myFilterList = new ArrayList<>();
@@ -105,7 +112,7 @@ public class TailContentExecutor implements Disposable {
 		return this;
 	}
 
-	private ConsoleView createConsole(@NotNull Project project, @NotNull ProcessHandler processHandler) {
+	public static ConsoleView createConsole(@NotNull Project project, @NotNull ProcessHandler processHandler, List<Filter> myFilterList) {
 		TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
 		consoleBuilder.filters(myFilterList);
 		ConsoleView console = consoleBuilder.getConsole();
@@ -116,7 +123,7 @@ public class TailContentExecutor implements Disposable {
 	public void run() {
 		FileDocumentManager.getInstance().saveAllDocuments();
 
-		ConsoleView consoleView = createConsole(myProject, myProcess);
+		ConsoleView consoleView = createConsole(myProject, myProcess, myFilterList);
 
 		if (myHelpId != null) {
 			consoleView.setHelpId(myHelpId);
@@ -155,8 +162,9 @@ public class TailContentExecutor implements Disposable {
 
 		ComponentWithActions componentWithActions = new MyImpl(null, null, (JComponent) consoleView, null, consolePanel);
 		final Content content = layoutUi.createContent(ExecutionConsole.CONSOLE_CONTENT_ID, componentWithActions, myTitle, AllIcons.Debugger.Console, consolePanel);
+		content.setDescription(file.getAbsolutePath());   //todo does nothing
 		layoutUi.addContent(content, 0, PlaceInGrid.right, false);
-		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, consoleView, layoutUi, descriptor, executor), "RunnerToolbar");
+		layoutUi.getOptions().setLeftToolbar(createActionToolbar(consolePanel, consoleView, layoutUi, myProcess, descriptor, executor), "RunnerToolbar");
 
 		Disposer.register(myProject, descriptor);
 		Disposer.register(descriptor, this);
@@ -196,11 +204,11 @@ public class TailContentExecutor implements Disposable {
 
 	@NotNull
 	private ActionGroup createActionToolbar(JComponent consolePanel, ConsoleView consoleView, @NotNull final RunnerLayoutUi myUi,
-											RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
+											ProcessHandler processHandler, RunContentDescriptor contentDescriptor, Executor runExecutorInstance) {
 		final DefaultActionGroup actionGroup = new DefaultActionGroup();
 		actionGroup.add(new RerunAction(consolePanel));
 		actionGroup.add(new StopAction());
-		actionGroup.add(new PinAction());
+		actionGroup.add(new PinAction(processHandler));
 		actionGroup.add(myUi.getOptions().getLayoutActions());
 		CloseAction closeAction = new CloseAction(runExecutorInstance, contentDescriptor, myProject) {
 			@Override
@@ -224,7 +232,7 @@ public class TailContentExecutor implements Disposable {
 		});
 	}
 
-	private static JComponent createConsolePanel(ConsoleView view, ActionGroup actions) {
+	public static JComponent createConsolePanel(ConsoleView view, ActionGroup actions) {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.add(view.getComponent(), BorderLayout.CENTER);
@@ -300,11 +308,12 @@ public class TailContentExecutor implements Disposable {
 	public class PinAction extends ToggleAction implements DumbAware {
 		private boolean pinned;
 
-		public PinAction() {
+		public PinAction(ProcessHandler processHandler) {
 			super("Pin", "Reopen with project", AllIcons.General.Pin_tab);
 			GrepProjectComponent projectComponent = GrepProjectComponent.getInstance(myProject);
 			projectComponent.register(this);
 			pinned = projectComponent.isPinned(file.getAbsoluteFile());
+			processHandler.putUserData(PIN_ACTION, this);
 		}
 
 		@Override

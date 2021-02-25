@@ -19,8 +19,9 @@ import java.util.List;
 /**
  * @author Vojtech Krasa
  */
-public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction implements CustomComponentAction {
-	private static final Logger log = LoggerFactory.getLogger(OpenFileInConsoleToolbarAction.class);
+public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction implements CustomComponentAction {
+	private static final Logger log = LoggerFactory.getLogger(TailFileInConsoleToolbarAction.class);
+
 	@Override
 	public JComponent createCustomComponent(Presentation presentation) {
 		final JPanel comp = new JPanel();
@@ -49,7 +50,7 @@ public class OpenFileInConsoleToolbarAction extends OpenFileInConsoleAction impl
 						final Project project = CommonDataKeys.PROJECT.getData(context);
 						for (File file : fileList) {
 							if (!file.isDirectory() && project != null) {
-								openFileInConsole(project, file);
+								openFileInConsole(project, file, resolveEncoding(file));
 							}
 						}
 					}
