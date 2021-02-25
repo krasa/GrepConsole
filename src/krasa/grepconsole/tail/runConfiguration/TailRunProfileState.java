@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
@@ -17,12 +18,13 @@ import krasa.grepconsole.action.TailFileInConsoleAction;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.tail.TailContentExecutor;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.List;
 
 public class TailRunProfileState implements RunProfileState {
 	private final ExecutionEnvironment myEnvironment;
@@ -40,47 +42,54 @@ public class TailRunProfileState implements RunProfileState {
 			boolean allowRunningInParallel = runConfig.isAllowRunningInParallel();
 
 			TailRunConfigurationSettings mySettings = runConfig.mySettings;
-			String path = mySettings.getPath();
-			if (StringUtils.isBlank(path)) {
-				return null;
+			List<String> paths = mySettings.getPaths();
+			for (String path : paths) {
+				open(path, allowRunningInParallel, mySettings, runConfig.getProject());
+
 			}
-			File file = new File(path);
+			return null;
+		}
+		return null;
+	}
+
+	public void open(String path, boolean allowRunningInParallel, TailRunConfigurationSettings mySettings, @NotNull Project project) {
+		if (StringUtils.isBlank(path)) {
+			return;
+		}
+		File file = new File(path);
 //			if (!file.exists() || !file.isFile()) {
 //				return null;
 //			}
 
-			if (!allowRunningInParallel) {
-				ToolWindow tail = ToolWindowManager.getInstance(runConfig.getProject()).getToolWindow("Tail");
-				if (tail != null) {
-					ContentManager contentManager = tail.getContentManager();
-					for (Content content : contentManager.getContents()) {
-						if (content.isValid()) {
-							RunContentDescriptor contentDescriptor = content.getUserData(RunContentDescriptor.DESCRIPTOR_KEY);
-							if (contentDescriptor != null) {
-								ProcessHandler processHandler = contentDescriptor.getProcessHandler();
-								if (processHandler != null && !processHandler.isProcessTerminated()) {
-									if (file.getAbsolutePath().equals(processHandler.getUserData(TailContentExecutor.FILE_PATH))) {
+		if (!allowRunningInParallel) {
+			ToolWindow tail = ToolWindowManager.getInstance(project).getToolWindow("Tail");
+			if (tail != null) {
+				ContentManager contentManager = tail.getContentManager();
+				for (Content content : contentManager.getContents()) {
+					if (content.isValid()) {
+						RunContentDescriptor contentDescriptor = content.getUserData(RunContentDescriptor.DESCRIPTOR_KEY);
+						if (contentDescriptor != null) {
+							ProcessHandler processHandler = contentDescriptor.getProcessHandler();
+							if (processHandler != null && !processHandler.isProcessTerminated()) {
+								if (file.getAbsolutePath().equals(processHandler.getUserData(TailContentExecutor.FILE_PATH))) {
 //										TailContentExecutor.PinAction pinAction = processHandler.getUserData(TailContentExecutor.PIN_ACTION);
 //										if (pinAction != null && pinAction.isSelected(null)) {
 //											continue;
 //										}
 //										contentManager.removeContent(content, true);
-										tail.activate(null);
-										contentManager.setSelectedContent(content, true);
-										return null;
-									}
+									tail.activate(null);
+									contentManager.setSelectedContent(content, true);
+									return;
 								}
 							}
 						}
 					}
 				}
-
 			}
 
-			new TailFileInConsoleAction().openFileInConsole(runConfig.getProject(), file, resolveEncoding(file, mySettings));
-			return null;
 		}
-		return null;
+
+		new TailFileInConsoleAction().openFileInConsole(project, file, resolveEncoding(file, mySettings));
 	}
 
 	@NotNull

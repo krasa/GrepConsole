@@ -1,17 +1,12 @@
 package krasa.grepconsole.tail.runConfiguration;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TailRunConfigurationSettings {
-	private String path = "";
 	private boolean autodetectEncoding = false;
 	private String encoding = "UTF-8";
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
+	private List<String> paths = new ArrayList<>();
 
 	public boolean isAutodetectEncoding() {
 		return autodetectEncoding;
@@ -27,5 +22,13 @@ public class TailRunConfigurationSettings {
 
 	public void setEncoding(final String encoding) {
 		this.encoding = encoding;
+	}
+
+	public List<String> getPaths() {
+		return paths;
+	}
+
+	public void setPaths(List<String> paths) {
+		this.paths = paths;
 	}
 }

@@ -8,6 +8,7 @@ import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.util.xmlb.XmlSerializer;
+import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,10 +42,14 @@ public class TailRunConfiguration extends RunConfigurationBase<TailRunConfigurat
 
 	@Override
 	public void checkConfiguration() throws RuntimeConfigurationException {
-		if (!new File(mySettings.getPath()).exists()) {
-			throw new RuntimeConfigurationException("File does not exist: " + mySettings.getPath(), "Tail");
+		for (String path : mySettings.getPaths()) {
+			if (!new File(path).exists()) {
+				throw new RuntimeConfigurationException("File does not exist: " + path);
+			}
+			if (new File(path).isDirectory()) {
+				throw new RuntimeConfigurationException("Directories not supported: " + path);
+			}
 		}
-
 	}
 
 	@Nullable
@@ -53,4 +58,11 @@ public class TailRunConfiguration extends RunConfigurationBase<TailRunConfigurat
 		return new TailRunProfileState(executionEnvironment);
 	}
 
+
+	@Override
+	public RunConfiguration clone() {
+		TailRunConfiguration clone = (TailRunConfiguration) super.clone();
+		clone.mySettings = XmlSerializerUtil.createCopy(mySettings);
+		return clone;
+	}
 }
