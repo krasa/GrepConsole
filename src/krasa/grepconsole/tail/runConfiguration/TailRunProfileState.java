@@ -45,9 +45,9 @@ public class TailRunProfileState implements RunProfileState {
 				return null;
 			}
 			File file = new File(path);
-			if (!file.exists() || !file.isFile()) {
-				return null;
-			}
+//			if (!file.exists() || !file.isFile()) {
+//				return null;
+//			}
 
 			if (!allowRunningInParallel) {
 				ToolWindow tail = ToolWindowManager.getInstance(runConfig.getProject()).getToolWindow("Tail");
