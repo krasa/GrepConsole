@@ -25,6 +25,7 @@ import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author Vojtech Krasa
@@ -132,15 +133,22 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 
 	public static class MyProcess extends Process {
 		protected volatile boolean running = true;
-		protected FileInputStream inputStream;
+		protected InputStream inputStream;
 
 		public MyProcess(final File file) {
 			try {
-				inputStream = new FileInputStream(file);
-				if (file.isFile()) {// Illegal seek for a named pipe on Linux #135
-					long size = inputStream.getChannel().size();
-					// close enough, it does not work for binary files very well, but i hope it does at least for text
-					inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
+				if (!file.exists()) {
+					String s = "File not found '" + file.getAbsolutePath() + "'";
+					inputStream = new ByteArrayInputStream(s.getBytes(StandardCharsets.UTF_8));
+					running = false;
+				} else {
+					FileInputStream inputStream = new FileInputStream(file);
+					if (file.isFile()) {// Illegal seek for a named pipe on Linux #135
+						long size = inputStream.getChannel().size();
+						// close enough, it does not work for binary files very well, but i hope it does at least for text
+						inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
+					}
+					this.inputStream = inputStream;
 				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);
