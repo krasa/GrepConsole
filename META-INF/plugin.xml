@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.6.211.6085.0</version>
+	<version>11.7.211.6085.0</version>
 	<idea-version since-build="211.6085"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -47,6 +47,9 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>11.7
+		<br>- Remembering the last tailed file in the file chooser dialog, allowed to select multiple files
+		<br>- Added Tail Run Configuration
         <br>11.6
 		<br>- Added Close action to Grep tabs
         <br>11.5
@@ -209,21 +212,21 @@
 				description="Highlight Editor according to Grep Console settings">
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
-		<action id="OpenFileInConsole" class="krasa.grepconsole.action.OpenFileInConsoleAction"
+		<action id="OpenFileInConsole" class="krasa.grepconsole.action.TailFileInConsoleAction"
 				text="Tail File in Console..."
 				description="Tail File in Console..."
 				icon="/krasa/grepconsole/icons/tail.png"
 		>
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
-		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.OpenFileInConsoleProjectViewAction"
+		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.TailFileInConsoleProjectViewAction"
 				text="Tail in Console"
 				description="Tail in Console"
 				icon="/krasa/grepconsole/icons/tail.png"
 		>
 			<add-to-group group-id="RevealGroup"/>
 		</action>
-		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.OpenCurrentFileInConsoleAction"
+		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.TailCurrentFileInConsoleAction"
 				text="Tail Current File in Console"
 				description="Tail Current Editor File in Console"
 				icon="/krasa/grepconsole/icons/tail.png"
@@ -231,7 +234,7 @@
 			<add-to-group group-id="ToolsMenu" anchor="last"/>
 		</action>
 		<action id="OpenFileInConsoleToolbarAction"
-				class="krasa.grepconsole.action.OpenFileInConsoleToolbarAction"
+				class="krasa.grepconsole.action.TailFileInConsoleToolbarAction"
 				text="Tail"
 				description="Drag and drop to open file in console">
 			<add-to-group group-id="MainToolBar" anchor="last"/>
@@ -272,5 +275,7 @@
 		<!-- Add your extensions here -->
 		<runConfigurationExtension
 				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionNew"/>
+		<configurationType implementation="krasa.grepconsole.tail.runConfiguration.TailRunConfigurationType"/>
+		<programRunner implementation="krasa.grepconsole.tail.runConfiguration.TailProgramRunner"/>
 	</extensions>
 </idea-plugin>

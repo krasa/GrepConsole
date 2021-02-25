@@ -10,20 +10,21 @@ import java.io.File;
 /**
  * @author Vojtech Krasa
  */
-public class OpenFileInConsoleProjectViewAction extends OpenFileInConsoleAction {
+public class TailFileInConsoleProjectViewAction extends TailFileInConsoleAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = getEventProject(e);
 		if (project == null) return;
-		
+
 		VirtualFile[] data = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
 		if (data != null) {
 			for (int i = 0; i < data.length; i++) {
 				VirtualFile virtualFile = data[i];
 				if (virtualFile != null && !virtualFile.isDirectory()) {
 					final String path = virtualFile.getPath();
-					openFileInConsole(project, new File(path));
+					final File file = new File(path);
+					openFileInConsole(project, file, resolveEncoding(file));
 				}
 			}
 		}

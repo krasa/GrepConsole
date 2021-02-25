@@ -1,7 +1,7 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.project.Project;
-import krasa.grepconsole.action.OpenFileInConsoleAction;
+import krasa.grepconsole.action.TailFileInConsoleAction;
 import krasa.grepconsole.grep.PinnedGrepConsolesState;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public class GrepProjectState {
 		for (String pinnedFile : pinnedTailFiles.toArray(new String[pinnedTailFiles.size()])) {
 			File file = new File(pinnedFile);
 			if (file.exists()) {
-				new OpenFileInConsoleAction().openFileInConsole(project, file);
+				new TailFileInConsoleAction().openFileInConsole(project, file, TailFileInConsoleAction.resolveEncoding(file));
 			} else {
 				pinnedTailFiles.remove(pinnedFile);
 			}
