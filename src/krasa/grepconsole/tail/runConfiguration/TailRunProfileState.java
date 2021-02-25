@@ -54,17 +54,20 @@ public class TailRunProfileState implements RunProfileState {
 				if (tail != null) {
 					ContentManager contentManager = tail.getContentManager();
 					for (Content content : contentManager.getContents()) {
-						if (content.isValid() && !content.isPinned()) {
+						if (content.isValid()) {
 							RunContentDescriptor contentDescriptor = content.getUserData(RunContentDescriptor.DESCRIPTOR_KEY);
 							if (contentDescriptor != null) {
 								ProcessHandler processHandler = contentDescriptor.getProcessHandler();
 								if (processHandler != null && !processHandler.isProcessTerminated()) {
 									if (file.getAbsolutePath().equals(processHandler.getUserData(TailContentExecutor.FILE_PATH))) {
-										TailContentExecutor.PinAction pinAction = processHandler.getUserData(TailContentExecutor.PIN_ACTION);
-										if (pinAction != null && pinAction.isSelected(null)) {
-											continue;
-										}
-										contentManager.removeContent(content, true);
+//										TailContentExecutor.PinAction pinAction = processHandler.getUserData(TailContentExecutor.PIN_ACTION);
+//										if (pinAction != null && pinAction.isSelected(null)) {
+//											continue;
+//										}
+//										contentManager.removeContent(content, true);
+										tail.activate(null);
+										contentManager.setSelectedContent(content, true);
+										return null;
 									}
 								}
 							}
