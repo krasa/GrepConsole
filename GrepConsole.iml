@@ -34,7 +34,7 @@
         <jarDirectory url="file://$MODULE_DIR$/lib/JMF-2.1.1e/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" scope="TEST">
       <library name="test">
         <CLASSES>
           <root url="file://$MODULE_DIR$/libTest" />
