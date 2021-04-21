@@ -75,10 +75,12 @@ public class GrepUtils {
 	protected static void flushAndProcess(GrepFilterListener grepListener, ConsoleViewImpl originalConsole) {
 		originalConsole.flushDeferredText();
 		Editor editor = originalConsole.getEditor();
-		Document document = editor.getDocument();
-		String text = document.getText();
-		for (String s : text.split("\n")) {
-			grepListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
+		if (editor != null) {
+			Document document = editor.getDocument();
+			String text = document.getText();
+			for (String s : text.split("\n")) {
+				grepListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
+			}
 		}
 	}
 }
