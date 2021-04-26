@@ -47,6 +47,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>11.8
+		<br>- NPE fix
         <br>11.7
 		<br>- Remembering the last tailed file in the file chooser dialog, allowed to select multiple files
 		<br>- Added Tail Run Configuration
