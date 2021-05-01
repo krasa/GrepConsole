@@ -45,11 +45,11 @@
 	 		- http and Windows context menu integration<br>
 	 		- Encoding auto-detection<br>
 	 		<br>
-			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a>
+			Inspired by <a href="http://marian.schedenig.name/projects/grep-console/">Grep Console plugin for Eclipse</a> <br>
 			Used <a href="http://plugins.jetbrains.com/plugin/6027?pr=idea">Remote call plugin</a> implementation for http integration.<br>      
-		   <br> <br>
 			       
-        <a href="https://www.paypal.me/VojtechKrasa">Donations are welcomed.</a>
+             <br> <br>
+        <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/GrepConsole/">GitHub</a> | <a href="https://github.com/krasa/GrepConsole/issues">Issues</a>
       ]]></description>
 
 	<change-notes><![CDATA[       
