@@ -239,6 +239,11 @@ public class ServiceManager {
 			registerConsole(consoleView);
 		}
 
+		return createOrGetHighlightFilter2(project, consoleView);
+	}
+
+	@NotNull
+	private HighlightingFilter createOrGetHighlightFilter2(@NotNull Project project, @Nullable ConsoleView consoleView) {
 		HighlightingFilter highlightingFilter = consoles.getHighlightFilter(consoleView);
 		if (highlightingFilter == null) {
 			Profile profile = getProfile(consoleView);
@@ -350,12 +355,16 @@ public class ServiceManager {
 		return inputFilterField;
 	}
 
-//	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
-//		if (consoles.getHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
-//			HighlightingFilter highlightingFilter = createHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
-//			console.addMessageFilter(highlightingFilter);
-//		}
-//	}
+
+	/**
+	 * workaround for consoles that does not use ConsoleDependentFilterProvider
+	 */
+	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
+		if (consoles.getHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
+			HighlightingFilter highlightingFilter = createOrGetHighlightFilter2(((ConsoleViewImpl) console).getProject(), console);
+			console.addMessageFilter(highlightingFilter);
+		}
+	}
 
 	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleView parentConsoleView) {
 		try {
