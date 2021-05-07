@@ -1,6 +1,7 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.execution.configurations.RunConfigurationBase;
+import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -276,6 +277,16 @@ public class ServiceManager {
 
 	public synchronized void registerConsole(@NotNull ConsoleView console) {
 		consoles.put(console, lastRunConfiguration);
+	}
+
+	/**
+	 * workaround for consoles that does not use ConsoleDependentFilterProvider
+	 */
+	public void createHighlightFilterIfMissing(@NotNull ConsoleView console) {
+		if (consoles.getHighlightFilter(console) == null && console instanceof ConsoleViewImpl) {
+			HighlightingFilter highlightingFilter = createOrGetHighlightFilter(((ConsoleViewImpl) console).getProject(), console);
+			console.addMessageFilter(highlightingFilter);
+		}
 	}
 
 	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleView parentConsoleView) {

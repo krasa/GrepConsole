@@ -1,8 +1,8 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.8.211.6085.1</version>
-	<idea-version since-build="211.6085"/>
+	<version>11.9.211.6086.0</version>
+	<idea-version since-build="211.6086"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
 		Krasa
@@ -53,9 +53,11 @@
       ]]></description>
 
 	<change-notes><![CDATA[       
+        <br>11.9
+		<br>- highlighting workaround for Flutter and other consoles that have disabled ConsoleFilterProvider
         <br>11.8
 		<br>- NPE fix
-        <br>11.7
+		<br>11.7
 		<br>- Remembering the last tailed file in the file chooser dialog, allowed to select multiple files
 		<br>- Added Tail Run Configuration
         <br>11.6
