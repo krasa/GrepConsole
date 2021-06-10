@@ -47,7 +47,7 @@ public class ServiceManager {
 	}
 
 	@NotNull
-	public Profile getProfile(ConsoleView consoleView) {
+	public Profile getProfile(@Nullable ConsoleView consoleView) {
 		if (consoleView == null) {
 			return GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
 		}
@@ -65,16 +65,16 @@ public class ServiceManager {
 	static class Consoles {
 		private WeakHashMap<ConsoleView, ConsoleViewData> consoleDataMap = new WeakHashMap<>();
 
-		public void put(ConsoleView consoleView, HighlightingFilter highlightingFilter) {
+		public void put(@NotNull ConsoleView consoleView, HighlightingFilter highlightingFilter) {
 			ConsoleViewData consoleViewData = getOrCreateData(consoleView);
 			consoleViewData.highlightingFilter = highlightingFilter;
 		}
 
-		public void put(ConsoleView console, GrepFilter lastCopier) {
+		public void put(@NotNull ConsoleView console, GrepFilter lastCopier) {
 			getOrCreateData(console).grepFilter = lastCopier;
 		}
 
-		public void put(ConsoleView console, RunConfigurationBase lastRunConfiguration) {
+		public void put(@NotNull ConsoleView console, RunConfigurationBase lastRunConfiguration) {
 			LOG.debug("runConfigurationBase=", lastRunConfiguration);
 			getOrCreateData(console).runConfigurationBase = lastRunConfiguration;
 			if (LOG.isDebugEnabled()) {
@@ -82,12 +82,12 @@ public class ServiceManager {
 			}
 		}
 
-		public void put(ConsoleView console, MainInputFilter lastMainInputFilter) {
+		public void put(@NotNull ConsoleView console, MainInputFilter lastMainInputFilter) {
 			getOrCreateData(console).mainInputFilter = lastMainInputFilter;
 		}
 
 
-		private ConsoleViewData getOrCreateData(ConsoleView consoleView) {
+		private ConsoleViewData getOrCreateData(@NotNull ConsoleView consoleView) {
 			ConsoleViewData consoleViewData = consoleDataMap.get(consoleView);
 			if (consoleViewData == null) {
 				consoleViewData = new ConsoleViewData();
@@ -97,11 +97,11 @@ public class ServiceManager {
 			return consoleViewData;
 		}
 
-		public HighlightingFilter getHighlightFilter(ConsoleView console) {
+		public HighlightingFilter getHighlightFilter(@NotNull ConsoleView console) {
 			return getOrCreateData(console).highlightingFilter;
 		}
 
-		public GrepFilter getGrepFilter(ConsoleView console) {
+		public GrepFilter getGrepFilter(@NotNull ConsoleView console) {
 			return getOrCreateData(console).grepFilter;
 		}
 
@@ -238,15 +238,13 @@ public class ServiceManager {
 		return inputFilter;
 	}
 
-	public synchronized HighlightingFilter createOrGetHighlightFilter(@NotNull Project project, @Nullable ConsoleView consoleView) {
+	public synchronized HighlightingFilter createOrGetHighlightFilter(@NotNull Project project, @NotNull ConsoleView consoleView) {
 		HighlightingFilter highlightingFilter = consoles.getHighlightFilter(consoleView);
 		if (highlightingFilter == null) {
 			Profile profile = getProfile(consoleView);
 			highlightingFilter = new HighlightingFilter(project, profile);
 			highlightFilters.add(new WeakReference<>(highlightingFilter));
-			if (consoleView != null) {
-				consoles.put(consoleView, highlightingFilter);
-			}
+			consoles.put(consoleView, highlightingFilter);
 		}
 		return highlightingFilter;
 	}

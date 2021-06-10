@@ -8,7 +8,8 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.filter.HighlightingFilter;
-import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.stats.StatisticsManager;
 
 import java.lang.reflect.Method;
@@ -55,16 +56,15 @@ public class Rehighlighter {
 	}
 
 
-	public void highlight(Editor editor, Project project) {
+	public void highlight(Editor editor, Project project, Profile selectedProfile) {
 		EditorHyperlinkSupport myHyperlinks = new EditorHyperlinkSupport(editor, project);
 		int lineCount = editor.getDocument().getLineCount();
 		if (lineCount > 0) {
-			myHyperlinks.highlightHyperlinks(getGrepFilter(project), 0, lineCount - 1);
+			if (selectedProfile == null) {
+				selectedProfile = GrepConsoleApplicationComponent.getInstance().getState().getDefaultProfile();
+			}
+			myHyperlinks.highlightHyperlinks(new HighlightingFilter(project, selectedProfile), 0, lineCount - 1);
 		}
-	}
-
-	private HighlightingFilter getGrepFilter(Project project) {
-		return ServiceManager.getInstance().createOrGetHighlightFilter(project, null);
 	}
 
 

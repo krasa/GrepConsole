@@ -167,4 +167,11 @@ public class MyConfigurable implements Configurable {
 	public Project getProject() {
 		return project;
 	}
+
+	public Profile getSelectedProfile() {
+		if (form != null) {//TODO test it
+			return form.getSelectedProfile();
+		}
+		return null;
+	}
 }

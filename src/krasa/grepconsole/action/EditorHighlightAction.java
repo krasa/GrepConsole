@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.MyConfigurable;
 import krasa.grepconsole.utils.Rehighlighter;
 
@@ -19,9 +20,11 @@ public class EditorHighlightAction extends HighlightManipulationAction {
 			instance.setCurrentAction(this);
 			boolean b = ShowSettingsUtil.getInstance().editConfigurable(e.getProject(), instance);
 			if (b) {
+				Profile selectedProfile = instance.getSelectedProfile();
+
 				Rehighlighter rehighlighter = new Rehighlighter();
 				rehighlighter.removeAllHighlighters(editor);
-				rehighlighter.highlight(editor, project);
+				rehighlighter.highlight(editor, project, selectedProfile);
 			}
 			instance.setCurrentAction(null);
 		}
