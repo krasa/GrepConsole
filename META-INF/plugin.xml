@@ -52,7 +52,10 @@
         <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/GrepConsole/">GitHub</a> | <a href="https://github.com/krasa/GrepConsole/issues">Issues</a>
       ]]></description>
 
-	<change-notes><![CDATA[       
+	<change-notes><![CDATA[
+        <br>11.10
+        <br>- 2021.2 compatibility
+        <br>- editor highlighting fixed
         <br>11.9
 		<br>- highlighting workaround for Flutter and other consoles that have disabled ConsoleFilterProvider
         <br>11.8
