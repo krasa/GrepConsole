@@ -241,7 +241,7 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	private static JComponent createToolbar(ActionGroup actions) {
-		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions, false);
+		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("GrepConsole-tail", actions, false);
 		return actionToolbar.getComponent();
 	}
 

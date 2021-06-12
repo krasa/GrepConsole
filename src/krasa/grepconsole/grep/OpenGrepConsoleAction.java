@@ -515,7 +515,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		panel.setLayout(new BorderLayout());
 		panel.add(comp.getRootComponent(), BorderLayout.NORTH);
 		panel.add(view.getComponent(), BorderLayout.CENTER);
-		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, actions, false);
+		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("GrepConsole", actions, false);
 		panel.add(actionToolbar.getComponent(), BorderLayout.WEST);
 		return panel;
 	}

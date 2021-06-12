@@ -2,7 +2,10 @@ package krasa.grepconsole.action;
 
 import com.intellij.ide.DataManager;
 import com.intellij.ide.dnd.FileCopyPasteUtil;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.project.Project;
 import org.slf4j.Logger;
@@ -31,7 +34,7 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 			@Override
 			public void mousePressed(MouseEvent e) {
 				actionPerformed(AnActionEvent.createFromInputEvent(e,
-						ActionPlaces.UNKNOWN,
+						"GrepConsole-Tail",
 						presentation, DataManager.getInstance().getDataContext(e.getComponent())));
 			}
 		});

@@ -8,7 +8,6 @@ import com.intellij.ide.actions.PasteAction;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
@@ -238,7 +237,7 @@ public class ProfileDetailForm {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								copyAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
-										ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
+										"GrepConsole-ProfileDetailForm", new Presentation(""), ActionManager.getInstance(), 0));
 							}
 						}));
 						CutAction cutAction = (CutAction) ActionManager.getInstance().getAction("$Cut");
@@ -246,7 +245,7 @@ public class ProfileDetailForm {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								cutAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
-										ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
+										"GrepConsole-ProfileDetailForm", new Presentation(""), ActionManager.getInstance(), 0));
 							}
 						}));
 
@@ -257,7 +256,7 @@ public class ProfileDetailForm {
 						@Override
 						public void actionPerformed(ActionEvent e) {
 							pasteAction.actionPerformed(new AnActionEvent(null, DataManager.getInstance().getDataContext(table),
-									ActionPlaces.UNKNOWN, new Presentation(""), ActionManager.getInstance(), 0));
+									"GrepConsole-ProfileDetailForm", new Presentation(""), ActionManager.getInstance(), 0));
 						}
 					}));
 					if (somethingSelected) {
