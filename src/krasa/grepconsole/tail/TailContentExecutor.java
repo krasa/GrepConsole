@@ -236,12 +236,13 @@ public class TailContentExecutor implements Disposable {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		panel.add(view.getComponent(), BorderLayout.CENTER);
-		panel.add(createToolbar(actions), BorderLayout.WEST);
+		panel.add(createToolbar(actions, view), BorderLayout.WEST);
 		return panel;
 	}
 
-	private static JComponent createToolbar(ActionGroup actions) {
+	private static JComponent createToolbar(ActionGroup actions, ConsoleView view) {
 		ActionToolbar actionToolbar = ActionManager.getInstance().createActionToolbar("GrepConsole-tail", actions, false);
+		actionToolbar.setTargetComponent(view.getComponent());
 		return actionToolbar.getComponent();
 	}
 
