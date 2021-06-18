@@ -30,10 +30,9 @@ More]
 image::screenshotColors.png[]
 image::screenshotGrepSubConsole.png[]
 
-==== Extension using https://plugins.jetbrains.com/plugin/7282-liveplugin[LivePlugin]:
-
-video::extension.avi[]
+==== Extension using https://plugins.jetbrains.com/plugin/7282-liveplugin[LivePlugin]: (https://github.com/krasa/GrepConsole/blob/master/extension.avi[avi])
 image::extension.gif[]
+
 
 Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
 Used http://plugins.jetbrains.com/plugin/6027?pr=idea[Remote call plugin] implementation for http integration.
