@@ -30,6 +30,7 @@ public class MyConfigurable implements Configurable {
 	public GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 	HighlightManipulationAction currentAction;
 	private Project project;
+	private Profile selectedProfile;
 
 	public MyConfigurable() {
 		setDefaultProfileId();
@@ -153,6 +154,9 @@ public class MyConfigurable implements Configurable {
 
 	@Override
 	public void disposeUIResources() {
+		if (form != null) {
+			selectedProfile = form.getSelectedProfile();
+		}
 		form = null;
 	}
 
@@ -169,9 +173,9 @@ public class MyConfigurable implements Configurable {
 	}
 
 	public Profile getSelectedProfile() {
-		if (form != null) {//TODO test it
-			return form.getSelectedProfile();
+		if (form != null) {
+			selectedProfile = form.getSelectedProfile();
 		}
-		return null;
+		return selectedProfile;
 	}
 }
