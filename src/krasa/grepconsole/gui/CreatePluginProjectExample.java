@@ -1,6 +1,6 @@
 package krasa.grepconsole.gui;
 
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.ide.util.BrowseFilesListener;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -41,7 +41,7 @@ public class CreatePluginProjectExample implements ActionListener {
 				outputStream.close();
 				resource.close();
 			}
-			
+
 			boolean exists = jar.exists();
 			if (!exists) {
 				throw new RuntimeException(jar.getPath());
@@ -50,8 +50,8 @@ public class CreatePluginProjectExample implements ActionListener {
 
 			jar.delete();
 
-			ShowFilePathAction.openDirectory(outputDir);
-		} catch (Exception e1) {
+			RevealFileAction.openDirectory(outputDir);
+		} catch (Throwable e1) {
 			throw new RuntimeException(e1);
 		}
 	}

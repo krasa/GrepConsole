@@ -2,9 +2,11 @@ package krasa.grepconsole.folding;
 
 import com.intellij.execution.ConsoleFolding;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -20,7 +22,11 @@ public class MyConsoleFolding extends ConsoleFolding {
 		this.grepConsoleApplicationComponent = GrepConsoleApplicationComponent.getInstance();
 	}
 
-	@Override
+	public boolean shouldFoldLine(@NotNull Project project, @NotNull String line) {
+		return shouldFoldLine(line);
+	}
+
+	@Deprecated
 	public boolean shouldFoldLine(String line) {
 		try {
 			List<GrepExpressionItem> foldings = grepConsoleApplicationComponent.getCachedFoldingItems();
@@ -47,7 +53,12 @@ public class MyConsoleFolding extends ConsoleFolding {
 	}
 
 	@Nullable
-	@Override
+	public String getPlaceholderText(@NotNull Project project, @NotNull List<String> lines) {
+		return getPlaceholderText(lines);
+	}
+
+	@Deprecated
+	@Nullable
 	public String getPlaceholderText(List<String> lines) {
 		String s = lines.size() > 1 ? "s" : "";
 		return " <" + lines.size() + " folded line" + s + ">";

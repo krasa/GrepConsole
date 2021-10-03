@@ -70,12 +70,16 @@ public class StatisticsManager {
 		if (!highlightingFilter.hasGrepProcessorsForStatusBar()) {
 			return;
 		}
-		final Project project = consoleView.getProject();
-		final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
-		final ConsoleStatusBarWidget statusBarWidget = new ConsoleStatusBarWidget(consoleView, highlightingFilter);
-		statusBar.addWidget(statusBarWidget);
-		statusBar.getComponent().revalidate();
-		Disposer.register(consoleView, statusBarWidget);
+		try {
+			final Project project = consoleView.getProject();
+			final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
+			final ConsoleStatusBarWidget statusBarWidget = new ConsoleStatusBarWidget(consoleView, highlightingFilter);
+			statusBar.getComponent().revalidate();
+			Disposer.register(consoleView, statusBarWidget);
+			statusBar.addWidget(statusBarWidget);
+		} catch (Throwable e) {
+			log.error(e);
+		}
 	}
 
 	public static void resetConsolePanel(ConsoleViewImpl consoleView) {

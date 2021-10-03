@@ -1,7 +1,7 @@
 <idea-plugin version="2">
 	<id>GrepConsole</id>
 	<name>Grep Console</name>
-	<version>11.9.211.6086.0</version>
+	<version>11.11.211.6086.0</version>
 	<idea-version since-build="211.6086"/>
 
 	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -53,6 +53,8 @@
       ]]></description>
 
 	<change-notes><![CDATA[
+        <br>11.11
+		<br>- IntelliJ 2021.3 API update
         <br>11.10
         <br>- 2021.2 compatibility
         <br>- editor highlighting fixed
