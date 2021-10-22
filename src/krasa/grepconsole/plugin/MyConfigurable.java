@@ -7,7 +7,7 @@ import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.action.HighlightManipulationAction;
 import krasa.grepconsole.filter.support.SoundMode;
-import krasa.grepconsole.gui.CompositeSettingsForm;
+import krasa.grepconsole.gui.MainSettingsForm;
 import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.Sound;
@@ -21,11 +21,10 @@ import javax.swing.*;
 
 public class MyConfigurable implements Configurable {
 
-	private RunConfigurationBase runConfigurationBase;
 	private long originalSelectedProfileId;
 	@Nullable
 	private ConsoleView console;
-	protected CompositeSettingsForm form;
+	protected MainSettingsForm form;
 	private ServiceManager serviceManager = ServiceManager.getInstance();
 	public GrepConsoleApplicationComponent applicationComponent = GrepConsoleApplicationComponent.getInstance();
 	HighlightManipulationAction currentAction;
@@ -48,12 +47,6 @@ public class MyConfigurable implements Configurable {
 		this.project = project;
 	}
 
-	public MyConfigurable(RunConfigurationBase runConfigurationBase) {
-		this.runConfigurationBase = runConfigurationBase;
-		originalSelectedProfileId = GrepConsoleData.getGrepConsoleData(runConfigurationBase).getSelectedProfileId();
-		setDefaultProfileId();
-		project = runConfigurationBase.getProject();
-	}
 
 	@Nls
 	@Override
@@ -76,12 +69,8 @@ public class MyConfigurable implements Configurable {
 	@Override
 	public JComponent createComponent() {
 		if (form == null) {
-			form = new CompositeSettingsForm(this, applicationComponent.getState(), originalSelectedProfileId);
+			form = new MainSettingsForm(this, SettingsContext.NONE, originalSelectedProfileId);
 		}
-		return getRootComponent();
-	}
-
-	protected JPanel getRootComponent() {
 		return form.getRootComponent();
 	}
 
@@ -107,19 +96,17 @@ public class MyConfigurable implements Configurable {
 	public void apply(@Nullable HighlightManipulationAction currentAction) {
 		Profile selectedProfile = form.getSelectedProfile();
 		if (selectedProfile != null) {
-			PluginState formSettings = form.getSettings();
+			PluginState formSettings = form.getPluginState();
 			applicationComponent.loadState(getClone(formSettings));
 
-
 			long selectedProfileId = selectedProfile.getId();
-			RunConfigurationBase runConfigurationBase = this.runConfigurationBase;
-			if (runConfigurationBase == null && console != null) {
-				runConfigurationBase = ServiceManager.getInstance().getRunConfigurationBase(console);
-			}
-			if (runConfigurationBase != null) {
-				GrepConsoleData.getGrepConsoleData(runConfigurationBase).setSelectedProfileId(selectedProfileId);
-			}
 			if (selectedProfileId != originalSelectedProfileId) {
+				if (console != null) {
+					RunConfigurationBase runConfigurationBase = ServiceManager.getInstance().getRunConfigurationBase(console);
+					if (runConfigurationBase != null) {
+						GrepConsoleData.getGrepConsoleData(runConfigurationBase).setSelectedProfileId_ifAllowed(selectedProfileId);
+					}
+				}
 				Profile profile = applicationComponent.getState().getProfile(selectedProfileId);
 				if (console != null) {
 					serviceManager.profileChanged(console, profile);
@@ -148,7 +135,7 @@ public class MyConfigurable implements Configurable {
 	@Override
 	public void reset() {
 		if (form != null) {
-			form.importFrom(applicationComponent.getState());
+			form.importFrom(applicationComponent.getState().clone());
 		}
 	}
 
@@ -161,7 +148,8 @@ public class MyConfigurable implements Configurable {
 	}
 
 	public void prepareForm(SettingsContext settingsContext) {
-		form = new CompositeSettingsForm(this, applicationComponent.getState(), settingsContext, originalSelectedProfileId);
+		form = new MainSettingsForm(this, settingsContext, originalSelectedProfileId);
+
 	}
 
 	public void setCurrentAction(HighlightManipulationAction currentEditor) {

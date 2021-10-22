@@ -3,7 +3,7 @@ package krasa.grepconsole.gui.table.column;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.IconLoader;
-import krasa.grepconsole.gui.ProfileDetailForm;
+import krasa.grepconsole.gui.MainSettingsForm;
 import krasa.grepconsole.gui.SoundSettingsForm;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Sound;
@@ -17,17 +17,17 @@ import javax.swing.*;
 public class SoundColumn extends IconColumnInfo {
 	public static final Icon SOUND_OFF = IconLoader.getIcon("/krasa/grepconsole/icons/soundOff.png");
 	public static final Icon SOUND_ON = IconLoader.getIcon("/krasa/grepconsole/icons/soundOn.png");
-	private final ProfileDetailForm profileDetailForm;
+	private final MainSettingsForm mainSettingsForm;
 	protected SoundSettingsForm soundSettingsForm;
 
-	public SoundColumn(String sound, ProfileDetailForm profileDetailForm) {
+	public SoundColumn(String sound, MainSettingsForm mainSettingsForm) {
 		super(sound);
-		this.profileDetailForm = profileDetailForm;
+		this.mainSettingsForm = mainSettingsForm;
 		soundSettingsForm = new SoundSettingsForm();
 	}
 
 	private boolean showDialog(GrepExpressionItem item) {
-		DialogBuilder builder = new DialogBuilder(profileDetailForm.getRootComponent());
+		DialogBuilder builder = new DialogBuilder(mainSettingsForm.getRootComponent());
 		builder.setCenterPanel(soundSettingsForm.getRoot());
 		builder.setDimensionServiceKey("GrepConsoleSound");
 		builder.setTitle("Sound settings");

@@ -4,7 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.ui.treeStructure.treetable.TreeTableModelAdapter;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ArrayUtil;
-import krasa.grepconsole.gui.ProfileDetailForm;
+import krasa.grepconsole.gui.MainSettingsForm;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -54,11 +54,11 @@ public class TableRowTransferHandler extends TransferHandler {
 	}
 
 	private CheckboxTreeTable table = null;
-	private ProfileDetailForm profileDetailForm;
+	private MainSettingsForm mainSettingsForm;
 
-	public TableRowTransferHandler(CheckboxTreeTable table, ProfileDetailForm profileDetailForm) {
+	public TableRowTransferHandler(CheckboxTreeTable table, MainSettingsForm mainSettingsForm) {
 		this.table = table;
-		this.profileDetailForm = profileDetailForm;
+		this.mainSettingsForm = mainSettingsForm;
 	}
 
 	@Override
@@ -188,7 +188,7 @@ public class TableRowTransferHandler extends TransferHandler {
 			TableUtils.expand(nodesToExpand, sourceTable);
 			TableUtils.selectNodes(nodesToSelect, sourceTable);
 
-			profileDetailForm.rebuildProfile();
+			mainSettingsForm.rebuildProfile();
 			target.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			sourceTable.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			target.grabFocus();

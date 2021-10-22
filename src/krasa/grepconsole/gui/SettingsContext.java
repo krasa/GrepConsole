@@ -5,6 +5,6 @@ package krasa.grepconsole.gui;
  */
 public enum SettingsContext {
 	NONE,
-	CONSOLE,
+	CONSOLE_BAR,
 	STATUS_BAR
 }

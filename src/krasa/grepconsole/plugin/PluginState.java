@@ -20,6 +20,10 @@ public class PluginState extends DomainObject implements Cloneable {
 	private boolean allowRunConfigurationChanges = true;
 	private int version;
 
+	public static PluginState getInstance() {
+		return GrepConsoleApplicationComponent.getInstance().getState();
+	}
+
 	public int getVersion() {
 		return version;
 	}

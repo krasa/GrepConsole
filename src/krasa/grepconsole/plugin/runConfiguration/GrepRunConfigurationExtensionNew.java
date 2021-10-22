@@ -47,8 +47,7 @@ public class GrepRunConfigurationExtensionNew extends RunConfigurationExtension 
 
 	@Override
 	public boolean isEnabledFor(@NotNull RunConfigurationBase applicableConfiguration, @Nullable RunnerSettings runnerSettings) {
-		PluginState state = GrepConsoleApplicationComponent.getInstance().getState();
-		return state.isAllowRunConfigurationChanges();
+		return PluginState.getInstance().isAllowRunConfigurationChanges();
 	}
 
 	@Nullable

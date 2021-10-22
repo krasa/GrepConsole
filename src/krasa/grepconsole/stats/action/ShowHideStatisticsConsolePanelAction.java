@@ -36,7 +36,7 @@ public class ShowHideStatisticsConsolePanelAction extends DumbAwareAction {
 
 			if (!hasStatusItems(highlightingFilter)) {
 				new OpenConsoleSettingsAction(console).actionPerformed(getEventProject(anActionEvent),
-						SettingsContext.CONSOLE);
+						SettingsContext.CONSOLE_BAR);
 			}
 			if (!hasStatusItems(highlightingFilter)) {
 				return;

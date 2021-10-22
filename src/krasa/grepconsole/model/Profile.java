@@ -385,4 +385,12 @@ public class Profile extends DomainObject implements Cloneable {
 	public void setBufferStreams(final boolean bufferStreams) {
 		this.bufferStreams = bufferStreams;
 	}
+
+	public String getPresentablename2() {
+		String name = getPresentableName();
+		if (!"default".equals(name) && isDefaultProfile()) {
+			name += " (default)";
+		}
+		return name;
+	}
 }

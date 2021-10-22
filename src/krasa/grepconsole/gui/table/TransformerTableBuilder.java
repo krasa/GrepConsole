@@ -12,7 +12,7 @@ import com.intellij.util.PlatformIcons;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
-import krasa.grepconsole.gui.ProfileDetailForm;
+import krasa.grepconsole.gui.MainSettingsForm;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class TransformerTableBuilder extends GrepTableBuilder {
 
-	public TransformerTableBuilder(final ProfileDetailForm profileDetailForm) {
+	public TransformerTableBuilder(final MainSettingsForm mainSettingsForm) {
 		List<ColumnInfo> columns = new ArrayList<>();
 		columns.add(new TreeColumnInfo("") {
 			@Nullable
@@ -161,7 +161,7 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 //				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
 //		columns.add(new FolderColumnInfoWrapper(
 //				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
-		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", profileDetailForm)));
+		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", mainSettingsForm)));
 
 		CheckboxTree.CheckboxTreeCellRenderer renderer = new CheckboxTree.CheckboxTreeCellRenderer() {
 			@Override
@@ -179,10 +179,10 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 
 			}
 		};
-		table = new MyCheckboxTreeTable(createRoot(), renderer, columns, null, profileDetailForm);
+		table = new MyCheckboxTreeTable(createRoot(), renderer, columns, null, mainSettingsForm);
 		table.setDragEnabled(true);
 		table.setDropMode(DropMode.INSERT_ROWS);
-		table.setTransferHandler(new TableRowTransferHandler(table, profileDetailForm));
+		table.setTransferHandler(new TableRowTransferHandler(table, mainSettingsForm));
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		final DefaultTreeExpander treeExpander = new DefaultTreeExpander(table.getTree());
 		treeExpander.expandAll();

@@ -1,6 +1,5 @@
 package krasa.grepconsole.gui;
 
-import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.CopyAction;
 import com.intellij.ide.actions.CutAction;
@@ -13,25 +12,21 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.keymap.KeymapUtil;
-import com.intellij.openapi.ui.JBMenuItem;
-import com.intellij.openapi.ui.JBPopupMenu;
-import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.ui.*;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import krasa.grepconsole.gui.table.*;
-import krasa.grepconsole.model.GrepColor;
-import krasa.grepconsole.model.GrepExpressionGroup;
-import krasa.grepconsole.model.GrepExpressionItem;
-import krasa.grepconsole.model.Profile;
-import krasa.grepconsole.plugin.DefaultState;
-import krasa.grepconsole.plugin.MyConfigurable;
-import krasa.grepconsole.plugin.ServiceManager;
+import krasa.grepconsole.model.*;
+import krasa.grepconsole.plugin.*;
+import krasa.grepconsole.tail.TailIntegrationForm;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.text.NumberFormatter;
@@ -47,10 +42,10 @@ import java.util.*;
 
 import static krasa.grepconsole.Cloner.deepClone;
 
-public class ProfileDetailForm {
+public class MainSettingsForm {
 	private static final String DIVIDER = "GrepConsole.ProfileDetail";
 
-	private static final Logger log = Logger.getInstance(ProfileDetailForm.class);
+	private static final Logger log = Logger.getInstance(MainSettingsForm.class);
 	private JPanel rootComponent;
 	private CheckboxTreeTable grepTable;
 	private JButton addNewItem;
@@ -60,7 +55,6 @@ public class ProfileDetailForm {
 	private JCheckBox enableMaxLength;
 	protected JCheckBox enableFiltering;
 	private JCheckBox multilineOutput;
-	private JButton DONATEButton;
 	private JCheckBox showStatsInConsole;
 	private JCheckBox showStatsInStatusBar;
 	private JButton addNewGroup;
@@ -68,7 +62,6 @@ public class ProfileDetailForm {
 	private JCheckBox enableFoldings;
 	private JFormattedTextField maxProcessingTime;
 	private JCheckBox filterOutBeforeGreppingToASubConsole;
-	private JButton web;
 	private JCheckBox alwaysPinGrepConsoles;
 	private JFormattedTextField maxLengthToGrep;
 	private JCheckBox enableMaxLengthGrep;
@@ -88,10 +81,21 @@ public class ProfileDetailForm {
 	private JButton addNewInputFilterItem;
 	private JCheckBox inputFilterBlankLineCheckBox;
 	public JCheckBox bufferStreams;
+	private JComboBox<Profile> profileComboBox;
+	private JButton streamBufferSettingsButton;
+	private JButton fileTailSettings;
+	private JButton profiles;
+	private JButton donate;
+	private JButton paypal;
 	// private JCheckBox synchronous;
-	public Profile profile;
+	public Profile currentProfile;
+	private SettingsContext settingsContext;
+	private long originallySelectedProfileId;
+	private PluginState originalState;
 
-	public ProfileDetailForm(MyConfigurable myConfigurable, SettingsContext settingsContext) {
+	public MainSettingsForm(MyConfigurable myConfigurable, SettingsContext settingsContext, long originallySelectedProfileId) {
+		this.settingsContext = settingsContext;
+		this.originallySelectedProfileId = originallySelectedProfileId;
 		String value = PropertiesComponent.getInstance().getValue(DIVIDER);
 		if (value != null) {
 			try {
@@ -99,6 +103,9 @@ public class ProfileDetailForm {
 			} catch (NumberFormatException e) {
 			}
 		}
+		fileTailSettings.addActionListener(new FileTailSettingsActionListener());
+		streamBufferSettingsButton.addActionListener(new StreamBufferSettingsActionListener());
+		profiles.addActionListener(new ProfilesSettingsActionListener());
 		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY,
 				new PropertyChangeListener() {
 					@Override
@@ -109,13 +116,27 @@ public class ProfileDetailForm {
 				}
 		);
 
-		Donate.init(rootComponent, DONATEButton);
-		web.addActionListener(new ActionListener() {
+		profileComboBox.addItemListener(e -> {
+			if (updatingModel) {
+				return;
+			}
+			Profile item = (Profile) e.getItemSelectable().getSelectedObjects()[0];
+			importFrom(item);
+		});
+
+
+		bufferStreams.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				BrowserUtil.browse("https://plugins.jetbrains.com/plugin/7125-grep-console");
+				if (bufferStreams.isSelected()) {
+					new StreamBufferSettingsActionListener().actionPerformed(null);
+					enableFiltering.setSelected(true);
+				}
 			}
 		});
+
+		Donate.initDonateButton(donate);
+		Donate.initDonateButton2(paypal);
 		rehighlightAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -137,7 +158,7 @@ public class ProfileDetailForm {
 		inputTable.addMouseListener(rightClickMenu(inputTable, true));
 		inputTable.addKeyListener(new DeleteListener(inputTable));
 
-		if (settingsContext == SettingsContext.CONSOLE) {
+		if (settingsContext == SettingsContext.CONSOLE_BAR) {
 			contextSpecificText.setText("Select items for which statistics should be displayed ('"
 					+ GrepTableBuilder.CONSOLE_COUNT + "' column)");
 		} else if (settingsContext == SettingsContext.STATUS_BAR) {
@@ -149,7 +170,7 @@ public class ProfileDetailForm {
 		help.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputStream resourceAsStream = ProfileDetailForm.class.getResourceAsStream("help.txt");
+				InputStream resourceAsStream = MainSettingsForm.class.getResourceAsStream("help.txt");
 				try {
 					String text = new String(FileUtilRt.loadBytes(resourceAsStream), "UTF-8");
 					Messages.showInfoMessage(rootComponent, text, "Help");
@@ -297,7 +318,7 @@ public class ProfileDetailForm {
 									item.grepExpression(item.getGrepExpression() + ".*");
 								}
 							}
-							reloadNode(ProfileDetailForm.this.getSelectedNode(table), table);
+							reloadNode(MainSettingsForm.this.getSelectedNode(table), table);
 						}
 
 					});
@@ -338,27 +359,73 @@ public class ProfileDetailForm {
 		return rootComponent;
 	}
 
-	public Profile getSettings() {
-		getData(profile);
-		return profile;
+	public boolean isSettingsModified(PluginState state) {
+		getData(currentProfile);
+		boolean modified = !state.equals(originalState);
+		modified |= currentProfile.getId() != originallySelectedProfileId;
+		return modified;
+	}
+
+
+	public PluginState getPluginState() {
+		return originalState;
+	}
+
+	/**
+	 * {@link #isSettingsModified(PluginState)}
+	 */
+	public void importFrom(PluginState pluginState) {
+		this.originalState = pluginState;
+		Profile defaultProfile = this.originalState.getProfile(originallySelectedProfileId);
+		importFrom(defaultProfile);
+	}
+
+	@Nullable
+	public Profile getSelectedProfile() {
+		getData(currentProfile);
+		return currentProfile;
+	}
+
+	public void setOriginallySelectedProfileId(long originallySelectedProfileId) {
+		this.originallySelectedProfileId = originallySelectedProfileId;
 	}
 
 	public void importFrom(@NotNull Profile profile) {
-		if (this.profile != null) {//keep changes when switching to another profile
-			getData(this.profile);
+		if (this.currentProfile != null) {//keep changes when switching to another profile
+			getData(this.currentProfile);
 		}
-		this.profile = profile;
+		this.currentProfile = profile;
 		setData(profile);
 		resetTreeModel(profile.isDefaultProfile());
+		initComboBox(profile);
 	}
+
+	boolean updatingModel = false;
+
+	private void initComboBox(Profile profile) {
+		try {
+			updatingModel = true;
+			PluginState pluginState = originalState;
+			DefaultComboBoxModel<Profile> boxModel = new DefaultComboBoxModel<>();
+			for (Profile p : pluginState.getProfiles()) {
+				boxModel.addElement(p);
+			}
+			profileComboBox.setRenderer(SimpleListCellRenderer.create("", Profile::getPresentablename2));
+			profileComboBox.setModel(boxModel);
+			profileComboBox.setSelectedItem(profile);
+		} finally {
+			updatingModel = false;
+		}
+	}
+
 
 	public void resetTreeModel(boolean foldingsEnabled) {
 		((GrepTableBuilder.MyCheckboxTreeTable) grepTable).foldingsEnabled(foldingsEnabled);
-		resetTable(grepTable, this.profile.getGrepExpressionGroups());
+		resetTable(grepTable, this.currentProfile.getGrepExpressionGroups());
 
 		enableFoldings.setEnabled(foldingsEnabled);
 
-		resetTable(inputTable, this.profile.getInputFilterGroups());
+		resetTable(inputTable, this.currentProfile.getInputFilterGroups());
 	}
 
 	protected void resetTable(CheckboxTreeTable grepTable, List<GrepExpressionGroup> grepExpressionGroups) {
@@ -384,12 +451,12 @@ public class ProfileDetailForm {
 
 
 	public void rebuildProfile() {
-		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
+		List<GrepExpressionGroup> grepExpressionGroups = currentProfile.getGrepExpressionGroups();
 		grepExpressionGroups.clear();
 		fillProfileFromTable(grepExpressionGroups, grepTable);
 
 
-		List<GrepExpressionGroup> inputFilterGroups = profile.getInputFilterGroups();
+		List<GrepExpressionGroup> inputFilterGroups = currentProfile.getInputFilterGroups();
 		inputFilterGroups.clear();
 		fillProfileFromTable(inputFilterGroups, inputTable);
 	}
@@ -418,7 +485,12 @@ public class ProfileDetailForm {
 			}
 		}
 	}
+	/** {@link #importFrom(PluginState)}*/
+	/**
+	 * {@link #importFrom(Profile)}
+	 */
 
+	@Deprecated
 	public void setData(Profile data) {
 		testHighlightersFirst.setSelected(data.isTestHighlightersInInputFilter());
 		multilineInputFilter.setSelected(data.isMultilineInputFilter());
@@ -438,7 +510,7 @@ public class ProfileDetailForm {
 		inputFilterBlankLineCheckBox.setSelected(data.isInputFilterBlankLineWorkaround());
 		bufferStreams.setSelected(data.isBufferStreams());
 	}
-
+	@Deprecated
 	public void getData(Profile data) {
 		data.setTestHighlightersInInputFilter(testHighlightersFirst.isSelected());
 		data.setMultilineInputFilter(multilineInputFilter.isSelected());
@@ -459,6 +531,10 @@ public class ProfileDetailForm {
 		data.setBufferStreams(bufferStreams.isSelected());
 	}
 
+	/**
+	 * {@link #isSettingsModified(PluginState)}
+	 */
+	@Deprecated
 	public boolean isModified(Profile data) {
 		if (testHighlightersFirst.isSelected() != data.isTestHighlightersInInputFilter()) return true;
 		if (multilineInputFilter.isSelected() != data.isMultilineInputFilter()) return true;
@@ -616,8 +692,8 @@ public class ProfileDetailForm {
 	private class ResetAllToDefaultAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Profile profile = ProfileDetailForm.this.profile;
-			ProfileDetailForm.this.profile = null;
+			Profile profile = MainSettingsForm.this.currentProfile;
+			MainSettingsForm.this.currentProfile = null;
 
 			profile.resetToDefault();
 			importFrom(profile);
@@ -627,7 +703,7 @@ public class ProfileDetailForm {
 	private class ResetHighlightersToDefaultAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Profile profile = ProfileDetailForm.this.profile;
+			Profile profile = MainSettingsForm.this.currentProfile;
 
 			List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 			grepExpressionGroups.clear();
@@ -683,4 +759,72 @@ public class ProfileDetailForm {
 		}
 	}
 
+	class FileTailSettingsActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final TailIntegrationForm form = new TailIntegrationForm();
+			TailSettings tailSettings = originalState.getTailSettings();
+			form.setData(tailSettings);
+
+			DialogBuilder builder = new DialogBuilder(getRootComponent());
+			builder.setCenterPanel(form.getRoot());
+			builder.setDimensionServiceKey("GrepConsoleTailFileDialog");
+			builder.setTitle("Tail File settings");
+			builder.removeAllActions();
+			builder.addOkAction();
+			builder.addCancelAction();
+
+			boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+			if (isOk) {
+				form.getData(tailSettings);
+				GrepConsoleApplicationComponent.getInstance().getState().setTailSettings(tailSettings);
+				form.rebind(tailSettings);
+			}
+		}
+	}
+
+	public class StreamBufferSettingsActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final StreamBufferSettingsForm form = new StreamBufferSettingsForm();
+			PluginState pluginState = PluginState.getInstance();
+			StreamBufferSettings streamBufferSettings = pluginState.getStreamBufferSettings();
+			form.setData(streamBufferSettings);
+
+			DialogBuilder builder = new DialogBuilder(getRootComponent());
+			builder.setCenterPanel(form.getRoot());
+			builder.setDimensionServiceKey("GrepConsoleStreamBufferSettingsDialog");
+			builder.setTitle("Stream Buffer settings");
+			builder.removeAllActions();
+			builder.addOkAction();
+			builder.addCancelAction();
+
+			boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+			if (isOk) {
+				form.getData(streamBufferSettings);
+				GrepConsoleApplicationComponent.getInstance().getState().setStreamBufferSettings(streamBufferSettings);
+			}
+		}
+
+	}
+
+	public class ProfilesSettingsActionListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			final ProfilesForm form = new ProfilesForm(originalState, currentProfile.getId(), true);
+			form.mainSettingsForm = MainSettingsForm.this;
+
+			DialogBuilder builder = new DialogBuilder(getRootComponent());
+			builder.setCenterPanel(form.getRootComponent());
+			builder.setDimensionServiceKey("GrepConsoleProfilesForm");
+			builder.setTitle("Profiles");
+			builder.removeAllActions();
+			builder.addCloseButton();
+			builder.show();
+		}
+
+	}
 }

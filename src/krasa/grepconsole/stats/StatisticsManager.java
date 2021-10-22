@@ -78,7 +78,7 @@ public class StatisticsManager {
 			Disposer.register(consoleView, statusBarWidget);
 			statusBar.addWidget(statusBarWidget);
 		} catch (Throwable e) {
-			log.error(e);
+			log.warn("status bar stats not supported for now", e);
 		}
 	}
 

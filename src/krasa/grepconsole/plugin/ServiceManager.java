@@ -127,7 +127,7 @@ public class ServiceManager {
 
 		@NotNull
 		public Profile getProfile(ConsoleView consoleView) {
-			PluginState state = GrepConsoleApplicationComponent.getInstance().getState();
+			PluginState state = PluginState.getInstance();
 			return state.getProfile(getSelectedProfileId(consoleView));
 		}
 
@@ -136,14 +136,16 @@ public class ServiceManager {
 			if (consoleViewData == null) {
 				return 0;
 			} else if (consoleViewData.runConfigurationBase != null) {
-				GrepConsoleData grepConsoleData = GrepConsoleData.getGrepConsoleData(consoleViewData.runConfigurationBase);
-				return grepConsoleData.getSelectedProfileId();
+				if (PluginState.getInstance().isAllowRunConfigurationChanges()) {
+					GrepConsoleData grepConsoleData = GrepConsoleData.getGrepConsoleData(consoleViewData.runConfigurationBase);
+					return grepConsoleData.getSelectedProfileId();
+				}
 			} else {
 				if (consoleViewData.profile != null) {
 					return consoleViewData.profile.getId();
 				}
-				return 0;
 			}
+			return 0;
 		}
 
 		public void projectClosed(Project project) {

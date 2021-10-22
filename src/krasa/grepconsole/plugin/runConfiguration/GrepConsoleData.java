@@ -36,14 +36,16 @@ public class GrepConsoleData implements JDOMExternalizable {
 
 	@Override
 	public void writeExternal(Element element) throws WriteExternalException {
-		PluginState state = GrepConsoleApplicationComponent.getInstance().getState();
+		PluginState state = PluginState.getInstance();
 		boolean runConfigurationChanges = state.isAllowRunConfigurationChanges();
-		if (runConfigurationChanges && selectedProfileId != 0 && selectedProfileId != state.getDefaultProfile().getId()) {
-			element.setAttribute(SELECTED_PROFILE_ID, String.valueOf(selectedProfileId));
+		if (runConfigurationChanges) {
+			if (selectedProfileId != 0 && selectedProfileId != state.getDefaultProfile().getId()) {
+				element.setAttribute(SELECTED_PROFILE_ID, String.valueOf(selectedProfileId));
+			}
 		}
 	}
 
-	public void setSelectedProfileId(long selectedProfileId) {
+	public void setSelectedProfileId_ifAllowed(long selectedProfileId) {
 		if (!GrepConsoleApplicationComponent.getInstance().getState().isAllowRunConfigurationChanges()) {
 			return;
 		}
