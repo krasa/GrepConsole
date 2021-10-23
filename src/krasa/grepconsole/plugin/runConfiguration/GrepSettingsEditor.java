@@ -29,6 +29,9 @@ public class GrepSettingsEditor extends SettingsEditor<RunConfigurationBase> {
 		form.setOriginallySelectedProfileId(selectedProfileId);
 	}
 
+	/**
+	 * called all the time
+	 */
 	@Override
 	protected void applyEditorTo(RunConfigurationBase runConfigurationBase) throws ConfigurationException {
 		Profile selectedProfile = form.getSelectedProfile();

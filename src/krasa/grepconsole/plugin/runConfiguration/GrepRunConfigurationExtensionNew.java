@@ -8,7 +8,6 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.PluginState;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;

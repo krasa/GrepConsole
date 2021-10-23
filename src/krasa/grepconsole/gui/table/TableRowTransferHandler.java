@@ -18,8 +18,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DragSource;
 import java.io.IOException;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class TableRowTransferHandler extends TransferHandler {
 	private static final Logger log = Logger.getInstance(TableRowTransferHandler.class);
