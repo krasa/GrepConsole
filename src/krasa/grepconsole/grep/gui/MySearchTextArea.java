@@ -411,9 +411,11 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
       if (mySearchTextArea.getParent().getComponentCount() > 1) {
         MySearchTextArea.this.getParent().remove(mySearchTextArea);
       }
-      apply();
+      reload();
     }
   }
+
+  protected abstract void reload();
 
   private static final class MyActionButton extends ActionButton {
 

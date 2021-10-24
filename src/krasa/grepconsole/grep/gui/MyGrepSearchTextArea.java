@@ -178,7 +178,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 
 	@Override
 	protected void apply() {
-		grepPanel.apply();
+		grepPanel.reload();
 	}
 
 	@Override
@@ -190,6 +190,11 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 			load(selectedValue.getModels().get(0));
 			grepPanel.reload();
 		}
+	}
+
+	@Override
+	protected void reload() {
+		grepPanel.reload();
 	}
 
 
