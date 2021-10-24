@@ -72,6 +72,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	public void actionPerformed(AnActionEvent e) {
 		Project eventProject = getEventProject(e);
 		ConsoleView parentConsoleView = (ConsoleView) getConsoleView(e);
+		if (parentConsoleView == null) {
+			return;
+		}
 		String expression = getExpression(e);
 		GrepProjectComponent grepProjectComponent = GrepProjectComponent.getInstance(eventProject);
 		try {
@@ -129,7 +132,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
 
-		ConsoleViewImpl newConsole = (ConsoleViewImpl) createConsoleWithoutInputFilter(project, parentConsoleView, myProcessHandler);
+		MyConsoleViewImpl newConsole = createConsoleWithoutInputFilter(project, parentConsoleView, myProcessHandler);
 		Profile profile = ServiceManager.getInstance().getProfile(parentConsoleView);
 		ServiceManager.getInstance().profileChanged(newConsole, profile);
 
@@ -139,6 +142,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				toolWindow);
 		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression,
 				selectSourceActionListener);
+		newConsole.setGrepPanel(quickFilterPanel);
+		ServiceManager.getInstance().registerChildGrepConsole(parentConsoleView, newConsole);
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
@@ -521,8 +526,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return panel;
 	}
 
-	private ConsoleView createConsoleWithoutInputFilter(@NotNull Project project, ConsoleView parentConsoleView, @NotNull ProcessHandler processHandler) {
-		ConsoleView console = ServiceManager.getInstance().createConsoleWithoutInputFilter(project, parentConsoleView);
+	private MyConsoleViewImpl createConsoleWithoutInputFilter(@NotNull Project project, ConsoleView parentConsoleView, @NotNull ProcessHandler processHandler) {
+		MyConsoleViewImpl console = ServiceManager.getInstance().createConsoleWithoutInputFilter(project, parentConsoleView);
 		console.attachToProcess(processHandler);
 		return console;
 	}

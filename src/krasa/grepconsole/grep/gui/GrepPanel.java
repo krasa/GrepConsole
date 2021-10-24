@@ -1,6 +1,5 @@
 package krasa.grepconsole.grep.gui;
 
-import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.ide.util.PropertiesComponent;
@@ -11,15 +10,18 @@ import com.intellij.notification.Notifications;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.TextFieldWithStoredHistory;
 import com.intellij.ui.components.JBCheckBox;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBDimension;
+import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.OpenGrepConsoleAction;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
+import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.FocusUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +36,7 @@ public class GrepPanel extends JPanel implements Disposable {
 
 	@Nullable
 	private ConsoleView originalConsole;
-	private final ConsoleViewImpl newConsole;
+	private final MyConsoleViewImpl newConsole;
 	private final GrepFilter grepFilter;
 	private final GrepFilterListener grepListener;
 	private MyTextFieldWithStoredHistory expressionTextField;
@@ -49,8 +51,10 @@ public class GrepPanel extends JPanel implements Disposable {
 	private JLabel expLabel;
 	private JLabel unlessLabel;
 	private JButton clearHistory;
+	private JPanel expressions;
 	private OpenGrepConsoleAction.Callback applyCallback;
 	private GrepModel grepModel;
+	private boolean initialized;
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -59,15 +63,23 @@ public class GrepPanel extends JPanel implements Disposable {
 	private void createUIComponents() {
 		expressionTextField = new MyTextFieldWithStoredHistory("ConsoleQuickFilterPanel-expression");
 		expressionTextField.setHistorySize(50);
-		// expression.setBorder(JBUI.Borders.empty());
-		expressionTextField.setMinimumAndPreferredWidth(300);
-		unlessExpressionTextField = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-unlessExpression");
-		unlessExpressionTextField.setMinimumAndPreferredWidth(150);
+		expressionTextField.setMinimumAndPreferredWidth(100);
+		unlessExpressionTextField = new TextFieldWithStoredHistory("ConsoleQuickFilterPanel-unlessExpression") {
+//			@Override
+//			public Dimension getPreferredSize() {
+//				Dimension dim = super.getPreferredSize();
+//				Insets m = getInsets();
+//				int i = getFontMetrics(getFont()).stringWidth(getText());
+//				dim.width = i + 40 + m.left + m.right;
+//				return dim;
+//			}
+		};
+		unlessExpressionTextField.setMinimumAndPreferredWidth(100);
 		unlessExpressionTextField.setHistorySize(50);
 		// this.unlessExpression.setBorder(JBUI.Borders.empty());
 	}
 
-	public GrepPanel(final ConsoleView originalConsole, final ConsoleViewImpl newConsole,
+	public GrepPanel(final ConsoleView originalConsole, final MyConsoleViewImpl newConsole,
 					 GrepFilter grepFilter, GrepFilterListener grepListener, GrepModel grepModel, final String pattern, SelectSourceActionListener selectSourceActionListener) {
 		this.originalConsole = originalConsole;
 		this.newConsole = newConsole;
@@ -78,6 +90,15 @@ public class GrepPanel extends JPanel implements Disposable {
 		buttons(selectSourceActionListener);
 		expressionTextField.addItemListener(new ItemChangeListener());
 
+	}
+
+	@Nullable
+	public ConsoleView getOriginalConsole() {
+		return originalConsole;
+	}
+
+	public MyConsoleViewImpl getConsole() {
+		return newConsole;
 	}
 
 	public void initModel(String pattern, GrepModel grepModel) {
@@ -110,7 +131,43 @@ public class GrepPanel extends JPanel implements Disposable {
 		this.grepModel = new GrepModel(matchCase.isSelected(),
 				wholeLine.isSelected(), regex.isSelected(), expressionTextField.getText(),
 				unlessExpressionTextField.getText());
+		initialized = true;
 	}
+
+	public void addExpression(String expression) {
+		String exp = StringUtil.escapeToRegexp(expression);
+		if (wholeLine.isSelected()) {
+			exp = ".*" + exp + ".*";
+		}
+		if (regex.isSelected()) {
+			String current = expressionTextField.getText();
+			String ex;
+			if (!current.startsWith("(") && !current.endsWith(")")) {
+				ex = "(" + current + "|" + exp + ")";
+			} else {
+				ex = current.substring(0, current.length() - 1) + "|" + exp + ")";
+			}
+			expressionTextField.setText(ex);
+		} else {
+			regex.setSelected(true);
+			String current = expressionTextField.getText();
+			expressionTextField.setText("(" + current + "|" + exp + ")");
+		}
+
+		reload();
+	}
+
+//	public void addExpression(String expression) {
+//		if (regex.isSelected()) {
+//			expression = StringUtil.escapeToRegexp(expression);
+//		}
+//		MyTextFieldWithStoredHistory field = new MyTextFieldWithStoredHistory("ConsoleQuickFilterPanel-expression");
+//		field.setHistorySize(50);
+//		field.setMinimumAndPreferredWidth(100);
+//		field.setText(expression);
+//		expressions.add(field);
+//		reload();
+//	}
 
 	class ItemChangeListener implements ItemListener {
 		@Override
@@ -224,6 +281,7 @@ public class GrepPanel extends JPanel implements Disposable {
 
 	@Override
 	public void dispose() {
+		ServiceManager.getInstance().unregisterGrepPanel(this);
 		originalConsole = null;
 		applyButton.setEnabled(false);
 		reloadButton.setEnabled(false);

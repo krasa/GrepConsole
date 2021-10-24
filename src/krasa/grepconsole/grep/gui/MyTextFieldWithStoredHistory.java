@@ -30,10 +30,19 @@ import java.util.List;
 public class MyTextFieldWithStoredHistory extends MyTextFieldWithHistory {
 	private final String myPropertyName;
 	private boolean initialized = false;
-	
+
 	public MyTextFieldWithStoredHistory(@NonNls final String propertyName) {
 		myPropertyName = propertyName;
 	}
+
+//	@Override
+//	public Dimension getPreferredSize() {
+//		Dimension dim = super.getPreferredSize();
+//		Insets m = getInsets();
+//		int i = getFontMetrics(getFont()).stringWidth(getText());
+//		dim.width = i + 40 + m.left + m.right;
+//		return dim;
+//	}
 
 	public void addCurrentTextToHistory(GrepModel grepModel) {
 		if (!initialized) {

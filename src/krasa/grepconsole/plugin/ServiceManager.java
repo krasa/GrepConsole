@@ -6,6 +6,7 @@ import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.util.containers.WeakList;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.AbstractFilter;
 import krasa.grepconsole.filter.GrepFilter;
@@ -13,6 +14,7 @@ import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.MainInputFilter;
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.SoundMode;
+import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.Sound;
 import krasa.grepconsole.plugin.runConfiguration.GrepConsoleData;
@@ -60,6 +62,27 @@ public class ServiceManager {
 
 	public long getSelectedProfileId(ConsoleView console) {
 		return consoles.getSelectedProfileId(console);
+	}
+
+	public void registerChildGrepConsole(ConsoleView parentConsoleView, MyConsoleViewImpl newConsole) {
+		consoles.getOrCreateData(parentConsoleView).childs.add(newConsole);
+	}
+
+	public void unregisterGrepPanel(GrepPanel grepPanel) {
+		MyConsoleViewImpl console = grepPanel.getConsole();
+		ConsoleView originalConsole = console.getParentConsoleView();
+		if (originalConsole != null) {
+			consoles.getOrCreateData(originalConsole).childs.remove(console);
+		}
+	}
+
+	public List<MyConsoleViewImpl> findChildGreps(ConsoleView parentConsoleView) {
+		Consoles.ConsoleViewData consoleViewData = consoles.get(parentConsoleView);
+		if (consoleViewData != null) {
+			List<MyConsoleViewImpl> myConsoleViews = consoleViewData.childs.toStrongList();
+			return myConsoleViews;
+		}
+		return Collections.emptyList();
 	}
 
 	static class Consoles {
@@ -162,6 +185,7 @@ public class ServiceManager {
 		}
 
 		static class ConsoleViewData {
+			public WeakList<MyConsoleViewImpl> childs = new WeakList<>();
 			RunConfigurationBase runConfigurationBase;
 			/**
 			 * for grep consoles - they don't have RunConfigurationBase
@@ -289,7 +313,7 @@ public class ServiceManager {
 		}
 	}
 
-	public ConsoleView createConsoleWithoutInputFilter(Project project, ConsoleView parentConsoleView) {
+	public MyConsoleViewImpl createConsoleWithoutInputFilter(Project project, ConsoleView parentConsoleView) {
 		try {
 			createInputFilter = false;
 			return new MyConsoleViewImpl(project, false, parentConsoleView);

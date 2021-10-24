@@ -22,6 +22,9 @@ public class AddHighlightAction extends HighlightManipulationAction {
 
 	private static final Logger LOG = Logger.getInstance(AddHighlightAction.class);
 
+	public AddHighlightAction() {
+	}
+
 	public AddHighlightAction(@Nullable String text, @Nullable String description, @Nullable Icon icon) {
 		super(text, description, icon);
 	}

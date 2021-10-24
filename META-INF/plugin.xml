@@ -1,15 +1,15 @@
 <idea-plugin version="2">
-	<id>GrepConsole</id>
-	<name>Grep Console</name>
-	<version>11.12.211.6086.0</version>
-	<idea-version since-build="211.6086"/>
+    <id>GrepConsole</id>
+    <name>Grep Console</name>
+    <version>11.12.211.6086.0</version>
+    <idea-version since-build="211.6086"/>
 
-	<vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
-		Krasa
-	</vendor>
+    <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
+        Krasa
+    </vendor>
 
 
-	<description><![CDATA[
+    <description><![CDATA[
 		  Grep, tail, filter, highlight... everything you need for a console (JS/NPM/GoLand/... Terminals are not supported - <a href="https://youtrack.jetbrains.com/issue/IDEA-216442">IDEA-216442<a/>). Also can highlight the editor...
 	         <br>
 	         <br>
@@ -52,7 +52,7 @@
         <a href="https://www.paypal.me/VojtechKrasa">Donations</a> | <a href="https://github.com/krasa/GrepConsole/">GitHub</a> | <a href="https://github.com/krasa/GrepConsole/issues">Issues</a>
       ]]></description>
 
-	<change-notes><![CDATA[
+    <change-notes><![CDATA[
         <br>11.12
 		<br>- gui cleanup
         <br>11.11
@@ -178,121 +178,142 @@
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
-	</change-notes>
+    </change-notes>
 
 
-	<!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
-		   on how to target different products -->
-	<depends>com.intellij.modules.lang</depends>
-	<!--suppress PluginXmlValidity -->
-	<depends optional="true">com.intellij.modules.java</depends>
+    <!-- please see http://confluence.jetbrains.net/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+           on how to target different products -->
+    <depends>com.intellij.modules.lang</depends>
+    <!--suppress PluginXmlValidity -->
+    <depends optional="true">com.intellij.modules.java</depends>
 
-	<application-components>
-		<!-- Add your application components here -->
-		<component>
-			<implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
-		</component>
-	</application-components>
+    <application-components>
+        <!-- Add your application components here -->
+        <component>
+            <implementation-class>krasa.grepconsole.plugin.GrepConsoleApplicationComponent</implementation-class>
+        </component>
+    </application-components>
 
-	<project-components>
-		<!-- Add your project components here -->
-		<component>
-			<implementation-class>krasa.grepconsole.plugin.GrepProjectComponent</implementation-class>
-		</component>
-	</project-components>
+    <project-components>
+        <!-- Add your project components here -->
+        <component>
+            <implementation-class>krasa.grepconsole.plugin.GrepProjectComponent</implementation-class>
+        </component>
+    </project-components>
 
-	<actions>
-		<action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
-				text="Clear Grep Highlights in Editor"
-				description="Clear Highlights in Editor">
-			<add-to-group group-id="ToolsMenu" anchor="last"/>
-		</action>
-		<action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
-				text="Toggle Highlight of All Occurrences (custom color)"
-				icon="/krasa/grepconsole/icons/highlight.png"
-				description="Toggle highlight of all occurrences of the selected text in the editor. Opens a dialog to choose a color.">
-			<add-to-group group-id="ToolsMenu" anchor="last"/>
-			<!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
-		</action>
-		<action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
-				text="Toggle Highlight of All Occurrences"
-				icon="/krasa/grepconsole/icons/highlight.png"
-				description="Toggle highlight of all occurrences of the selected text in the editor - with predefined colors">
-			<add-to-group group-id="ToolsMenu" anchor="last"/>
-			<add-to-group group-id="EditorPopupMenu" anchor="first"/>
-			<keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
-		</action>
-		<!-- Add your actions here -->
-		<action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction"
-				text="Highlight Editor according to Grep Console settings"
-				icon="/krasa/grepconsole/icons/highlight.png"
-				description="Highlight Editor according to Grep Console settings">
-			<add-to-group group-id="ToolsMenu" anchor="last"/>
-		</action>
-		<action id="OpenFileInConsole" class="krasa.grepconsole.action.TailFileInConsoleAction"
-				text="Tail File in Console..."
-				description="Tail File in Console..."
-				icon="/krasa/grepconsole/icons/tail.png"
-		>
-			<add-to-group group-id="ToolsMenu" anchor="last"/>
-		</action>
-		<action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.TailFileInConsoleProjectViewAction"
-				text="Tail in Console"
-				description="Tail in Console"
-				icon="/krasa/grepconsole/icons/tail.png"
-		>
-			<add-to-group group-id="RevealGroup"/>
-		</action>
-		<action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.TailCurrentFileInConsoleAction"
-				text="Tail Current File in Console"
-				description="Tail Current Editor File in Console"
-				icon="/krasa/grepconsole/icons/tail.png"
-		>
-			<add-to-group group-id="ToolsMenu" anchor="last"/>
-		</action>
-		<action id="OpenFileInConsoleToolbarAction"
-				class="krasa.grepconsole.action.TailFileInConsoleToolbarAction"
-				text="Tail"
-				description="Drag and drop to open file in console">
-			<add-to-group group-id="MainToolBar" anchor="last"/>
-		</action>
-		<action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog"
-				text="Tail Log in Console"
-				description="Tail Log in Console - by Grep Console plugin"
-				icon="/krasa/grepconsole/icons/tail.png"
-		>
-			<add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
-		</action>
-		<action id="krasa.grepconsole.action.NextHighlight"
-				class="krasa.grepconsole.action.NextHighlightAction"
-				text="Next Console Highlight"
-				icon="/krasa/grepconsole/icons/next.svg"
-		/>
-		<action id="krasa.grepconsole.action.PreviousHighlight"
-				class="krasa.grepconsole.action.PreviousHighlightAction"
-				text="Previous Console Highlight"
-				icon="/krasa/grepconsole/icons/previous.svg"
-		/>
-	</actions>
+    <actions>
+        <action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
+                text="Clear Grep Highlights in Editor"
+                description="Clear Highlights in Editor">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
+                text="Toggle Highlight of All Occurrences (custom color)"
+                icon="/krasa/grepconsole/icons/highlight.png"
+                description="Toggle highlight of all occurrences of the selected text in the editor. Opens a dialog to choose a color.">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
+        </action>
+        <action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
+                text="Toggle Highlight of All Occurrences"
+                icon="/krasa/grepconsole/icons/highlight.png"
+                description="Toggle highlight of all occurrences of the selected text in the editor - with predefined colors">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
+        </action>
+        <!-- Add your actions here -->
+        <action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction"
+                text="Highlight Editor according to Grep Console settings"
+                icon="/krasa/grepconsole/icons/highlight.png"
+                description="Highlight Editor according to Grep Console settings">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="OpenFileInConsole" class="krasa.grepconsole.action.TailFileInConsoleAction"
+                text="Tail File in Console..."
+                description="Tail File in Console..."
+                icon="/krasa/grepconsole/icons/tail.png"
+        >
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.TailFileInConsoleProjectViewAction"
+                text="Tail in Console"
+                description="Tail in Console"
+                icon="/krasa/grepconsole/icons/tail.png"
+        >
+            <add-to-group group-id="RevealGroup"/>
+        </action>
+        <action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.TailCurrentFileInConsoleAction"
+                text="Tail Current File in Console"
+                description="Tail Current Editor File in Console"
+                icon="/krasa/grepconsole/icons/tail.png"
+        >
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </action>
+        <action id="OpenFileInConsoleToolbarAction"
+                class="krasa.grepconsole.action.TailFileInConsoleToolbarAction"
+                text="Tail"
+                description="Drag and drop to open file in console">
+            <add-to-group group-id="MainToolBar" anchor="last"/>
+        </action>
+        <action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog"
+                text="Tail Log in Console"
+                description="Tail Log in Console - by Grep Console plugin"
+                icon="/krasa/grepconsole/icons/tail.png"
+        >
+            <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
+        </action>
+        <action id="krasa.grepconsole.action.NextHighlight"
+                class="krasa.grepconsole.action.NextHighlightAction"
+                text="Next Console Highlight"
+                icon="/krasa/grepconsole/icons/next.svg"
+        />
+        <action id="krasa.grepconsole.action.PreviousHighlight"
+                class="krasa.grepconsole.action.PreviousHighlightAction"
+                text="Previous Console Highlight"
+                icon="/krasa/grepconsole/icons/previous.svg"
+        />
+        <group id="krasa.grepconsole.actions" text="Console Context Menu">
+            <action id="GrepConsole.OpenGrepConsoleAction"
+                    class="krasa.grepconsole.grep.OpenGrepConsoleAction"
+                    text="Grep"
+                    description="Open a new filter/grep console"
+                    icon="com.intellij.icons.AllIcons.General.Filter"
+            />
+            <action id="GrepConsole.AddGrepConsoleAction"
+                    class="krasa.grepconsole.grep.AddGrepConsoleAction"
+                    text="Add Grep"
+                    description="As OR regex to an existing grep console"
+                    icon="com.intellij.icons.AllIcons.General.Filter"
+            />
+            <action id="GrepConsole.AddHighlightAction"
+                    class="krasa.grepconsole.action.AddHighlightAction"
+                    text="Add highlight"
+                    description="Add highlight for this selected text"
+                    icon="/krasa/grepconsole/icons/highlight.png"
+            />
+        </group>
 
-	<extensions defaultExtensionNs="com.intellij">
-		<notificationGroup id="Grep Console error" displayType="BALLOON" isLogByDefault="false"/>
-		<notificationGroup id="Grep Console" displayType="BALLOON" isLogByDefault="true"/>
+    </actions>
 
-		<postStartupActivity implementation="krasa.grepconsole.grep.PinnedGrepsReopenerEnabler" order="last"/>
-		<applicationService serviceImplementation="krasa.grepconsole.tail.remotecall.RemoteCallService"/>
-		<executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="Grep Console error" displayType="BALLOON" isLogByDefault="false"/>
+        <notificationGroup id="Grep Console" displayType="BALLOON" isLogByDefault="true"/>
 
-		<consoleActionsPostProcessor implementation="krasa.grepconsole.integration.MyConsoleActionsPostProcessor"/>
-		<consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.MyConsoleFilterProvider"/>
-		<consoleInputFilterProvider implementation="krasa.grepconsole.integration.MyConsoleInputFilterProvider"/>
-		<console.folding implementation="krasa.grepconsole.folding.MyConsoleFolding"/>
-		<applicationConfigurable id="GrepConsole" displayName="Grep Console"
-								 instance="krasa.grepconsole.plugin.MyConfigurable"/>
-		<!-- Add your extensions here -->
-		<runConfigurationExtension
-				implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionNew"/>
-		<configurationType implementation="krasa.grepconsole.tail.runConfiguration.TailRunConfigurationType"/>
-		<programRunner implementation="krasa.grepconsole.tail.runConfiguration.TailProgramRunner"/>
-	</extensions>
+        <postStartupActivity implementation="krasa.grepconsole.grep.PinnedGrepsReopenerEnabler" order="last"/>
+        <applicationService serviceImplementation="krasa.grepconsole.tail.remotecall.RemoteCallService"/>
+        <executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
+
+        <consoleActionsPostProcessor implementation="krasa.grepconsole.integration.MyConsoleActionsPostProcessor"/>
+        <consoleFilterProvider order="first" implementation="krasa.grepconsole.integration.MyConsoleFilterProvider"/>
+        <consoleInputFilterProvider implementation="krasa.grepconsole.integration.MyConsoleInputFilterProvider"/>
+        <console.folding implementation="krasa.grepconsole.folding.MyConsoleFolding"/>
+        <applicationConfigurable id="GrepConsole" displayName="Grep Console"
+                                 instance="krasa.grepconsole.plugin.MyConfigurable"/>
+        <!-- Add your extensions here -->
+        <runConfigurationExtension
+                implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionNew"/>
+        <configurationType implementation="krasa.grepconsole.tail.runConfiguration.TailRunConfigurationType"/>
+        <programRunner implementation="krasa.grepconsole.tail.runConfiguration.TailProgramRunner"/>
+    </extensions>
 </idea-plugin>
