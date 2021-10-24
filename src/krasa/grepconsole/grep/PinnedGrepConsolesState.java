@@ -1,22 +1,20 @@
 package krasa.grepconsole.grep;
 
-import java.lang.ref.WeakReference;
-import java.util.*;
-
-import javax.swing.*;
-
-import org.apache.commons.lang.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.util.xmlb.annotations.Transient;
-
+import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepProjectComponent;
+import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 public class PinnedGrepConsolesState {
 	private static final Logger LOG = Logger.getInstance(PinnedGrepConsolesState.class);
@@ -61,7 +59,7 @@ public class PinnedGrepConsolesState {
 		update(pinAction.getRunConfigurationRef(), pinAction.getParentConsoleUUID(), pinAction.getConsoleUUID(), pinAction.getModel(), pinAction.getContentType(), true);
 	}
 
-	public void update(@NotNull RunConfigurationRef runContentDescriptor, String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepModel grepModel, String contentType, boolean add) {
+	public void update(@NotNull RunConfigurationRef runContentDescriptor, String parentConsoleUUID, @NotNull String consoleUUID, @NotNull GrepCompositeModel grepModel, String contentType, boolean add) {
 		if (LOG.isDebugEnabled()) {
 			LOG.debug(">update " + "runContentDescriptor = [" + runContentDescriptor + "], parentConsoleUUID = [" + parentConsoleUUID + "], consoleUUID = [" + consoleUUID + "], grepModel = [" + grepModel + "], contentType = [" + contentType + "], add = [" + add + "]");
 		}
@@ -80,7 +78,7 @@ public class PinnedGrepConsolesState {
 			for (Pin pin : pins.pins) {
 				if (pin.consoleUUID.equals(consoleUUID)) {
 					LOG.debug("#update grepModel updated for pin=" + pin);
-					pin.grepModel = grepModel;
+					pin.grepCompositeModel = grepModel;
 					updated = true;
 				}
 			}
@@ -167,7 +165,7 @@ public class PinnedGrepConsolesState {
 	public static class Pins {
 		private List<Pin> pins = new ArrayList<>();
 
-		public Pins(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, String contentType, @NotNull GrepModel grepModel) {
+		public Pins(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, String contentType, @NotNull GrepCompositeModel grepModel) {
 			pins.add(new Pin(parentConsoleUUID, consoleUUID, contentType, grepModel));
 		}
 
@@ -198,20 +196,31 @@ public class PinnedGrepConsolesState {
 		private String parentConsoleUUID;
 		private String consoleUUID;
 		private String contentType;
-		private GrepModel grepModel;
+		private GrepCompositeModel grepCompositeModel;
 
 		public Pin() {
 		}
 
-		public Pin(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, String contentType, @NotNull GrepModel grepModel) {
+		public Pin(@Nullable String parentConsoleUUID, @NotNull String consoleUUID, String contentType, @NotNull GrepCompositeModel grepCompositeModel) {
 			this.parentConsoleUUID = parentConsoleUUID;
 			this.consoleUUID = consoleUUID;
 			this.contentType = contentType;
-			this.grepModel = grepModel;
+			this.grepCompositeModel = grepCompositeModel;
 		}
 
-		public void setGrepModel(@NotNull GrepModel grepModel) {
-			this.grepModel = grepModel;
+		public void setGrepCompositeModel(@NotNull GrepCompositeModel grepCompositeModel) {
+			this.grepCompositeModel = grepCompositeModel;
+		}
+
+		public GrepModel getGrepModel() {
+			return null;
+		}
+
+		@Deprecated
+		public void setGrepModel(GrepModel grepModel) {
+			GrepCompositeModel grepCompositeModel = new GrepCompositeModel();
+			grepCompositeModel.add(grepModel);
+			this.grepCompositeModel = grepCompositeModel;
 		}
 
 		public void setParentConsoleUUID(@Nullable String parentConsoleUUID) {
@@ -240,8 +249,8 @@ public class PinnedGrepConsolesState {
 			return consoleUUID;
 		}
 
-		public GrepModel getGrepModel() {
-			return grepModel;
+		public GrepCompositeModel getGrepCompositeModel() {
+			return grepCompositeModel;
 		}
 
 		@Override
@@ -250,7 +259,7 @@ public class PinnedGrepConsolesState {
 					"parentConsoleUUID='" + parentConsoleUUID + '\'' +
 					", consoleUUID='" + consoleUUID + '\'' +
 					", contentType='" + contentType + '\'' +
-					", grepModel=" + grepModel +
+					", grepModel=" + grepCompositeModel +
 					'}';
 		}
 	}
@@ -264,9 +273,10 @@ public class PinnedGrepConsolesState {
 		}
 
 		@NotNull
-		static protected RunConfigurationRef toKey(ToolWindow toolWindow) {
+		public static RunConfigurationRef toKey(ToolWindow toolWindow) {
 			return new RunConfigurationRef(toolWindow.getId(), null);
 		}
+
 		@NotNull
 		static protected RunConfigurationRef toKey(RunContentDescriptor runContentDescriptor) {
 			return new RunConfigurationRef(

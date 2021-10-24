@@ -14,6 +14,7 @@ import com.intellij.util.Alarm;
 import com.intellij.util.SingleAlarm;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
+import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.Nullable;
@@ -153,7 +154,7 @@ public class PinnedGrepsReopener {
 					LOG.debug(">initConsole " + "pin = [" + pin + "], parent = [" + parent.hashCode() + "], list = [" + list + "]");
 				}
 				String thisConsoleUUID = pin.getConsoleUUID();
-				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(null, project, key, parent, pin.getGrepModel(), null, thisConsoleUUID,
+				ConsoleViewImpl foo = new OpenGrepConsoleAction().createGrepConsole(null, project, key, parent, pin.getGrepCompositeModel(), null, thisConsoleUUID,
 						pin.getContentType());
 
 				lockAndInitAllConsoles(foo, key, list, new Predicate<PinnedGrepConsolesState.Pin>() {

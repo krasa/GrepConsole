@@ -275,22 +275,46 @@
         />
         <group id="krasa.grepconsole.actions" text="Console Context Menu">
             <action id="GrepConsole.OpenGrepConsoleAction"
-                    class="krasa.grepconsole.grep.OpenGrepConsoleAction"
+                    class="krasa.grepconsole.grep.actions.OpenGrepConsoleAction"
                     text="Grep"
                     description="Open a new filter/grep console"
                     icon="com.intellij.icons.AllIcons.General.Filter"
             />
             <action id="GrepConsole.AddGrepConsoleAction"
-                    class="krasa.grepconsole.grep.AddGrepConsoleAction"
+                    class="krasa.grepconsole.grep.actions.AddGrepConsoleAction"
                     text="Add Grep"
                     description="As OR regex to an existing grep console"
                     icon="com.intellij.icons.AllIcons.General.Filter"
             />
+            <separator/>
             <action id="GrepConsole.AddHighlightAction"
                     class="krasa.grepconsole.action.AddHighlightAction"
-                    text="Add highlight"
+                    text="Add Highlight"
                     description="Add highlight for this selected text"
                     icon="/krasa/grepconsole/icons/highlight.png"
+            />
+        </group>
+        <group id="krasa.grepconsole.grep.panel" text="Grep Panel">
+            <action id="GrepConsole.ApplyAction"
+                    class="krasa.grepconsole.grep.actions.ApplyAction"
+                    text="Apply"
+                    icon="com.intellij.icons.AllIcons.Actions.Commit"
+            />
+            <action id="GrepConsole.ReloadAction"
+                    class="krasa.grepconsole.grep.actions.ReloadAction"
+                    text="Reload"
+                    icon="com.intellij.icons.AllIcons.Actions.BuildLoadChanges"
+            />
+            <action id="GrepConsole.SourceAction"
+                    class="krasa.grepconsole.grep.actions.SourceAction"
+                    text="Source"
+                    icon="com.intellij.icons.AllIcons.General.Locate"
+            />
+            <action id="GrepConsole.SetTitleAction"
+                    class="krasa.grepconsole.grep.actions.SetTitleAction"
+                    text="Set Title"
+                    icon="com.intellij.icons.AllIcons.General.Settings"
+                    popup="true"
             />
         </group>
 

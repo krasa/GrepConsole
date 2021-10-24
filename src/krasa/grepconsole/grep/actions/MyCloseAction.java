@@ -1,4 +1,4 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.grep.actions;
 
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.icons.AllIcons;

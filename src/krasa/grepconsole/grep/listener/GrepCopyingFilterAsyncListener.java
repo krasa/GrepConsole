@@ -4,7 +4,7 @@
 //import com.intellij.openapi.project.Project;
 //import krasa.grepconsole.grep.GrepModel;
 //import krasa.grepconsole.grep.HybridQueue;
-//import krasa.grepconsole.grep.OpenGrepConsoleAction;
+//import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 //import krasa.grepconsole.model.Profile;
 //
 //public class GrepFilterAsyncListener implements GrepFilterListener {

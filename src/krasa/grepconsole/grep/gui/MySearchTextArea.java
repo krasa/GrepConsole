@@ -1,10 +1,7 @@
 // Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package krasa.grepconsole.grep.gui;
 
-import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.FindBundle;
-import com.intellij.find.FindInProjectSettings;
-import com.intellij.find.editorHeaderActions.Utils;
 import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.openapi.actionSystem.*;
@@ -17,11 +14,16 @@ import com.intellij.openapi.editor.ex.util.EditorUtil;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.PopupChooserBuilder;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.DocumentAdapter;
 import com.intellij.ui.JBColor;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.components.panels.NonOpaquePanel;
@@ -32,8 +34,10 @@ import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
-import org.jetbrains.annotations.ApiStatus;
+import krasa.grepconsole.grep.GrepCompositeModel;
+import krasa.grepconsole.plugin.PluginState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -41,10 +45,9 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
@@ -55,7 +58,7 @@ import java.util.List;
 import static java.awt.event.InputEvent.*;
 import static javax.swing.ScrollPaneConstants.*;
 
-public class MySearchTextArea extends JPanel implements PropertyChangeListener {
+public abstract class MySearchTextArea extends JPanel implements PropertyChangeListener {
   private static final JBColor BUTTON_SELECTED_BACKGROUND = JBColor.namedColor("SearchOption.selectedBackground", 0xDAE4ED, 0x5C6164);
   public static final String JUST_CLEARED_KEY = "JUST_CLEARED";
   public static final KeyStroke NEW_LINE_KEYSTROKE
@@ -90,18 +93,11 @@ public class MySearchTextArea extends JPanel implements PropertyChangeListener {
   private final JTextArea myTextArea;
   private final boolean mySearchMode;
   private final JPanel myIconsPanel = new NonOpaquePanel();
-  private final ActionButton myNewLineButton;
   private final ActionButton myClearButton;
   private final NonOpaquePanel myExtraActionsPanel = new NonOpaquePanel();
   private final JBScrollPane myScrollPane;
   private final ActionButton myHistoryPopupButton;
   private boolean myMultilineEnabled = true;
-
-  @Deprecated
-  @ApiStatus.ScheduledForRemoval(inVersion = "2021.3")
-  public MySearchTextArea(@NotNull JTextArea textArea, boolean searchMode, boolean infoMode) {
-    this(textArea, searchMode);
-  }
 
   public MySearchTextArea(@NotNull JTextArea textArea, boolean searchMode) {
     myTextArea = textArea;
@@ -184,7 +180,6 @@ public class MySearchTextArea extends JPanel implements PropertyChangeListener {
 
     myHistoryPopupButton = new MyActionButton(new ShowHistoryAction(), false);
     myClearButton = new MyActionButton(new ClearAction(), false);
-    myNewLineButton = new MyActionButton(new NewLineAction(), false);
 
     updateLayout();
   }
@@ -233,19 +228,16 @@ public class MySearchTextArea extends JPanel implements PropertyChangeListener {
     }
 
     boolean showClearIcon = !StringUtil.isEmpty(myTextArea.getText());
-    boolean showNewLine = myMultilineEnabled;
     boolean wrongVisibility =
-            ((myClearButton.getParent() == null) == showClearIcon) || ((myNewLineButton.getParent() == null) == showNewLine);
+            ((myClearButton.getParent() == null) == showClearIcon);
 
     boolean multiline = StringUtil.getLineBreakCount(myTextArea.getText()) > 0;
     if (wrongVisibility) {
       myIconsPanel.removeAll();
       myIconsPanel.setLayout(new BorderLayout());
       myIconsPanel.add(myClearButton, BorderLayout.CENTER);
-      myIconsPanel.add(myNewLineButton, BorderLayout.EAST);
       myIconsPanel.setPreferredSize(myIconsPanel.getPreferredSize());
       if (!showClearIcon) myIconsPanel.remove(myClearButton);
-      if (!showNewLine) myIconsPanel.remove(myNewLineButton);
       myIconsPanel.revalidate();
       myIconsPanel.repaint();
     }
@@ -337,12 +329,14 @@ public class MySearchTextArea extends JPanel implements PropertyChangeListener {
   public void setInfoText(String info) {
   }
 
+  protected abstract void apply();
+
   private class ShowHistoryAction extends DumbAwareAction {
     private final PopupState<JBPopup> myPopupState = PopupState.forPopup();
 
     ShowHistoryAction() {
-      super(FindBundle.message(mySearchMode ? "find.search.history" : "find.replace.history"),
-              FindBundle.message(mySearchMode ? "find.search.history" : "find.replace.history"),
+      super("History",
+              "History",
               AllIcons.Actions.SearchWithHistory);
       registerCustomShortcutSet(KeymapUtil.getActiveKeymapShortcuts("ShowSearchHistory"), myTextArea);
     }
@@ -350,14 +344,58 @@ public class MySearchTextArea extends JPanel implements PropertyChangeListener {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
       if (myPopupState.isRecentlyHidden()) return; // do not show new popup
-      FeatureUsageTracker.getInstance().triggerFeatureUsed("find.recent.search");
-      FindInProjectSettings findInProjectSettings = FindInProjectSettings.getInstance(e.getProject());
-      String[] recent = mySearchMode ? findInProjectSettings.getRecentFindStrings()
-              : findInProjectSettings.getRecentReplaceStrings();
-      JBList<String> historyList = new JBList<>(ArrayUtil.reverseArray(recent));
-      Utils.showCompletionPopup(MySearchTextArea.this, historyList, null, myTextArea, null, myPopupState);
+
+      List<GrepCompositeModel> grepHistory = PluginState.getInstance().getGrepHistory();
+      GrepCompositeModel[] array = grepHistory.toArray(GrepCompositeModel[]::new);
+      GrepCompositeModel[] ts = ArrayUtil.reverseArray(array);
+      JBList<GrepCompositeModel> historyList = new JBList<>(ts);
+      showCompletionPopup(MySearchTextArea.this, historyList, null, myTextArea, null, myPopupState);
     }
   }
+
+  public static void showCompletionPopup(MySearchTextArea toolbarComponent,
+                                         final JBList<GrepCompositeModel> list,
+                                         @NlsContexts.PopupTitle String title,
+                                         final JTextComponent textField,
+                                         @NlsContexts.PopupAdvertisement String ad,
+                                         @Nullable PopupState<JBPopup> popupState) {
+
+    final Runnable callback = () -> {
+      GrepCompositeModel selectedValue = list.getSelectedValue();
+      if (selectedValue != null) {
+        toolbarComponent.reload(selectedValue);
+        IdeFocusManager.getGlobalInstance().requestFocus(textField, false);
+      }
+    };
+
+    final PopupChooserBuilder builder = JBPopupFactory.getInstance().createListPopupBuilder(list);
+    if (title != null) {
+      builder.setTitle(title);
+    }
+    builder.setRenderer(new SimpleListCellRenderer<GrepCompositeModel>() {
+      @Override
+      public void customize(@NotNull JList<? extends GrepCompositeModel> jList, GrepCompositeModel grepCompositeModel, int i, boolean b, boolean b1) {
+        setText(grepCompositeModel.getTitle());
+      }
+
+
+    });
+    final JBPopup popup = builder.setMovable(false).setResizable(false)
+            .setRequestFocus(true).setItemChoosenCallback(callback).createPopup();
+
+    if (ad != null) {
+      popup.setAdText(ad, SwingConstants.LEFT);
+    }
+
+    if (popupState != null) popupState.prepareToShow(popup);
+    if (toolbarComponent != null) {
+      popup.showUnderneathOf(toolbarComponent);
+    } else {
+      popup.showUnderneathOf(textField);
+    }
+  }
+
+  protected abstract void reload(GrepCompositeModel selectedValue);
 
   private class ClearAction extends DumbAwareAction {
     ClearAction() {
@@ -369,19 +407,11 @@ public class MySearchTextArea extends JPanel implements PropertyChangeListener {
     public void actionPerformed(@NotNull AnActionEvent e) {
       myTextArea.putClientProperty(JUST_CLEARED_KEY, !myTextArea.getText().isEmpty());
       myTextArea.setText("");
-    }
-  }
-
-  private class NewLineAction extends DumbAwareAction {
-    NewLineAction() {
-      super(FindBundle.message("find.new.line"), null, AllIcons.Actions.SearchNewLine);
-      setShortcutSet(new CustomShortcutSet(NEW_LINE_KEYSTROKE));
-      getTemplatePresentation().setHoveredIcon(AllIcons.Actions.SearchNewLineHover);
-    }
-
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-      new DefaultEditorKit.InsertBreakAction().actionPerformed(new ActionEvent(myTextArea, 0, "action"));
+      MySearchTextArea mySearchTextArea = MySearchTextArea.this;
+      if (mySearchTextArea.getParent().getComponentCount() > 1) {
+        MySearchTextArea.this.getParent().remove(mySearchTextArea);
+      }
+      apply();
     }
   }
 
@@ -435,5 +465,9 @@ public class MySearchTextArea extends JPanel implements PropertyChangeListener {
     public boolean isBorderOpaque() {
       return false;
     }
+  }
+
+  public void updateControls() {
+    updateExtraActions();
   }
 }

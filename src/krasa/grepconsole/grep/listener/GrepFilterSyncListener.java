@@ -7,8 +7,8 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
-import krasa.grepconsole.grep.GrepModel;
-import krasa.grepconsole.grep.OpenGrepConsoleAction;
+import krasa.grepconsole.grep.GrepCompositeModel;
+import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.utils.Notifier;
 import krasa.grepconsole.utils.Utils;
@@ -22,11 +22,11 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 
 	private final OpenGrepConsoleAction.LightProcessHandler myProcessHandler;
 	private final Project project;
-	private volatile GrepModel.Matcher matcher;
 	private volatile Profile profile;
 	private volatile boolean showLimitNotification = true;
 	private ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
 	private ThreadLocal<Long> previousTimestamp = new ThreadLocal<>();
+	private GrepCompositeModel grepModel;
 
 	public GrepFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
 		this.myProcessHandler = myProcessHandler;
@@ -35,8 +35,8 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	}
 
 	@Override
-	public void modelUpdated(@NotNull GrepModel grepModel) {
-		matcher = grepModel.matcher();
+	public void modelUpdated(@NotNull GrepCompositeModel grepModel) {
+		this.grepModel = grepModel;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 
 	@Override
 	public void process(String text, ConsoleViewContentType type) {
-		if (matcher == null || StringUtils.isEmpty(text)) {
+		if (grepModel == null || StringUtils.isEmpty(text)) {
 			return;
 		}
 		List<String> split = StringUtil.split(text, "\n", false, false);
@@ -83,7 +83,7 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 			String substring = profile.limitInputGrepLength_andCutNewLine(s);
 			CharSequence charSequence = profile.limitProcessingTime(substring);
 			try {
-				if (matcher.matches(charSequence)) {
+				if (grepModel.matches(charSequence)) {
 					if (!s.endsWith("\n")) {
 						s = s + "\n";
 					}
@@ -92,7 +92,7 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 			} catch (ProcessCanceledException e) {
 				String message = "Grep to a subconsole took too long, aborting to prevent input freezing.\n"
 						+ "Consider changing following settings: 'Match only first N characters on each line' or 'Max processing time for a line'\n"
-						+ "Matcher: " + matcher + "\n" + "Line: " + Utils.toNiceLineForLog(substring);
+						+ "Matcher: " + grepModel + "\n" + "Line: " + Utils.toNiceLineForLog(substring);
 				if (showLimitNotification) {
 					showLimitNotification = false;
 					Notifier.notify_GrepFilter(project, message);
@@ -118,7 +118,7 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	@Override
 	public String toString() {
 		return "GrepFilterSyncListener{" +
-				"matcher=" + matcher +
+				"grepModel=" + grepModel +
 				'}';
 	}
 }

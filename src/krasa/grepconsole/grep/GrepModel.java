@@ -2,37 +2,66 @@ package krasa.grepconsole.grep;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class GrepModel {
 	private boolean caseSensitive;
 	private boolean wholeLine;
+	private boolean wholeWords;
 	private String expression;
-	private String unlessExpression;
 	private boolean regex;
+	private boolean exclude;
+
+	private volatile GrepModel.Matcher matcher;
 
 	public GrepModel() {
 	}
 
-	public GrepModel(boolean caseSensitive, boolean wholeLine, boolean regex, String expression,
-					 String unlessExpression) {
-		this.caseSensitive = caseSensitive;
-		this.wholeLine = wholeLine;
+	public GrepModel(String expression) {
 		this.expression = expression;
-		this.unlessExpression = unlessExpression;
+	}
+
+	public GrepModel(boolean caseSensitive, boolean wholeWords, boolean regex, String expression, boolean exclude) {
+		this.caseSensitive = caseSensitive;
+		this.wholeWords = wholeWords;
+		this.expression = expression;
 		this.regex = regex;
+		this.exclude = exclude;
+	}
+
+	public boolean isWholeWords() {
+		return wholeWords;
+	}
+
+	public void setWholeWords(boolean wholeWords) {
+		this.wholeWords = wholeWords;
+	}
+
+	public boolean isExclude() {
+		return exclude;
+	}
+
+	public void setExclude(boolean exclude) {
+		this.exclude = exclude;
 	}
 
 	public Matcher matcher() {
-		Pattern unlessExpressionPattern = null;
 		Pattern expressionPattern = null;
 		if (!StringUtils.isBlank(expression)) {
+			String expression = this.expression;
+
+			if (!regex) {
+				expression = Pattern.quote(expression);
+			}
+
+			if (wholeWords) {
+				expression = "\\b" + expression + "\\b";
+			}
+
 			expressionPattern = Pattern.compile(expression, computeFlags());
 		}
-		if (!StringUtils.isBlank(unlessExpression)) {
-			unlessExpressionPattern = Pattern.compile(unlessExpression, computeFlags());
-		}
-		return new Matcher(expressionPattern, unlessExpressionPattern, wholeLine);
+		return new Matcher(expressionPattern, wholeLine);
 	}
 
 	public void setCaseSensitive(boolean caseSensitive) {
@@ -45,10 +74,6 @@ public class GrepModel {
 
 	public void setExpression(String expression) {
 		this.expression = expression;
-	}
-
-	public void setUnlessExpression(String unlessExpression) {
-		this.unlessExpression = unlessExpression;
 	}
 
 	public void setRegex(boolean regex) {
@@ -67,35 +92,35 @@ public class GrepModel {
 		return wholeLine;
 	}
 
-	public String getUnlessExpression() {
-		return unlessExpression;
-	}
-
 	public boolean isRegex() {
 		return regex;
 	}
 
 	private int computeFlags() {
 		int i = caseSensitive ? 0 : Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE;
-		int j = regex ? 0 : Pattern.LITERAL;
-		return i | j;
+		return i;
+	}
+
+	boolean matches(CharSequence charSequence) {
+		if (matcher == null) {
+			matcher = matcher();
+		}
+		return matcher.matches(charSequence);
 	}
 
 	public static class Matcher {
 		private final Pattern expressionPattern;
-		private final Pattern unlessExpressionPattern;
 		private final boolean wholeLine;
 
-		public Matcher(Pattern expressionPattern, Pattern unlessExpressionPattern, boolean wholeLine) {
+		public Matcher(Pattern expressionPattern, boolean wholeLine) {
 			this.expressionPattern = expressionPattern;
-			this.unlessExpressionPattern = unlessExpressionPattern;
 			this.wholeLine = wholeLine;
 		}
 
 		public boolean matches(CharSequence s) {
-				if (matchesPattern(expressionPattern, s) && !matchesPattern(unlessExpressionPattern, s)) {
-					return true;
-				}
+			if (matchesPattern(expressionPattern, s)) {
+				return true;
+			}
 			return false;
 		}
 
@@ -115,10 +140,22 @@ public class GrepModel {
 		public String toString() {
 			return "[" +
 					"expressionPattern=" + expressionPattern +
-					", unlessExpressionPattern=" + unlessExpressionPattern +
 					", wholeLine=" + wholeLine +
 					']';
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		GrepModel grepModel = (GrepModel) o;
+		return caseSensitive == grepModel.caseSensitive && wholeLine == grepModel.wholeLine && wholeWords == grepModel.wholeWords && regex == grepModel.regex && exclude == grepModel.exclude && Objects.equals(expression, grepModel.expression);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(caseSensitive, wholeLine, wholeWords, expression, regex, exclude);
 	}
 
 	@Override
@@ -127,7 +164,6 @@ public class GrepModel {
 				"caseSensitive=" + caseSensitive +
 				", wholeLine=" + wholeLine +
 				", expression='" + expression + '\'' +
-				", unlessExpression='" + unlessExpression + '\'' +
 				", regex=" + regex +
 				'}';
 	}

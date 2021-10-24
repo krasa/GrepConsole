@@ -14,7 +14,7 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
-import krasa.grepconsole.grep.OpenGrepConsoleAction;
+import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;

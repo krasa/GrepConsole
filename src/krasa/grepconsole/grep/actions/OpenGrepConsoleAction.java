@@ -1,4 +1,4 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.grep.actions;
 
 import com.intellij.build.BuildView;
 import com.intellij.execution.console.ConsoleViewWrapperBase;
@@ -32,6 +32,8 @@ import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
+import krasa.grepconsole.grep.GrepCompositeModel;
+import krasa.grepconsole.grep.PinnedGrepConsolesState;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.gui.GrepUtils;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
@@ -60,6 +62,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	private static final Logger LOG = Logger.getInstance(OpenGrepConsoleAction.class);
+	public static final int MAX_TITLE_LENGTH = 40;
 
 	public OpenGrepConsoleAction() {
 	}
@@ -87,10 +90,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	public ConsoleViewImpl createGrepConsole(AnActionEvent e, Project project, PinnedGrepConsolesState.RunConfigurationRef key, ConsoleView parentConsoleView,
-											 @Nullable GrepModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
-		if (grepModel != null) {
-			expression = grepModel.getExpression();
-		}
+											 @Nullable GrepCompositeModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
+		String title = grepModel != null ? grepModel.getTitle() : title(expression);
 		boolean focusTab = e != null;
 		if (!(parentConsoleView instanceof JComponent)) {
 			throw new RuntimeException("console not supported, must be instance of JComponent: " + parentConsoleView);
@@ -163,7 +164,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		final Content tab;
 		if (runnerLayoutUi != null) {
-			tab = runnerLayoutUi.createContent(contentType, consolePanel, title(expression), AllIcons.General.Filter, consolePanel);
+			tab = runnerLayoutUi.createContent(contentType, consolePanel, title, AllIcons.General.Filter, consolePanel);
 			runnerLayoutUi.addContent(tab);
 			try {
 				if (focusTab) {
@@ -174,8 +175,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 			actions.add(new MyCloseAction(tab, runnerLayoutUi));
 		} else {
-			tab = ContentFactory.SERVICE.getInstance().createContent(consolePanel, title(expression), true);
-			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title(expression));
+			tab = ContentFactory.SERVICE.getInstance().createContent(consolePanel, title, true);
+			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title);
 			tab.setDisposer(contentDescriptor);
 			ContentManager contentManager = toolWindow.getContentManager();
 			contentManager.addContent(tab);
@@ -189,12 +190,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		PinnedGrepConsolesState.RunConfigurationRef finalRunConfigurationRef = runConfigurationRef;
 		quickFilterPanel.setApplyCallback(new Callback() {
 			@Override
-			public void apply(GrepModel grepModel) {
+			public void apply(GrepCompositeModel grepModel) {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("apply callback");
 				}
 				grepListener.modelUpdated(grepModel);
-				tab.setDisplayName(title(grepModel.getExpression()));
+				tab.setDisplayName(title(grepModel.getTitle()));
 				if (finalRunConfigurationRef != null) {
 					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
 							false);
@@ -273,8 +274,11 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return parentConsoleUUID;
 	}
 
-	protected String title(String expression) {
-		return StringUtils.substring(expression, 0, 20);
+	public static String title(String expression) {
+		if (expression.length() > MAX_TITLE_LENGTH + 10) {
+			return StringUtils.substring(expression, 0, MAX_TITLE_LENGTH) + "...";
+		}
+		return expression;
 	}
 
 	@NotNull
@@ -300,7 +304,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	public interface Callback {
 
-		void apply(GrepModel grepModel);
+		void apply(GrepCompositeModel grepModel);
 	}
 
 	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, @Nullable RunContentDescriptor runContentDescriptor, ConsoleView parentConsoleView) {
@@ -557,7 +561,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		presentation.setEnabled(enabled || e.getData(PlatformDataKeys.TOOL_WINDOW) != null);
 	}
 
-	private ConsoleView getTopParentConsoleView(ConsoleView data) {
+	public static ConsoleView getTopParentConsoleView(ConsoleView data) {
 		if (data instanceof MyConsoleViewImpl) {
 			data = getTopParentConsoleView(((MyConsoleViewImpl) data).getParentConsoleView());
 		}
@@ -638,7 +642,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 		}
 
-		public GrepModel getModel() {
+		public GrepCompositeModel getModel() {
 			return quickFilterPanel.getModel();
 		}
 

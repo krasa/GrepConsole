@@ -1,6 +1,7 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.diagnostic.Logger;
+import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.StreamBufferSettings;
@@ -19,6 +20,7 @@ public class PluginState extends DomainObject implements Cloneable {
 	private StreamBufferSettings streamBufferSettings;
 	private boolean allowRunConfigurationChanges = true;
 	private int version;
+	private List<GrepCompositeModel> grepHistory = new ArrayList<>();
 
 	public static PluginState getInstance() {
 		return GrepConsoleApplicationComponent.getInstance().getState();
@@ -165,5 +167,29 @@ public class PluginState extends DomainObject implements Cloneable {
 				"} " + super.toString();
 	}
 
+	private static final int MAX_RECENT_SIZE = 30;
 
+	public List<GrepCompositeModel> getGrepHistory() {
+		return grepHistory;
+	}
+
+	public List<String> getGrepHistoryAsStrings() {
+		ArrayList<String> strings = new ArrayList<>();
+		for (String string : strings) {
+
+		}
+		return strings;
+	}
+
+	public void setGrepHistory(List<GrepCompositeModel> grepHistory) {
+		this.grepHistory = grepHistory;
+	}
+
+	public void addToHistory(GrepCompositeModel grepModel) {
+		grepHistory.remove(grepModel);
+		grepHistory.add(grepModel);
+		while (grepHistory.size() > MAX_RECENT_SIZE) {
+			grepHistory.remove(0);
+		}
+	}
 }

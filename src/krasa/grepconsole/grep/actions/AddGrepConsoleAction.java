@@ -1,6 +1,8 @@
-package krasa.grepconsole.grep;
+package krasa.grepconsole.grep.actions;
 
 import com.intellij.execution.ui.ConsoleView;
+import com.intellij.execution.ui.RunContentDescriptor;
+import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -8,6 +10,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import krasa.grepconsole.MyConsoleViewImpl;
+import krasa.grepconsole.filter.GrepFilter;
+import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
@@ -33,21 +37,24 @@ public class AddGrepConsoleAction extends DumbAwareAction {
 
 	@Override
 	public void actionPerformed(AnActionEvent e) {
-		Project eventProject = getEventProject(e);
-		ConsoleView parentConsoleView = (ConsoleView) getConsoleView(e);
+		ConsoleView parentConsoleView = getConsoleView(e);
 		if (parentConsoleView == null) {
 			return;
 		}
 		List<MyConsoleViewImpl> childGreps = ServiceManager.getInstance().findChildGreps(parentConsoleView);
-		if (childGreps.isEmpty()) {
-			new OpenGrepConsoleAction().actionPerformed(e);
-			return;
-		}
+//		if (childGreps.isEmpty()) {
+//			new OpenGrepConsoleAction().actionPerformed(e);
+//			return;
+//		}
 
 		DefaultActionGroup actionGroup = new DefaultActionGroup();
+		if (parentConsoleView instanceof MyConsoleViewImpl) {
+			actionGroup.add(new MyAnAction(((MyConsoleViewImpl) parentConsoleView).getGrepPanel(), "[This Console]"));
+			actionGroup.add(new Separator());
+		}
 		add(actionGroup, childGreps);
 		actionGroup.add(new Separator());
-		actionGroup.add(new OpenGrepConsoleAction("New...", null, null));
+		actionGroup.add(new OpenGrepConsoleAction("[New]", null, null));
 
 
 		ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup("Select Console", actionGroup, e.getDataContext(), JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING, true, (Runnable) null, -1);
@@ -59,13 +66,32 @@ public class AddGrepConsoleAction extends DumbAwareAction {
 		}
 	}
 
+	@Override
+	public void update(AnActionEvent e) {
+		Presentation presentation = e.getPresentation();
+		boolean enabled = false;
+
+		Project eventProject = getEventProject(e);
+		ConsoleView parentConsoleView = OpenGrepConsoleAction.getTopParentConsoleView(e.getData(LangDataKeys.CONSOLE_VIEW));
+		if (parentConsoleView != null) {
+			GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(parentConsoleView);
+			if (eventProject != null && grepFilter != null) {
+				RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(eventProject, parentConsoleView);
+				if (runContentDescriptor != null) {
+					RunnerLayoutUi runnerLayoutUi = OpenGrepConsoleAction.getRunnerLayoutUi(eventProject, runContentDescriptor, parentConsoleView);
+					enabled = runnerLayoutUi != null;
+				}
+			}
+		}
+
+		presentation.setEnabled(enabled || e.getData(PlatformDataKeys.TOOL_WINDOW) != null);
+	}
+
 	private void add(DefaultActionGroup actionGroup, List<MyConsoleViewImpl> list) {
 		for (MyConsoleViewImpl consoleView : list) {
 			GrepPanel grepPanel = consoleView.getGrepPanel();
-			String expression = grepPanel.getModel().getExpression();
-			if (expression == null) {
-				expression = "---";
-			}
+			GrepCompositeModel model = grepPanel.getModel();
+			String expression = model.getTitle();
 			actionGroup.add(new MyAnAction(grepPanel, expression));
 			add(actionGroup, ServiceManager.getInstance().findChildGreps(consoleView));
 			actionGroup.add(new Separator());

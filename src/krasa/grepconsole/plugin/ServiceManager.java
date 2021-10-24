@@ -72,7 +72,10 @@ public class ServiceManager {
 		MyConsoleViewImpl console = grepPanel.getConsole();
 		ConsoleView originalConsole = console.getParentConsoleView();
 		if (originalConsole != null) {
-			consoles.getOrCreateData(originalConsole).childs.remove(console);
+			Consoles.ConsoleViewData consoleViewData = consoles.get(originalConsole);
+			if (consoleViewData != null) {
+				consoleViewData.childs.remove(console);
+			}
 		}
 	}
 
@@ -125,7 +128,11 @@ public class ServiceManager {
 		}
 
 		public GrepFilter getGrepFilter(@NotNull ConsoleView console) {
-			return getOrCreateData(console).grepFilter;
+			ConsoleViewData consoleViewData = get(console);
+			if (consoleViewData != null) {
+				return consoleViewData.grepFilter;
+			}
+			return null;
 		}
 
 		public Collection<GrepFilter> getCopiers() {
@@ -288,11 +295,7 @@ public class ServiceManager {
 
 	@Nullable
 	public GrepFilter getGrepFilter(@NotNull ConsoleView console) {
-		GrepFilter grepFilter = consoles.getGrepFilter(console);
-		if (grepFilter == null) {
-			grepFilter = consoles.getGrepFilter(console);
-		}
-		return grepFilter;
+		return consoles.getGrepFilter(console);
 	}
 
 	public boolean isRegistered(@NotNull ConsoleView console) {
