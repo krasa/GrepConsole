@@ -227,7 +227,8 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
       return;
     }
 
-    boolean showClearIcon = !StringUtil.isEmpty(myTextArea.getText());
+//    boolean showClearIcon = !StringUtil.isEmpty(myTextArea.getText());
+    boolean showClearIcon = true;
     boolean wrongVisibility =
             ((myClearButton.getParent() == null) == showClearIcon);
 

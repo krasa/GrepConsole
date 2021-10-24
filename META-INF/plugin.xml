@@ -295,6 +295,11 @@
             />
         </group>
         <group id="krasa.grepconsole.grep.panel" text="Grep Panel">
+            <action id="GrepConsole.AddExpressionAction"
+                    class="krasa.grepconsole.grep.actions.AddExpressionAction"
+                    text="Add Expression"
+                    icon="com.intellij.icons.AllIcons.General.Add"
+            />
             <action id="GrepConsole.ApplyAction"
                     class="krasa.grepconsole.grep.actions.ApplyAction"
                     text="Apply"
