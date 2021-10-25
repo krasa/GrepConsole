@@ -14,11 +14,11 @@ import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.Consumer;
 import krasa.grepconsole.action.TailFileInConsoleAction;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.tail.TailContentExecutor;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,22 +44,17 @@ public class TailRunProfileState implements RunProfileState {
 			TailRunConfigurationSettings mySettings = runConfig.mySettings;
 			List<String> paths = mySettings.getPaths();
 			for (String path : paths) {
-				open(path, allowRunningInParallel, mySettings, runConfig.getProject());
-
+				Consumer<File> fileConsumer = file -> open(file, allowRunningInParallel, mySettings, runConfig.getProject());
+				TailUtils.openAllMatching(path, runConfig.mySettings.isSelectNewestMatchingFile(), fileConsumer);
 			}
-			return null;
 		}
 		return null;
 	}
 
-	public void open(String path, boolean allowRunningInParallel, TailRunConfigurationSettings mySettings, @NotNull Project project) {
-		if (StringUtils.isBlank(path)) {
+	public void open(File file, boolean allowRunningInParallel, TailRunConfigurationSettings mySettings, @NotNull Project project) {
+		if (file == null || !file.exists() || !file.isFile()) {
 			return;
 		}
-		File file = new File(path);
-//			if (!file.exists() || !file.isFile()) {
-//				return null;
-//			}
 
 		if (!allowRunningInParallel) {
 			ToolWindow tail = ToolWindowManager.getInstance(project).getToolWindow("Tail");

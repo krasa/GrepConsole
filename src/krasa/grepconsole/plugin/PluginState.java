@@ -1,6 +1,7 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.diagnostic.Logger;
+import krasa.grepconsole.Cloner;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
@@ -99,7 +100,7 @@ public class PluginState extends DomainObject implements Cloneable {
 
 	@Override
 	public PluginState clone() {
-		return krasa.grepconsole.Cloner.deepClone(this);
+		return Cloner.deepClone(this);
 	}
 
 	public boolean isAllowRunConfigurationChanges() {
@@ -192,4 +193,5 @@ public class PluginState extends DomainObject implements Cloneable {
 			grepHistory.remove(0);
 		}
 	}
+
 }

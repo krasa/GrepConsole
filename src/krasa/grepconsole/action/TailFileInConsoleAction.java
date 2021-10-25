@@ -5,19 +5,25 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
+import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogBuilder;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.tail.MyProcessHandler;
 import krasa.grepconsole.tail.TailContentExecutor;
+import krasa.grepconsole.tail.runConfiguration.TailRunConfigurationSettings;
+import krasa.grepconsole.tail.runConfiguration.TailSettingsEditor;
+import krasa.grepconsole.tail.runConfiguration.TailUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,6 +32,7 @@ import org.mozilla.universalchardet.UniversalDetector;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * @author Vojtech Krasa
@@ -39,26 +46,56 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
 		if (project == null) return;
-		final FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(
-				FileChooserDescriptorFactory.createMultipleFilesNoJarsDescriptor(), project, null);
 
-		PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
-		String value = propertiesComponent.getValue(TAIL_FILE_IN_CONSOLE_ACTION_LAST_FILE);
-		VirtualFile lastFile = null;
-		if (value != null) {
-			lastFile = VirtualFileManager.getInstance().findFileByUrl(value);
-		}
-		final VirtualFile[] choose;
-		if (lastFile != null) {
-			choose = fileChooser.choose(project, lastFile);
+		TailSettings tailSettings = PluginState.getInstance().getTailSettings();
+		TailRunConfigurationSettings lastTail = tailSettings.getLastTail();
+		if (tailSettings.isAdvancedTailDialog()) {
+			showAdvancedDialog(project, tailSettings, lastTail);
 		} else {
-			choose = fileChooser.choose(project);
+			final FileChooserDialog fileChooser = FileChooserFactory.getInstance().createFileChooser(
+					new FileChooserDescriptor(true, true, false, false, false, true), project, null);
+
+			PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+			String value = propertiesComponent.getValue(TAIL_FILE_IN_CONSOLE_ACTION_LAST_FILE);
+			VirtualFile lastFile = null;
+			if (value != null) {
+				lastFile = VirtualFileManager.getInstance().findFileByUrl(value);
+			}
+			final VirtualFile[] choose;
+			if (lastFile != null) {
+				choose = fileChooser.choose(project, lastFile);
+			} else {
+				choose = fileChooser.choose(project);
+			}
+			for (VirtualFile virtualFile : choose) {
+				propertiesComponent.setValue(TAIL_FILE_IN_CONSOLE_ACTION_LAST_FILE, virtualFile.getUrl());
+				TailUtils.openAllMatching(virtualFile.getPath(), false, file -> openFileInConsole(project, file, resolveEncoding(file)));
+			}
 		}
-		for (VirtualFile virtualFile : choose) {
-			propertiesComponent.setValue(TAIL_FILE_IN_CONSOLE_ACTION_LAST_FILE, virtualFile.getUrl());
-			final String path1 = virtualFile.getPath();
-			final File file = new File(path1);
-			openFileInConsole(project, file, resolveEncoding(file));
+	}
+
+	protected void showAdvancedDialog(Project project, TailSettings tailSettings, TailRunConfigurationSettings lastTail) {
+		TailSettingsEditor form = new TailSettingsEditor(project);
+		form.resetEditorFrom(lastTail);
+
+		DialogBuilder builder = new DialogBuilder(project);
+		builder.setCenterPanel(form.getComponent());
+		builder.setPreferredFocusComponent(form.getPreferredFocusComponent());
+		builder.setDimensionServiceKey("TailFileInConsoleActionDialog");
+		builder.setTitle("Tail File");
+		builder.removeAllActions();
+		builder.addOkAction();
+		builder.addCancelAction();
+
+		boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+		if (isOk) {
+			form.applyEditorTo(lastTail);
+			List<String> paths = lastTail.getPaths();
+			for (String path : paths) {
+				TailUtils.openAllMatching(path, lastTail.isSelectNewestMatchingFile(), file -> openFileInConsole(project, file, lastTail.resolveEncoding(file)));
+			}
+
+			tailSettings.setLastTail(lastTail.clearPaths());
 		}
 	}
 

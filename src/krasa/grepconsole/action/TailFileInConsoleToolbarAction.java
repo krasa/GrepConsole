@@ -8,6 +8,11 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.model.TailSettings;
+import krasa.grepconsole.plugin.PluginState;
+import krasa.grepconsole.tail.runConfiguration.TailRunConfigurationSettings;
+import krasa.grepconsole.tail.runConfiguration.TailUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +31,8 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 	private static final Logger log = LoggerFactory.getLogger(TailFileInConsoleToolbarAction.class);
 
 	@Override
-	public JComponent createCustomComponent(Presentation presentation) {
+	public @NotNull
+	JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
 		final JPanel comp = new JPanel();
 		comp.setTransferHandler(new MyTransferHandler());
 		comp.add(new JLabel(getTemplatePresentation().getText()));
@@ -34,7 +40,7 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 			@Override
 			public void mousePressed(MouseEvent e) {
 				actionPerformed(AnActionEvent.createFromInputEvent(e,
-						"GrepConsole-Tail",
+						"GrepConsole-Tail-" + place,
 						presentation, DataManager.getInstance().getDataContext(e.getComponent())));
 			}
 		});
@@ -46,17 +52,42 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 		@Override
 		public boolean importData(JComponent comp, Transferable t) {
 			try {
-				if (canHandleDrop(t.getTransferDataFlavors())) {
+				DataContext context = DataManager.getInstance().getDataContext(comp);
+				final Project project = CommonDataKeys.PROJECT.getData(context);
+				if (project == null) {
+					return true;
+				}
+
+				DataFlavor[] transferFlavors = t.getTransferDataFlavors();
+				if (transferFlavors != null && FileCopyPasteUtil.isFileListFlavorAvailable(transferFlavors)) {
 					final List<File> fileList = FileCopyPasteUtil.getFileList(t);
 					if (fileList != null) {
-						DataContext context = DataManager.getInstance().getDataContext(comp);
-						final Project project = CommonDataKeys.PROJECT.getData(context);
+						int directories = 0;
 						for (File file : fileList) {
-							if (!file.isDirectory() && project != null) {
-								openFileInConsole(project, file, resolveEncoding(file));
+							if (file.exists() && file.isDirectory()) {
+								directories++;
 							}
 						}
+						if (directories == 0) {
+							for (File file : fileList) {
+								openFileInConsole(project, file, resolveEncoding(file));
+							}
+						} else {
+							TailSettings tailSettings = PluginState.getInstance().getTailSettings();
+							TailRunConfigurationSettings lastTail = tailSettings.getLastTail();
+							List<String> paths = lastTail.getPaths();
+							paths.clear();
+							for (File file : fileList) {
+								paths.add(file.getAbsolutePath());
+							}
+							showAdvancedDialog(project, tailSettings, lastTail);
+						}
 					}
+					return true;
+				} else if (canHandlePlainText(transferFlavors)) {
+					String path = (String) t.getTransferData(DataFlavor.stringFlavor);
+					path = path.trim();
+					TailUtils.openAllMatching(path, false, file -> openFileInConsole(project, file, resolveEncoding(file)));
 					return true;
 				}
 				return false;
@@ -68,11 +99,19 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 
 		@Override
 		public boolean canImport(JComponent comp, DataFlavor[] transferFlavors) {
-			return canHandleDrop(transferFlavors);
+			return transferFlavors != null && (canHandlePlainText(transferFlavors) || FileCopyPasteUtil.isFileListFlavorAvailable(transferFlavors));
 		}
 
-		public boolean canHandleDrop(DataFlavor[] transferFlavors) {
-			return transferFlavors != null && FileCopyPasteUtil.isFileListFlavorAvailable(transferFlavors);
+		public boolean canHandlePlainText(DataFlavor[] transferFlavors) {
+			if (transferFlavors != null) {
+				for (DataFlavor flavor : transferFlavors) {
+					if (flavor != null && (flavor.equals(DataFlavor.stringFlavor))) {
+						return true;
+					}
+				}
+
+			}
+			return false;
 		}
 	}
 }

@@ -27,6 +27,7 @@ public class TailIntegrationForm {
 	private JButton bindButton;
 	private JTextField defaultEncoding;
 	private JCheckBox autodetectEncoding;
+	private JCheckBox advancedTailDialog;
 
 	public TailIntegrationForm() {
 		for (JToggleButton button : Arrays.asList(listenOnPortCheckBox)) {
@@ -167,7 +168,7 @@ public class TailIntegrationForm {
 		listenOnPortCheckBox.setSelected(data.isEnabled());
 		defaultEncoding.setText(data.getDefaultEncoding());
 		autodetectEncoding.setSelected(data.isAutodetectEncoding());
-		updateComponents();
+		advancedTailDialog.setSelected(data.isAdvancedTailDialog());
 	}
 
 	public void getData(TailSettings data) {
@@ -175,6 +176,7 @@ public class TailIntegrationForm {
 		data.setEnabled(listenOnPortCheckBox.isSelected());
 		data.setDefaultEncoding(defaultEncoding.getText());
 		data.setAutodetectEncoding(autodetectEncoding.isSelected());
+		data.setAdvancedTailDialog(advancedTailDialog.isSelected());
 	}
 
 	public boolean isModified(TailSettings data) {
@@ -183,6 +185,7 @@ public class TailIntegrationForm {
 		if (defaultEncoding.getText() != null ? !defaultEncoding.getText().equals(data.getDefaultEncoding()) : data.getDefaultEncoding() != null)
 			return true;
 		if (autodetectEncoding.isSelected() != data.isAutodetectEncoding()) return true;
+		if (advancedTailDialog.isSelected() != data.isAdvancedTailDialog()) return true;
 		return false;
 	}
 }

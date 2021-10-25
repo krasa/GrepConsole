@@ -1,5 +1,7 @@
 package krasa.grepconsole.tail.runConfiguration;
 
+import java.io.File;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,6 +9,7 @@ public class TailRunConfigurationSettings {
 	private boolean autodetectEncoding = false;
 	private String encoding = "UTF-8";
 	private List<String> paths = new ArrayList<>();
+	private boolean selectNewestMatchingFile;
 
 	public boolean isAutodetectEncoding() {
 		return autodetectEncoding;
@@ -30,5 +33,22 @@ public class TailRunConfigurationSettings {
 
 	public void setPaths(List<String> paths) {
 		this.paths = paths;
+	}
+
+	public boolean isSelectNewestMatchingFile() {
+		return selectNewestMatchingFile;
+	}
+
+	public void setSelectNewestMatchingFile(final boolean selectNewestMatchingFile) {
+		this.selectNewestMatchingFile = selectNewestMatchingFile;
+	}
+
+	public Charset resolveEncoding(File file) {
+		return TailRunProfileState.resolveEncoding(file, this);
+	}
+
+	public TailRunConfigurationSettings clearPaths() {
+		paths.clear();
+		return this;
 	}
 }

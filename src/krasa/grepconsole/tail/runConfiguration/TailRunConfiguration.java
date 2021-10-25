@@ -13,8 +13,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-
 public class TailRunConfiguration extends RunConfigurationBase<TailRunConfigurationSettings> {
 	public TailRunConfigurationSettings mySettings = new TailRunConfigurationSettings();
 
@@ -42,14 +40,6 @@ public class TailRunConfiguration extends RunConfigurationBase<TailRunConfigurat
 
 	@Override
 	public void checkConfiguration() throws RuntimeConfigurationException {
-		for (String path : mySettings.getPaths()) {
-			if (!new File(path).exists()) {
-				throw new RuntimeConfigurationException("File does not exist: " + path);
-			}
-			if (new File(path).isDirectory()) {
-				throw new RuntimeConfigurationException("Directories not supported: " + path);
-			}
-		}
 	}
 
 	@Nullable
