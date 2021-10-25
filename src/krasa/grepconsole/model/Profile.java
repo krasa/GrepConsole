@@ -1,6 +1,7 @@
 package krasa.grepconsole.model;
 
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.Cloner;
@@ -16,6 +17,8 @@ public class Profile extends DomainObject implements Cloneable {
 	public static final String DEFAULT = "200";
 	public static final String DEFAULT_GREP = "1000";
 	private static final String MAX_PROCESSING_TIME_DEFAULT = "1000";
+	public static final String DARK = "@Dark Theme@";
+	public static final String LIGHT = "@Light Theme@";
 
 	private String maxLengthToMatch = DEFAULT;
 	private long id;
@@ -108,7 +111,18 @@ public class Profile extends DomainObject implements Cloneable {
 	public List<GrepExpressionItem> getAllGrepExpressionItems() {
 		List<GrepExpressionItem> items = new ArrayList<>();
 		for (GrepExpressionGroup group : grepExpressionGroups) {
-			items.addAll(group.getGrepExpressionItems());
+			if (DARK.equals(group.getName())) {
+				if (UIUtil.isUnderDarcula()) {
+					items.addAll(group.getGrepExpressionItems());
+				}
+			} else if (LIGHT.equals(group.getName())) {
+				if (!UIUtil.isUnderDarcula()) {
+					items.addAll(group.getGrepExpressionItems());
+				}
+			} else {
+				items.addAll(group.getGrepExpressionItems());
+			}
+
 		}
 		return items;
 	}

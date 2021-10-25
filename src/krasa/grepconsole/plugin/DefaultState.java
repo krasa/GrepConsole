@@ -22,9 +22,7 @@ public class DefaultState {
 		Profile profile = new Profile();
 		profile.setDefaultProfile(true);
 		profile.setName("default");
-		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
-		grepExpressionGroups.clear();
-		grepExpressionGroups.add(new GrepExpressionGroup("default", createDefaultItems()));
+		resetToDefault(profile);
 
 		List<GrepExpressionGroup> inputFilters = profile.getInputFilterGroups();
 		inputFilters.clear();
@@ -39,11 +37,24 @@ public class DefaultState {
 		return grepExpressionItems;
 	}
 
-	public static List<GrepExpressionItem> createDefaultItems() {
+	public static void resetToDefault(Profile profile) {
+		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
+		grepExpressionGroups.clear();
+		grepExpressionGroups.add(new GrepExpressionGroup("default"));
+		boolean underDarcula = UIUtil.isUnderDarcula();
+		if (underDarcula) {
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true)));
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false)));
+		} else {
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false)));
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true)));
+		}
+
+	}
+
+	private static List<GrepExpressionItem> createDefaultItems(boolean dark) {
 		List<GrepExpressionItem> items = new ArrayList<>();
-
-
-		if (UIUtil.isUnderDarcula()) {
+		if (dark) {
 			items.add(newItem().style(
 					getGrepStyle(new Color(0, 0, 0, 255), null).bold(true)).grepExpression(
 					".*FATAL.*"));
@@ -54,9 +65,14 @@ public class DefaultState {
 //			warnColor = new Color(0, 55, 0, 200);
 //			warnColor = new Color(22, 22, 0, 230);
 			warnColor = new Color(26, 0, 55, 200);
-
 			items.add(newItem().style(getGrepStyle(warnColor, null)).grepExpression(
 					".*WARN.*"));
+			items.add(newItem().enabled(false).style(getGrepStyle(null, null)).grepExpression(
+					".*INFO.*"));
+			items.add(newItem().style(getGrepStyle(null, dark ? Color.GRAY : Color.GRAY)).grepExpression(
+					".*DEBUG.*"));
+			items.add(newItem().style(getGrepStyle(null, dark ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(
+					".*TRACE.*"));
 		} else {
 			items.add(newItem().style(
 					getGrepStyle(JBColor.RED, null).bold(true)).grepExpression(
@@ -65,16 +81,13 @@ public class DefaultState {
 					".*ERROR.*"));
 			items.add(newItem().style(getGrepStyle(JBColor.YELLOW, null)).grepExpression(
 					".*WARN.*"));
+			items.add(newItem().enabled(false).style(getGrepStyle(null, null)).grepExpression(
+					".*INFO.*"));
+			items.add(newItem().style(getGrepStyle(null, dark ? Color.GRAY : Color.GRAY)).grepExpression(
+					".*DEBUG.*"));
+			items.add(newItem().style(getGrepStyle(null, dark ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(
+					".*TRACE.*"));
 		}
-
-
-		items.add(newItem().enabled(false).style(getGrepStyle(null, null)).grepExpression(
-				".*INFO.*"));
-
-		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.GRAY : Color.GRAY)).grepExpression(
-				".*DEBUG.*"));
-		items.add(newItem().style(getGrepStyle(null, UIUtil.isUnderDarcula() ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(
-				".*TRACE.*"));
 		return items;
 	}
 
@@ -89,4 +102,5 @@ public class DefaultState {
 		}
 		return grepStyle;
 	}
+
 }

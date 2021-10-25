@@ -704,11 +704,7 @@ public class MainSettingsForm {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Profile profile = MainSettingsForm.this.currentProfile;
-
-			List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
-			grepExpressionGroups.clear();
-			grepExpressionGroups.add(new GrepExpressionGroup("default", DefaultState.createDefaultItems()));
-
+			DefaultState.resetToDefault(profile);
 			importFrom(profile);
 		}
 	}
