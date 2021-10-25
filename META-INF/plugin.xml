@@ -303,7 +303,7 @@
             <action id="GrepConsole.ApplyAction"
                     class="krasa.grepconsole.grep.actions.ApplyAction"
                     text="Apply"
-                    icon="com.intellij.icons.AllIcons.Actions.Commit"
+                    icon="/krasa/grepconsole/icons/commit.svg"
             />
             <action id="GrepConsole.ReloadAction"
                     class="krasa.grepconsole.grep.actions.ReloadAction"
@@ -318,7 +318,7 @@
             <action id="GrepConsole.SetTitleAction"
                     class="krasa.grepconsole.grep.actions.SetTitleAction"
                     text="Set Title"
-                    icon="com.intellij.icons.AllIcons.General.Settings"
+                    icon="/krasa/grepconsole/icons/settings.svg"
                     popup="true"
             />
         </group>

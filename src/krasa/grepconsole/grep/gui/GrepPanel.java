@@ -14,6 +14,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBEmptyBorder;
+import com.intellij.util.ui.WrapLayout;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepCompositeModel;
@@ -61,7 +62,9 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	}
 
 	private void createUIComponents() {
-//		comp.getTextArea().addListener(new ItemChangeListener());
+		WrapLayout layout = new WrapLayout(FlowLayout.LEFT, 3, 3);
+		layout.setFillWidth(true);
+		expressions = new JPanel(layout);
 	}
 
 	public GrepPanel(final ConsoleView originalConsole, final MyConsoleViewImpl newConsole,
@@ -72,7 +75,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		this.grepListener = grepListener;
 		initModel(pattern, grepModel);
 		this.selectSourceActionListener = selectSourceActionListener;
-		buttons.add(createToolbarFromGroupId().getComponent(), BorderLayout.CENTER);
+		buttons.add(createToolbar().getComponent(), BorderLayout.CENTER);
 		addKeyListener(new KeyAdapter() {
 
 			@Override
@@ -87,10 +90,12 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 				}
 			}
 		});
+		;
 	}
 
+
 	@NotNull
-	private ActionToolbar createToolbarFromGroupId() {
+	private ActionToolbar createToolbar() {
 		final ActionManager actionManager = ActionManager.getInstance();
 
 		DefaultActionGroup newGroup = new DefaultActionGroup();
