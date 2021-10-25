@@ -100,6 +100,10 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 	}
 
 	public void openFileInConsole(@NotNull final Project project, final File file, final Charset charset) {
+		if (file == null || !file.exists() || !file.isFile()) {
+			return;
+		}
+
 		final Process process = new MyProcess(file);
 
 		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), charset) {

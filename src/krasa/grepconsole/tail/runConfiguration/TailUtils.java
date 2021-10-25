@@ -98,9 +98,9 @@ public class TailUtils {
 	}
 
 	private static File getLatestFile(File[] files) {
-		File lastModifiedFile = files[0];
+		File lastModifiedFile = null;
 		for (int i = 1; i < files.length; i++) {
-			if (lastModifiedFile.lastModified() < files[i].lastModified()) {
+			if (files[i].isFile() && (lastModifiedFile == null || lastModifiedFile.lastModified() < files[i].lastModified())) {
 				lastModifiedFile = files[i];
 			}
 		}

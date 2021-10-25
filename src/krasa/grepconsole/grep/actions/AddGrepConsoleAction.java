@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.awt.event.InputEvent;
 import java.util.List;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
@@ -58,12 +57,12 @@ public class AddGrepConsoleAction extends DumbAwareAction {
 
 
 		ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup("Select Console", actionGroup, e.getDataContext(), JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING, true, (Runnable) null, -1);
-		InputEvent inputEvent = e.getInputEvent();
-		if (inputEvent != null) {
-			popup.showInCenterOf(inputEvent.getComponent());
-		} else {
-			popup.showInBestPositionFor(e.getDataContext());
-		}
+//		InputEvent inputEvent = e.getInputEvent();
+//		if (inputEvent != null) {
+//			popup.showInCenterOf(inputEvent.getComponent());
+//		} else {
+		popup.showInBestPositionFor(e.getDataContext());
+//		}
 	}
 
 	@Override

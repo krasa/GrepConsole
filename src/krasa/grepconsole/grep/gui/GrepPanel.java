@@ -63,7 +63,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	private void createUIComponents() {
 		WrapLayout layout = new WrapLayout(FlowLayout.LEFT, 3, 3);
-		layout.setFillWidth(true);
+		layout.setFillWidth(false);
 		expressions = new JPanel(layout);
 	}
 
