@@ -218,9 +218,7 @@ public class PinnedGrepConsolesState {
 
 		@Deprecated
 		public void setGrepModel(GrepModel grepModel) {
-			GrepCompositeModel grepCompositeModel = new GrepCompositeModel();
-			grepCompositeModel.add(grepModel);
-			this.grepCompositeModel = grepCompositeModel;
+			this.grepCompositeModel = new GrepCompositeModel(grepModel);
 		}
 
 		public void setParentConsoleUUID(@Nullable String parentConsoleUUID) {

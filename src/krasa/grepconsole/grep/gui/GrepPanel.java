@@ -119,13 +119,13 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		return newConsole;
 	}
 
-	public void initModel(String pattern, GrepCompositeModel grepModel) {
+	public void initModel(String pattern, GrepCompositeModel compositeModel) {
 		PluginState state = PluginState.getInstance();
 		List grepHistory = state.getGrepHistory();
 		expressions.removeAll();
 
-		if (grepModel != null) {
-			customTitle = grepModel.getCustomTitle();
+		if (compositeModel != null) {
+			customTitle = compositeModel.getCustomTitle();
 		} else {
 			if (!StringUtils.isEmpty(pattern)) {
 				GrepModel selectedItem = null;
@@ -139,23 +139,21 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 					}
 				}
 				if (selectedItem == null) {
-					selectedItem = new GrepModel();
-					selectedItem.setExpression(pattern);
+					selectedItem = new GrepModel(pattern);
 				}
-				grepModel = new GrepCompositeModel(selectedItem);
+				compositeModel = new GrepCompositeModel(selectedItem);
 			}
 		}
-		if (grepModel != null) {
-			state.addToHistory(grepModel);
+		if (compositeModel != null) {
+			state.addToHistory(compositeModel);
 		} else {
-			grepModel = new GrepCompositeModel();
-			grepModel.add(new GrepModel(""));
+			compositeModel = new GrepCompositeModel(new GrepModel(""));
 		}
-		if (grepModel.getModels().isEmpty()) {
-			LOG.error("grepModel.getModels() is empty");
+		if (compositeModel.getModels().isEmpty()) {
+			LOG.error("grepModel.getModels() is empty: " + compositeModel);
 			return;
 		}
-		for (GrepModel model : grepModel.getModels()) {
+		for (GrepModel model : compositeModel.getModels()) {
 			expressions.add(new MyGrepSearchTextArea(this, model));
 		}
 	}
