@@ -43,6 +43,14 @@ public class GrepCompositeModel {
 		if (customTitle != null) {
 			return customTitle;
 		}
+		return OpenGrepConsoleAction.title(getFullTitle());
+	}
+
+	@Transient
+	public String getFullTitle() {
+		if (customTitle != null) {
+			return customTitle;
+		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < models.size(); i++) {
 			GrepModel grepModel = models.get(i);
@@ -59,7 +67,7 @@ public class GrepCompositeModel {
 		if (expression.equals("")) {
 			expression = "---";
 		}
-		return OpenGrepConsoleAction.title(expression);
+		return expression;
 	}
 
 

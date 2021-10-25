@@ -54,8 +54,8 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	private JPanel expressions;
 	private JPanel buttons;
 	private OpenGrepConsoleAction.Callback applyCallback;
-	private boolean initialized;
 	private String customTitle;
+	private String cachedFullTitle;
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -183,6 +183,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 			}
 		}
 		grepCompositeModel.setCustomTitle(customTitle);
+		cachedFullTitle = grepCompositeModel.getFullTitle();
 		return grepCompositeModel;
 	}
 
@@ -190,7 +191,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		if (applyCallback != null) {
 			try {
 				GrepCompositeModel model = getModel();
-				applyCallback.apply(model);
+				applyCallback.apply(newConsole, model);
 				PluginState.getInstance().addToHistory(model);
 			} catch (PatternSyntaxException e) {
 				Notification notification = NotificationGroupManager.getInstance().getNotificationGroup("Grep Console error")
@@ -240,6 +241,14 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	public String getCustomTitle() {
 		return customTitle;
+	}
+
+	public ConsoleView getSourceConsole() {
+		return originalConsole;
+	}
+
+	public String getCachedFullTitle() {
+		return cachedFullTitle;
 	}
 
 	public static class SelectSourceActionListener implements ActionListener {

@@ -190,12 +190,23 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		PinnedGrepConsolesState.RunConfigurationRef finalRunConfigurationRef = runConfigurationRef;
 		quickFilterPanel.setApplyCallback(new Callback() {
 			@Override
-			public void apply(GrepCompositeModel grepModel) {
+			public void apply(MyConsoleViewImpl current, GrepCompositeModel grepModel) {
 				if (LOG.isDebugEnabled()) {
 					LOG.debug("apply callback");
 				}
 				grepListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getTitle()));
+
+				String description;
+				if (parentConsoleView instanceof MyConsoleViewImpl) {
+					GrepPanel panel = ((MyConsoleViewImpl) parentConsoleView).getGrepPanel();
+					description = "Source: '" + panel.getCachedFullTitle() + "'";
+				} else {
+					description = "Source: Main Console";
+				}
+				tab.setDescription(description);
+				updateChildTabDescription(current);
+
 				if (finalRunConfigurationRef != null) {
 					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
 							false);
@@ -264,6 +275,13 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return newConsole;
 	}
 
+	private void updateChildTabDescription(MyConsoleViewImpl current) {
+		List<MyConsoleViewImpl> childGreps = ServiceManager.getInstance().findChildGreps(current);
+		for (MyConsoleViewImpl childGrep : childGreps) {
+			childGrep.getGrepPanel().apply();
+		}
+	}
+
 	@Nullable
 	public String getConsoleUUID(JComponent parentConsoleView) {
 		String parentConsoleUUID = null;
@@ -304,7 +322,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 	public interface Callback {
 
-		void apply(GrepCompositeModel grepModel);
+		void apply(MyConsoleViewImpl current, GrepCompositeModel grepModel);
 	}
 
 	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, @Nullable RunContentDescriptor runContentDescriptor, ConsoleView parentConsoleView) {
