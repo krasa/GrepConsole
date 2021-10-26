@@ -10,7 +10,7 @@ image::https://img.shields.io/badge/donate-paypal-black.svg[link="https://www.pa
 - fold output
 - clear console
 - play sounds
-- tail files
+- tail files - by folder/wildcard/newest - using a Run Configuration or manually
 - toggle highlight of all occurrences of the selected text in the editor
 - highlight editor according to console settings
 
