@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.0.211.6086.1</version>
+    <version>12.0.211.6086.2</version>
     <idea-version since-build="211.6086"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech

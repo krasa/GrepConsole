@@ -174,20 +174,12 @@ public class PluginState extends DomainObject implements Cloneable {
 		return grepHistory;
 	}
 
-	public List<String> getGrepHistoryAsStrings() {
-		ArrayList<String> strings = new ArrayList<>();
-		for (String string : strings) {
-
-		}
-		return strings;
-	}
-
 	public void setGrepHistory(List<GrepCompositeModel> grepHistory) {
 		this.grepHistory = grepHistory;
 	}
 
 	public void addToHistory(GrepCompositeModel grepModel) {
-		grepHistory.remove(grepModel);
+		grepHistory.removeIf(m -> m.equals(grepModel));
 		grepHistory.add(grepModel);
 		while (grepHistory.size() > MAX_RECENT_SIZE) {
 			grepHistory.remove(0);

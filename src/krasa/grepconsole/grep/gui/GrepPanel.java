@@ -187,6 +187,12 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		return grepCompositeModel;
 	}
 
+	public void updateTabDescription() {
+		if (applyCallback != null) {
+			applyCallback.updateTabDescription(newConsole, getModel());
+		}
+	}
+
 	public void apply() {
 		if (applyCallback != null) {
 			try {
@@ -250,6 +256,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	public String getCachedFullTitle() {
 		return cachedFullTitle;
 	}
+
 
 	public static class SelectSourceActionListener implements ActionListener {
 		private RunnerLayoutUi runnerLayoutUi;

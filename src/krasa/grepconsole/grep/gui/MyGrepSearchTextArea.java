@@ -98,6 +98,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		caseSensitive.set(grepModel.isCaseSensitive());
 		regex.set(grepModel.isRegex());
 		wholeWords.set(grepModel.isCaseSensitive());
+		exclude.set(grepModel.isExclude());
 		getTextArea().setText(grepModel.getExpression());
 	}
 

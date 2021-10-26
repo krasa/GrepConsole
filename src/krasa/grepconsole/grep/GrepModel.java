@@ -5,6 +5,9 @@ import org.apache.commons.lang.StringUtils;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * equals only by expression
+ */
 public class GrepModel {
 	private boolean caseSensitive;
 	private boolean wholeLine;
@@ -150,12 +153,12 @@ public class GrepModel {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		GrepModel grepModel = (GrepModel) o;
-		return caseSensitive == grepModel.caseSensitive && wholeLine == grepModel.wholeLine && wholeWords == grepModel.wholeWords && regex == grepModel.regex && exclude == grepModel.exclude && Objects.equals(expression, grepModel.expression);
+		return Objects.equals(expression, grepModel.expression);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(caseSensitive, wholeLine, wholeWords, expression, regex, exclude);
+		return Objects.hash(expression);
 	}
 
 	@Override

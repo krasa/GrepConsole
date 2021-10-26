@@ -197,6 +197,16 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				grepListener.modelUpdated(grepModel);
 				tab.setDisplayName(title(grepModel.getTitle()));
 
+				updateTabDescription(current, grepModel);
+
+				if (finalRunConfigurationRef != null) {
+					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
+							false);
+				}
+			}
+
+			@Override
+			public void updateTabDescription(MyConsoleViewImpl current, GrepCompositeModel model) {
 				String description;
 				if (parentConsoleView instanceof MyConsoleViewImpl) {
 					GrepPanel panel = ((MyConsoleViewImpl) parentConsoleView).getGrepPanel();
@@ -205,13 +215,17 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 					description = "Source: Main Console";
 				}
 				tab.setDescription(description);
-				updateChildTabDescription(current);
 
-				if (finalRunConfigurationRef != null) {
-					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
-							false);
+				updateChildTabDescription(current);
+			}
+
+			private void updateChildTabDescription(MyConsoleViewImpl current) {
+				List<MyConsoleViewImpl> childGreps = ServiceManager.getInstance().findChildGreps(current);
+				for (MyConsoleViewImpl childGrep : childGreps) {
+					childGrep.getGrepPanel().updateTabDescription();
 				}
 			}
+
 		});
 
 		GrepUtils.grepThroughExistingText(parentConsoleView, grepFilter, grepListener);
@@ -275,12 +289,6 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		return newConsole;
 	}
 
-	private void updateChildTabDescription(MyConsoleViewImpl current) {
-		List<MyConsoleViewImpl> childGreps = ServiceManager.getInstance().findChildGreps(current);
-		for (MyConsoleViewImpl childGrep : childGreps) {
-			childGrep.getGrepPanel().apply();
-		}
-	}
 
 	@Nullable
 	public String getConsoleUUID(JComponent parentConsoleView) {
@@ -323,6 +331,8 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	public interface Callback {
 
 		void apply(MyConsoleViewImpl current, GrepCompositeModel grepModel);
+
+		void updateTabDescription(MyConsoleViewImpl current, GrepCompositeModel model);
 	}
 
 	public static RunnerLayoutUi getRunnerLayoutUi(Project eventProject, @Nullable RunContentDescriptor runContentDescriptor, ConsoleView parentConsoleView) {
