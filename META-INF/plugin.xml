@@ -54,9 +54,9 @@
 
     <change-notes><![CDATA[
         <br>12.0
-		<br>- Tail by wildcard and last modified
-		<br>- Grep by multiple expressions
-		<br>- Grep source console tooltips
+		<br>- Tail - better GUI, by folder, wildcard and last modified
+		<br>- Grep - better GUI, multiple expressions
+		<br>- Grep - source console tooltips
         <br>11.12
 		<br>- gui cleanup
         <br>11.11
