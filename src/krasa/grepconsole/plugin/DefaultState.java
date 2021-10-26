@@ -32,8 +32,8 @@ public class DefaultState {
 
 	private static List<GrepExpressionItem> createDefaultInputFilter() {
 		ArrayList<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
-		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE));
-		grepExpressionItems.add(newItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED));
+		grepExpressionItems.add(newItem(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE));
+		grepExpressionItems.add(newItem(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED));
 		return grepExpressionItems;
 	}
 
@@ -43,56 +43,58 @@ public class DefaultState {
 		grepExpressionGroups.add(new GrepExpressionGroup("default"));
 		boolean underDarcula = UIUtil.isUnderDarcula();
 		if (underDarcula) {
-			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true)));
-			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false)));
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true, true)));
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false, true)));
 		} else {
-			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false)));
-			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true)));
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false, true)));
+			grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true, true)));
 		}
 
 	}
 
-	private static List<GrepExpressionItem> createDefaultItems(boolean dark) {
+	public static List<GrepExpressionItem> createDefaultItems(boolean dark, boolean enabled) {
 		List<GrepExpressionItem> items = new ArrayList<>();
 		if (dark) {
-			items.add(newItem().style(
+			items.add(newItem(enabled).style(
 					getGrepStyle(new Color(0, 0, 0, 255), null).bold(true)).grepExpression(
 					".*FATAL.*"));
-			items.add(newItem().style(getGrepStyle(new Color(55, 0, 0, 200), null)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(new Color(55, 0, 0, 200), null)).grepExpression(
 					".*ERROR.*"));
 			Color warnColor;
 //			warnColor = new Color(0, 55, 55, 200);
 //			warnColor = new Color(0, 55, 0, 200);
 //			warnColor = new Color(22, 22, 0, 230);
 			warnColor = new Color(26, 0, 55, 200);
-			items.add(newItem().style(getGrepStyle(warnColor, null)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(warnColor, null)).grepExpression(
 					".*WARN.*"));
-			items.add(newItem().enabled(false).style(getGrepStyle(null, null)).grepExpression(
+			items.add(newItem(enabled).enabled(false).style(getGrepStyle(null, null)).grepExpression(
 					".*INFO.*"));
-			items.add(newItem().style(getGrepStyle(null, dark ? Color.GRAY : Color.GRAY)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(null, dark ? Color.GRAY : Color.GRAY)).grepExpression(
 					".*DEBUG.*"));
-			items.add(newItem().style(getGrepStyle(null, dark ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(null, dark ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(
 					".*TRACE.*"));
 		} else {
-			items.add(newItem().style(
+			items.add(newItem(enabled).style(
 					getGrepStyle(JBColor.RED, null).bold(true)).grepExpression(
 					".*FATAL.*"));
-			items.add(newItem().style(getGrepStyle(JBColor.ORANGE, null)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(JBColor.ORANGE, null)).grepExpression(
 					".*ERROR.*"));
-			items.add(newItem().style(getGrepStyle(JBColor.YELLOW, null)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(JBColor.YELLOW, null)).grepExpression(
 					".*WARN.*"));
-			items.add(newItem().enabled(false).style(getGrepStyle(null, null)).grepExpression(
+			items.add(newItem(enabled).enabled(false).style(getGrepStyle(null, null)).grepExpression(
 					".*INFO.*"));
-			items.add(newItem().style(getGrepStyle(null, dark ? Color.GRAY : Color.GRAY)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(null, dark ? Color.GRAY : Color.GRAY)).grepExpression(
 					".*DEBUG.*"));
-			items.add(newItem().style(getGrepStyle(null, dark ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(
+			items.add(newItem(enabled).style(getGrepStyle(null, dark ? Color.BLACK : Color.LIGHT_GRAY)).grepExpression(
 					".*TRACE.*"));
 		}
 		return items;
 	}
 
-	public static GrepExpressionItem newItem() {
-		return new GrepExpressionItem();
+	public static GrepExpressionItem newItem(boolean enabled) {
+		GrepExpressionItem grepExpressionItem = new GrepExpressionItem();
+		grepExpressionItem.setEnabled(enabled);
+		return grepExpressionItem;
 	}
 
 	public static GrepStyle getGrepStyle(Color color, Color foreground) {

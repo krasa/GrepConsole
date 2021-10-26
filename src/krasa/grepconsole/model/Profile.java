@@ -5,13 +5,15 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.Cloner;
-import krasa.grepconsole.plugin.DefaultState;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static krasa.grepconsole.plugin.DefaultState.createDefaultItems;
+import static krasa.grepconsole.plugin.DefaultState.getDefaultProfile;
 
 public class Profile extends DomainObject implements Cloneable {
 	public static final String DEFAULT = "200";
@@ -141,7 +143,40 @@ public class Profile extends DomainObject implements Cloneable {
 			GrepExpressionGroup expressionGroup = new GrepExpressionGroup("default");
 			grepExpressionGroups.add(expressionGroup);
 		}
+		addMissingThemeGroups();
 		return grepExpressionGroups;
+	}
+
+	private void addMissingThemeGroups() {
+		boolean containsLight = false;
+		boolean containsDark = false;
+		for (GrepExpressionGroup grepExpressionGroup : grepExpressionGroups) {
+			String name = grepExpressionGroup.getName();
+			if (LIGHT.equals(name)) {
+				containsLight = true;
+			} else if (DARK.equals(name)) {
+				containsDark = true;
+			}
+		}
+
+		if (!containsLight || !containsDark) {
+			if (UIUtil.isUnderDarcula()) {
+				if (!containsDark) {
+					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true, false)));
+				}
+				if (!containsLight) {
+					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false, false)));
+				}
+			} else {
+				if (!containsLight) {
+					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false, false)));
+
+				}
+				if (!containsDark) {
+					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true, false)));
+				}
+			}
+		}
 	}
 
 
@@ -355,7 +390,7 @@ public class Profile extends DomainObject implements Cloneable {
 		long id = this.id;
 		boolean defaultProfile = this.defaultProfile;
 
-		XmlSerializerUtil.copyBean(DefaultState.getDefaultProfile(), this);
+		XmlSerializerUtil.copyBean(getDefaultProfile(), this);
 
 		this.setName(name);
 		this.setId(id);
