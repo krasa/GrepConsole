@@ -256,6 +256,10 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		return cachedFullTitle;
 	}
 
+	public void tabSelected() {
+		//layout fix
+		expressions.revalidate();
+	}
 
 	public static class SelectSourceActionListener implements ActionListener {
 		private RunnerLayoutUi runnerLayoutUi;

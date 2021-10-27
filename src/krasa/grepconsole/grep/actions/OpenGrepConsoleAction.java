@@ -23,9 +23,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
-import com.intellij.ui.content.Content;
-import com.intellij.ui.content.ContentFactory;
-import com.intellij.ui.content.ContentManager;
+import com.intellij.ui.content.*;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.SmartList;
 import com.intellij.xdebugger.XDebugSession;
@@ -166,6 +164,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		if (runnerLayoutUi != null) {
 			tab = runnerLayoutUi.createContent(contentType, consolePanel, title, AllIcons.General.Filter, consolePanel);
 			runnerLayoutUi.addContent(tab);
+			runnerLayoutUi.addListener(new MyContentManagerListener(tab, quickFilterPanel), tab);
 			try {
 				if (focusTab) {
 					runnerLayoutUi.selectAndFocus(tab, true, true);
@@ -179,6 +178,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title);
 			tab.setDisposer(contentDescriptor);
 			ContentManager contentManager = toolWindow.getContentManager();
+			MyContentManagerListener contentManagerListener = new MyContentManagerListener(tab, quickFilterPanel);
+			contentManager.addContentManagerListener(contentManagerListener);
+			Disposer.register(tab, () -> contentManager.removeContentManagerListener(contentManagerListener));
 			contentManager.addContent(tab);
 			if (focusTab) {
 				contentManager.setSelectedContent(tab);
@@ -728,4 +730,20 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 	}
 
+	private static class MyContentManagerListener implements ContentManagerListener {
+		private final Content tab;
+		private final GrepPanel quickFilterPanel;
+
+		public MyContentManagerListener(Content tab, GrepPanel quickFilterPanel) {
+			this.tab = tab;
+			this.quickFilterPanel = quickFilterPanel;
+		}
+
+		@Override
+		public void selectionChanged(@NotNull ContentManagerEvent event) {
+			if (event.getContent() == tab && event.getOperation() == ContentManagerEvent.ContentOperation.add) {
+				quickFilterPanel.tabSelected();
+			}
+		}
+	}
 }
