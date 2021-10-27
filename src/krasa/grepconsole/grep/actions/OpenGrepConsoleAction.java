@@ -122,11 +122,16 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			throw new IllegalStateException("runnerLayoutUi, toolWindow == null");
 		}
 
+
 		if (contentType == null && runnerLayoutUi != null) {
 			contentType = getContentType(topParentConsoleView, runnerLayoutUi.getContents());
 		}
+		/** TODO a little different than java.lang.Runnable#getContentType*/
 		if (contentType == null && runnerLayoutUi != null) {
 			contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
+		}
+		if (contentType == null) {
+			contentType = toolWindow.getId();
 		}
 
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
@@ -178,6 +183,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title);
 			tab.setDisposer(contentDescriptor);
 			ContentManager contentManager = toolWindow.getContentManager();
+			Content selectedContent = contentManager.getSelectedContent();
+			if (selectedContent != null && StringUtils.isBlank(selectedContent.getDisplayName())) {
+				selectedContent.setDisplayName("Main");
+			}
 			MyContentManagerListener contentManagerListener = new MyContentManagerListener(tab, quickFilterPanel);
 			contentManager.addContentManagerListener(contentManagerListener);
 			Disposer.register(tab, () -> contentManager.removeContentManagerListener(contentManagerListener));
@@ -303,6 +312,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	public static String title(String expression) {
+		if (StringUtils.isEmpty(expression)) {
+			expression = "---";
+		}
 		if (expression.length() > MAX_TITLE_LENGTH + 10) {
 			return StringUtils.substring(expression, 0, MAX_TITLE_LENGTH) + "...";
 		}

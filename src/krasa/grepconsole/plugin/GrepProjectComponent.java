@@ -33,6 +33,7 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	private GrepProjectState grepProjectState = new GrepProjectState();
 	private List<WeakReference<TailContentExecutor.PinAction>> tailPinActions = new ArrayList<>();
 	private List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
+	@Deprecated //probably worthless now, with  krasa.grepconsole.grep.PinnedGrepsReopener.ignore
 	public volatile boolean pinReopenerEnabled = true;  //#149 , might have to be false
 
 	public static GrepProjectComponent getInstance(Project project) {
