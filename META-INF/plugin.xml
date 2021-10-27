@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.0.211.6086.2</version>
+    <version>12.0.211.6086.3</version>
     <idea-version since-build="211.6086"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -282,13 +282,13 @@
                     class="krasa.grepconsole.grep.actions.OpenGrepConsoleAction"
                     text="Grep"
                     description="Open a new filter/grep console"
-                    icon="com.intellij.icons.AllIcons.General.Filter"
+                    icon="/krasa/grepconsole/icons/filter.svg"
             />
             <action id="GrepConsole.AddGrepConsoleAction"
                     class="krasa.grepconsole.grep.actions.AddGrepConsoleAction"
                     text="Add Grep"
                     description="As OR regex to an existing grep console"
-                    icon="com.intellij.icons.AllIcons.General.Filter"
+                    icon="/krasa/grepconsole/icons/filter.svg"
             />
             <separator/>
             <action id="GrepConsole.AddHighlightAction"
@@ -302,7 +302,7 @@
             <action id="GrepConsole.AddExpressionAction"
                     class="krasa.grepconsole.grep.actions.AddExpressionAction"
                     text="Add Expression"
-                    icon="com.intellij.icons.AllIcons.General.Add"
+                    icon="/krasa/grepconsole/icons/add.svg"
             />
             <action id="GrepConsole.ApplyAction"
                     class="krasa.grepconsole.grep.actions.ApplyAction"
@@ -312,12 +312,12 @@
             <action id="GrepConsole.ReloadAction"
                     class="krasa.grepconsole.grep.actions.ReloadAction"
                     text="Reload"
-                    icon="com.intellij.icons.AllIcons.Actions.BuildLoadChanges"
+                    icon="/krasa/grepconsole/icons/buildLoadChanges.svg"
             />
             <action id="GrepConsole.SourceAction"
                     class="krasa.grepconsole.grep.actions.SourceAction"
                     text="Source"
-                    icon="com.intellij.icons.AllIcons.General.Locate"
+                    icon="/krasa/grepconsole/icons/locate.svg"
             />
             <action id="GrepConsole.SetTitleAction"
                     class="krasa.grepconsole.grep.actions.SetTitleAction"
