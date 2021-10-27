@@ -38,10 +38,11 @@
 		  </ul>
 		   <br>
 	 		*File Tailing: <br>
+	 		- Run Configuration<br>
 	 		- Main menu | Tools | Open File in Console<br>
 	 		- Main Menu | Help | Tail (IntelliJ) Log in Console<br>
-	 		- Project View ToolWindow | right click context menu | Tail<br>
-	 		- Drag&Drop "Tail File" panel in main toolbar<br>
+	 		- Project View | right click context menu | Tail<br>
+	 		- Drag&Drop "Tail File" panel in the main toolbar<br>
 	 		- http and Windows context menu integration<br>
 	 		- Encoding auto-detection<br>
 	 		<br>
