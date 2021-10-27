@@ -120,11 +120,16 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			throw new IllegalStateException("runnerLayoutUi, toolWindow == null");
 		}
 
+
 		if (contentType == null && runnerLayoutUi != null) {
 			contentType = getContentType(topParentConsoleView, runnerLayoutUi.getContents());
 		}
+		/** TODO a little different than java.lang.Runnable#getContentType*/
 		if (contentType == null && runnerLayoutUi != null) {
 			contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
+		}
+		if (contentType == null) {
+			contentType = toolWindow.getId();
 		}
 
 		LightProcessHandler myProcessHandler = new LightProcessHandler();
@@ -136,9 +141,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		final GrepFilterListener grepListener = new GrepFilterSyncListener(myProcessHandler, project, profile);
 
 		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi,
-			toolWindow);
+				toolWindow);
 		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression,
-			selectSourceActionListener);
+				selectSourceActionListener);
 
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
@@ -173,6 +178,10 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title(expression));
 			tab.setDisposer(contentDescriptor);
 			ContentManager contentManager = toolWindow.getContentManager();
+			Content selectedContent = contentManager.getSelectedContent();
+			if (selectedContent != null && StringUtils.isBlank(selectedContent.getDisplayName())) {
+				selectedContent.setDisplayName("Main");
+			}
 			contentManager.addContent(tab);
 			if (focusTab) {
 				contentManager.setSelectedContent(tab);
@@ -192,7 +201,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 				tab.setDisplayName(title(grepModel.getExpression()));
 				if (finalRunConfigurationRef != null) {
 					PinnedGrepConsolesState.getInstance(project).update(finalRunConfigurationRef, parentConsoleUUID, consoleUUID, grepModel, finalContentType,
-						false);
+							false);
 				}
 			}
 		});
@@ -269,6 +278,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 	}
 
 	protected String title(String expression) {
+		if (StringUtils.isEmpty(expression)) {
+			expression = "---";
+		}
 		return StringUtils.substring(expression, 0, 20);
 	}
 
@@ -660,7 +672,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		@Override
 		public String toString() {
 			return "PinAction{" + "pinned=" + pinned + ", parentConsoleUUID='" + parentConsoleUUID + '\'' + ", consoleUUID='" + consoleUUID + '\''
-				+ ", runConfigurationRef=" + runConfigurationRef + '}';
+					+ ", runConfigurationRef=" + runConfigurationRef + '}';
 		}
 	}
 

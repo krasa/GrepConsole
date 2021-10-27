@@ -34,6 +34,10 @@ public class PinnedGrepsReopener {
 
     private static WeakHashMap<ConsoleView, Boolean> processed = new WeakHashMap<>();
 
+    public static void ignore(ConsoleView consoleView) {
+        processed.put(consoleView, true);
+    }
+
     public PinnedGrepsReopener(Project project, ConsoleView console) {
         Boolean aBoolean = processed.get(console);
         if (aBoolean == null) {
@@ -93,8 +97,7 @@ public class PinnedGrepsReopener {
                                 }
                                 for (Content content : contents) {
                                     if (OpenGrepConsoleAction.isSameConsole(content, consoleView)) {
-                                        String contentType = RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
-
+                                        String contentType = getContentType(toolWindow, content);
                                         List<PinnedGrepConsolesState.Pin> list = state.getPins();
                                         lockAndInitAllConsoles(consoleView, key, list, new Predicate<PinnedGrepConsolesState.Pin>() {
                                             public boolean test(PinnedGrepConsolesState.Pin pin) {
@@ -111,6 +114,18 @@ public class PinnedGrepsReopener {
                         myUpdateAlarm.cancelAndRequest();
                     }
                 });
+            }
+
+            private String getContentType(ToolWindow toolWindow, Content content) {
+                String contentType = RunnerLayoutUiImpl.CONTENT_TYPE.get(content);
+
+//                if (contentType == null && runnerLayoutUi != null) {
+//                    contentType = ExecutionConsole.CONSOLE_CONTENT_ID;
+//                }
+                if (contentType == null && toolWindow != null) {
+                    contentType = toolWindow.getId();
+                }
+                return contentType;
             }
 
             @Nullable
