@@ -1,16 +1,14 @@
 package krasa.grepconsole.gui;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.model.StreamBufferSettings;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class StreamBufferSettingsForm {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(StreamBufferSettingsForm.class);
@@ -90,17 +88,8 @@ public class StreamBufferSettingsForm {
 		@Override
 		public void hyperlinkUpdate(HyperlinkEvent e) {
 			if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-				if (Desktop.isDesktopSupported()) {
-					try {
-						Desktop.getDesktop().browse(e.getURL().toURI());
-					} catch (IOException e1) {
-						LOG.warn("Exception browsing to " + e.getURL().toExternalForm() + " : " + e1);
-					} catch (URISyntaxException e1) {
-						LOG.warn("Incorrect URI syntax " + e.getURL().toExternalForm() + " : " + e1);
-					}
-				}
+				BrowserUtil.browse(e.getURL());
 			}
-
 		}
 	}
 
