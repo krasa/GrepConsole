@@ -185,5 +185,4 @@ public class PluginState extends DomainObject implements Cloneable {
 			grepHistory.remove(0);
 		}
 	}
-
 }

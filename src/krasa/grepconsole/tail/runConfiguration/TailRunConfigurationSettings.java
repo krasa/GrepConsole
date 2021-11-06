@@ -1,11 +1,13 @@
 package krasa.grepconsole.tail.runConfiguration;
 
+import krasa.grepconsole.model.DomainObject;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TailRunConfigurationSettings {
+public class TailRunConfigurationSettings extends DomainObject {
 	private boolean autodetectEncoding = false;
 	private String encoding = "UTF-8";
 	private List<String> paths = new ArrayList<>();
