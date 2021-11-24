@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.0.211.6086.4</version>
+    <version>12.1.211.6086.0</version>
     <idea-version since-build="211.6086"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech
@@ -54,6 +54,8 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <br>12.1
+		<br>- Fixed sound playing
         <br>12.0
 		<br>- Highlighting theme support
 		<br>- Tail - better GUI, by folder, wildcard and last modified
