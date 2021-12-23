@@ -351,5 +351,6 @@
                 implementation="krasa.grepconsole.plugin.runConfiguration.GrepRunConfigurationExtensionNew"/>
         <configurationType implementation="krasa.grepconsole.tail.runConfiguration.TailRunConfigurationType"/>
         <programRunner implementation="krasa.grepconsole.tail.runConfiguration.TailProgramRunner"/>
+        <themeMetadataProvider path="/schemas/GrepConsole.themeMetadata.json"/>
     </extensions>
 </idea-plugin>
