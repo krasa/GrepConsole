@@ -9,20 +9,20 @@
       <minimumSize width="750" height="200"/>
       <opaque value="false"/>
     </properties>
-    <border type="none"/>
+    <border type="empty"/>
     <children>
       <scrollpane id="25447">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties/>
-        <border type="none"/>
+        <border type="empty"/>
         <children>
           <grid id="cef91" layout-manager="GridLayoutManager" row-count="7" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
             <properties/>
-            <border type="none"/>
+            <border type="empty"/>
             <children>
               <splitpane id="366cf" binding="splitPane">
                 <constraints>
@@ -37,7 +37,7 @@
                   <orientation value="0"/>
                   <resizeWeight value="0.0"/>
                 </properties>
-                <border type="none"/>
+                <border type="empty"/>
                 <children>
                   <grid id="71f24" binding="transfrormersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
@@ -58,7 +58,7 @@
                           </grid>
                         </constraints>
                         <properties/>
-                        <border type="none"/>
+                        <border type="empty"/>
                         <children>
                           <component id="f9910" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="inputTable" custom-create="true">
                             <constraints/>
@@ -141,7 +141,7 @@
                           </grid>
                         </constraints>
                         <properties/>
-                        <border type="none"/>
+                        <border type="empty"/>
                         <children>
                           <component id="1e8d0" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="grepTable" custom-create="true" default-binding="true">
                             <constraints/>
@@ -207,7 +207,7 @@
                   <grid row="0" column="0" row-span="5" col-span="5" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
-                <border type="none"/>
+                <border type="empty"/>
                 <children>
                   <component id="f941c" class="javax.swing.JCheckBox" binding="enableMaxLength">
                     <constraints>
