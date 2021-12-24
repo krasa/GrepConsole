@@ -13,8 +13,8 @@ import javax.swing.*;
  * @author Vojtech Krasa
  */
 public class TailRunExecutor extends Executor {
-	public static final Icon ToolWindowRun = IconLoader.getIcon("/krasa/grepconsole/icons/tail.png"); // 13x13
-	public static final Icon disabledRun = IconLoader.getIcon("/krasa/grepconsole/icons/disabledRun.png"); // 13x13
+	public static final Icon ToolWindowRun = IconLoader.getIcon("/krasa/grepconsole/icons/tail.svg"); // 13x13
+	public static final Icon disabledRun = IconLoader.getIcon("/krasa/grepconsole/icons/disabledRun.svg"); // 13x13
 
 	public static final String TOOLWINDOWS_ID = "Tail";
 	@NonNls
