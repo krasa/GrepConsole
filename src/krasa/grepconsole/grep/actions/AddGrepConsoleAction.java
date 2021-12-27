@@ -72,7 +72,11 @@ public class AddGrepConsoleAction extends DumbAwareAction {
 
 		Project eventProject = getEventProject(e);
 		ConsoleView parentConsoleView = OpenGrepConsoleAction.getTopParentConsoleView(e.getData(LangDataKeys.CONSOLE_VIEW));
+		boolean empty = false;
+
 		if (parentConsoleView != null) {
+			List<MyConsoleViewImpl> childGreps = ServiceManager.getInstance().findChildGreps(parentConsoleView);
+			empty = childGreps.isEmpty();
 			GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(parentConsoleView);
 			if (eventProject != null && grepFilter != null) {
 				RunContentDescriptor runContentDescriptor = OpenGrepConsoleAction.getRunContentDescriptor(eventProject, parentConsoleView);
@@ -83,7 +87,7 @@ public class AddGrepConsoleAction extends DumbAwareAction {
 			}
 		}
 
-		presentation.setEnabled(enabled || e.getData(PlatformDataKeys.TOOL_WINDOW) != null);
+		presentation.setVisible((enabled || e.getData(PlatformDataKeys.TOOL_WINDOW) != null) && !empty);
 	}
 
 	private void add(DefaultActionGroup actionGroup, List<MyConsoleViewImpl> list) {
