@@ -24,6 +24,8 @@ public class GrepColor extends DomainObject {
 		this.enabled = enabled;
 		if (color != null) {
 			this.color = color.getRGB();
+		} else {
+			this.enabled = false;
 		}
 	}
 
@@ -34,7 +36,7 @@ public class GrepColor extends DomainObject {
 
 	public GrepColor(@NotNull ColorKey colorKey) {
 		this.colorKey = colorKey.getExternalName();
-		this.enabled = colorKey.getDefaultColor() != null;
+		this.enabled = EditorColorsUtil.getGlobalOrDefaultColor(colorKey) != null;
 	}
 
 	public Integer getColor() {
