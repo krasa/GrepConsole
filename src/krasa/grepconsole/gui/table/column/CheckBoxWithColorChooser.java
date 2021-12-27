@@ -15,13 +15,14 @@
  */
 package krasa.grepconsole.gui.table.column;
 
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.ui.ColorChooser;
+import krasa.grepconsole.model.GrepColor;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 /**
  * @author Konstantin Bulenkov
@@ -30,11 +31,17 @@ public class CheckBoxWithColorChooser extends JPanel {
 	private final JCheckBox myCheckbox;
 	protected MyColorButton myColorButton;
 	private Color myColor;
+	private GrepColor originalGrepColor;
 
-	public CheckBoxWithColorChooser(String text, boolean selected, Color color) {
+	public CheckBoxWithColorChooser(String text, GrepColor originalGrepColor) {
+		this.originalGrepColor = originalGrepColor;
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		myColor = color;
-		myCheckbox = new JCheckBox(text, selected);
+		Color colorAsAWT = originalGrepColor.getColorAsAWT();
+		if (colorAsAWT == null) {
+			colorAsAWT = Color.BLACK;
+		}
+		myColor = colorAsAWT;
+		myCheckbox = new JCheckBox(text, originalGrepColor.isEnabled());
 		add(myCheckbox);
 		myColorButton = new MyColorButton();
 		add(myColorButton);
@@ -44,6 +51,10 @@ public class CheckBoxWithColorChooser extends JPanel {
 				myColorButton.mouseAdapter.mousePressed(e);
 			}
 		});
+	}
+
+	public GrepColor getOriginalGrepColor() {
+		return originalGrepColor;
 	}
 
 	public void setMnemonic(char c) {

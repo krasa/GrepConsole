@@ -13,26 +13,28 @@ public class GrepColor extends DomainObject {
 	private Integer color;
 	private String colorKey;
 
+	public GrepColor() {
+	}
+
+	public GrepColor(Color color) {
+		this(true, color);
+	}
+
 	public GrepColor(boolean enabled, Color color) {
 		this.enabled = enabled;
-		if (color == null) {
-			color = Color.BLACK;
-			this.enabled = false;
+		if (color != null) {
+			this.color = color.getRGB();
 		}
-		this.color = color.getRGB();
+	}
+
+	public GrepColor(boolean enabled, String colorKey) {
+		this.colorKey = colorKey;
+		this.enabled = enabled;
 	}
 
 	public GrepColor(@NotNull ColorKey colorKey) {
 		this.colorKey = colorKey.getExternalName();
 		this.enabled = colorKey.getDefaultColor() != null;
-	}
-
-	public GrepColor() {
-		this(false, Color.BLACK);
-	}
-
-	public GrepColor(Color color) {
-		this(true, color);
 	}
 
 	public Integer getColor() {
@@ -61,18 +63,21 @@ public class GrepColor extends DomainObject {
 
 	public Color getColorAsAWT() {
 		if (colorKey != null) {
-			Color color = EditorColorsUtil.getGlobalOrDefaultColor(
-					ColorKey.createColorKey(colorKey)
-			);
-			if (color == null) {
-				return Color.BLACK;
-			}
-			return color;
+			return EditorColorsUtil.getGlobalOrDefaultColor(ColorKey.createColorKey(colorKey));
 		}
 
 		if (color == null) {
 			return null;
 		}
 		return new Color(color);
+	}
+
+	/*ColorChooser returns Color under Darcula - equals with JBColor does not work*/
+	public boolean isSameAsColorKey(Color color) {
+		if (colorKey != null) {
+			Color colorAsAWT = EditorColorsUtil.getGlobalOrDefaultColor(ColorKey.createColorKey(colorKey));
+			return color != null && colorAsAWT != null && color.getBlue() == colorAsAWT.getBlue() && color.getRed() == colorAsAWT.getRed() && color.getGreen() == colorAsAWT.getGreen();
+		}
+		return false;
 	}
 }

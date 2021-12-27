@@ -1,19 +1,16 @@
 package krasa.grepconsole.gui.table.column;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.EventObject;
+import com.intellij.util.ui.AbstractTableCellEditor;
+import krasa.grepconsole.model.GrepColor;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-
-import krasa.grepconsole.model.GrepColor;
-
-import org.jetbrains.annotations.Nullable;
-
-import com.intellij.util.ui.AbstractTableCellEditor;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.EventObject;
 
 public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Item, GrepColor> {
 
@@ -59,7 +56,14 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 
 			@Override
 			public Object getCellEditorValue() {
-				return new GrepColor(checkBoxWithColorChooser.isSelected(), checkBoxWithColorChooser.getColor());
+				GrepColor originalGrepColor = checkBoxWithColorChooser.getOriginalGrepColor();
+				Color color = checkBoxWithColorChooser.getColor();
+
+				if (originalGrepColor.isSameAsColorKey(color)) {
+					return new GrepColor(checkBoxWithColorChooser.isSelected(), originalGrepColor.getColorKey());
+				} else {
+					return new GrepColor(checkBoxWithColorChooser.isSelected(), color);
+				}
 			}
 
 			@Override
@@ -76,8 +80,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 		if (color == null) {
 			color = new GrepColor();
 		}
-		CheckBoxWithColorChooser checkBoxWithColorChooser = new CheckBoxWithColorChooser(null, color.isEnabled(),
-				color.getColorAsAWT()) {
+		CheckBoxWithColorChooser checkBoxWithColorChooser = new CheckBoxWithColorChooser(null, color) {
 			@Override
 			public void onColorChanged() {
 				abstractTableCellEditor.stopCellEditing();
