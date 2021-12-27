@@ -2,14 +2,16 @@ package krasa.grepconsole.model;
 
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
+@SuppressWarnings("UseJBColor")
 public class GrepColor extends DomainObject {
 
 	private boolean enabled;
 	private Integer color;
-  private String colorKey;
+	private String colorKey;
 
 	public GrepColor(boolean enabled, Color color) {
 		this.enabled = enabled;
@@ -20,19 +22,9 @@ public class GrepColor extends DomainObject {
 		this.color = color.getRGB();
 	}
 
-	public GrepColor(boolean enabled, Integer color) {
-		this.enabled = enabled;
-		this.color = color;
-	}
-
-	public GrepColor(boolean enabled, ColorKey colorKey) {
-		this.enabled = enabled;
-		if(colorKey != null) {
-			this.colorKey = colorKey.getExternalName();
-		} else {
-			this.enabled = false;
-			color = Color.black.getRGB();
-		}
+	public GrepColor(@NotNull ColorKey colorKey) {
+		this.colorKey = colorKey.getExternalName();
+		this.enabled = colorKey.getDefaultColor() != null;
 	}
 
 	public GrepColor() {
@@ -59,20 +51,24 @@ public class GrepColor extends DomainObject {
 		this.enabled = enabled;
 	}
 
-  public String getColorKey() {
-    return colorKey;
-  }
+	public String getColorKey() {
+		return colorKey;
+	}
 
-  public void setColorKey(String colorKey) {
-    this.colorKey = colorKey;
-  }
+	public void setColorKey(String colorKey) {
+		this.colorKey = colorKey;
+	}
 
-  public Color getColorAsAWT() {
-    if(colorKey != null) {
-      return EditorColorsUtil.getGlobalOrDefaultColor(
-          ColorKey.createColorKey(colorKey)
-      );
-    }
+	public Color getColorAsAWT() {
+		if (colorKey != null) {
+			Color color = EditorColorsUtil.getGlobalOrDefaultColor(
+					ColorKey.createColorKey(colorKey)
+			);
+			if (color == null) {
+				return Color.BLACK;
+			}
+			return color;
+		}
 
 		if (color == null) {
 			return null;

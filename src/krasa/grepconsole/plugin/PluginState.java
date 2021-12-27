@@ -16,6 +16,10 @@ import java.util.List;
 public class PluginState extends DomainObject implements Cloneable {
 	private static final Logger LOG = Logger.getInstance(PluginState.class);
 
+	//DO NOT REMOVE, initializes ColorKeys
+	@SuppressWarnings("InstantiationOfUtilityClass")
+	private static DefaultState DEFAULT_STATE = new DefaultState();
+
 	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;
 	private StreamBufferSettings streamBufferSettings;

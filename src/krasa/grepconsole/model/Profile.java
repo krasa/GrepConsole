@@ -1,5 +1,6 @@
 package krasa.grepconsole.model;
 
+import com.intellij.ide.ui.LafManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.xmlb.XmlSerializerUtil;
@@ -12,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static krasa.grepconsole.plugin.DefaultState.createDefaultItems;
 import static krasa.grepconsole.plugin.DefaultState.getDefaultProfile;
 
 public class Profile extends DomainObject implements Cloneable {
@@ -113,6 +113,7 @@ public class Profile extends DomainObject implements Cloneable {
 	public List<GrepExpressionItem> getAllGrepExpressionItems() {
 		List<GrepExpressionItem> items = new ArrayList<>();
 		for (GrepExpressionGroup group : grepExpressionGroups) {
+			String name = group.getName();
 			if (DARK.equals(group.getName())) {
 				if (UIUtil.isUnderDarcula()) {
 					items.addAll(group.getGrepExpressionItems());
@@ -121,10 +122,14 @@ public class Profile extends DomainObject implements Cloneable {
 				if (!UIUtil.isUnderDarcula()) {
 					items.addAll(group.getGrepExpressionItems());
 				}
+			} else if (name.startsWith("@") && name.endsWith("@")) {
+				String themeName = LafManager.getInstance().getCurrentLookAndFeel().getName();
+				if (themeName.equalsIgnoreCase(name.substring(1, name.length() - 1))) {
+					items.addAll(group.getGrepExpressionItems());
+				}
 			} else {
 				items.addAll(group.getGrepExpressionItems());
 			}
-
 		}
 		return items;
 	}
@@ -143,42 +148,8 @@ public class Profile extends DomainObject implements Cloneable {
 			GrepExpressionGroup expressionGroup = new GrepExpressionGroup("default");
 			grepExpressionGroups.add(expressionGroup);
 		}
-		addMissingThemeGroups();
 		return grepExpressionGroups;
 	}
-
-	private void addMissingThemeGroups() {
-		boolean containsLight = false;
-		boolean containsDark = false;
-		for (GrepExpressionGroup grepExpressionGroup : grepExpressionGroups) {
-			String name = grepExpressionGroup.getName();
-			if (LIGHT.equals(name)) {
-				containsLight = true;
-			} else if (DARK.equals(name)) {
-				containsDark = true;
-			}
-		}
-
-		if (!containsLight || !containsDark) {
-			if (UIUtil.isUnderDarcula()) {
-				if (!containsDark) {
-					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true, false)));
-				}
-				if (!containsLight) {
-					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false, false)));
-				}
-			} else {
-				if (!containsLight) {
-					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.LIGHT, createDefaultItems(false, false)));
-
-				}
-				if (!containsDark) {
-					grepExpressionGroups.add(new GrepExpressionGroup(krasa.grepconsole.model.Profile.DARK, createDefaultItems(true, false)));
-				}
-			}
-		}
-	}
-
 
 	public List<GrepExpressionGroup> getInputFilterGroups() {
 		if (inputFilterGroups.isEmpty()) {
