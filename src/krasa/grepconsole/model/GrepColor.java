@@ -1,11 +1,15 @@
 package krasa.grepconsole.model;
 
+import com.intellij.openapi.editor.colors.ColorKey;
+import com.intellij.openapi.editor.colors.EditorColorsUtil;
+
 import java.awt.*;
 
 public class GrepColor extends DomainObject {
 
 	private boolean enabled;
 	private Integer color;
+  private String colorKey;
 
 	public GrepColor(boolean enabled, Color color) {
 		this.enabled = enabled;
@@ -19,6 +23,16 @@ public class GrepColor extends DomainObject {
 	public GrepColor(boolean enabled, Integer color) {
 		this.enabled = enabled;
 		this.color = color;
+	}
+
+	public GrepColor(boolean enabled, ColorKey colorKey) {
+		this.enabled = enabled;
+		if(colorKey != null) {
+			this.colorKey = colorKey.getExternalName();
+		} else {
+			this.enabled = false;
+			color = Color.black.getRGB();
+		}
 	}
 
 	public GrepColor() {
@@ -45,7 +59,21 @@ public class GrepColor extends DomainObject {
 		this.enabled = enabled;
 	}
 
-	public Color getColorAsAWT() {
+  public String getColorKey() {
+    return colorKey;
+  }
+
+  public void setColorKey(String colorKey) {
+    this.colorKey = colorKey;
+  }
+
+  public Color getColorAsAWT() {
+    if(colorKey != null) {
+      return EditorColorsUtil.getGlobalOrDefaultColor(
+          ColorKey.createColorKey(colorKey)
+      );
+    }
+
 		if (color == null) {
 			return null;
 		}

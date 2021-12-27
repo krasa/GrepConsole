@@ -1,5 +1,6 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.model.*;
@@ -52,35 +53,36 @@ public class DefaultState {
 
 	}
 
+	private static final ColorKey FATAL_BACKGROUND = ColorKey.createColorKey("GrepConsole.fatal.background", new JBColor(
+			JBColor.RED, new Color(0, 0, 0, 255)
+	));
+	private static final ColorKey ERROR_BACKGROUND = ColorKey.createColorKey("GrepConsole.error.background", new JBColor(
+			JBColor.ORANGE, new Color(55, 0, 0, 200)
+	));
+	private static final ColorKey WARN_BACKGROUND = ColorKey.createColorKey("GrepConsole.warn.background", new JBColor(
+			JBColor.YELLOW, new Color(26, 0, 55, 200)
+	));
+	private static final ColorKey DEBUG_FOREGROUND = ColorKey.createColorKey("GrepConsole.debug.foreground", new JBColor(
+			JBColor.GRAY, JBColor.GRAY
+	));
+	private static final ColorKey TRACE_FOREGROUND = ColorKey.createColorKey("GrepConsole.trace.foreground", new JBColor(
+			JBColor.LIGHT_GRAY, JBColor.BLACK
+	));
+
 	public static List<GrepExpressionItem> createDefaultItems(boolean dark, boolean enabled) {
 		List<GrepExpressionItem> items = new ArrayList<>();
-		JBColor fatalBackground = JBColor.namedColor("GrepConsole.fatal.background",
-				dark ? JBColor.BLACK : JBColor.RED
-		);
-		JBColor errorBackground = JBColor.namedColor("GrepConsole.error.background",
-				dark ? new Color(55, 0, 0, 200) : JBColor.ORANGE
-		);
-		JBColor warnBackground = JBColor.namedColor("GrepConsole.warn.background",
-				dark ? new Color(26, 0, 55, 200) : JBColor.YELLOW
-		);
-		JBColor infoForeground = JBColor.namedColor("GrepConsole.info.foreground",
-				JBColor.GRAY
-		);
-		JBColor traceForeground = JBColor.namedColor("GrepConsole.trace.foreground",
-				dark ? JBColor.BLACK : JBColor.LIGHT_GRAY
-		);
 		items.add(newItem(enabled).style(
-				getGrepStyle(fatalBackground, null).bold(true)).grepExpression(
+				getGrepDefaultStyle(FATAL_BACKGROUND, null).bold(true)).grepExpression(
 				".*FATAL.*"));
-		items.add(newItem(enabled).style(getGrepStyle(errorBackground, null)).grepExpression(
+		items.add(newItem(enabled).style(getGrepDefaultStyle(ERROR_BACKGROUND, null)).grepExpression(
 				".*ERROR.*"));
-		items.add(newItem(enabled).style(getGrepStyle(warnBackground, null)).grepExpression(
+		items.add(newItem(enabled).style(getGrepDefaultStyle(WARN_BACKGROUND, null)).grepExpression(
 				".*WARN.*"));
-		items.add(newItem(enabled).enabled(false).style(getGrepStyle(null, null)).grepExpression(
+		items.add(newItem(enabled).enabled(false).style(getGrepDefaultStyle(null, null)).grepExpression(
 				".*INFO.*"));
-		items.add(newItem(enabled).style(getGrepStyle(null, infoForeground)).grepExpression(
+		items.add(newItem(enabled).style(getGrepDefaultStyle(null, DEBUG_FOREGROUND)).grepExpression(
 				".*DEBUG.*"));
-		items.add(newItem(enabled).style(getGrepStyle(null, traceForeground)).grepExpression(
+		items.add(newItem(enabled).style(getGrepDefaultStyle(null, TRACE_FOREGROUND)).grepExpression(
 				".*TRACE.*"));
 		return items;
 	}
@@ -91,7 +93,7 @@ public class DefaultState {
 		return grepExpressionItem;
 	}
 
-	public static GrepStyle getGrepStyle(Color color, Color foreground) {
+	private static GrepStyle getGrepDefaultStyle(ColorKey color, ColorKey foreground) {
 		GrepStyle grepStyle = new GrepStyle().backgroundColor(new GrepColor(true, color));
 		if (foreground != null) {
 			grepStyle = grepStyle.foregroundColor(new GrepColor(true, foreground));
