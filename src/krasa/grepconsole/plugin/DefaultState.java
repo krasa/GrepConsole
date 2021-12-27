@@ -33,15 +33,15 @@ public class DefaultState {
 
 	private static List<GrepExpressionItem> createDefaultInputFilter() {
 		ArrayList<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
-		grepExpressionItems.add(newItem(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE));
-		grepExpressionItems.add(newItem(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED));
+		grepExpressionItems.add(newItem(".*unwanted line.*", null).action(GrepExpressionItem.ACTION_REMOVE));
+		grepExpressionItems.add(newItem(".*unwanted line.*", null).action(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED));
 		return grepExpressionItems;
 	}
 
 	public static void resetToDefault(Profile profile) {
 		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 		grepExpressionGroups.clear();
-		grepExpressionGroups.add(new GrepExpressionGroup("default", createDefaultItems(true)));
+		grepExpressionGroups.add(new GrepExpressionGroup("default", createDefaultItems()));
 		grepExpressionGroups.add(new GrepExpressionGroup("@Theme Name@"));
 	}
 
@@ -74,31 +74,29 @@ public class DefaultState {
 	)));
 	private static final GrepColor TRACE_BACKGROUND = new GrepColor(createColorKey("GrepConsole.trace.background", null));
 
-	public static List<GrepExpressionItem> createDefaultItems(boolean enabled) {
+	public static List<GrepExpressionItem> createDefaultItems() {
 		List<GrepExpressionItem> items = new ArrayList<>();
-		items.add(newItem(enabled).style(
-				getGrepDefaultStyle(FATAL_BACKGROUND, FATAL_FOREGROUND).bold(true)).grepExpression(
-				".*FATAL.*"));
-		items.add(newItem(enabled).style(getGrepDefaultStyle(ERROR_BACKGROUND, ERROR_FOREGROUND)).grepExpression(
-				".*ERROR.*"));
-		items.add(newItem(enabled).style(getGrepDefaultStyle(WARN_BACKGROUND, WARN_FOREGROUND)).grepExpression(
-				".*WARN.*"));
-		items.add(newItem(enabled).enabled(false).style(getGrepDefaultStyle(INFO_BACKGROUND, INFO_FOREGROUND)).grepExpression(
-				".*INFO.*"));
-		items.add(newItem(enabled).style(getGrepDefaultStyle(DEBUG_FOREGROUND, DEBUG_BACKGROUND)).grepExpression(
-				".*DEBUG.*"));
-		items.add(newItem(enabled).style(getGrepDefaultStyle(TRACE_FOREGROUND, TRACE_BACKGROUND)).grepExpression(
-				".*TRACE.*"));
+		items.add(newItem(".*FATAL.*", style(FATAL_BACKGROUND, FATAL_FOREGROUND).bold(true)));
+		items.add(newItem(".*ERROR.*", style(ERROR_BACKGROUND, ERROR_FOREGROUND)));
+		items.add(newItem(".*WARN.*", style(WARN_BACKGROUND, WARN_FOREGROUND)));
+		items.add(newItem(".*INFO.*", style(INFO_BACKGROUND, INFO_FOREGROUND)));
+		items.add(newItem(".*DEBUG.*", style(DEBUG_FOREGROUND, DEBUG_BACKGROUND)));
+		items.add(newItem(".*TRACE.*", style(TRACE_FOREGROUND, TRACE_BACKGROUND)));
 		return items;
 	}
 
-	public static GrepExpressionItem newItem(boolean enabled) {
+
+	public static GrepExpressionItem newItem(String grepExpression, GrepStyle style) {
 		GrepExpressionItem grepExpressionItem = new GrepExpressionItem();
-		grepExpressionItem.setEnabled(enabled);
+		grepExpressionItem.setStyle(style);
+		grepExpressionItem.setGrepExpression(grepExpression);
+		grepExpressionItem.setEnabled(style != null
+				&& (style.getBackgroundColor().isEnabled() || style.getForegroundColor().isEnabled())
+		);
 		return grepExpressionItem;
 	}
 
-	private static GrepStyle getGrepDefaultStyle(GrepColor backgroundColor, GrepColor foregroundColor) {
+	private static GrepStyle style(GrepColor backgroundColor, GrepColor foregroundColor) {
 		GrepStyle grepStyle = new GrepStyle();
 		grepStyle.backgroundColor(backgroundColor);
 		grepStyle.foregroundColor(foregroundColor);
