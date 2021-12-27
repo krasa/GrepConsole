@@ -16,7 +16,6 @@ import com.intellij.openapi.ui.*;
 import com.intellij.openapi.updateSettings.impl.pluginsAdvertisement.PluginsAdvertiser;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.ui.CheckedTreeNode;
-import com.intellij.ui.JBColor;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ArrayUtil;
@@ -25,6 +24,7 @@ import krasa.grepconsole.gui.table.*;
 import krasa.grepconsole.model.*;
 import krasa.grepconsole.plugin.*;
 import krasa.grepconsole.tail.TailIntegrationForm;
+import krasa.grepconsole.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -633,7 +633,7 @@ public class MainSettingsForm {
 				item.setEnabled(true);
 				item.setContinueMatching(true);
 				item.setHighlightOnlyMatchingText(true);
-				item.getStyle().setBackgroundColor(new GrepColor(true, JBColor.CYAN));
+				item.getStyle().setBackgroundColor(new GrepColor(true, Utils.nextColor()));
 				userObject = item;
 			}
 			final CheckedTreeNode newChild = new GrepExpressionItemTreeNode(userObject);
