@@ -36,7 +36,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-					boolean hasFocus, int row, int column) {
+														   boolean hasFocus, int row, int column) {
 				return getCheckBoxWithColorChooser((GrepColor) value, null);
 			}
 		};
@@ -58,29 +58,23 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 			public Object getCellEditorValue() {
 				GrepColor originalGrepColor = checkBoxWithColorChooser.getOriginalGrepColor();
 				Color color = checkBoxWithColorChooser.getColor();
-
-				if (originalGrepColor.isSameAsColorKey(color) || (color == null && originalGrepColor.getColorKey() != null)) {
-					return new GrepColor(checkBoxWithColorChooser.isSelected(), originalGrepColor.getColorKey());
-				} else {
-					return new GrepColor(checkBoxWithColorChooser.isSelected(), color);
-				}
+				return new GrepColor(checkBoxWithColorChooser.isSelected(), color, originalGrepColor);
 			}
 
 			@Override
 			public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
-					int column) {
+														 int column) {
 				return checkBoxWithColorChooser = getCheckBoxWithColorChooser((GrepColor) value, this);
 			}
 		};
 		return abstractTableCellEditor;
 	}
 
-	private CheckBoxWithColorChooser getCheckBoxWithColorChooser(GrepColor color,
-			final AbstractTableCellEditor abstractTableCellEditor) {
-		if (color == null) {
-			color = new GrepColor();
+	private CheckBoxWithColorChooser getCheckBoxWithColorChooser(GrepColor grepColor, final AbstractTableCellEditor abstractTableCellEditor) {
+		if (grepColor == null) {
+			grepColor = new GrepColor();
 		}
-		CheckBoxWithColorChooser checkBoxWithColorChooser = new CheckBoxWithColorChooser(null, color) {
+		CheckBoxWithColorChooser checkBoxWithColorChooser = new CheckBoxWithColorChooser(null, grepColor) {
 			@Override
 			public void onColorChanged() {
 				abstractTableCellEditor.stopCellEditing();

@@ -244,6 +244,9 @@ public class MainSettingsForm {
 					GrepExpressionItem selectedGrepExpressionItem = getSelectedGrepExpressionItem(table);
 					if (selectedGrepExpressionItem != null) {
 						popup.add(getConvertAction(selectedGrepExpressionItem, table));
+						if (selectedGrepExpressionItem.getStyle().isResetable()) {
+							popup.add(getResetColorsAction(selectedGrepExpressionItem, table));
+						}
 						popup.add(new JPopupMenu.Separator());
 					}
 					popup.add(newMenuItem("Add New Item", new AddNewItemAction(table, input)));
@@ -288,6 +291,15 @@ public class MainSettingsForm {
 				}
 			}
 
+			private JBMenuItem getResetColorsAction(final GrepExpressionItem item, CheckboxTreeTable table) {
+				final JBMenuItem menuItem = new JBMenuItem("Reset Colors to Default");
+				menuItem.addActionListener(e -> {
+					item.getStyle().reset();
+					reloadNode(MainSettingsForm.this.getSelectedNode(table), table);
+				});
+				return menuItem;
+			}
+
 
 			private JBMenuItem getConvertAction(final GrepExpressionItem item, CheckboxTreeTable table) {
 				final boolean highlightOnlyMatchingText = item.isHighlightOnlyMatchingText();
@@ -327,6 +339,7 @@ public class MainSettingsForm {
 				}
 				return convert;
 			}
+
 		};
 	}
 
@@ -633,7 +646,7 @@ public class MainSettingsForm {
 				item.setEnabled(true);
 				item.setContinueMatching(true);
 				item.setHighlightOnlyMatchingText(true);
-				item.getStyle().setBackgroundColor(new GrepColor(true, Utils.nextColor()));
+				item.getStyle().setBackgroundColor(new GrepColor(Utils.nextColor()));
 				userObject = item;
 			}
 			final CheckedTreeNode newChild = new GrepExpressionItemTreeNode(userObject);
@@ -823,4 +836,5 @@ public class MainSettingsForm {
 		}
 
 	}
+
 }

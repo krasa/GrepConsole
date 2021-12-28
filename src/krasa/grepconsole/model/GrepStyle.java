@@ -137,4 +137,24 @@ public class GrepStyle extends DomainObject {
 		return this;
 	}
 
+	public boolean isResetable() {
+		if (foregroundColor != null && foregroundColor.isResetable()) {
+			return true;
+		}
+		if (backgroundColor != null && backgroundColor.isResetable()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public void reset() {
+		if (foregroundColor != null) {
+			foregroundColor.reset();
+		}
+
+		if (backgroundColor != null) {
+			backgroundColor.reset();
+		}
+	}
 }

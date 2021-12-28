@@ -18,7 +18,12 @@ public class GrepColor extends DomainObject {
 	}
 
 	public GrepColor(Color color) {
-		this(true, color);
+		this.enabled = true;
+		if (color != null) {
+			this.color = color.getRGB();
+		} else {
+			this.enabled = false;
+		}
 	}
 
 	public GrepColor(boolean enabled, Color color) {
@@ -30,14 +35,20 @@ public class GrepColor extends DomainObject {
 		}
 	}
 
-	public GrepColor(boolean enabled, String colorKey) {
-		this.colorKey = colorKey;
-		this.enabled = enabled;
-	}
-
 	public GrepColor(@NotNull ColorKey colorKey) {
 		this.colorKey = colorKey.getExternalName();
 		this.enabled = true;
+	}
+
+	public GrepColor(boolean selected, Color newColor, GrepColor originalGrepColor) {
+		if (originalGrepColor.isSameAsColorKey(newColor)) {
+			newColor = null;
+		}
+		if (newColor != null) {
+			this.color = newColor.getRGB();
+		}
+		this.colorKey = originalGrepColor.getColorKey();
+		this.enabled = selected;
 	}
 
 	public Integer getColor() {
@@ -66,22 +77,29 @@ public class GrepColor extends DomainObject {
 
 	@Nullable
 	public Color getColorAsAWT() {
+		if (color != null) {
+			return new Color(color);
+		}
 		if (colorKey != null) {
 			return EditorColorsUtil.getGlobalOrDefaultColor(ColorKey.createColorKey(colorKey));
 		}
-
-		if (color == null) {
-			return null;
-		}
-		return new Color(color);
+		return null;
 	}
 
 	/*ColorChooser returns Color under Darcula - equals with JBColor does not work*/
 	public boolean isSameAsColorKey(Color color) {
-		if (colorKey != null) {
+		if (colorKey != null && color != null) {
 			Color colorAsAWT = EditorColorsUtil.getGlobalOrDefaultColor(ColorKey.createColorKey(colorKey));
-			return color != null && colorAsAWT != null && color.getBlue() == colorAsAWT.getBlue() && color.getRed() == colorAsAWT.getRed() && color.getGreen() == colorAsAWT.getGreen();
+			return colorAsAWT != null && color.getBlue() == colorAsAWT.getBlue() && color.getRed() == colorAsAWT.getRed() && color.getGreen() == colorAsAWT.getGreen();
 		}
 		return false;
+	}
+
+	public boolean isResetable() {
+		return colorKey != null && color != null;
+	}
+
+	public void reset() {
+		color = null;
 	}
 }
