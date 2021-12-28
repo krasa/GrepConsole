@@ -1,14 +1,19 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.editor.colors.ColorKey;
-import krasa.grepconsole.integration.ThemeColors;
 import krasa.grepconsole.model.*;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static krasa.grepconsole.integration.ThemeColors.*;
+
 public class DefaultState {
+	private static final Logger log = LoggerFactory.getLogger(DefaultState.class);
+
 	public static List<Profile> createDefault() {
 		List<Profile> profiles = new ArrayList<>();
 		Profile profile = getDefaultProfile();
@@ -16,16 +21,24 @@ public class DefaultState {
 		return profiles;
 	}
 
+	/**
+	 * this must never fail, catch all logic
+	 */
 	@NotNull
 	public static Profile getDefaultProfile() {
 		Profile profile = new Profile();
 		profile.setDefaultProfile(true);
 		profile.setName("default");
-		resetToDefault(profile);
 
-		List<GrepExpressionGroup> inputFilters = profile.getInputFilterGroups();
-		inputFilters.clear();
-		inputFilters.add(new GrepExpressionGroup("default", createDefaultInputFilter()));
+		try {
+			resetToDefault(profile);
+
+			List<GrepExpressionGroup> inputFilters = profile.getInputFilterGroups();
+			inputFilters.clear();
+			inputFilters.add(new GrepExpressionGroup("default", createDefaultInputFilter()));
+		} catch (Throwable e) {
+			log.error("failed to create default profile", e);
+		}
 		return profile;
 	}
 
@@ -46,12 +59,12 @@ public class DefaultState {
 
 	public static List<GrepExpressionItem> createDefaultItems() {
 		List<GrepExpressionItem> items = new ArrayList<>();
-		items.add(newItem(".*FATAL.*", style(ThemeColors.FATAL_BACKGROUND, ThemeColors.FATAL_FOREGROUND).bold(true)));
-		items.add(newItem(".*ERROR.*", style(ThemeColors.ERROR_BACKGROUND, ThemeColors.ERROR_FOREGROUND)));
-		items.add(newItem(".*WARN.*", style(ThemeColors.WARN_BACKGROUND, ThemeColors.WARN_FOREGROUND)));
-		items.add(newItem(".*INFO.*", style(ThemeColors.INFO_BACKGROUND, ThemeColors.INFO_FOREGROUND)));
-		items.add(newItem(".*DEBUG.*", style(ThemeColors.DEBUG_FOREGROUND, ThemeColors.DEBUG_BACKGROUND)));
-		items.add(newItem(".*TRACE.*", style(ThemeColors.TRACE_FOREGROUND, ThemeColors.TRACE_BACKGROUND)));
+		items.add(newItem(".*FATAL.*", style(FATAL_BACKGROUND, FATAL_FOREGROUND).bold(true)));
+		items.add(newItem(".*ERROR.*", style(ERROR_BACKGROUND, ERROR_FOREGROUND)));
+		items.add(newItem(".*WARN.*", style(WARN_BACKGROUND, WARN_FOREGROUND)));
+		items.add(newItem(".*INFO.*", style(INFO_BACKGROUND, INFO_FOREGROUND)));
+		items.add(newItem(".*DEBUG.*", style(DEBUG_FOREGROUND, DEBUG_BACKGROUND)));
+		items.add(newItem(".*TRACE.*", style(TRACE_FOREGROUND, TRACE_BACKGROUND)));
 		return items;
 	}
 
@@ -60,7 +73,7 @@ public class DefaultState {
 		GrepExpressionItem grepExpressionItem = new GrepExpressionItem();
 		grepExpressionItem.setStyle(style);
 		grepExpressionItem.setGrepExpression(grepExpression);
-		grepExpressionItem.setEnabled(style.hasColor());
+		grepExpressionItem.setEnabled(style != null && style.hasColor());
 		return grepExpressionItem;
 	}
 

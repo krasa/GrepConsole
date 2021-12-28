@@ -708,7 +708,7 @@ public class MainSettingsForm {
 			Profile profile = MainSettingsForm.this.currentProfile;
 			MainSettingsForm.this.currentProfile = null;
 
-			profile.resetToDefault();
+  			profile.resetToDefault();
 			importFrom(profile);
 		}
 	}
