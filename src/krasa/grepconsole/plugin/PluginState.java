@@ -3,6 +3,7 @@ package krasa.grepconsole.plugin;
 import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.Cloner;
 import krasa.grepconsole.grep.GrepCompositeModel;
+import krasa.grepconsole.integration.ThemeColors;
 import krasa.grepconsole.model.DomainObject;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.StreamBufferSettings;
@@ -16,9 +17,11 @@ import java.util.List;
 public class PluginState extends DomainObject implements Cloneable {
 	private static final Logger LOG = Logger.getInstance(PluginState.class);
 
-	//DO NOT REMOVE, initializes ColorKeys
+	/**
+	 * MUST BE CLASSLOADED BEFORE THE STATE
+	 */
 	@SuppressWarnings("InstantiationOfUtilityClass")
-	private static DefaultState DEFAULT_STATE = new DefaultState();
+	private static final ThemeColors THEME_COLORS = new ThemeColors();
 
 	private List<Profile> profiles = new ArrayList<>();
 	private TailSettings tailSettings;

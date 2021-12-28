@@ -59,7 +59,7 @@ public class ColorChooserJavaBeanColumnInfo<Item> extends JavaBeanColumnInfo<Ite
 				GrepColor originalGrepColor = checkBoxWithColorChooser.getOriginalGrepColor();
 				Color color = checkBoxWithColorChooser.getColor();
 
-				if (originalGrepColor.isSameAsColorKey(color)) {
+				if (originalGrepColor.isSameAsColorKey(color) || (color == null && originalGrepColor.getColorKey() != null)) {
 					return new GrepColor(checkBoxWithColorChooser.isSelected(), originalGrepColor.getColorKey());
 				} else {
 					return new GrepColor(checkBoxWithColorChooser.isSelected(), color);

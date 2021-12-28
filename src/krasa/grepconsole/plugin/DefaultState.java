@@ -1,14 +1,12 @@
 package krasa.grepconsole.plugin;
 
-import com.intellij.ui.JBColor;
+import com.intellij.openapi.editor.colors.ColorKey;
+import krasa.grepconsole.integration.ThemeColors;
 import krasa.grepconsole.model.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.intellij.openapi.editor.colors.ColorKey.createColorKey;
 
 public class DefaultState {
 	public static List<Profile> createDefault() {
@@ -45,43 +43,15 @@ public class DefaultState {
 		grepExpressionGroups.add(new GrepExpressionGroup("@Theme Name@"));
 	}
 
-	private static final GrepColor FATAL_BACKGROUND = new GrepColor(createColorKey("GrepConsole.fatal.background", new JBColor(
-			JBColor.RED, new Color(0, 0, 0, 255)
-	)));
-	private static final GrepColor FATAL_FOREGROUND = new GrepColor(createColorKey("GrepConsole.fatal.foreground", null));
-
-	private static final GrepColor ERROR_BACKGROUND = new GrepColor(createColorKey("GrepConsole.error.background", new JBColor(
-			JBColor.ORANGE, new Color(55, 0, 0, 200)
-	)));
-	private static final GrepColor ERROR_FOREGROUND = new GrepColor(createColorKey("GrepConsole.error.foreground", null));
-
-	private static final GrepColor WARN_BACKGROUND = new GrepColor(createColorKey("GrepConsole.warn.background", new JBColor(
-			JBColor.YELLOW, new Color(26, 0, 55, 200)
-	)));
-	private static final GrepColor WARN_FOREGROUND = new GrepColor(createColorKey("GrepConsole.warn.foreground", null));
-
-
-	private static final GrepColor INFO_BACKGROUND = new GrepColor(createColorKey("GrepConsole.info.background", null));
-	private static final GrepColor INFO_FOREGROUND = new GrepColor(createColorKey("GrepConsole.info.foreground", null));
-
-	private static final GrepColor DEBUG_FOREGROUND = new GrepColor(createColorKey("GrepConsole.debug.foreground", new JBColor(
-			JBColor.GRAY, JBColor.GRAY
-	)));
-	private static final GrepColor DEBUG_BACKGROUND = new GrepColor(createColorKey("GrepConsole.debug.background", null));
-
-	public static final GrepColor TRACE_FOREGROUND = new GrepColor(createColorKey("GrepConsole.trace.foreground", new JBColor(
-			JBColor.LIGHT_GRAY, JBColor.BLACK
-	)));
-	private static final GrepColor TRACE_BACKGROUND = new GrepColor(createColorKey("GrepConsole.trace.background", null));
 
 	public static List<GrepExpressionItem> createDefaultItems() {
 		List<GrepExpressionItem> items = new ArrayList<>();
-		items.add(newItem(".*FATAL.*", style(FATAL_BACKGROUND, FATAL_FOREGROUND).bold(true)));
-		items.add(newItem(".*ERROR.*", style(ERROR_BACKGROUND, ERROR_FOREGROUND)));
-		items.add(newItem(".*WARN.*", style(WARN_BACKGROUND, WARN_FOREGROUND)));
-		items.add(newItem(".*INFO.*", style(INFO_BACKGROUND, INFO_FOREGROUND)));
-		items.add(newItem(".*DEBUG.*", style(DEBUG_FOREGROUND, DEBUG_BACKGROUND)));
-		items.add(newItem(".*TRACE.*", style(TRACE_FOREGROUND, TRACE_BACKGROUND)));
+		items.add(newItem(".*FATAL.*", style(ThemeColors.FATAL_BACKGROUND, ThemeColors.FATAL_FOREGROUND).bold(true)));
+		items.add(newItem(".*ERROR.*", style(ThemeColors.ERROR_BACKGROUND, ThemeColors.ERROR_FOREGROUND)));
+		items.add(newItem(".*WARN.*", style(ThemeColors.WARN_BACKGROUND, ThemeColors.WARN_FOREGROUND)));
+		items.add(newItem(".*INFO.*", style(ThemeColors.INFO_BACKGROUND, ThemeColors.INFO_FOREGROUND)));
+		items.add(newItem(".*DEBUG.*", style(ThemeColors.DEBUG_FOREGROUND, ThemeColors.DEBUG_BACKGROUND)));
+		items.add(newItem(".*TRACE.*", style(ThemeColors.TRACE_FOREGROUND, ThemeColors.TRACE_BACKGROUND)));
 		return items;
 	}
 
@@ -90,16 +60,14 @@ public class DefaultState {
 		GrepExpressionItem grepExpressionItem = new GrepExpressionItem();
 		grepExpressionItem.setStyle(style);
 		grepExpressionItem.setGrepExpression(grepExpression);
-		grepExpressionItem.setEnabled(style != null
-				&& (style.getBackgroundColor().isEnabled() || style.getForegroundColor().isEnabled())
-		);
+		grepExpressionItem.setEnabled(true);
 		return grepExpressionItem;
 	}
 
-	private static GrepStyle style(GrepColor backgroundColor, GrepColor foregroundColor) {
+	private static GrepStyle style(ColorKey backgroundColor, ColorKey foregroundColor) {
 		GrepStyle grepStyle = new GrepStyle();
-		grepStyle.backgroundColor(backgroundColor);
-		grepStyle.foregroundColor(foregroundColor);
+		grepStyle.backgroundColor(new GrepColor(backgroundColor));
+		grepStyle.foregroundColor(new GrepColor(foregroundColor));
 		return grepStyle;
 	}
 

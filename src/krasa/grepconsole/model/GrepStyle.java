@@ -4,6 +4,8 @@ import com.intellij.openapi.editor.markup.EffectType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import org.intellij.lang.annotations.JdkConstants;
 
+import java.awt.*;
+
 public class GrepStyle extends DomainObject {
 	private String name;
 
@@ -52,16 +54,25 @@ public class GrepStyle extends DomainObject {
 
 	public void applyTo(TextAttributes attributes) {
 		if (foregroundColor != null && foregroundColor.isEnabled()) {
-			attributes.setForegroundColor(foregroundColor.getColorAsAWT());
+			Color colorAsAWT = foregroundColor.getColorAsAWT();
+			if (colorAsAWT != null) {
+				attributes.setForegroundColor(colorAsAWT);
+			}
 		}
 		if (backgroundColor != null && backgroundColor.isEnabled()) {
-			attributes.setBackgroundColor(backgroundColor.getColorAsAWT());
+			Color colorAsAWT = backgroundColor.getColorAsAWT();
+			if (colorAsAWT != null) {
+				attributes.setBackgroundColor(colorAsAWT);
+			}
 		}
 		if (effectType != null) {
 			attributes.setEffectType(effectType);
 		}
 		if (effectColor != null && effectColor.isEnabled()) {
-			attributes.setEffectColor(effectColor.getColorAsAWT());
+			Color colorAsAWT = effectColor.getColorAsAWT();
+			if (colorAsAWT != null) {
+				attributes.setEffectColor(colorAsAWT);
+			}
 		}
 		int fontType = 0 + (bold ? 1 : 0) + (italic ? 2 : 0);
 		attributes.setFontType(fontType);

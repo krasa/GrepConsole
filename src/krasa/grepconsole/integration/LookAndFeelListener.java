@@ -7,6 +7,7 @@ import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
 public class LookAndFeelListener implements LafManagerListener {
+
   @Override
   public void lookAndFeelChanged(@NotNull LafManager lafManager) {
     Cache.reset();

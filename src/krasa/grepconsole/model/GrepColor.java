@@ -3,6 +3,7 @@ package krasa.grepconsole.model;
 import com.intellij.openapi.editor.colors.ColorKey;
 import com.intellij.openapi.editor.colors.EditorColorsUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
@@ -36,7 +37,7 @@ public class GrepColor extends DomainObject {
 
 	public GrepColor(@NotNull ColorKey colorKey) {
 		this.colorKey = colorKey.getExternalName();
-		this.enabled = EditorColorsUtil.getGlobalOrDefaultColor(colorKey) != null;
+		this.enabled = true;
 	}
 
 	public Integer getColor() {
@@ -63,6 +64,7 @@ public class GrepColor extends DomainObject {
 		this.colorKey = colorKey;
 	}
 
+	@Nullable
 	public Color getColorAsAWT() {
 		if (colorKey != null) {
 			return EditorColorsUtil.getGlobalOrDefaultColor(ColorKey.createColorKey(colorKey));
