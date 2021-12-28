@@ -138,10 +138,10 @@ public class GrepStyle extends DomainObject {
 	}
 
 	public boolean isResetable() {
-		if (foregroundColor != null && foregroundColor.isResetable()) {
+		if (foregroundColor.isResetable()) {
 			return true;
 		}
-		if (backgroundColor != null && backgroundColor.isResetable()) {
+		if (backgroundColor.isResetable()) {
 			return true;
 		}
 
@@ -149,12 +149,11 @@ public class GrepStyle extends DomainObject {
 	}
 
 	public void reset() {
-		if (foregroundColor != null) {
-			foregroundColor.reset();
-		}
+		foregroundColor.reset();
+		backgroundColor.reset();
+	}
 
-		if (backgroundColor != null) {
-			backgroundColor.reset();
-		}
+	public boolean hasColor() {
+		return backgroundColor.getColorAsAWT() != null || foregroundColor.getColorAsAWT() != null;
 	}
 }

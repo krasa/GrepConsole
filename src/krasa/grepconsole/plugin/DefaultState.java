@@ -60,7 +60,7 @@ public class DefaultState {
 		GrepExpressionItem grepExpressionItem = new GrepExpressionItem();
 		grepExpressionItem.setStyle(style);
 		grepExpressionItem.setGrepExpression(grepExpression);
-		grepExpressionItem.setEnabled(true);
+		grepExpressionItem.setEnabled(style.hasColor());
 		return grepExpressionItem;
 	}
 
