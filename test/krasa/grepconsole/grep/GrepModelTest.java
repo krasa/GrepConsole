@@ -10,70 +10,70 @@ public class GrepModelTest {
 
 	@Test
 	public void matchTest() throws Exception {
-		matcher = new GrepModel(false, false, false, "a", "").matcher();
+		matcher = new GrepModel(false, false, false, "a", false).matcher();
 		_true("a");
 		_true("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new GrepModel(false, false, false, "a", "aa").matcher();
+		matcher = new GrepModel(false, false, false, "a", false).matcher();
 		_true("a");
 		_true("A");
-		false_("aa");
-		false_("aA");
+//		false_("aa");
+//		false_("aA");
 		false_("b");
 
-		matcher = new GrepModel(false, false, true, "a", "aa").matcher();
+		matcher = new GrepModel(false, false, true, "a", false).matcher();
 		_true("a");
 		_true("A");
-		false_("aa");
-		false_("aA");
+//		false_("aa");
+//		false_("aA");
 		false_("b");
 
-		matcher = new GrepModel(false, false, false, "a[a]", "").matcher();
+		matcher = new GrepModel(false, false, false, "a[a]", false).matcher();
 		false_("a");
 		false_("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new GrepModel(false, false, true, "a[a]", "").matcher();
+		matcher = new GrepModel(false, false, true, "a[a]", false).matcher();
 		false_("a");
 		false_("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new GrepModel(false, false, true, "a", "").matcher();
+		matcher = new GrepModel(false, false, true, "a", false).matcher();
 		_true("a");
 		_true("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new GrepModel(false, true, false, "a", "").matcher();
+		matcher = new GrepModel(false, true, false, "a", false).matcher();
 		_true("a");
 		_true("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new GrepModel(false, true, true, "a", "").matcher();
+		matcher = new GrepModel(false, true, true, "a", false).matcher();
 		_true("a");
 		_true("A");
 		false_("aa");
 		false_("aA");
 		false_("b");
 
-		matcher = new GrepModel(true, false, false, "a", "").matcher();
+		matcher = new GrepModel(true, false, false, "a", false).matcher();
 		_true("a");
 		false_("A");
 		_true("aa");
 		_true("aA");
 		false_("b");
 
-		matcher = new GrepModel(true, false, true, "a", "").matcher();
+		matcher = new GrepModel(true, false, true, "a", false).matcher();
 		_true("a");
 		false_("A");
 		_true("aa");

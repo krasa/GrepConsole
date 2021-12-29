@@ -33,16 +33,16 @@ public class HighlightingFilterTest {
 		assertNotNull(result);
 		assertEquals(1, result.getResultItems().size());
 		Filter.ResultItem resultItem = result.getResultItems().get(0);
-		assertEquals(Color.RED, resultItem.highlightAttributes.getBackgroundColor());
-		assertNull(resultItem.highlightAttributes.getEffectColor());
-		assertNull(resultItem.highlightAttributes.getErrorStripeColor());
-		assertNull(resultItem.highlightAttributes.getForegroundColor());
+		assertEquals(Color.RED, resultItem.getHighlightAttributes().getBackgroundColor());
+		assertNull(resultItem.getHighlightAttributes().getEffectColor());
+		assertNull(resultItem.getHighlightAttributes().getErrorStripeColor());
+		assertNull(resultItem.getHighlightAttributes().getForegroundColor());
 
 		result = grepFilter.applyFilter("[INFO]", 10);
 		assertEquals(1, result.getResultItems().size());
 		resultItem = result.getResultItems().get(0);
 		assertNotNull(resultItem);
-		assertEquals(Color.BLUE, resultItem.highlightAttributes.getBackgroundColor());
+		assertEquals(Color.BLUE, resultItem.getHighlightAttributes().getBackgroundColor());
 
 		testVariousText(grepFilter);
 	}
@@ -54,26 +54,26 @@ public class HighlightingFilterTest {
 		grepProcessors.add(getFilterB(".*RED BACKGROUND.*", Color.RED, Operation.CONTINUE_MATCHING));
 		HighlightingFilter grepFilter = new HighlightingFilter(new Profile(), grepProcessors);
 
-		Filter.Result result = grepFilter.applyFilter("BLACK FOREGROUND RED BACKGROUND", 10);
+		Filter.Result result = grepFilter.applyFilter("BLACK FOREGROUND RED BACKGROUND", 100);
 		assertNotNull(result);
 		assertEquals(1, result.getResultItems().size());
 		Filter.ResultItem resultItem = result.getResultItems().get(0);
-		assertEquals(Color.RED, resultItem.highlightAttributes.getBackgroundColor());
-		assertEquals(Color.BLACK, resultItem.highlightAttributes.getForegroundColor());
-		assertNull(resultItem.highlightAttributes.getEffectColor());
-		assertNull(resultItem.highlightAttributes.getErrorStripeColor());
+		assertEquals(Color.RED, resultItem.getHighlightAttributes().getBackgroundColor());
+		assertEquals(Color.BLACK, resultItem.getHighlightAttributes().getForegroundColor());
+		assertNull(resultItem.getHighlightAttributes().getEffectColor());
+		assertNull(resultItem.getHighlightAttributes().getErrorStripeColor());
 
-		result = grepFilter.applyFilter("BLACK FOREGROUND", 10);
+		result = grepFilter.applyFilter("BLACK FOREGROUND", 100);
 		assertEquals(1, result.getResultItems().size());
 		resultItem = result.getResultItems().get(0);
-		assertEquals(null, resultItem.highlightAttributes.getBackgroundColor());
-		assertEquals(Color.BLACK, resultItem.highlightAttributes.getForegroundColor());
+		assertEquals(null, resultItem.getHighlightAttributes().getBackgroundColor());
+		assertEquals(Color.BLACK, resultItem.getHighlightAttributes().getForegroundColor());
 
-		result = grepFilter.applyFilter("RED BACKGROUND", 10);
+		result = grepFilter.applyFilter("RED BACKGROUND", 100);
 		assertEquals(1, result.getResultItems().size());
 		resultItem = result.getResultItems().get(0);
-		assertEquals(Color.RED, resultItem.highlightAttributes.getBackgroundColor());
-		assertEquals(null, resultItem.highlightAttributes.getForegroundColor());
+		assertEquals(Color.RED, resultItem.getHighlightAttributes().getBackgroundColor());
+		assertEquals(null, resultItem.getHighlightAttributes().getForegroundColor());
 	}
 
 	private void testVariousText(HighlightingFilter grepFilter) {

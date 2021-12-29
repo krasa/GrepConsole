@@ -52,6 +52,12 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 		this.grepFilter = grepFilter;
 	}
 
+	public MainInputFilter(Profile profile, List<GrepProcessor> grepProcessors) {
+		super(profile, grepProcessors);
+		this.filterBeforeGrepping = false;
+		this.grepFilter = null;
+	}
+
 	/*todo not reliable */
 	public void init(WeakReference<ConsoleView> console, Profile profile) {
 		this.profile = profile;
