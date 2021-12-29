@@ -16,8 +16,7 @@ public class DefaultState {
 
 	public static List<Profile> createDefault() {
 		List<Profile> profiles = new ArrayList<>();
-		Profile profile = getDefaultProfile();
-		profiles.add(profile);
+		profiles.add(getDefaultProfile());
 		return profiles;
 	}
 
@@ -44,12 +43,12 @@ public class DefaultState {
 
 	private static List<GrepExpressionItem> createDefaultInputFilter() {
 		ArrayList<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
-		grepExpressionItems.add(newItem(".*unwanted line.*", null).action(GrepExpressionItem.ACTION_REMOVE));
-		grepExpressionItems.add(newItem(".*unwanted line.*", null).action(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED));
+		grepExpressionItems.add(new GrepExpressionItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE));
+		grepExpressionItems.add(new GrepExpressionItem().enabled(false).grepExpression(".*unwanted line.*").action(GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED));
 		return grepExpressionItems;
 	}
 
-	public static void resetToDefault(Profile profile) {
+	public static void resetToDefault(@NotNull Profile profile) {
 		List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 		grepExpressionGroups.clear();
 		grepExpressionGroups.add(new GrepExpressionGroup("default", createDefaultItems()));
@@ -57,7 +56,7 @@ public class DefaultState {
 	}
 
 
-	public static List<GrepExpressionItem> createDefaultItems() {
+	private static List<GrepExpressionItem> createDefaultItems() {
 		List<GrepExpressionItem> items = new ArrayList<>();
 		items.add(newItem(".*FATAL.*", style(FATAL_BACKGROUND, FATAL_FOREGROUND).bold(true)));
 		items.add(newItem(".*ERROR.*", style(ERROR_BACKGROUND, ERROR_FOREGROUND)));
@@ -69,15 +68,15 @@ public class DefaultState {
 	}
 
 
-	public static GrepExpressionItem newItem(String grepExpression, GrepStyle style) {
+	private static GrepExpressionItem newItem(String grepExpression, @NotNull GrepStyle style) {
 		GrepExpressionItem grepExpressionItem = new GrepExpressionItem();
-		grepExpressionItem.setStyle(style);
 		grepExpressionItem.setGrepExpression(grepExpression);
-		grepExpressionItem.setEnabled(style != null && style.hasColor());
+		grepExpressionItem.setStyle(style);
+		grepExpressionItem.setEnabled(style.hasColor());
 		return grepExpressionItem;
 	}
 
-	private static GrepStyle style(ColorKey backgroundColor, ColorKey foregroundColor) {
+	private static GrepStyle style(@NotNull ColorKey backgroundColor, @NotNull ColorKey foregroundColor) {
 		GrepStyle grepStyle = new GrepStyle();
 		grepStyle.backgroundColor(new GrepColor(backgroundColor));
 		grepStyle.foregroundColor(new GrepColor(foregroundColor));
