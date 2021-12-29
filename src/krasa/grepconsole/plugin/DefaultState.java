@@ -62,8 +62,8 @@ public class DefaultState {
 		items.add(newItem(".*ERROR.*", style(ERROR_BACKGROUND, ERROR_FOREGROUND)));
 		items.add(newItem(".*WARN.*", style(WARN_BACKGROUND, WARN_FOREGROUND)));
 		items.add(newItem(".*INFO.*", style(INFO_BACKGROUND, INFO_FOREGROUND)));
-		items.add(newItem(".*DEBUG.*", style(DEBUG_FOREGROUND, DEBUG_BACKGROUND)));
-		items.add(newItem(".*TRACE.*", style(TRACE_FOREGROUND, TRACE_BACKGROUND)));
+		items.add(newItem(".*DEBUG.*", style(DEBUG_BACKGROUND, DEBUG_FOREGROUND)));
+		items.add(newItem(".*TRACE.*", style(TRACE_BACKGROUND, TRACE_FOREGROUND)));
 		return items;
 	}
 
