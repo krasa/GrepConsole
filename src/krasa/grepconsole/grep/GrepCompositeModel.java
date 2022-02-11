@@ -54,10 +54,10 @@ public class GrepCompositeModel {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < models.size(); i++) {
 			GrepModel grepModel = models.get(i);
-			if (i != 0) {
-				if (grepModel.isExclude()) {
-					sb.append("-");
-				} else {
+			if (grepModel.isExclude()) {
+				sb.append("-");
+			} else {
+				if (i != 0) {
 					sb.append("+");
 				}
 			}
