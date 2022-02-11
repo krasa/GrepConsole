@@ -53,7 +53,7 @@
 
     <change-notes><![CDATA[
         <br>12.3
-		<br>- Themable default colors
+		<br>- Grep Excluding improved - all is matched when there is no include
         <br>12.2
 		<br>- Themable default colors
         <br>12.1
