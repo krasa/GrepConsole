@@ -72,8 +72,12 @@ public class GrepCompositeModel {
 
 
 	public boolean matches(CharSequence charSequence) {
+		boolean hasExcludingModel = false;
+		boolean hasIncludingModel = false;
+
 		for (GrepModel grepModel : models) {
 			if (grepModel.isExclude()) {
+				hasExcludingModel = true;
 				if (grepModel.matches(charSequence)) {
 					return false;
 				}
@@ -81,11 +85,17 @@ public class GrepCompositeModel {
 		}
 		for (GrepModel grepModel : models) {
 			if (!grepModel.isExclude()) {
+				hasIncludingModel = true;
 				if (grepModel.matches(charSequence)) {
 					return true;
 				}
 			}
 		}
+
+		if (hasExcludingModel && !hasIncludingModel) {
+			return true;
+		}
+
 		return false;
 	}
 
