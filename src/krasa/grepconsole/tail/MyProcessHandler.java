@@ -22,9 +22,7 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Consumer;
-import com.intellij.util.io.BaseDataReader;
 import com.intellij.util.io.BaseInputStreamReader;
-import com.intellij.util.io.BaseOutputReader;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -101,8 +99,8 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 			@Override
 			public void startNotified(final ProcessEvent event) {
 				try {
-					final BaseDataReader stdOutReader = createOutputDataReader(getPolicy());
-					final BaseDataReader stdErrReader = processHasSeparateErrorStream() ? createErrorDataReader(getPolicy()) : null;
+					final MyBaseDataReader stdOutReader = createOutputDataReader(getPolicy());
+					final MyBaseDataReader stdErrReader = processHasSeparateErrorStream() ? createErrorDataReader(getPolicy()) : null;
 
 					myWaitFor.setTerminationCallback(new Consumer<Integer>() {
 						@Override
@@ -132,22 +130,22 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 	}
 
 	@NotNull
-	private BaseDataReader.SleepingPolicy getPolicy() {
+	private MyBaseDataReader.SleepingPolicy getPolicy() {
 		if (useNonBlockingRead()) {
-			return BaseDataReader.SleepingPolicy.NON_BLOCKING;
+			return MyBaseDataReader.SleepingPolicy.NON_BLOCKING;
 		} else {
 			//use blocking read policy
-			return BaseDataReader.SleepingPolicy.BLOCKING;
+			return MyBaseDataReader.SleepingPolicy.BLOCKING;
 		}
 	}
 
 	@NotNull
-	protected BaseDataReader createErrorDataReader(@NotNull BaseDataReader.SleepingPolicy sleepingPolicy) {
+	protected MyBaseDataReader createErrorDataReader(@NotNull MyBaseDataReader.SleepingPolicy sleepingPolicy) {
 		return new SimpleOutputReader(createProcessErrReader(), ProcessOutputTypes.STDERR, sleepingPolicy, "error stream of " + myPresentableName);
 	}
 
 	@NotNull
-	protected BaseDataReader createOutputDataReader(@NotNull BaseDataReader.SleepingPolicy sleepingPolicy) {
+	protected MyBaseDataReader createOutputDataReader(@NotNull MyBaseDataReader.SleepingPolicy sleepingPolicy) {
 		return new SimpleOutputReader(createProcessOutReader(), ProcessOutputTypes.STDOUT, sleepingPolicy, "output stream of " + myPresentableName);
 	}
 
@@ -251,11 +249,11 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 		return ExecutorServiceHolder.ourThreadExecutorsService.submit(task);
 	}
 
-	private class SimpleOutputReader extends BaseOutputReader {
+	private class SimpleOutputReader extends MyBaseOutputReader {
 		private final Key myProcessOutputType;
 
 		private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
-			super(reader, BaseOutputReader.Options.withPolicy(sleepingPolicy));
+			super(reader, MyBaseOutputReader.Options.withPolicy(sleepingPolicy));
 			myProcessOutputType = processOutputType;
 			start(presentableName);
 		}
@@ -270,7 +268,9 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 		protected void onTextAvailable(@NotNull String text) {
 			notifyTextAvailable(text, myProcessOutputType);
 		}
+
 	}
+
 
 	@Override
 	public String toString() {
