@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.3.211.6693.0</version>
+    <version>12.4.211.6693.0</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -52,6 +52,8 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <br>12.4
+		<br>- More reliable Tail - ignoring "The process cannot access the file because another process has locked a portion of the file" IOException.
         <br>12.3
 		<br>- Grep Excluding improved - all is matched when there is no include
         <br>12.2
