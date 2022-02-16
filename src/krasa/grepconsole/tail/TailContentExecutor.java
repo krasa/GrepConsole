@@ -2,7 +2,6 @@ package krasa.grepconsole.tail;
 
 import com.intellij.execution.DefaultExecutionResult;
 import com.intellij.execution.ExecutionException;
-import com.intellij.execution.ExecutionManager;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
@@ -13,10 +12,7 @@ import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.ui.ConsoleView;
-import com.intellij.execution.ui.ExecutionConsole;
-import com.intellij.execution.ui.RunContentDescriptor;
-import com.intellij.execution.ui.RunnerLayoutUi;
+import com.intellij.execution.ui.*;
 import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.execution.ui.layout.PlaceInGrid;
 import com.intellij.icons.AllIcons;
@@ -183,23 +179,27 @@ public class TailContentExecutor implements Disposable {
 		for (AnAction action : consoleView.createConsoleActions()) {
 			actions.add(action);
 		}
+		ToolWindowManager.getInstance(myProject).invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				RunContentManager.getInstance(myProject).showRunContent(executor, descriptor);
 
-		ExecutionManager.getInstance(myProject).getContentManager().showRunContent(executor, descriptor);
-
-		if (myActivateToolWindow) {
-			activateToolWindow();
-		}
-
-		if (myAfterCompletion != null) {
-			myProcess.addProcessListener(new ProcessAdapter() {
-				@Override
-				public void processTerminated(ProcessEvent event) {
-					SwingUtilities.invokeLater(myAfterCompletion);
+				if (myActivateToolWindow) {
+					activateToolWindow();
 				}
-			});
-		}
 
-		myProcess.startNotify();
+				if (myAfterCompletion != null) {
+					myProcess.addProcessListener(new ProcessAdapter() {
+						@Override
+						public void processTerminated(ProcessEvent event) {
+							SwingUtilities.invokeLater(myAfterCompletion);
+						}
+					});
+				}
+				myProcess.startNotify();
+			}
+		});
+
 	}
 
 	@NotNull
