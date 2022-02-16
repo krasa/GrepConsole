@@ -154,7 +154,16 @@ public abstract class MyBaseDataReader {
     try {
       boolean stopSignalled = false;
       while (true) {
-        final boolean read = readAvailable();
+        boolean read = false;
+        try {
+          read = readAvailable();
+        } catch (IOException e) {
+          if ("The process cannot access the file because another process has locked a portion of the file".equals(e.getMessage())) {
+            LOG.debug("TAIL IGNORING", e);
+          } else {
+            throw e;
+          }
+        }
 
         if (stopSignalled || mySleepingPolicy == SleepingPolicy.BLOCKING) {
           break;
