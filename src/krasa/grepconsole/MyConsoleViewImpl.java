@@ -15,6 +15,7 @@ public class MyConsoleViewImpl extends ConsoleViewImpl {
 		super(project, viewer);
 		this.parentConsoleView = parentConsoleView;
 		PinnedGrepsReopener.ignore(this);
+
 	}
 
 	public ConsoleView getParentConsoleView() {

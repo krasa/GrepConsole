@@ -3,7 +3,7 @@ package krasa.grepconsole.grep.gui;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
-import krasa.grepconsole.grep.GrepContextModel;
+import krasa.grepconsole.grep.GrepBeforeAfterModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,18 +19,18 @@ public class GrepBeforeAfterSettingsDialog {
 	private JTextField after;
 
 	private Project project;
-	private GrepContextModel grepContextModel;
+	private GrepBeforeAfterModel beforeAfterModel;
 
-	public GrepBeforeAfterSettingsDialog(Project project, GrepContextModel grepContextModel) {
+	public GrepBeforeAfterSettingsDialog(Project project, GrepBeforeAfterModel beforeAfterModel) {
 		this.project = project;
-		this.grepContextModel = grepContextModel;
-		setData(grepContextModel);
+		this.beforeAfterModel = beforeAfterModel;
+		setData(beforeAfterModel);
 	}
 
-	public GrepContextModel showAndGet(Component parent) {
+	public GrepBeforeAfterModel showAndGet(Component parent) {
 		DialogBuilder builder = new DialogBuilder(parent);
 		builder.setCenterPanel(this.root);
-		builder.setDimensionServiceKey("GrepContextDialog");
+		builder.setDimensionServiceKey("GrepBeforeAfterSettingsDialog");
 		builder.setTitle("Print Before/After Lines in Addition to Matched Lines");
 		builder.removeAllActions();
 		builder.addAction(new AbstractAction("Reset") {
@@ -45,17 +45,17 @@ public class GrepBeforeAfterSettingsDialog {
 		builder.addCancelAction();
 		boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
 		if (isOk) {
-			getData(this.grepContextModel);
+			getData(this.beforeAfterModel);
 		}
-		return this.grepContextModel;
+		return this.beforeAfterModel;
 	}
 
-	public void setData(GrepContextModel data) {
+	public void setData(GrepBeforeAfterModel data) {
 		before.setText(String.valueOf(data.getBefore()));
 		after.setText(String.valueOf(data.getAfter()));
 	}
 
-	public void getData(GrepContextModel data) {
+	public void getData(GrepBeforeAfterModel data) {
 		data.setBefore(Integer.parseInt(before.getText()));
 		data.setAfter(Integer.parseInt(after.getText()));
 	}

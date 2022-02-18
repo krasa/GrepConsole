@@ -309,7 +309,7 @@
             />
         </group>
         <group id="krasa.grepconsole.grep.panel.before" text="Grep Panel - Before Expressions">
-            <action id="GrepConsole.GrepContextSettings"
+            <action id="GrepConsole.GrepBeforeAfterSettings"
                     class="krasa.grepconsole.grep.actions.BeforeAfterSettingsAction"
                     text="Before/After Settings"
                     description="Print before/after lines in addition to matched lines"

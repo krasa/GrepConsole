@@ -17,8 +17,8 @@ import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.WrapLayout;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
+import krasa.grepconsole.grep.GrepBeforeAfterModel;
 import krasa.grepconsole.grep.GrepCompositeModel;
-import krasa.grepconsole.grep.GrepContextModel;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
@@ -58,7 +58,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	private OpenGrepConsoleAction.Callback applyCallback;
 	private String customTitle;
 	private String cachedFullTitle;
-	private GrepContextModel grepContextModel = new GrepContextModel();
+	private GrepBeforeAfterModel beforeAfterModel = new GrepBeforeAfterModel();
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -131,7 +131,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 		if (compositeModel != null) {
 			customTitle = compositeModel.getCustomTitle();
-			grepContextModel = compositeModel.getGrepContextModel();
+			beforeAfterModel = compositeModel.getBeforeAfterModel();
 		} else {
 			if (!StringUtils.isEmpty(pattern)) {
 				GrepModel selectedItem = null;
@@ -177,7 +177,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		expressions.repaint();
 		newConsole.clear();
 		grepListener.clear();
-		grepContextModel.clear();
+		beforeAfterModel.clear();
 		GrepUtils.grepThroughExistingText(originalConsole, grepFilter, grepListener);
 	}
 
@@ -191,13 +191,13 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 			}
 		}
 		grepCompositeModel.setCustomTitle(customTitle);
-		grepCompositeModel.setGrepContextModel(grepContextModel);
+		grepCompositeModel.setBeforeAfterModel(beforeAfterModel);
 		cachedFullTitle = grepCompositeModel.getFullTitle();
 		return grepCompositeModel;
 	}
 
-	public GrepContextModel getGrepContextModel() {
-		return grepContextModel;
+	public GrepBeforeAfterModel getBeforeAfterModel() {
+		return beforeAfterModel;
 	}
 
 	public void updateTabDescription() {
@@ -274,8 +274,8 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		expressions.revalidate();
 	}
 
-	public void setGrepContextModel(@NotNull GrepContextModel grepContextModel) {
-		this.grepContextModel = grepContextModel;
+	public void setBeforeAfterModel(@NotNull GrepBeforeAfterModel beforeAfterModel) {
+		this.beforeAfterModel = beforeAfterModel;
 		reload();
 	}
 

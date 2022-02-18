@@ -9,7 +9,7 @@ import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.MyConsoleViewImpl;
-import krasa.grepconsole.grep.GrepContextModel;
+import krasa.grepconsole.grep.GrepBeforeAfterModel;
 import krasa.grepconsole.grep.gui.GrepBeforeAfterSettingsDialog;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import org.jetbrains.annotations.NotNull;
@@ -26,11 +26,11 @@ public class BeforeAfterSettingsAction extends DumbAwareAction implements Custom
 		GrepPanel grepPanel = getGrepPanel(e);
 		if (grepPanel != null) {
 			Project project = e.getProject();
-			GrepContextModel grepContextModel = grepPanel.getGrepContextModel();
-			GrepBeforeAfterSettingsDialog grepBeforeAfterSettingsDialog = new GrepBeforeAfterSettingsDialog(project, grepContextModel);
+			GrepBeforeAfterModel beforeAfterModel = grepPanel.getBeforeAfterModel();
+			GrepBeforeAfterSettingsDialog grepBeforeAfterSettingsDialog = new GrepBeforeAfterSettingsDialog(project, beforeAfterModel);
 			grepBeforeAfterSettingsDialog.showAndGet(e.getInputEvent().getComponent());
-			grepPanel.setGrepContextModel(grepContextModel);
-			e.getPresentation().setText(grepContextModel.toPresentationString());
+			grepPanel.setBeforeAfterModel(beforeAfterModel);
+			e.getPresentation().setText(beforeAfterModel.toPresentationString());
 		}
 	}
 
@@ -52,8 +52,8 @@ public class BeforeAfterSettingsAction extends DumbAwareAction implements Custom
 		super.update(e);
 		GrepPanel grepPanel = GrepPanel.GREP_PANEL.getData(e.getDataContext());
 		if (grepPanel != null) {
-			GrepContextModel grepContextModel = grepPanel.getGrepContextModel();
-			String s = grepContextModel.toPresentationString();
+			GrepBeforeAfterModel beforeAfterModel = grepPanel.getBeforeAfterModel();
+			String s = beforeAfterModel.toPresentationString();
 			e.getPresentation().setText(s);
 		}
 	}
