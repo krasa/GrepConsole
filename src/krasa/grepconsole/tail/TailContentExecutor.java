@@ -179,6 +179,7 @@ public class TailContentExecutor implements Disposable {
 		for (AnAction action : consoleView.createConsoleActions()) {
 			actions.add(action);
 		}
+
 		ToolWindowManager.getInstance(myProject).invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -196,10 +197,10 @@ public class TailContentExecutor implements Disposable {
 						}
 					});
 				}
+
 				myProcess.startNotify();
 			}
 		});
-
 	}
 
 	@NotNull

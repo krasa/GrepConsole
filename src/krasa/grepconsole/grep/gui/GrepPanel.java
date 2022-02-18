@@ -59,7 +59,6 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	private String customTitle;
 	private String cachedFullTitle;
 	private GrepBeforeAfterModel beforeAfterModel = new GrepBeforeAfterModel();
-
 	public JPanel getRootComponent() {
 		return rootComponent;
 	}
@@ -94,7 +93,6 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 				}
 			}
 		});
-		;
 	}
 
 

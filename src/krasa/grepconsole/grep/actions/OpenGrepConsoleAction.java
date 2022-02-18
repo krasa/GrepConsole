@@ -140,7 +140,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		Profile profile = ServiceManager.getInstance().getProfile(parentConsoleView);
 		ServiceManager.getInstance().profileChanged(newConsole, profile);
 
-		final GrepFilterListener grepListener = new GrepFilterSyncListener(myProcessHandler, project, profile);
+		final GrepFilterListener grepListener = new GrepFilterSyncListener(newConsole, myProcessHandler, project, profile);
 
 		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi,
 				toolWindow);

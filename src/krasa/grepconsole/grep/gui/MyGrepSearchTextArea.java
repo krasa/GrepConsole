@@ -43,7 +43,6 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		this.grepPanel = grepPanel;
 		getTextArea().addKeyListener(myEnterRedispatcher);
 
-		UiUtils.addChangeListener(getTextArea(), e -> grepPanel.textExpressionChanged());
 
 		caseSensitive = new AtomicBoolean();
 		MySwitchStateToggleAction myCaseSensitiveAction =
@@ -74,6 +73,8 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 
 		setExtraActions(myCaseSensitiveAction, myWholeWordsAction, myRegexAction, myExcludeAction);
 		load(model);
+
+		UiUtils.addChangeListener(getTextArea(), e -> grepPanel.textExpressionChanged());
 	}
 
 	private final KeyAdapter myEnterRedispatcher = new KeyAdapter() {

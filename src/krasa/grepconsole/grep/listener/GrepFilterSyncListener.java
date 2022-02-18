@@ -7,6 +7,7 @@ import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
+import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.grep.GrepBeforeAfterModel;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
@@ -21,6 +22,7 @@ import java.util.List;
 public class GrepFilterSyncListener implements GrepFilterListener {
 	private static final Logger log = Logger.getInstance(GrepFilterSyncListener.class);
 
+	private MyConsoleViewImpl newConsole;
 	private final OpenGrepConsoleAction.LightProcessHandler myProcessHandler;
 	private final Project project;
 	private volatile Profile profile;
@@ -30,7 +32,8 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	private final ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
 	private final ThreadLocal<Long> previousTimestamp = new ThreadLocal<>();
 
-	public GrepFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
+	public GrepFilterSyncListener(MyConsoleViewImpl newConsole, OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
+		this.newConsole = newConsole;
 		this.myProcessHandler = myProcessHandler;
 		this.project = project;
 		this.profile = profile;
@@ -127,6 +130,7 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	@Override
 	public void dispose() {
 		previousIncompleteToken.set(null);
+		newConsole = null;
 	}
 
 	@Override
