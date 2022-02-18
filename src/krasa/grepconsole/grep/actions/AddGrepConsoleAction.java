@@ -93,7 +93,7 @@ public class AddGrepConsoleAction extends DumbAwareAction {
 	private void add(DefaultActionGroup actionGroup, List<MyConsoleViewImpl> list) {
 		for (MyConsoleViewImpl consoleView : list) {
 			GrepPanel grepPanel = consoleView.getGrepPanel();
-			GrepCompositeModel model = grepPanel.getModel();
+			GrepCompositeModel model = grepPanel.createModel();
 			String expression = model.getTitle();
 			actionGroup.add(new MyAnAction(grepPanel, expression));
 			add(actionGroup, ServiceManager.getInstance().findChildGreps(consoleView));

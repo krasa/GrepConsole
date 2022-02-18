@@ -238,6 +238,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 
 		});
+		quickFilterPanel.apply();
 
 		GrepUtils.grepThroughExistingText(parentConsoleView, grepFilter, grepListener);
 
@@ -685,7 +686,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 
 		public GrepCompositeModel getModel() {
-			return quickFilterPanel.getModel();
+			return quickFilterPanel.createModel();
 		}
 
 		public boolean isPinned() {

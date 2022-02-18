@@ -1,6 +1,7 @@
 package krasa.grepconsole.grep;
 
 import com.intellij.util.xmlb.annotations.Transient;
+import krasa.grepconsole.Cloner;
 import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 
 import java.util.ArrayList;
@@ -10,8 +11,20 @@ import java.util.Objects;
 public class GrepCompositeModel {
 	List<GrepModel> models = new ArrayList<GrepModel>();
 	String customTitle;
+	GrepContextModel grepContextModel = new GrepContextModel();
 
 	public GrepCompositeModel() {
+	}
+
+	public GrepContextModel getGrepContextModel() {
+		if (grepContextModel == null) {
+			grepContextModel = new GrepContextModel();
+		}
+		return grepContextModel;
+	}
+
+	public void setGrepContextModel(GrepContextModel grepContextModel) {
+		this.grepContextModel = Cloner.deepClone(grepContextModel);
 	}
 
 	public GrepCompositeModel(GrepModel selectedItem) {
@@ -104,12 +117,12 @@ public class GrepCompositeModel {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		GrepCompositeModel that = (GrepCompositeModel) o;
-		return Objects.equals(models, that.models) && Objects.equals(customTitle, that.customTitle);
+		return Objects.equals(models, that.models) && Objects.equals(customTitle, that.customTitle) && Objects.equals(grepContextModel, that.grepContextModel);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(models, customTitle);
+		return Objects.hash(models, customTitle, grepContextModel);
 	}
 
 	@Override
@@ -118,4 +131,5 @@ public class GrepCompositeModel {
 				"list=" + models +
 				'}';
 	}
+
 }

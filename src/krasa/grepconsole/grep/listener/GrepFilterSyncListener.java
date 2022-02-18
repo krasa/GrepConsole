@@ -8,6 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.text.StringUtil;
 import krasa.grepconsole.grep.GrepCompositeModel;
+import krasa.grepconsole.grep.GrepContextModel;
 import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.utils.Notifier;
@@ -24,9 +25,10 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	private final Project project;
 	private volatile Profile profile;
 	private volatile boolean showLimitNotification = true;
-	private ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
-	private ThreadLocal<Long> previousTimestamp = new ThreadLocal<>();
 	private GrepCompositeModel grepModel;
+
+	private final ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
+	private final ThreadLocal<Long> previousTimestamp = new ThreadLocal<>();
 
 	public GrepFilterSyncListener(OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
 		this.myProcessHandler = myProcessHandler;
@@ -83,11 +85,20 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 			String substring = profile.limitInputGrepLength_andCutNewLine(s);
 			CharSequence charSequence = profile.limitProcessingTime(substring);
 			try {
+
+				GrepContextModel contextModel = grepModel.getGrepContextModel();
 				if (grepModel.matches(charSequence)) {
 					if (!s.endsWith("\n")) {
 						s = s + "\n";
 					}
+
+					contextModel.flushBeforeMatched(myProcessHandler);
+
 					myProcessHandler.notifyTextAvailable(s, stdout);
+
+					contextModel.matched();
+				} else {
+					contextModel.buffer(myProcessHandler, s, stdout);
 				}
 			} catch (ProcessCanceledException e) {
 				String message = "Grep to a subconsole took too long, aborting to prevent input freezing.\n"
@@ -106,8 +117,11 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	}
 
 	@Override
-	public void clearStats() {
-
+	public void clear() {
+		previousTimestamp.remove();
+		previousIncompleteToken.remove();
+		GrepContextModel grepContextModel = grepModel.getGrepContextModel();
+		grepContextModel.clear();
 	}
 
 	@Override

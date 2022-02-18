@@ -15,6 +15,7 @@ import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.Producer;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.GrepModel;
+import krasa.grepconsole.utils.UiUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,8 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		super(createJbTextArea(), true);
 		this.grepPanel = grepPanel;
 		getTextArea().addKeyListener(myEnterRedispatcher);
+
+		UiUtils.addChangeListener(getTextArea(), e -> grepPanel.textExpressionChanged());
 
 		caseSensitive = new AtomicBoolean();
 		MySwitchStateToggleAction myCaseSensitiveAction =

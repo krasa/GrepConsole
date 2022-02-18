@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.4.211.6693.0</version>
+    <version>12.5.211.6693.0</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -52,6 +52,9 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <br>12.5
+		<br>- Grep: added Before/After option
+		<br>- Grep: added Auto Reload/Apply on expression change option
         <br>12.4
 		<br>- More reliable Tail - ignoring "The process cannot access the file because another process has locked a portion of the file" IOException.
         <br>12.3
@@ -305,6 +308,14 @@
                     icon="/krasa/grepconsole/icons/highlight.svg"
             />
         </group>
+        <group id="krasa.grepconsole.grep.panel.before" text="Grep Panel - Before Expressions">
+            <action id="GrepConsole.GrepContextSettings"
+                    class="krasa.grepconsole.grep.actions.BeforeAfterSettingsAction"
+                    text="Before/After Settings"
+                    description="Print before/after lines in addition to matched lines"
+                    icon="com.intellij.icons.AllIcons.Actions.AddList"
+            />
+        </group>
         <group id="krasa.grepconsole.grep.panel" text="Grep Panel">
             <action id="GrepConsole.AddExpressionAction"
                     class="krasa.grepconsole.grep.actions.AddExpressionAction"
@@ -326,12 +337,23 @@
                     text="Source"
                     icon="/krasa/grepconsole/icons/locate.svg"
             />
-            <action id="GrepConsole.SetTitleAction"
-                    class="krasa.grepconsole.grep.actions.SetTitleAction"
-                    text="Set Title"
-                    icon="/krasa/grepconsole/icons/settings.svg"
-                    popup="true"
-            />
+            <group text="Grep Settings" popup="true" icon="com.intellij.icons.AllIcons.Nodes.Editorconfig">
+                <action id="GrepConsole.SetTitleAction"
+                        class="krasa.grepconsole.grep.actions.SetTitleAction"
+                        text="Set Title"
+                        icon="/krasa/grepconsole/icons/settings.svg"
+                />
+                <action id="GrepConsole.AutoReload"
+                        class="krasa.grepconsole.grep.actions.AutoReloadToggleAction"
+                        text="Auto Reload"
+                        description="Auto reload on expression change"
+                />
+                <action id="GrepConsole.AutoApply"
+                        class="krasa.grepconsole.grep.actions.AutoApplyToggleAction"
+                        text="Auto Apply"
+                        description="Auto apply on expression change"
+                />
+            </group>
         </group>
 
     </actions>

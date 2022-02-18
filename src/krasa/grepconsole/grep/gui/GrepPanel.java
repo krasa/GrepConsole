@@ -18,6 +18,7 @@ import com.intellij.util.ui.WrapLayout;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepCompositeModel;
+import krasa.grepconsole.grep.GrepContextModel;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
@@ -53,9 +54,11 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	private JPanel rootComponent;
 	private JPanel expressions;
 	private JPanel buttons;
+	private JPanel beforeExpressions;
 	private OpenGrepConsoleAction.Callback applyCallback;
 	private String customTitle;
 	private String cachedFullTitle;
+	private GrepContextModel grepContextModel = new GrepContextModel();
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -75,7 +78,8 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		this.grepListener = grepListener;
 		initModel(pattern, grepModel);
 		this.selectSourceActionListener = selectSourceActionListener;
-		buttons.add(createToolbar().getComponent(), BorderLayout.CENTER);
+		buttons.add(createToolbar("krasa.grepconsole.grep.panel").getComponent(), BorderLayout.CENTER);
+		beforeExpressions.add(createToolbar("krasa.grepconsole.grep.panel.before").getComponent(), BorderLayout.CENTER);
 		addKeyListener(new KeyAdapter() {
 
 			@Override
@@ -95,14 +99,15 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 
 	@NotNull
-	private ActionToolbar createToolbar() {
+	private ActionToolbar createToolbar(String s) {
 		final ActionManager actionManager = ActionManager.getInstance();
 
 		DefaultActionGroup newGroup = new DefaultActionGroup();
-		newGroup.add(actionManager.getAction("krasa.grepconsole.grep.panel"));
+		newGroup.add(actionManager.getAction(s));
 
 		ActionToolbar actionToolbar = actionManager.createActionToolbar("GrepConsole-GrepPanel", newGroup, true);
 		final ActionToolbarImpl editorToolbar = ((ActionToolbarImpl) actionToolbar);
+		editorToolbar.setReservePlaceAutoPopupIcon(false);
 		editorToolbar.setOpaque(false);
 		editorToolbar.setBorder(new JBEmptyBorder(0, 0, 0, 0));
 		editorToolbar.setTargetComponent(newConsole);
@@ -126,6 +131,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 		if (compositeModel != null) {
 			customTitle = compositeModel.getCustomTitle();
+			grepContextModel = compositeModel.getGrepContextModel();
 		} else {
 			if (!StringUtils.isEmpty(pattern)) {
 				GrepModel selectedItem = null;
@@ -170,10 +176,12 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		expressions.revalidate();
 		expressions.repaint();
 		newConsole.clear();
+		grepListener.clear();
+		grepContextModel.clear();
 		GrepUtils.grepThroughExistingText(originalConsole, grepFilter, grepListener);
 	}
 
-	public GrepCompositeModel getModel() {
+	public GrepCompositeModel createModel() {
 		GrepCompositeModel grepCompositeModel = new GrepCompositeModel();
 		Component[] components = expressions.getComponents();
 		for (Component component : components) {
@@ -183,20 +191,25 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 			}
 		}
 		grepCompositeModel.setCustomTitle(customTitle);
+		grepCompositeModel.setGrepContextModel(grepContextModel);
 		cachedFullTitle = grepCompositeModel.getFullTitle();
 		return grepCompositeModel;
 	}
 
+	public GrepContextModel getGrepContextModel() {
+		return grepContextModel;
+	}
+
 	public void updateTabDescription() {
 		if (applyCallback != null) {
-			applyCallback.updateTabDescription(newConsole, getModel());
+			applyCallback.updateTabDescription(newConsole, createModel());
 		}
 	}
 
 	public void apply() {
 		if (applyCallback != null) {
 			try {
-				GrepCompositeModel model = getModel();
+				GrepCompositeModel model = createModel();
 				applyCallback.apply(newConsole, model);
 				PluginState.getInstance().addToHistory(model);
 			} catch (PatternSyntaxException e) {
@@ -225,7 +238,6 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	public void setApplyCallback(OpenGrepConsoleAction.Callback applyCallback) {
 		this.applyCallback = applyCallback;
-		apply();
 	}
 
 	public void selectSource() {
@@ -260,6 +272,20 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	public void tabSelected() {
 		//layout fix
 		expressions.revalidate();
+	}
+
+	public void setGrepContextModel(@NotNull GrepContextModel grepContextModel) {
+		this.grepContextModel = grepContextModel;
+		reload();
+	}
+
+	public void textExpressionChanged() {
+		PluginState instance = PluginState.getInstance();
+		if (instance.isAutoReloadGrepModel()) {
+			reload();
+		} else if (instance.isAutoApplyGrepModel()) {
+			apply();
+		}
 	}
 
 	public static class SelectSourceActionListener implements ActionListener {

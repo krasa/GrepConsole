@@ -12,5 +12,5 @@ public interface GrepFilterListener extends Disposable {
 
 	void process(String s, ConsoleViewContentType type);
 
-	void clearStats();
+	void clear();
 }

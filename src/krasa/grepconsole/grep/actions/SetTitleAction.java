@@ -13,7 +13,7 @@ public class SetTitleAction extends DumbAwareAction {
 		GrepPanel grepPanel = ApplyAction.getGrepPanel(e);
 		if (grepPanel != null) {
 
-			String s = Messages.showInputDialog(grepPanel, null, "Tab Title", null, grepPanel.getModel().getTitle(), new NonEmptyInputValidator());
+			String s = Messages.showInputDialog(grepPanel, null, "Tab Title", null, grepPanel.createModel().getTitle(), new NonEmptyInputValidator());
 			if (s != null) {
 				grepPanel.setCustomTitle(s);
 				grepPanel.apply();

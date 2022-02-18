@@ -29,6 +29,8 @@ public class PluginState extends DomainObject implements Cloneable {
 	private boolean allowRunConfigurationChanges = true;
 	private int version;
 	private List<GrepCompositeModel> grepHistory = new ArrayList<>();
+	private boolean autoReloadGrepModel = false;
+	private boolean autoApplyGrepModel = true;
 
 	public static PluginState getInstance() {
 		return GrepConsoleApplicationComponent.getInstance().getState();
@@ -191,5 +193,21 @@ public class PluginState extends DomainObject implements Cloneable {
 		while (grepHistory.size() > MAX_RECENT_SIZE) {
 			grepHistory.remove(0);
 		}
+	}
+
+	public boolean isAutoReloadGrepModel() {
+		return autoReloadGrepModel;
+	}
+
+	public void setAutoReloadGrepModel(boolean autoReloadGrepModel) {
+		this.autoReloadGrepModel = autoReloadGrepModel;
+	}
+
+	public boolean isAutoApplyGrepModel() {
+		return autoApplyGrepModel;
+	}
+
+	public void setAutoApplyGrepModel(boolean autoApplyGrepModel) {
+		this.autoApplyGrepModel = autoApplyGrepModel;
 	}
 }
