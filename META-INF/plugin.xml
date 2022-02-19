@@ -54,7 +54,8 @@
     <change-notes><![CDATA[
         <br>12.5
 		<br>- Grep: added Before/After option
-		<br>- Grep: added Auto Reload/Apply on expression change option
+		<br>- Grep: added Auto Reload/Apply on expression change option - Ctrl/Alt + Click on the button to toggle
+		<br>- Grep: usability - double click to add expression field, middle click to remove expression field
         <br>12.4
 		<br>- More reliable Tail - ignoring "The process cannot access the file because another process has locked a portion of the file" IOException.
         <br>12.3
@@ -67,128 +68,6 @@
 		<br>- Highlighting theme support
 		<br>- Tail - better GUI, by folder, wildcard and last modified
 		<br>- Grep - better GUI, multiple expressions, source console tooltips
-        <br>11.12
-		<br>- gui cleanup
-        <br>11.11
-		<br>- IntelliJ 2021.3 API update
-        <br>11.10
-        <br>- 2021.2 compatibility
-        <br>- editor highlighting fixed
-        <br>11.9
-		<br>- highlighting workaround for Flutter and other consoles that have disabled ConsoleFilterProvider
-        <br>11.8
-		<br>- NPE fix
-		<br>11.7
-		<br>- Remembering the last tailed file in the file chooser dialog, allowed to select multiple files
-		<br>- Added Tail Run Configuration
-        <br>11.6
-		<br>- Added Close action to Grep tabs
-        <br>11.5
-		<br>- Icons fix for 2021
-        <br>11.3
-		<br>- Added: Next Console Highlight, Previous Console Highlight actions
-        <br>11.2
-		<br>- icons fix for 2020.3
-        <br>11.1
-		<br>- Fixed memory leak
-        <br>11.0
-		<br>- IntelliJ 2020.2 compatibility
-        <br>10.1
-		<br>- Fixed Goland ArrayIndexOutOfBoundsException
-        <br>10.0
-		<br>- Fixed grepping
-		<br>- Reopening of pinned grep consoles at startup - might not work flawlessly, please report bugs 
-		<br>- Enabled Grep for other toolwindows (Python Console, CMake...).
-        <br>9.11
-		<br>- Fixed Grep for Gradle
-        <br>9.10
-		<br>- Fixed Grep action in Tail toolwindow
-		<br>- NPE fix
-        <br>9.9
-		<br>- IntelliJ 2020.1 compatibility
-		<br>- Tail from editor context menu
-		<br>- Fixed: UnsupportedCharsetException when using charset autodetection 
-        <br>9.8
-		<br>- Grep support for new build tool window in IntelliJ 2019.2
-        <br>9.7
-		<br>- Better Grep action compatibility
-        <br>9.6
-		<br>- Fixed: Opening recent project leads to crash #149
-        <br>9.5
-		<br>- Grep - fixed disabled action in some cases
-        <br>9.4
-		<br>- Minimized a race condition for grepping, to make sure all the output is processed
-        <br>9.3
-		<br>- IntelliJ 2019.2 compatibility
-        <br>9.2
-		<br>- Highlighting disabled table rows
-        <br>9.1
-		<br>- Grep action support for Python Debug
-        <br>9.0
-		<br>- Added Stream Buffering - disabled by default
-		<br>- Added: 'Move error stream to the bottom' action
-		<br>- Fixed: Main class in Run/Debug Configurations takes too much space
-		<br>- Fixed: Input filtering for CLion  
-		<br>- Added: Input filter blank line workaround option
-		<br>- Hopefully Fixed: Tail - Illegal seek for a named pipe on Linux
-        <br>8.6
-		<br>- Exception fix     
-        <br>8.5
-		<br>- Exception fix
-        <br>8.4
-		<br>- Added: Toggle highlight of all occurrences of the selected text in the editor.
-		<br>- Fixed reopening of pinned grep console
-        <br>8.3
-		<br>- Highlighting for Grunt and other consoles.
-        <br>8.2
-		<br>- IJ 2018.2 EAP icons fix
-        <br>8.1
-		<br>- GUI, Help improvements
-		<br>- Various edge cases fixed
-        <br>8.0
-		<br>- Support for manipulating output text, and any custom actions (e.g. notifications) by scripting using <a href="https://github.com/dkandalov/live-plugin">LivePlugin</a> or making own plugin. 
-		<br>- Reworked input filtering logic and gui
-		<br>- 'Grep' fix for incomplete stream #103
-		<br>- IJ 2018.2 compatibility
-		<br>- New default colors for Darcula - for readable links
-		<br>- Plaintext copy&paste for table rows
-        <br>7.4
-		<br>- Tail exception handling      
-        <br>7.3
-		<br>- Various fixes
-        <br>7.2
-		<br>- Fixed "Runner GrepConsoleTail is not registered" exception on startup
-        <br>7.1
-		<br>- Option to disable Run Configuration profile settings
-		<br>- Fixed filtering of test console #55
-        <br>7.0
-		<br>- Run Configuration settings and profiles 
-		<br>- Multiline input filtering - filter out not matched lines if the previous one was filtered out
-		<br>- Restored old filtering behaviour prior to v6.9 - Sometimes you may want to see only lines that are highlighted. To do this, add a ".*" as the last item and set to "Whole line" and "Filter out".
-        <br>6.10
-		<br>- Tail encoding settings and auto-detection
-        <br>6.9
-		<br>- Console clearing on match
-        <br>6.8
-		<br>- Unpinning of a grep console on closing of the tab
-		<br>- Jumping to a console from the status bar on a left click
-		<br>- Status bar colors
-		<br>- Added a separate grep limit settings
-		<br>- Gui improvements, rehighlight all button
-        <br>6.7
-		<br>- Grep Consoles pinning
-		<br>- file tail integration fix for Win 10
-        <br>6.6
-		<br>- Tail tabs pinning (reopening with a project)
-        <br>6.5
-		<br>- Grep sub-console improvements 
-        <br>6.4
-		<br>- ANSI support deleted, for IJ 2016+  
-		<br>- more strict performance checks
-        <br>6.3
-		<br>- grep improvements    
-        <br>6.0
-		<br>- ability to filter/grep the console output into a new console tab
         <br>0.1 (2012-11-13)
         <br>- Initial release
 			]]>
@@ -325,12 +204,14 @@
             <action id="GrepConsole.ApplyAction"
                     class="krasa.grepconsole.grep.actions.ApplyAction"
                     text="Apply"
-                    icon="/krasa/grepconsole/icons/commit.svg"
+                    description="Ctrl/Alt + Click to Toggle"
+                    icon="/krasa/grepconsole/icons/commitGray.svg"
             />
             <action id="GrepConsole.ReloadAction"
                     class="krasa.grepconsole.grep.actions.ReloadAction"
                     text="Reload"
-                    icon="/krasa/grepconsole/icons/buildLoadChanges.svg"
+                    description="Ctrl/Alt + Click to Toggle"
+                    icon="/krasa/grepconsole/icons/buildLoadChangesGray.svg"
             />
             <action id="GrepConsole.SourceAction"
                     class="krasa.grepconsole.grep.actions.SourceAction"

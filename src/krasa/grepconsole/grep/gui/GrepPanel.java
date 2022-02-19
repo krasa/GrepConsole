@@ -12,6 +12,7 @@ import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.wm.ToolWindow;
+import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.content.Content;
 import com.intellij.util.ui.JBEmptyBorder;
 import com.intellij.util.ui.WrapLayout;
@@ -32,10 +33,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
@@ -67,6 +65,14 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		WrapLayout layout = new WrapLayout(FlowLayout.LEFT, 3, 3);
 		layout.setFillWidth(false);
 		expressions = new JPanel(layout);
+		DoubleClickListener doubleClickListener = new DoubleClickListener() {
+			@Override
+			protected boolean onDoubleClick(@NotNull MouseEvent mouseEvent) {
+				addExpression("");
+				return true;
+			}
+		};
+		doubleClickListener.installOn(expressions);
 	}
 
 	public GrepPanel(final ConsoleView originalConsole, final MyConsoleViewImpl newConsole,

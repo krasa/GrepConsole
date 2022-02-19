@@ -93,10 +93,10 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
   private final JTextArea myTextArea;
   private final boolean mySearchMode;
   private final JPanel myIconsPanel = new NonOpaquePanel();
-  private final ActionButton myClearButton;
-  private final NonOpaquePanel myExtraActionsPanel = new NonOpaquePanel();
+  protected final ActionButton myClearButton;
+  protected final NonOpaquePanel myExtraActionsPanel = new NonOpaquePanel();
   private final JBScrollPane myScrollPane;
-  private final ActionButton myHistoryPopupButton;
+  protected final ActionButton myHistoryPopupButton;
   private boolean myMultilineEnabled = true;
 
   public MySearchTextArea(@NotNull JTextArea textArea, boolean searchMode) {
@@ -364,7 +364,7 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
     final Runnable callback = () -> {
       GrepCompositeModel selectedValue = list.getSelectedValue();
       if (selectedValue != null) {
-        toolbarComponent.reload(selectedValue);
+        toolbarComponent.loadGrepCompositeModelFromHistory(selectedValue);
         IdeFocusManager.getGlobalInstance().requestFocus(textField, false);
       }
     };
@@ -396,9 +396,8 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
     }
   }
 
-  protected abstract void reload(GrepCompositeModel selectedValue);
-
   private class ClearAction extends DumbAwareAction {
+
     ClearAction() {
       super(AllIcons.Actions.Close);
       getTemplatePresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
@@ -406,17 +405,24 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      myTextArea.putClientProperty(JUST_CLEARED_KEY, !myTextArea.getText().isEmpty());
-      myTextArea.setText("");
-      MySearchTextArea mySearchTextArea = MySearchTextArea.this;
-      if (mySearchTextArea.getParent().getComponentCount() > 1) {
-        MySearchTextArea.this.getParent().remove(mySearchTextArea);
-      }
-      reload();
+      removeFromGrepPanel();
     }
+
   }
 
-  protected abstract void reload();
+  protected void removeFromGrepPanel() {
+    myTextArea.putClientProperty(JUST_CLEARED_KEY, !myTextArea.getText().isEmpty());
+    myTextArea.setText("");
+    MySearchTextArea mySearchTextArea = MySearchTextArea.this;
+    if (mySearchTextArea.getParent().getComponentCount() > 1) {
+      MySearchTextArea.this.getParent().remove(mySearchTextArea);
+    }
+    reloadGrepPanel();
+  }
+
+  protected abstract void loadGrepCompositeModelFromHistory(GrepCompositeModel selectedValue);
+
+  protected abstract void reloadGrepPanel();
 
   private static final class MyActionButton extends ActionButton {
 

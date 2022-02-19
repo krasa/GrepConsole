@@ -9,10 +9,13 @@ import com.intellij.openapi.actionSystem.Toggleable;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.ex.TooltipDescriptionProvider;
 import com.intellij.openapi.actionSystem.ex.TooltipLinkProvider;
+import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.project.DumbAwareToggleAction;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.ui.ClickListener;
 import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.Producer;
+import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.utils.UiUtils;
@@ -24,6 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MyGrepSearchTextArea extends MySearchTextArea {
@@ -74,6 +78,24 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		setExtraActions(myCaseSensitiveAction, myWholeWordsAction, myRegexAction, myExcludeAction);
 		load(model);
 
+		ClickListener middleMouseListener = new ClickListener() {
+			@Override
+			public boolean onClick(@NotNull MouseEvent mouseEvent, int i) {
+				if (mouseEvent.getButton() == 2) {
+					removeFromGrepPanel();
+					return true;
+				}
+				return false;
+			}
+		};
+		middleMouseListener.installOn(this);
+		middleMouseListener.installOn(getTextArea());
+		middleMouseListener.installOn(myExtraActionsPanel);
+		middleMouseListener.installOn(myClearButton);
+		middleMouseListener.installOn(myHistoryPopupButton);
+		for (ActionButton button : UIUtil.findComponentsOfType(myExtraActionsPanel, ActionButton.class)) {
+			middleMouseListener.installOn(button);
+		}
 		UiUtils.addChangeListener(getTextArea(), e -> grepPanel.textExpressionChanged());
 	}
 
@@ -187,7 +209,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 	}
 
 	@Override
-	protected void reload(GrepCompositeModel selectedValue) {
+	protected void loadGrepCompositeModelFromHistory(GrepCompositeModel selectedValue) {
 		if (selectedValue.getModels().size() > 1) {
 			grepPanel.initModel(null, selectedValue);
 			grepPanel.reload();
@@ -198,7 +220,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 	}
 
 	@Override
-	protected void reload() {
+	protected void reloadGrepPanel() {
 		grepPanel.reload();
 	}
 
