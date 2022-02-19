@@ -190,7 +190,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		Component[] components = expressions.getComponents();
 		for (Component component : components) {
 			if (component instanceof MyGrepSearchTextArea) {
-				GrepModel grepModel = ((MyGrepSearchTextArea) component).grepModel();
+				GrepModel grepModel = ((MyGrepSearchTextArea) component).createGrepModel();
 				grepCompositeModel.add(grepModel);
 			}
 		}

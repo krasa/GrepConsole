@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import krasa.grepconsole.grep.GrepBeforeAfterModel;
+import krasa.grepconsole.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,8 +57,8 @@ public class GrepBeforeAfterSettingsDialog {
 	}
 
 	public void getData(GrepBeforeAfterModel data) {
-		data.setBefore(Integer.parseInt(before.getText()));
-		data.setAfter(Integer.parseInt(after.getText()));
+		data.setBefore(Utils.safeParseInt(before.getText()));
+		data.setAfter(Utils.safeParseInt(after.getText()));
 	}
 
 

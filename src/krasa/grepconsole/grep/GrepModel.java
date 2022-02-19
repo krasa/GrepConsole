@@ -1,6 +1,9 @@
 package krasa.grepconsole.grep;
 
+import com.intellij.util.xmlb.annotations.Transient;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -9,6 +12,7 @@ import java.util.regex.Pattern;
  * equals only by expression
  */
 public class GrepModel {
+	private static final Logger log = LoggerFactory.getLogger(GrepModel.class);
 	private boolean caseSensitive;
 	private boolean wholeLine;
 	private boolean wholeWords;
@@ -49,7 +53,7 @@ public class GrepModel {
 		this.exclude = exclude;
 	}
 
-	public Matcher matcher() {
+	public Matcher createMatcher() {
 		Pattern expressionPattern = null;
 		if (!StringUtils.isBlank(expression)) {
 			String expression = this.expression;
@@ -62,7 +66,12 @@ public class GrepModel {
 				expression = "\\b" + expression + "\\b";
 			}
 
-			expressionPattern = Pattern.compile(expression, computeFlags());
+			try {
+				expressionPattern = Pattern.compile(expression, computeFlags());
+			} catch (Exception e) {
+				log.debug("expression=" + expression, e);
+				return null;
+			}
 		}
 		return new Matcher(expressionPattern, wholeLine);
 	}
@@ -104,9 +113,16 @@ public class GrepModel {
 		return i;
 	}
 
+	@Transient
+	private transient boolean broken = false;
+
 	boolean matches(CharSequence charSequence) {
-		if (matcher == null) {
-			matcher = matcher();
+		if (!broken && matcher == null) {
+			matcher = createMatcher();
+		}
+		if (matcher == null) { //invalid regex
+			broken = true;
+			return false;
 		}
 		return matcher.matches(charSequence);
 	}

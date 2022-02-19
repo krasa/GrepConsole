@@ -23,7 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Utils {
-	public static int tryParseInteger(String text) {
+	public static int safeParseInt(String text) {
 		if ("".equals(text)) {
 			return 0;
 		}

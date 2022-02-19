@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.project.DumbAwareToggleAction;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.ClickListener;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBTextArea;
 import com.intellij.util.Producer;
 import com.intellij.util.ui.UIUtil;
@@ -29,6 +30,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Pattern;
 
 public class MyGrepSearchTextArea extends MySearchTextArea {
 	public static final Icon EXCLUDE = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark.svg", MyGrepSearchTextArea.class);
@@ -96,7 +98,19 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		for (ActionButton button : UIUtil.findComponentsOfType(myExtraActionsPanel, ActionButton.class)) {
 			middleMouseListener.installOn(button);
 		}
-		UiUtils.addChangeListener(getTextArea(), e -> grepPanel.textExpressionChanged());
+		UiUtils.addChangeListener(getTextArea(), e -> {
+			if (regex.get()) {
+				try {
+					Pattern.compile(getTextArea().getText());
+				} catch (Exception ex) {
+					getTextArea().setForeground(JBColor.namedColor("SearchField.errorForeground", JBColor.RED));
+					return;
+				}
+			}
+			getTextArea().setForeground(UIUtil.getTextFieldForeground());
+			grepPanel.textExpressionChanged();
+		});
+
 	}
 
 	private final KeyAdapter myEnterRedispatcher = new KeyAdapter() {
@@ -116,7 +130,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		return innerTextComponent;
 	}
 
-	public GrepModel grepModel() {
+	public GrepModel createGrepModel() {
 		return new GrepModel(caseSensitive.get(), wholeWords.get(), regex.get(), getTextArea().getText(), exclude.get());
 	}
 
