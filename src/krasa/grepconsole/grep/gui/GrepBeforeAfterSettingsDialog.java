@@ -28,7 +28,7 @@ public class GrepBeforeAfterSettingsDialog {
 		setData(beforeAfterModel);
 	}
 
-	public GrepBeforeAfterModel showAndGet(Component parent) {
+	public boolean showAndGet(Component parent) {
 		DialogBuilder builder = new DialogBuilder(parent);
 		builder.setCenterPanel(this.root);
 		builder.setDimensionServiceKey("GrepBeforeAfterSettingsDialog");
@@ -48,7 +48,7 @@ public class GrepBeforeAfterSettingsDialog {
 		if (isOk) {
 			getData(this.beforeAfterModel);
 		}
-		return this.beforeAfterModel;
+		return isOk;
 	}
 
 	public void setData(GrepBeforeAfterModel data) {

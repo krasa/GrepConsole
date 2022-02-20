@@ -117,7 +117,10 @@ public class GrepModel {
 	private transient boolean broken = false;
 
 	boolean matches(CharSequence charSequence) {
-		if (!broken && matcher == null) {
+		if (broken) {
+			return false;
+		}
+		if (matcher == null) {
 			matcher = createMatcher();
 		}
 		if (matcher == null) { //invalid regex

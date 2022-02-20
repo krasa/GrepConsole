@@ -28,9 +28,10 @@ public class BeforeAfterSettingsAction extends DumbAwareAction implements Custom
 			Project project = e.getProject();
 			GrepBeforeAfterModel beforeAfterModel = grepPanel.getBeforeAfterModel();
 			GrepBeforeAfterSettingsDialog grepBeforeAfterSettingsDialog = new GrepBeforeAfterSettingsDialog(project, beforeAfterModel);
-			grepBeforeAfterSettingsDialog.showAndGet(e.getInputEvent().getComponent());
-			grepPanel.setBeforeAfterModel(beforeAfterModel);
-			e.getPresentation().setText(beforeAfterModel.toPresentationString());
+			if (grepBeforeAfterSettingsDialog.showAndGet(e.getInputEvent().getComponent())) {
+				grepPanel.setBeforeAfterModel(beforeAfterModel);
+				e.getPresentation().setText(beforeAfterModel.toPresentationString());
+			}
 		}
 	}
 
