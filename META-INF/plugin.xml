@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.5.211.6693.1</version>
+    <version>12.5.211.6693.2</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -192,7 +192,6 @@
                     class="krasa.grepconsole.grep.actions.BeforeAfterSettingsAction"
                     text="Before/After Settings"
                     description="Print before/after lines in addition to matched lines"
-                    icon="com.intellij.icons.AllIcons.Actions.AddList"
             />
         </group>
         <group id="krasa.grepconsole.grep.panel" text="Grep Panel">
