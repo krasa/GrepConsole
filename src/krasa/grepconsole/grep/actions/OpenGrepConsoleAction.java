@@ -16,6 +16,8 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.editor.event.DocumentEvent;
+import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
@@ -23,6 +25,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.terminal.TerminalExecutionConsole;
 import com.intellij.ui.content.*;
 import com.intellij.util.NotNullFunction;
 import com.intellij.util.SmartList;
@@ -38,6 +41,7 @@ import krasa.grepconsole.grep.listener.GrepFilterListener;
 import krasa.grepconsole.grep.listener.GrepFilterSyncListener;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepProjectComponent;
+import krasa.grepconsole.plugin.PluginState;
 import krasa.grepconsole.plugin.ReflectionUtils;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.utils.Utils;
@@ -91,6 +95,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 											 @Nullable GrepCompositeModel grepModel, @Nullable String expression, String consoleUUID, String contentType) {
 		String title = grepModel != null ? grepModel.getTitle() : title(expression);
 		boolean focusTab = e != null;
+		if (parentConsoleView instanceof TerminalExecutionConsole) {
+			throw new RuntimeException("TerminalExecutionConsole is not supported. https://youtrack.jetbrains.com/issue/IDEA-216442");
+		}
 		if (!(parentConsoleView instanceof JComponent)) {
 			throw new RuntimeException("console not supported, must be instance of JComponent: " + parentConsoleView);
 		}
@@ -239,6 +246,20 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		});
 		quickFilterPanel.apply();
+
+		if (parentConsoleView instanceof ConsoleViewImpl) {
+			ConsoleViewImpl originalConsole = (ConsoleViewImpl) parentConsoleView;
+			originalConsole.getEditor().getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void documentChanged(@NotNull DocumentEvent event) {
+					if (event.getNewLength() == 0) {
+						if (PluginState.getInstance().isAutoClearChildConsoles()) {
+							newConsole.clear();
+						}
+					}
+				}
+			}, parentConsoleView);
+		}
 
 		GrepUtils.grepThroughExistingText(parentConsoleView, grepFilter, grepListener);
 
@@ -590,6 +611,12 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 
 		Project eventProject = getEventProject(e);
 		ConsoleView parentConsoleView = getTopParentConsoleView(e.getData(LangDataKeys.CONSOLE_VIEW));
+
+		if (parentConsoleView instanceof TerminalExecutionConsole) {
+			presentation.setEnabled(false);
+			return;
+		}
+
 		if (parentConsoleView != null) {
 			GrepFilter grepFilter = ServiceManager.getInstance().getGrepFilter(parentConsoleView);
 			if (eventProject != null && grepFilter != null) {

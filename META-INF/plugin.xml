@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.5.211.6693.2</version>
+    <version>12.6.211.6693.0</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -52,6 +52,8 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <br>12.6
+		<br>- Grep: added Auto Clear option
         <br>12.5
 		<br>- Grep: added Before/After option
 		<br>- Grep: added Auto Reload/Apply on expression change option - Ctrl/Alt + Click on the button to toggle
@@ -232,6 +234,11 @@
                         class="krasa.grepconsole.grep.actions.AutoApplyToggleAction"
                         text="Auto Apply"
                         description="Auto apply on expression change"
+                />
+                <action id="GrepConsole.AutoClear"
+                        class="krasa.grepconsole.grep.actions.AutoClearToggleAction"
+                        text="Auto Clear"
+                        description="Clear a console when the parent console clears"
                 />
             </group>
         </group>

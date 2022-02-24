@@ -30,6 +30,7 @@ public class PluginState extends DomainObject implements Cloneable {
 	private int version;
 	private List<GrepCompositeModel> grepHistory = new ArrayList<>();
 	private boolean autoReloadGrepModel = false;
+	private boolean autoClearChildConsoles = false;
 	private boolean autoApplyGrepModel = true;
 
 	public static PluginState getInstance() {
@@ -209,5 +210,13 @@ public class PluginState extends DomainObject implements Cloneable {
 
 	public void setAutoApplyGrepModel(boolean autoApplyGrepModel) {
 		this.autoApplyGrepModel = autoApplyGrepModel;
+	}
+
+	public boolean isAutoClearChildConsoles() {
+		return autoClearChildConsoles;
+	}
+
+	public void setAutoClearChildConsoles(boolean autoClearChildConsoles) {
+		this.autoClearChildConsoles = autoClearChildConsoles;
 	}
 }
