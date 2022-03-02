@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.7.211.6693.0</version>
+    <version>12.7.211.6693.1</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -54,6 +54,7 @@
     <change-notes><![CDATA[
         <br>12.7
 		<br>- NPE fix
+		<br>- Fixed icon
         <br>12.6
 		<br>- Grep: added Auto Clear option
         <br>12.5
@@ -221,7 +222,7 @@
                     text="Source"
                     icon="/krasa/grepconsole/icons/locate.svg"
             />
-            <group text="Grep Settings" popup="true" icon="com.intellij.icons.AllIcons.Nodes.Editorconfig">
+            <group text="Grep Settings" popup="true" icon="/icons/nodes/editorconfig.svg">
                 <action id="GrepConsole.SetTitleAction"
                         class="krasa.grepconsole.grep.actions.SetTitleAction"
                         text="Set Title"
