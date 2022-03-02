@@ -7,7 +7,7 @@ import java.util.List;
  * @author Vojtech Krasa
  */
 public class GrepExpressionGroup extends DomainObject {
-	private String name;
+	private String name = "default";
 	private List<GrepExpressionItem> grepExpressionItems = new ArrayList<>();
 
 	public GrepExpressionGroup() {
@@ -23,6 +23,9 @@ public class GrepExpressionGroup extends DomainObject {
 	}
 
 	public String getName() {
+		if (name == null) {
+			return "default";
+		}
 		return name;
 	}
 
