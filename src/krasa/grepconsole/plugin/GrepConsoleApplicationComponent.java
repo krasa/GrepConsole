@@ -11,6 +11,7 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.tail.remotecall.RemoteCallService;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -124,7 +125,11 @@ public class GrepConsoleApplicationComponent
 							GrepExpressionItem newItem = Cloner.deepClone(grepExpressionItem);
 							newItem.action(GrepExpressionItem.ACTION_REMOVE);
 
-							GrepExpressionGroup group = profile.getOrCreateInputFilterGroup(grepExpressionGroup.getName());
+							String name = grepExpressionGroup.getName();
+							if (StringUtils.isBlank(name)) {
+								name = "default";
+							}
+							GrepExpressionGroup group = profile.getOrCreateInputFilterGroup(name);
 							group.add(newItem);
 
 							iterator.remove();

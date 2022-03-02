@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static krasa.grepconsole.plugin.DefaultState.getDefaultProfile;
 
@@ -373,7 +374,10 @@ public class Profile extends DomainObject implements Cloneable {
 	public GrepExpressionGroup getOrCreateInputFilterGroup(String name) {
 		List<GrepExpressionGroup> inputFilterGroups = getInputFilterGroups();
 		for (GrepExpressionGroup inputFilterGroup : inputFilterGroups) {
-			if (inputFilterGroup.getName().equals(name)) {
+			if (inputFilterGroup == null) {
+				continue;
+			}
+			if (Objects.equals(name, inputFilterGroup.getName())) {
 				return inputFilterGroup;
 			}
 		}
