@@ -291,13 +291,9 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		reload(false);
 	}
 
-	public void textExpressionChanged(String previousExpression, String newExpression) {
+	public void textExpressionChanged(boolean replaceHistory) {
 		PluginState instance = PluginState.getInstance();
 		if (instance.isAutoReloadGrepModel() || instance.isAutoApplyGrepModel()) {
-			if (previousExpression.equals(newExpression)) {
-				return;
-			}
-			boolean replaceHistory = newExpression.length() > 0 && newExpression.startsWith(previousExpression) || previousExpression.startsWith(newExpression);
 
 			if (instance.isAutoReloadGrepModel()) {
 				reload(replaceHistory);
