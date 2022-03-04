@@ -57,6 +57,8 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	private String customTitle;
 	private String cachedFullTitle;
 	private GrepBeforeAfterModel beforeAfterModel = new GrepBeforeAfterModel();
+	private GrepCompositeModel currentModel;
+
 	public JPanel getRootComponent() {
 		return rootComponent;
 	}
@@ -91,11 +93,11 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 			public void keyPressed(KeyEvent e) {
 				final int keyCode = e.getKeyCode();
 				if (keyCode == KeyEvent.VK_ENTER && e.isAltDown()) {
-					reload();
+					reload(false);
 				} else if (keyCode == KeyEvent.VK_ENTER && e.isControlDown()) {
-					reload();
+					reload(false);
 				} else if (keyCode == KeyEvent.VK_ENTER) {
-					apply();
+					apply(false);
 				}
 			}
 		});
@@ -166,17 +168,18 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		for (GrepModel model : compositeModel.getModels()) {
 			expressions.add(new MyGrepSearchTextArea(this, model));
 		}
+		currentModel = compositeModel;
 	}
 
 
 	public void addExpression(String expression) {
 		expressions.add(new MyGrepSearchTextArea(this, new GrepModel(expression)));
-		reload();
+		reload(false);
 	}
 
 
-	public void reload() {
-		apply();
+	public void reload(boolean replaceHistory) {
+		apply(replaceHistory);
 		expressions.revalidate();
 		expressions.repaint();
 		newConsole.clear();
@@ -210,12 +213,17 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		}
 	}
 
-	public void apply() {
+	public void apply(boolean replaceHistory) {
 		if (applyCallback != null) {
 			try {
-				GrepCompositeModel model = createModel();
-				applyCallback.apply(newConsole, model);
-				PluginState.getInstance().addToHistory(model);
+				PluginState instance = PluginState.getInstance();
+				if (replaceHistory) {
+					instance.removeFromHistory(currentModel);
+				}
+
+				currentModel = createModel();
+				applyCallback.apply(newConsole, currentModel);
+				instance.addToHistory(currentModel);
 			} catch (PatternSyntaxException e) {
 				Notification notification = NotificationGroupManager.getInstance().getNotificationGroup("Grep Console error")
 						.createNotification("Grep: invalid regexp", NotificationType.WARNING);
@@ -280,15 +288,22 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	public void setBeforeAfterModel(@NotNull GrepBeforeAfterModel beforeAfterModel) {
 		this.beforeAfterModel = beforeAfterModel;
-		reload();
+		reload(false);
 	}
 
-	public void textExpressionChanged() {
+	public void textExpressionChanged(String previousExpression, String newExpression) {
 		PluginState instance = PluginState.getInstance();
-		if (instance.isAutoReloadGrepModel()) {
-			reload();
-		} else if (instance.isAutoApplyGrepModel()) {
-			apply();
+		if (instance.isAutoReloadGrepModel() || instance.isAutoApplyGrepModel()) {
+			if (previousExpression.equals(newExpression)) {
+				return;
+			}
+			boolean replaceHistory = newExpression.length() > 0 && newExpression.startsWith(previousExpression) || previousExpression.startsWith(newExpression);
+
+			if (instance.isAutoReloadGrepModel()) {
+				reload(replaceHistory);
+			} else if (instance.isAutoApplyGrepModel()) {
+				apply(replaceHistory);
+			}
 		}
 	}
 

@@ -15,22 +15,22 @@ public class UiUtils {
 	/**
 	 * https://stackoverflow.com/a/27190162/685796
 	 * <p>
-	 * Installs a listener to receive notification when the text of any
+	 * Installs a listener to receive notification when the jTextComponent of any
 	 * {@code JTextComponent} is changed. Internally, it installs a
-	 * {@link DocumentListener} on the text component's {@link Document},
+	 * {@link DocumentListener} on the jTextComponent component's {@link Document},
 	 * and a {@link PropertyChangeListener
-	 * } on the text component to detect
+	 * } on the jTextComponent component to detect
 	 * if the {@code Document} itself is replaced.
 	 *
-	 * @param text           any text component, such as a {@link JTextField}
+	 * @param jTextComponent any jTextComponent component, such as a {@link JTextField}
 	 *                       or {@link JTextArea}
 	 * @param changeListener a listener to receieve {@link ChangeEvent}s
-	 *                       when the text is changed; the source object for the events
-	 *                       will be the text component
+	 *                       when the jTextComponent is changed; the source object for the events
+	 *                       will be the jTextComponent component
 	 * @throws NullPointerException if either parameter is null
 	 */
-	public static void addChangeListener(JTextComponent text, ChangeListener changeListener) {
-		Objects.requireNonNull(text);
+	public static void addChangeListener(JTextComponent jTextComponent, ChangeListener changeListener) {
+		Objects.requireNonNull(jTextComponent);
 		Objects.requireNonNull(changeListener);
 		DocumentListener dl = new DocumentListener() {
 			private int lastChange = 0, lastNotifiedChange = 0;
@@ -51,19 +51,20 @@ public class UiUtils {
 				SwingUtilities.invokeLater(() -> {
 					if (lastNotifiedChange != lastChange) {
 						lastNotifiedChange = lastChange;
-						changeListener.stateChanged(new ChangeEvent(text));
+
+						changeListener.stateChanged(new ChangeEvent(jTextComponent));
 					}
 				});
 			}
 		};
-		text.addPropertyChangeListener("document", (PropertyChangeEvent e) -> {
+		jTextComponent.addPropertyChangeListener("document", (PropertyChangeEvent e) -> {
 			Document d1 = (Document) e.getOldValue();
 			Document d2 = (Document) e.getNewValue();
 			if (d1 != null) d1.removeDocumentListener(dl);
 			if (d2 != null) d2.addDocumentListener(dl);
 			dl.changedUpdate(null);
 		});
-		Document d = text.getDocument();
+		Document d = jTextComponent.getDocument();
 		if (d != null) d.addDocumentListener(dl);
 	}
 }

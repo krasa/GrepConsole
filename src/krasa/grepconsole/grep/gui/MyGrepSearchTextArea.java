@@ -43,6 +43,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 	private final AtomicBoolean wholeLine;
 	private final AtomicBoolean exclude;
 	private GrepPanel grepPanel;
+	private String previousExpression;
 
 	public MyGrepSearchTextArea(GrepPanel grepPanel, GrepModel model) {
 		super(createJbTextArea(), true);
@@ -108,7 +109,9 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 				}
 			}
 			getTextArea().setForeground(UIUtil.getTextFieldForeground());
-			grepPanel.textExpressionChanged();
+			String newExpression = MyGrepSearchTextArea.this.getTextArea().getText();
+			grepPanel.textExpressionChanged(previousExpression, newExpression);
+			previousExpression = newExpression;
 		});
 
 	}
@@ -139,6 +142,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		regex.set(grepModel.isRegex());
 		wholeWords.set(grepModel.isCaseSensitive());
 		exclude.set(grepModel.isExclude());
+		previousExpression = grepModel.getExpression();
 		getTextArea().setText(grepModel.getExpression());
 	}
 
@@ -219,23 +223,23 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 
 	@Override
 	protected void apply() {
-		grepPanel.reload();
+		grepPanel.reload(false);
 	}
 
 	@Override
 	protected void loadGrepCompositeModelFromHistory(GrepCompositeModel selectedValue) {
 		if (selectedValue.getModels().size() > 1) {
 			grepPanel.initModel(null, selectedValue);
-			grepPanel.reload();
+			grepPanel.reload(false);
 		} else if (selectedValue.getModels().size() == 1) {
 			load(selectedValue.getModels().get(0));
-			grepPanel.reload();
+			grepPanel.reload(false);
 		}
 	}
 
 	@Override
 	protected void reloadGrepPanel() {
-		grepPanel.reload();
+		grepPanel.reload(false);
 	}
 
 

@@ -196,6 +196,12 @@ public class PluginState extends DomainObject implements Cloneable {
 		}
 	}
 
+	public void removeFromHistory(GrepCompositeModel currentModel) {
+		if (currentModel != null) {
+			grepHistory.remove(currentModel);
+		}
+	}
+
 	public boolean isAutoReloadGrepModel() {
 		return autoReloadGrepModel;
 	}

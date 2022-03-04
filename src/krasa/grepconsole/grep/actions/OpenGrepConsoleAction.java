@@ -245,7 +245,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 
 		});
-		quickFilterPanel.apply();
+		quickFilterPanel.apply(false);
 
 		if (parentConsoleView instanceof ConsoleViewImpl) {
 			ConsoleViewImpl originalConsole = (ConsoleViewImpl) parentConsoleView;
