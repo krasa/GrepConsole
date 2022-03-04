@@ -14,12 +14,14 @@ public class GrepProjectState {
 	private Set<String> pinnedTailFiles = new LinkedHashSet<>();
 	@NotNull
 	private PinnedGrepConsolesState pinnedGrepConsolesState = new PinnedGrepConsolesState();
+	@NotNull
+	private TailHistory tailHistory = new TailHistory();
 
 	public void openOldPins(@NotNull Project project) {
 		for (String pinnedFile : pinnedTailFiles.toArray(new String[pinnedTailFiles.size()])) {
 			File file = new File(pinnedFile);
 			if (file.exists()) {
-				new TailFileInConsoleAction().openFileInConsole(project, file, TailFileInConsoleAction.resolveEncoding(file));
+				TailFileInConsoleAction.openFileInConsole(project, file, TailFileInConsoleAction.resolveEncoding(file));
 			} else {
 				pinnedTailFiles.remove(pinnedFile);
 			}
@@ -55,5 +57,14 @@ public class GrepProjectState {
 
 	public boolean isPinned(File file) {
 		return pinnedTailFiles.contains(file.getAbsolutePath());
+	}
+
+	@NotNull
+	public TailHistory getTailHistory() {
+		return tailHistory;
+	}
+
+	public void setTailHistory(@NotNull TailHistory tailHistory) {
+		this.tailHistory = tailHistory;
 	}
 }

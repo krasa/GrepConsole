@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import krasa.grepconsole.plugin.TailHistory;
 
 import java.io.File;
 
@@ -18,6 +19,7 @@ public class TailFileInConsoleProjectViewAction extends TailFileInConsoleAction 
 		if (project == null) return;
 
 		VirtualFile[] data = e.getData(PlatformDataKeys.VIRTUAL_FILE_ARRAY);
+		TailHistory.getState(project).add(data);
 		if (data != null) {
 			for (int i = 0; i < data.length; i++) {
 				VirtualFile virtualFile = data[i];

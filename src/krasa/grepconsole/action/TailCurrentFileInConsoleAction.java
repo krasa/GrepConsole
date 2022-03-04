@@ -7,6 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import krasa.grepconsole.plugin.TailHistory;
 
 import java.io.File;
 
@@ -27,6 +28,7 @@ public class TailCurrentFileInConsoleAction extends TailFileInConsoleAction {
 				final VirtualFile virtualFile = psiFile.getVirtualFile();
 				final String path = virtualFile.getPath();
 				final File file = new File(path);
+				TailHistory.getState(project).add(file);
 				openFileInConsole(project, file, resolveEncoding(file));
 			}
 		}

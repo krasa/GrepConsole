@@ -84,7 +84,7 @@ public class TailRunProfileState implements RunProfileState {
 
 		}
 
-		new TailFileInConsoleAction().openFileInConsole(project, file, resolveEncoding(file, mySettings));
+		TailFileInConsoleAction.openFileInConsole(project, file, resolveEncoding(file, mySettings));
 	}
 
 	@NotNull

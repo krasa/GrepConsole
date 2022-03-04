@@ -30,7 +30,9 @@ public class GrepProjectComponent implements ProjectComponent, PersistentStateCo
 	private static final Logger LOG = Logger.getInstance(GrepProjectComponent.class);
 
 	private Project project;
+
 	private GrepProjectState grepProjectState = new GrepProjectState();
+
 	private List<WeakReference<TailContentExecutor.PinAction>> tailPinActions = new ArrayList<>();
 	private List<WeakReference<CloseAction>> tailCloseActions = new ArrayList<>();
 	@Deprecated //probably worthless now, with  krasa.grepconsole.grep.PinnedGrepsReopener.ignore

@@ -10,6 +10,7 @@ import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.project.Project;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.PluginState;
+import krasa.grepconsole.plugin.TailHistory;
 import krasa.grepconsole.tail.runConfiguration.TailRunConfigurationSettings;
 import krasa.grepconsole.tail.runConfiguration.TailUtils;
 import org.jetbrains.annotations.NotNull;
@@ -69,6 +70,7 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 							}
 						}
 						if (directories == 0) {
+							TailHistory.getState(project).add2(fileList);
 							for (File file : fileList) {
 								openFileInConsole(project, file, resolveEncoding(file));
 							}
@@ -87,6 +89,8 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 				} else if (canHandlePlainText(transferFlavors)) {
 					String path = (String) t.getTransferData(DataFlavor.stringFlavor);
 					path = path.trim();
+					TailHistory.getState(project).add(new File(path));
+
 					TailUtils.openAllMatching(path, false, file -> openFileInConsole(project, file, resolveEncoding(file)));
 					return true;
 				}

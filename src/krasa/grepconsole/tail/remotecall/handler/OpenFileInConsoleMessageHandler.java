@@ -8,6 +8,7 @@ import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.openapi.wm.ex.WindowManagerEx;
 import krasa.grepconsole.action.TailFileInConsoleAction;
+import krasa.grepconsole.plugin.TailHistory;
 import krasa.grepconsole.utils.FocusUtils;
 
 import java.awt.*;
@@ -60,7 +61,9 @@ public class OpenFileInConsoleMessageHandler implements MessageHandler {
 						Project project = getProject(allProjectFrames, selectedProject);
 						if (project != null) {
 							final File file = new File(message);
-							new TailFileInConsoleAction().openFileInConsole(project, file, TailFileInConsoleAction.resolveEncoding(file));
+							TailHistory.getState(project).add(file);
+
+							TailFileInConsoleAction.openFileInConsole(project, file, TailFileInConsoleAction.resolveEncoding(file));
 						}
 					}
 				}

@@ -4,6 +4,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import krasa.grepconsole.plugin.TailHistory;
 
 import java.io.File;
 
@@ -17,6 +18,7 @@ public class TailIntelliJLog extends DumbAwareAction {
 		if (project == null) return;
 
 		final File logFile = new File(PathManager.getLogPath(), "idea.log");
-		new TailFileInConsoleAction().openFileInConsole(project, logFile, TailFileInConsoleAction.resolveEncoding(logFile));
+		TailHistory.getState(project).add(logFile);
+		TailFileInConsoleAction.openFileInConsole(project, logFile, TailFileInConsoleAction.resolveEncoding(logFile));
 	}
 }

@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.VirtualFileManager;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.PluginState;
+import krasa.grepconsole.plugin.TailHistory;
 import krasa.grepconsole.tail.MyProcessHandler;
 import krasa.grepconsole.tail.TailContentExecutor;
 import krasa.grepconsole.tail.runConfiguration.TailRunConfigurationSettings;
@@ -67,6 +68,7 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 			} else {
 				choose = fileChooser.choose(project);
 			}
+			TailHistory.getState(project).add(choose);
 			for (VirtualFile virtualFile : choose) {
 				propertiesComponent.setValue(TAIL_FILE_IN_CONSOLE_ACTION_LAST_FILE, virtualFile.getUrl());
 				TailUtils.openAllMatching(virtualFile.getPath(), false, file -> openFileInConsole(project, file, resolveEncoding(file)));
@@ -91,6 +93,7 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 		if (isOk) {
 			form.applyEditorTo(lastTail);
 			List<String> paths = lastTail.getPaths();
+			TailHistory.getState(project).add(paths, lastTail.isSelectNewestMatchingFile());
 			for (String path : paths) {
 				TailUtils.openAllMatching(path, lastTail.isSelectNewestMatchingFile(), file -> openFileInConsole(project, file, lastTail.resolveEncoding(file)));
 			}
@@ -99,7 +102,7 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 		}
 	}
 
-	public void openFileInConsole(@NotNull final Project project, final File file, final Charset charset) {
+	public static void openFileInConsole(@NotNull final Project project, final File file, final Charset charset) {
 		if (file == null || !file.exists() || !file.isFile()) {
 			return;
 		}
