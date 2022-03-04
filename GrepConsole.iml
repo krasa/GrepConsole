@@ -13,7 +13,6 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" type="java-resource" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
-    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="lib">
@@ -48,5 +47,6 @@
         <jarDirectory url="file://$MODULE_DIR$/libTest" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="inheritedJdk" />
   </component>
 </module>
