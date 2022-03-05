@@ -1,19 +1,24 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.SystemIndependent;
 
 import java.io.File;
 import java.util.Objects;
 
 public class TailItem {
+	@SystemIndependent
 	private String path;
-	private boolean newestMatching;
+	private boolean newestMatching = false;
+	private boolean autodetectEncoding = false;
+	private String encoding = null;
 
 	public TailItem() {
 	}
 
 	public TailItem(String path, boolean newestMatching) {
-		this.path = path;
+		this.path = FileUtil.toSystemIndependentName(path);
 		this.newestMatching = newestMatching;
 	}
 
@@ -22,7 +27,7 @@ public class TailItem {
 	}
 
 	public TailItem(VirtualFile virtualFile) {
-		this(virtualFile.getPath(), false);
+		this(FileUtil.toSystemIndependentName(virtualFile.getPath()), false);
 	}
 
 	public boolean isNewestMatching() {
@@ -41,6 +46,22 @@ public class TailItem {
 		this.path = path;
 	}
 
+	public boolean isAutodetectEncoding() {
+		return autodetectEncoding;
+	}
+
+	public void setAutodetectEncoding(boolean autodetectEncoding) {
+		this.autodetectEncoding = autodetectEncoding;
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -52,5 +73,13 @@ public class TailItem {
 	@Override
 	public int hashCode() {
 		return Objects.hash(path, newestMatching);
+	}
+
+	@Override
+	public String toString() {
+		return "TailItem{" +
+				"path='" + path + '\'' +
+				", newestMatching=" + newestMatching +
+				'}';
 	}
 }

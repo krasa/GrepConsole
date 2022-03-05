@@ -43,6 +43,7 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 	public static final String TAIL_FILE_IN_CONSOLE_ACTION_LAST_FILE = "TailFileInConsoleAction.lastFile";
 	private VirtualFile lastVirtualFile;
 
+
 	@Override
 	public void actionPerformed(AnActionEvent e) {
 		final Project project = e.getProject();
@@ -76,9 +77,9 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 		}
 	}
 
-	protected void showAdvancedDialog(Project project, TailSettings tailSettings, TailRunConfigurationSettings lastTail) {
+	protected void showAdvancedDialog(Project project, TailSettings tailSettings, TailRunConfigurationSettings settings) {
 		TailSettingsEditor form = new TailSettingsEditor(project);
-		form.resetEditorFrom(lastTail);
+		form.resetEditorFrom(settings);
 
 		DialogBuilder builder = new DialogBuilder(project);
 		builder.setCenterPanel(form.getComponent());
@@ -91,14 +92,16 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 
 		boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
 		if (isOk) {
-			form.applyEditorTo(lastTail);
-			List<String> paths = lastTail.getPaths();
-			TailHistory.getState(project).add(paths, lastTail.isSelectNewestMatchingFile());
+			form.applyEditorTo(settings);
+			List<String> paths = settings.getPaths();
+
+			TailHistory.getState(project).add(paths, settings.isSelectNewestMatchingFile(), settings.getEncoding(), settings.isAutodetectEncoding());
+
 			for (String path : paths) {
-				TailUtils.openAllMatching(path, lastTail.isSelectNewestMatchingFile(), file -> openFileInConsole(project, file, lastTail.resolveEncoding(file)));
+				TailUtils.openAllMatching(path, settings.isSelectNewestMatchingFile(), file -> openFileInConsole(project, file, settings.resolveEncoding(file)));
 			}
 
-			tailSettings.setLastTail(lastTail.clearPaths());
+			tailSettings.setLastTail(settings.clearPaths());
 		}
 	}
 
@@ -148,6 +151,22 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 	}
 
 	@NotNull
+	public static Charset resolveEncoding(File file, boolean autodetectEncoding, String defaultEncoding) {
+		String encoding = null;
+		if (autodetectEncoding) {
+			encoding = detectEncoding(file);
+		}
+		if (StringUtils.isEmpty(encoding)) {
+			encoding = defaultEncoding;
+		}
+		if (StringUtils.isEmpty(encoding)) {
+			final TailSettings tailSettings = GrepConsoleApplicationComponent.getInstance().getState().getTailSettings();
+			encoding = tailSettings.getDefaultEncoding();
+		}
+		return Charset.forName(encoding);
+	}
+
+	@NotNull
 	public static Charset resolveEncoding(File file) {
 		final TailSettings tailSettings = GrepConsoleApplicationComponent.getInstance().getState().getTailSettings();
 		String encoding = null;
@@ -159,7 +178,6 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 		}
 		return Charset.forName(encoding);
 	}
-
 	@Nullable
 	public static String detectEncoding(File file) {
 		String encoding;
@@ -174,12 +192,13 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 		return encoding;
 	}
 
-
 	public static class MyProcess extends Process {
 		protected volatile boolean running = true;
 		protected InputStream inputStream;
+		private File file;
 
 		public MyProcess(final File file) {
+			this.file = file;
 			try {
 				if (!file.exists()) {
 					String s = "File not found '" + file.getAbsolutePath() + "'";
@@ -198,6 +217,14 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 				throw new RuntimeException(e);
 			}
 
+		}
+
+		public File getFile() {
+			return file;
+		}
+
+		public void setFile(File file) {
+			this.file = file;
 		}
 
 		@Override

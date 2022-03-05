@@ -61,7 +61,7 @@ public class GrepProjectState {
 
 	@NotNull
 	public TailHistory getTailHistory() {
-		return tailHistory;
+	return tailHistory;
 	}
 
 	public void setTailHistory(@NotNull TailHistory tailHistory) {

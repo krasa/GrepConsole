@@ -10,20 +10,18 @@ import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.util.Consumer;
 import krasa.grepconsole.action.TailFileInConsoleAction;
-import krasa.grepconsole.model.TailSettings;
-import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.tail.TailContentExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.nio.charset.Charset;
 import java.util.List;
 
 public class TailRunProfileState implements RunProfileState {
@@ -57,50 +55,38 @@ public class TailRunProfileState implements RunProfileState {
 		}
 
 		if (!allowRunningInParallel) {
-			ToolWindow tail = ToolWindowManager.getInstance(project).getToolWindow("Tail");
-			if (tail != null) {
-				ContentManager contentManager = tail.getContentManager();
-				for (Content content : contentManager.getContents()) {
-					if (content.isValid()) {
-						RunContentDescriptor contentDescriptor = content.getUserData(RunContentDescriptor.DESCRIPTOR_KEY);
-						if (contentDescriptor != null) {
-							ProcessHandler processHandler = contentDescriptor.getProcessHandler();
-							if (processHandler != null && !processHandler.isProcessTerminated()) {
-								if (file.getAbsolutePath().equals(processHandler.getUserData(TailContentExecutor.FILE_PATH))) {
+			if (showExistingContent(file, project)) return;
+		}
+
+		TailFileInConsoleAction.openFileInConsole(project, file, TailFileInConsoleAction.resolveEncoding(file, mySettings.isAutodetectEncoding(), mySettings.getEncoding()));
+	}
+
+	public static boolean showExistingContent(File file, @NotNull Project project) {
+		ToolWindow tail = ToolWindowManager.getInstance(project).getToolWindow("Tail");
+		if (tail != null) {
+			ContentManager contentManager = tail.getContentManager();
+			for (Content content : contentManager.getContents()) {
+				if (content.isValid()) {
+					RunContentDescriptor contentDescriptor = content.getUserData(RunContentDescriptor.DESCRIPTOR_KEY);
+					if (contentDescriptor != null) {
+						ProcessHandler processHandler = contentDescriptor.getProcessHandler();
+						if (processHandler != null && !processHandler.isProcessTerminated()) {
+							if (FileUtil.pathsEqual(file.getAbsolutePath(), processHandler.getUserData(TailContentExecutor.FILE_PATH))) {
 //										TailContentExecutor.PinAction pinAction = processHandler.getUserData(TailContentExecutor.PIN_ACTION);
 //										if (pinAction != null && pinAction.isSelected(null)) {
 //											continue;
 //										}
 //										contentManager.removeContent(content, true);
-									tail.activate(null);
-									contentManager.setSelectedContent(content, true);
-									return;
-								}
+								tail.activate(null);
+								contentManager.setSelectedContent(content, true);
+								return true;
 							}
 						}
 					}
 				}
 			}
-
 		}
-
-		TailFileInConsoleAction.openFileInConsole(project, file, resolveEncoding(file, mySettings));
-	}
-
-	@NotNull
-	public static Charset resolveEncoding(File file, TailRunConfigurationSettings mySettings) {
-		String encoding = null;
-		if (mySettings.isAutodetectEncoding()) {
-			encoding = TailFileInConsoleAction.detectEncoding(file);
-		}
-		if (org.apache.commons.lang.StringUtils.isEmpty(encoding)) {
-			encoding = mySettings.getEncoding();
-		}
-		if (org.apache.commons.lang.StringUtils.isEmpty(encoding)) {
-			final TailSettings tailSettings = GrepConsoleApplicationComponent.getInstance().getState().getTailSettings();
-			encoding = tailSettings.getDefaultEncoding();
-		}
-		return Charset.forName(encoding);
+		return false;
 	}
 
 }

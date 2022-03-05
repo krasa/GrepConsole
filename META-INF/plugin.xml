@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.8.211.6693.2</version>
+    <version>12.8.211.6693.3</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -41,7 +41,7 @@
 	 		- Main Menu | Help | Tail (IntelliJ) Log in Console<br>
 	 		- Project View | right click context menu | Tail<br>
 	 		- Drag&Drop "Tail File" panel in the main toolbar<br>
-	 		- Ctrl + Alt + Shift + E - Open Tail History<br>
+	 		- Ctrl + Alt + Shift + E - Tail Quick Switch<br>
 	 		- http and Windows context menu integration<br>
 	 		- Encoding auto-detection<br>
 	 		<br>
@@ -54,7 +54,7 @@
 
     <change-notes><![CDATA[
         <br>12.8
-		<br>- Added: Ctrl + Alt + Shift + E - Open Tail History
+		<br>- Added: Ctrl + Alt + Shift + E - Tail Quick Switch
 		<br>- Fixed: Cannot create class krasa.grepconsole.integration.LookAndFeelListener on IDE start
 		<br>- Less polluted Grep history
         <br>12.7
@@ -251,8 +251,8 @@
             </group>
         </group>
 
-        <action id="GrepConsole.TailHistory"
-                class="krasa.grepconsole.tail.TailHistoryQuickSwitchSchemeAction" text="Open Tail History">
+        <action id="GrepConsole.TailQuickSwitch"
+                class="krasa.grepconsole.action.TailQuickSwitchSchemeAction" text="Tail Quick Switch">
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift E"/>
         </action>
     </actions>

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 public class TailHistory {
-	static int MAX_SIZE = 50;
+	static int MAX_SIZE = 20;
 
 	@NotNull
 	private Set<TailItem> items = new LinkedHashSet<>();
@@ -31,9 +31,11 @@ public class TailHistory {
 	}
 
 
-	public void add(List<String> paths, boolean selectNewestMatchingFile) {
+	public void add(List<String> paths, boolean selectNewestMatchingFile, String encoding, boolean autodetectEncoding) {
 		for (String path : paths) {
 			TailItem e = new TailItem(path, selectNewestMatchingFile);
+			e.setEncoding(encoding);
+			e.setAutodetectEncoding(autodetectEncoding);
 			items.remove(e);
 			items.add(e);
 		}

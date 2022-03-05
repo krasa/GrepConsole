@@ -1,5 +1,6 @@
 package krasa.grepconsole.tail.runConfiguration;
 
+import krasa.grepconsole.action.TailFileInConsoleAction;
 import krasa.grepconsole.model.DomainObject;
 
 import java.io.File;
@@ -46,7 +47,7 @@ public class TailRunConfigurationSettings extends DomainObject {
 	}
 
 	public Charset resolveEncoding(File file) {
-		return TailRunProfileState.resolveEncoding(file, this);
+		return TailFileInConsoleAction.resolveEncoding(file, this.isAutodetectEncoding(), this.getEncoding());
 	}
 
 	public TailRunConfigurationSettings clearPaths() {

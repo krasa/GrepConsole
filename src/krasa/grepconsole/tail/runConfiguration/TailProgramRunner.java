@@ -9,10 +9,13 @@ import com.intellij.execution.runners.ProgramRunner;
 import org.jetbrains.annotations.NotNull;
 
 public class TailProgramRunner implements ProgramRunner<RunnerSettings> {
+
+	public static final String ID = "GrepConsoleTail";
+
 	@Override
 	public @NotNull
 	String getRunnerId() {
-		return "GrepConsoleTail";
+		return ID;
 	}
 
 	@Override
