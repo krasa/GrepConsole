@@ -89,7 +89,7 @@ public class TailFileInConsoleToolbarAction extends TailFileInConsoleAction impl
 				} else if (canHandlePlainText(transferFlavors)) {
 					String path = (String) t.getTransferData(DataFlavor.stringFlavor);
 					path = path.trim();
-					TailHistory.getState(project).add(new File(path));
+					TailHistory.getState(project).addAndLimitSize(new File(path));
 
 					TailUtils.openAllMatching(path, false, file -> openFileInConsole(project, file, resolveEncoding(file)));
 					return true;

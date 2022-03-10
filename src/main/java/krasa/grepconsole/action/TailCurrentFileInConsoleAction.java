@@ -28,7 +28,7 @@ public class TailCurrentFileInConsoleAction extends TailFileInConsoleAction {
 				final VirtualFile virtualFile = psiFile.getVirtualFile();
 				final String path = virtualFile.getPath();
 				final File file = new File(path);
-				TailHistory.getState(project).add(file);
+				TailHistory.getState(project).addAndLimitSize(file);
 				openFileInConsole(project, file, resolveEncoding(file));
 			}
 		}

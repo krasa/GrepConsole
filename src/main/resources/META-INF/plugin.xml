@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.8.211.6693.3</version>
+    <version>12.9.211.6693.0</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -53,6 +53,10 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <br>12.9
+		<br>- Tail Quick Switch - added delete action, small fixes
+		<br>- Added: Tools menu group
+		<br>- Changed ID of some actions - shortcuts break
         <br>12.8
 		<br>- Added: Ctrl + Alt + Shift + E - Tail Quick Switch
 		<br>- Fixed: Cannot create class krasa.grepconsole.integration.LookAndFeelListener on IDE start
@@ -105,67 +109,86 @@
     </project-components>
 
     <actions>
-        <action id="ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
+        <group id="GrepConsole.ToolsMenu" popup="true" searchable="false" text="Grep Console"
+               icon="/krasa/grepconsole/icons/highlight.svg">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </group>
+
+
+        <action id="GrepConsole.ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
                 text="Clear Grep Highlights in Editor"
                 description="Clear Highlights in Editor">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
         </action>
+
         <action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
                 text="Toggle Highlight of All Occurrences (custom color)"
                 icon="/krasa/grepconsole/icons/highlight.svg"
                 description="Toggle highlight of all occurrences of the selected text in the editor. Opens a dialog to choose a color.">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
             <!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
         </action>
+
         <action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
                 text="Toggle Highlight of All Occurrences"
                 icon="/krasa/grepconsole/icons/highlight.svg"
                 description="Toggle highlight of all occurrences of the selected text in the editor - with predefined colors">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
         </action>
-        <!-- Add your actions here -->
-        <action id="Highlight" class="krasa.grepconsole.action.EditorHighlightAction"
+
+        <action id="GrepConsole.Highlight" class="krasa.grepconsole.action.EditorHighlightAction"
                 text="Highlight Editor according to Grep Console settings"
                 icon="/krasa/grepconsole/icons/highlight.svg"
                 description="Highlight Editor according to Grep Console settings">
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
         </action>
-        <action id="OpenFileInConsole" class="krasa.grepconsole.action.TailFileInConsoleAction"
+        <action id="GrepConsole.OpenFileInConsole" class="krasa.grepconsole.action.TailFileInConsoleAction"
                 text="Tail File in Console..."
                 description="Tail File in Console..."
                 icon="/krasa/grepconsole/icons/tail.svg"
         >
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
         </action>
-        <action id="OpenFileInConsoleProjectView" class="krasa.grepconsole.action.TailFileInConsoleProjectViewAction"
+        <action id="GrepConsole.OpenFileInConsoleProjectView"
+                class="krasa.grepconsole.action.TailFileInConsoleProjectViewAction"
                 text="Tail in Console"
                 description="Tail in Console"
                 icon="/krasa/grepconsole/icons/tail.svg"
         >
             <add-to-group group-id="RevealGroup"/>
         </action>
-        <action id="OpenCurrentFileInConsole" class="krasa.grepconsole.action.TailCurrentFileInConsoleAction"
+        <action id="GrepConsole.OpenCurrentFileInConsole"
+                class="krasa.grepconsole.action.TailCurrentFileInConsoleAction"
                 text="Tail Current File in Console"
                 description="Tail Current Editor File in Console"
                 icon="/krasa/grepconsole/icons/tail.svg"
         >
-            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
         </action>
-        <action id="OpenFileInConsoleToolbarAction"
+        <action id="GrepConsole.OpenFileInConsoleToolbarAction"
                 class="krasa.grepconsole.action.TailFileInConsoleToolbarAction"
                 text="Tail"
                 description="Drag and drop to open file in console">
             <add-to-group group-id="MainToolBar" anchor="last"/>
         </action>
-        <action id="TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog"
+        <action id="GrepConsole.TailIntelliJLog" class="krasa.grepconsole.action.TailIntelliJLog"
                 text="Tail Log in Console"
                 description="Tail Log in Console - by Grep Console plugin"
                 icon="/krasa/grepconsole/icons/tail.svg"
         >
             <add-to-group group-id="HelpMenu" anchor="before" relative-to-action="ShowLog"/>
         </action>
+        <action id="GrepConsole.TailQuickSwitch"
+                icon="/krasa/grepconsole/icons/tail.svg"
+                class="krasa.grepconsole.action.TailQuickSwitchSchemeAction"
+                text="Tail Quick Switch">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift E"/>
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
+        </action>
+
+
         <action id="krasa.grepconsole.action.NextHighlight"
                 class="krasa.grepconsole.action.NextHighlightAction"
                 text="Next Console Highlight"
@@ -251,10 +274,6 @@
             </group>
         </group>
 
-        <action id="GrepConsole.TailQuickSwitch"
-                class="krasa.grepconsole.action.TailQuickSwitchSchemeAction" text="Tail Quick Switch">
-            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift E"/>
-        </action>
     </actions>
 
     <applicationListeners>

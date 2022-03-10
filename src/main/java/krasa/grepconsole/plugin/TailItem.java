@@ -1,10 +1,9 @@
 package krasa.grepconsole.plugin;
 
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.SystemIndependent;
 
-import java.io.File;
 import java.util.Objects;
 
 public class TailItem {
@@ -22,12 +21,8 @@ public class TailItem {
 		this.newestMatching = newestMatching;
 	}
 
-	public TailItem(File file) {
-		this(file.getAbsolutePath(), false);
-	}
-
-	public TailItem(VirtualFile virtualFile) {
-		this(FileUtil.toSystemIndependentName(virtualFile.getPath()), false);
+	public TailItem(@NotNull String path) {
+		this(path, false);
 	}
 
 	public boolean isNewestMatching() {

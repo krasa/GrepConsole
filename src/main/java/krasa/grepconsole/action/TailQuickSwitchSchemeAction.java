@@ -21,8 +21,13 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.popup.PopupFactoryImpl;
+import com.intellij.ui.popup.list.ListPopupImpl;
+import com.intellij.ui.popup.list.ListPopupModel;
 import com.intellij.vcsUtil.VcsFileUtil;
 import krasa.grepconsole.plugin.TailHistory;
 import krasa.grepconsole.plugin.TailItem;
@@ -32,7 +37,11 @@ import krasa.grepconsole.tail.runConfiguration.TailRunConfigurationType;
 import krasa.grepconsole.tail.runConfiguration.TailRunProfileState;
 import krasa.grepconsole.tail.runConfiguration.TailUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -71,10 +80,6 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 		}
 		for (TailItem tailItem : list) {
 			File file = new File(tailItem.getPath());
-			if (!file.exists()) {
-				state.removeFromHistory(tailItem);
-				continue;
-			}
 
 			String text = tailItem.getPath();
 			if (root != null) {
@@ -87,14 +92,7 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 			if (tailItem.isNewestMatching()) {
 				text += " (newest)";
 			}
-			defaultActionGroup.add(new DumbAwareAction(FileUtil.toSystemIndependentName(text)) {
-				@Override
-				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
-					state.add(tailItem);
-
-					TailUtils.openAllMatching(file.getPath(), false, file -> openFile(file, project, tailItem));
-				}
-			});
+			defaultActionGroup.add(new MyDumbAwareAction(text, state, tailItem, file, project));
 		}
 	}
 
@@ -136,5 +134,63 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 			charset = resolveEncoding(file);
 		}
 		openFileInConsole(project, file, charset);
+	}
+
+	@Override
+	protected void showPopup(AnActionEvent e, ListPopup p) {
+		final ListPopupImpl popup = (ListPopupImpl) p;
+		registerActions(popup, e.getProject());
+		super.showPopup(e, popup);
+	}
+
+	private void registerActions(final ListPopupImpl popup, @Nullable Project project) {
+		final Ref<Boolean> invoked = Ref.create(false);
+		popup.registerAction("invokeWithDelete", KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), new AbstractAction() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				invoked.set(true);
+				JList list = popup.getList();
+				int selectedIndex = list.getSelectedIndex();
+				ListPopupModel model = (ListPopupModel) list.getModel();
+				PopupFactoryImpl.ActionItem selectedItem = (PopupFactoryImpl.ActionItem) model.get(selectedIndex);
+				if (selectedItem != null && selectedItem.getAction() instanceof MyDumbAwareAction) {
+					MyDumbAwareAction action = (MyDumbAwareAction) selectedItem.getAction();
+					TailItem tailItem = action.getTailItem();
+					model.deleteItem(selectedItem);
+					TailHistory.getState(project).removeFromHistory(tailItem);
+					if (selectedIndex == list.getModel().getSize()) { // is last
+						list.setSelectedIndex(selectedIndex - 1);
+					} else {
+						list.setSelectedIndex(selectedIndex);
+					}
+				}
+			}
+		});
+	}
+
+	private class MyDumbAwareAction extends DumbAwareAction {
+		private final TailHistory state;
+		private final TailItem tailItem;
+		private final File file;
+		private final Project project;
+
+		public MyDumbAwareAction(String text, TailHistory state, TailItem tailItem, File file, Project project) {
+			super(FileUtil.toSystemIndependentName(text));
+			this.state = state;
+			this.tailItem = tailItem;
+			this.file = file;
+			this.project = project;
+		}
+
+		@Override
+		public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+			state.add(tailItem);
+
+			TailUtils.openAllMatching(file.getPath(), tailItem.isNewestMatching(), file -> openFile(file, project, tailItem));
+		}
+
+		public TailItem getTailItem() {
+			return tailItem;
+		}
 	}
 }

@@ -36,8 +36,7 @@ public class TailHistory {
 			TailItem e = new TailItem(path, selectNewestMatchingFile);
 			e.setEncoding(encoding);
 			e.setAutodetectEncoding(autodetectEncoding);
-			items.remove(e);
-			items.add(e);
+			add(e);
 		}
 		limitSize();
 	}
@@ -45,9 +44,7 @@ public class TailHistory {
 	public void add(@Nullable VirtualFile[] choose) {
 		if (choose != null) {
 			for (VirtualFile virtualFile : choose) {
-				TailItem e = new TailItem(virtualFile);
-				items.remove(e);
-				items.add(e);
+				add(new TailItem(virtualFile.getPath()));
 			}
 			limitSize();
 		}
@@ -55,9 +52,7 @@ public class TailHistory {
 
 	public void add2(List<File> list) {
 		for (File file : list) {
-			TailItem e = new TailItem(file);
-			items.remove(e);
-			items.add(e);
+			add(new TailItem(file.getAbsolutePath()));
 		}
 		limitSize();
 	}
@@ -67,10 +62,8 @@ public class TailHistory {
 		items.add(e);
 	}
 
-	public void add(File file) {
-		TailItem e = new TailItem(file);
-		items.remove(e);
-		items.add(e);
+	public void addAndLimitSize(File file) {
+		add(new TailItem(file.getAbsolutePath()));
 		limitSize();
 	}
 

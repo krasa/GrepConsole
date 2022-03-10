@@ -61,7 +61,7 @@ public class OpenFileInConsoleMessageHandler implements MessageHandler {
 						Project project = getProject(allProjectFrames, selectedProject);
 						if (project != null) {
 							final File file = new File(message);
-							TailHistory.getState(project).add(file);
+							TailHistory.getState(project).addAndLimitSize(file);
 
 							TailFileInConsoleAction.openFileInConsole(project, file, TailFileInConsoleAction.resolveEncoding(file));
 						}
