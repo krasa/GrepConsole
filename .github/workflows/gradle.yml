@@ -14,4 +14,4 @@ jobs:
         with:
           java-version: 11.0.x
       - name: Build with Gradle
-        run: ./gradlew build
+        run: sh gradlew build
