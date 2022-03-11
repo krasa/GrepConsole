@@ -1,7 +1,8 @@
-/out
+/.gradle
+**/build
+**/out
 *.iws
 *.ipr
 *.zip
 .shelf
 .idea
-
