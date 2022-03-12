@@ -401,6 +401,7 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
     ClearAction() {
       super(AllIcons.Actions.Close);
       getTemplatePresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
+      getTemplatePresentation().setDescription("Remove Expression (use the middle mouse button)");
     }
 
     @Override

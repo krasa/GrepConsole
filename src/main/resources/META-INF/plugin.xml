@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.9.211.6693.0</version>
+    <version>12.10.211.6693.0</version>
     <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
@@ -53,6 +53,8 @@
       ]]></description>
 
     <change-notes><![CDATA[
+        <br>12.10
+		<br>- Grep panel optimization
         <br>12.9
 		<br>- Tail Quick Switch - added delete action, small fixes
 		<br>- Added: Tools menu group
@@ -230,7 +232,7 @@
         <group id="krasa.grepconsole.grep.panel" text="Grep Panel">
             <action id="GrepConsole.AddExpressionAction"
                     class="krasa.grepconsole.grep.actions.AddExpressionAction"
-                    text="Add Expression"
+                    text="Add Expression (or double click on the panel)"
                     icon="/krasa/grepconsole/icons/add.svg"
             />
             <action id="GrepConsole.ApplyAction"

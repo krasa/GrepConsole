@@ -67,6 +67,8 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		WrapLayout layout = new WrapLayout(FlowLayout.LEFT, 3, 3);
 		layout.setFillWidth(false);
 		expressions = new JPanel(layout);
+		expressions.setToolTipText("Double click to add a new expression");
+
 		DoubleClickListener doubleClickListener = new DoubleClickListener() {
 			@Override
 			protected boolean onDoubleClick(@NotNull MouseEvent mouseEvent) {
@@ -174,7 +176,12 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	public void addExpression(String expression) {
 		expressions.add(new MyGrepSearchTextArea(this, new GrepModel(expression)));
-		reload(false);
+		if (!expression.isEmpty()) {
+			reload(false);
+		} else {
+			expressions.revalidate();
+			expressions.repaint();
+		}
 	}
 
 
