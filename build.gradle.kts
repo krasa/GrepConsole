@@ -10,7 +10,11 @@ tasks {
     patchPluginXml {
         sinceBuild.set("211.6693.3")
         untilBuild.set("")
-        changeNotes.set("Grep panel optimization")
+        changeNotes.set(
+            buildString {
+                append("- Grep panel optimization <br>")
+            }
+        )
     }
 
     // Set the JVM compatibility versions
