@@ -225,7 +225,7 @@ public class MainSettingsForm {
 					}));
 				}
 				popup.add(newMenuItem("Create 'LivePlugin' example", new LivePluginExampleAction(myConfigurable.getProject())));
-				popup.add(newMenuItem("Create plugin project example", new CreatePluginProjectExample()));
+//				popup.add(newMenuItem("Create plugin project example", new CreatePluginProjectExample()));
 				popup.show(extensionButton, 0, extensionButton.getHeight());
 			}
 		});
