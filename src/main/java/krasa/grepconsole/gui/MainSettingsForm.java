@@ -170,7 +170,7 @@ public class MainSettingsForm {
 		help.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				InputStream resourceAsStream = MainSettingsForm.class.getResourceAsStream("help.txt");
+				InputStream resourceAsStream = MainSettingsForm.class.getResourceAsStream("/krasa/grepconsole/help.txt");
 				try {
 					String text = new String(FileUtilRt.loadBytes(resourceAsStream), "UTF-8");
 					Messages.showInfoMessage(rootComponent, text, "Help");

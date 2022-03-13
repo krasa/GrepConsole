@@ -1,3 +1,3 @@
 rootProject.name = "GrepConsole"
 include("http-client")
-include("GrepConsoleExtension")
+//include("GrepConsoleExtension")

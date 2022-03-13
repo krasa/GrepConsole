@@ -26,6 +26,7 @@ dependencies {
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("javax.media:jmf:2.1.1e")
     implementation("uk.com.robust-it:cloning:1.9.12")
+    implementation(project(":http-client"))
 }
 
 tasks {

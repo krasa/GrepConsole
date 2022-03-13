@@ -2,8 +2,8 @@ plugins {
     id("java")
 }
 
-group = "com.example"
-version = "1.0-SNAPSHOT"
+group = "GrepConsole-http-client"
+version = ""
 
 repositories {
     mavenCentral()
@@ -16,4 +16,8 @@ dependencies {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    archiveBaseName.set("GrepConsole-http-client")
 }
