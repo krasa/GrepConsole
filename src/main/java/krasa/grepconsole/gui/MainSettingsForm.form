@@ -8,6 +8,7 @@
     <properties>
       <minimumSize width="750" height="200"/>
       <opaque value="false"/>
+      <preferredSize width="950" height="700"/>
     </properties>
     <border type="empty"/>
     <children>
