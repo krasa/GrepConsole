@@ -4,7 +4,36 @@ plugins {
 }
 
 group = "GrepConsole"
-version = "12.8.211.6693.3"
+version = "12.10.211.6693.3"
+
+tasks {
+    patchPluginXml {
+        sinceBuild.set("211.6693.3")
+        untilBuild.set("")
+        changeNotes.set("Grep panel optimization")
+    }
+
+    // Set the JVM compatibility versions
+    withType<JavaCompile> {
+        sourceCompatibility = "11"
+        targetCompatibility = "11"
+    }
+
+
+    signPlugin {
+        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
+        privateKey.set(System.getenv("PRIVATE_KEY"))
+        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+    }
+
+    publishPlugin {
+        token.set(System.getenv("PUBLISH_TOKEN"))
+    }
+
+    buildSearchableOptions {
+        enabled = false
+    }
+}
 
 repositories {
     mavenCentral()
@@ -29,29 +58,3 @@ dependencies {
     implementation(project(":http-client"))
 }
 
-tasks {
-    // Set the JVM compatibility versions
-    withType<JavaCompile> {
-        sourceCompatibility = "11"
-        targetCompatibility = "11"
-    }
-
-    patchPluginXml {
-        sinceBuild.set("213")
-        untilBuild.set("223.*")
-    }
-
-    signPlugin {
-        certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-        privateKey.set(System.getenv("PRIVATE_KEY"))
-        password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
-    }
-
-    publishPlugin {
-        token.set(System.getenv("PUBLISH_TOKEN"))
-    }
-
-    buildSearchableOptions {
-        enabled = false
-    }
-}

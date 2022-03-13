@@ -1,11 +1,8 @@
 <idea-plugin version="2">
     <id>GrepConsole</id>
     <name>Grep Console</name>
-    <version>12.10.211.6693.0</version>
-    <idea-version since-build="211.6693.111"/>
 
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
-
 
     <description><![CDATA[
 		  Grep, tail, filter, highlight... everything you need for a console (JS/NPM/GoLand/... Terminals are not supported - <a href="https://youtrack.jetbrains.com/issue/IDEA-216442">IDEA-216442<a/>). Also can highlight the editor...
