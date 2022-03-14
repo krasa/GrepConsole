@@ -19,193 +19,16 @@
         <properties/>
         <border type="empty"/>
         <children>
-          <grid id="cef91" layout-manager="GridLayoutManager" row-count="7" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="cef91" layout-manager="GridLayoutManager" row-count="2" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints/>
             <properties/>
             <border type="empty"/>
             <children>
-              <splitpane id="366cf" binding="splitPane">
-                <constraints>
-                  <grid row="5" column="0" row-span="2" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="200" height="200"/>
-                  </grid>
-                </constraints>
-                <properties>
-                  <continuousLayout value="true"/>
-                  <dividerLocation value="150"/>
-                  <oneTouchExpandable value="true"/>
-                  <orientation value="0"/>
-                  <resizeWeight value="0.0"/>
-                </properties>
-                <border type="empty"/>
-                <children>
-                  <grid id="71f24" binding="transfrormersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <splitpane position="left"/>
-                    </constraints>
-                    <properties>
-                      <minimumSize width="0" height="0"/>
-                    </properties>
-                    <border type="none" title="Filtering">
-                      <color color="-4473925"/>
-                    </border>
-                    <children>
-                      <scrollpane id="36ad1">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <minimum-size width="50" height="100"/>
-                          </grid>
-                        </constraints>
-                        <properties/>
-                        <border type="empty"/>
-                        <children>
-                          <component id="f9910" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="inputTable" custom-create="true">
-                            <constraints/>
-                            <properties>
-                              <autoResizeMode value="2"/>
-                              <intercellSpacing width="1" height="1"/>
-                              <preferredScrollableViewportSize width="-1" height="40"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </scrollpane>
-                      <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                        <margin top="0" left="0" bottom="0" right="0"/>
-                        <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
-                        </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="95448" class="javax.swing.JCheckBox" binding="testHighlightersFirst">
-                            <constraints>
-                              <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Test highlighters first"/>
-                              <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else by using REMOVE_UNLESS_PREVIOUSLY_MATCHED action. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: NO_ACTION, Continue: TRUE."/>
-                            </properties>
-                          </component>
-                          <component id="dab6c" class="javax.swing.JButton" binding="addNewInputFilterGroup">
-                            <constraints>
-                              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Add new group"/>
-                            </properties>
-                          </component>
-                          <component id="99e19" class="javax.swing.JCheckBox" binding="multilineInputFilter">
-                            <constraints>
-                              <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Filter out not matched lines if the previous one was filtered out"/>
-                              <toolTipText value=""/>
-                            </properties>
-                          </component>
-                          <component id="ea3" class="javax.swing.JButton" binding="extensionButton" default-binding="true">
-                            <constraints>
-                              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Extension..."/>
-                            </properties>
-                          </component>
-                          <component id="e8905" class="javax.swing.JButton" binding="addNewInputFilterItem">
-                            <constraints>
-                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                            </constraints>
-                            <properties>
-                              <text value="Add new item"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </grid>
-                    </children>
-                  </grid>
-                  <grid id="c72d6" binding="highlightersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-                    <margin top="0" left="0" bottom="0" right="0"/>
-                    <constraints>
-                      <splitpane position="right"/>
-                    </constraints>
-                    <properties>
-                      <minimumSize width="778" height="0"/>
-                    </properties>
-                    <border type="none" title="Highlighting &amp; Folding"/>
-                    <children>
-                      <scrollpane id="44bf4">
-                        <constraints>
-                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <minimum-size width="-1" height="100"/>
-                          </grid>
-                        </constraints>
-                        <properties/>
-                        <border type="empty"/>
-                        <children>
-                          <component id="1e8d0" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="grepTable" custom-create="true" default-binding="true">
-                            <constraints/>
-                            <properties>
-                              <autoResizeMode value="2"/>
-                              <intercellSpacing width="1" height="1"/>
-                              <preferredScrollableViewportSize width="-1" height="100"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </scrollpane>
-                      <grid id="441f9" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
-                        <constraints>
-                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                            <minimum-size width="-1" height="0"/>
-                          </grid>
-                        </constraints>
-                        <properties/>
-                        <border type="none"/>
-                        <children>
-                          <component id="a3358" class="javax.swing.JButton" binding="addNewItem" default-binding="true">
-                            <constraints/>
-                            <properties>
-                              <text value="Add new item"/>
-                            </properties>
-                          </component>
-                          <component id="dd534" class="javax.swing.JButton" binding="addNewGroup">
-                            <constraints/>
-                            <properties>
-                              <text value="Add new group"/>
-                            </properties>
-                          </component>
-                          <component id="ee95" class="javax.swing.JButton" binding="resetHighlighters">
-                            <constraints/>
-                            <properties>
-                              <horizontalTextPosition value="0"/>
-                              <text value="Reset to default"/>
-                            </properties>
-                          </component>
-                          <component id="ba71" class="javax.swing.JButton" binding="rehighlightAll">
-                            <constraints/>
-                            <properties>
-                              <text value="Rehighlight all consoles"/>
-                              <toolTipText value="Reapply highlighting to all consoles. OK/Apply applies settings to all, but reprocesses a previous output only in the current one."/>
-                            </properties>
-                          </component>
-                          <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
-                            <constraints/>
-                            <properties>
-                              <text value="Use a previous highlight if a line is not matched"/>
-                              <toolTipText value="The style is applied for all following lines until another match occurs"/>
-                            </properties>
-                          </component>
-                        </children>
-                      </grid>
-                    </children>
-                  </grid>
-                </children>
-              </splitpane>
               <grid id="a6d7b" binding="settings" layout-manager="GridLayoutManager" row-count="5" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="0">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <grid row="0" column="0" row-span="5" col-span="5" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="0" row-span="1" col-span="5" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties/>
                 <border type="empty"/>
@@ -442,6 +265,194 @@
                       </component>
                     </children>
                   </grid>
+                </children>
+              </grid>
+              <grid id="4eca" binding="splitterParent" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="5" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <splitpane id="366cf" binding="splitPane" custom-create="true">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="400" height="400"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <continuousLayout value="true"/>
+                      <dividerLocation value="160"/>
+                      <dividerSize value="6"/>
+                      <oneTouchExpandable value="true"/>
+                      <orientation value="0"/>
+                      <resizeWeight value="0.0"/>
+                    </properties>
+                    <border type="empty"/>
+                    <children>
+                      <grid id="71f24" binding="transfrormersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <splitpane position="left"/>
+                        </constraints>
+                        <properties>
+                          <minimumSize width="0" height="0"/>
+                        </properties>
+                        <border type="none" title="Filtering">
+                          <color color="-4473925"/>
+                        </border>
+                        <children>
+                          <scrollpane id="36ad1">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                                <minimum-size width="50" height="100"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                            <border type="empty"/>
+                            <children>
+                              <component id="f9910" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="inputTable" custom-create="true">
+                                <constraints/>
+                                <properties>
+                                  <autoResizeMode value="2"/>
+                                  <intercellSpacing width="1" height="1"/>
+                                  <preferredScrollableViewportSize width="-1" height="40"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </scrollpane>
+                          <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                            <margin top="0" left="0" bottom="0" right="0"/>
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="95448" class="javax.swing.JCheckBox" binding="testHighlightersFirst">
+                                <constraints>
+                                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Test highlighters first"/>
+                                  <toolTipText value="For cases when you want to keep lines that are matched by highlighters and remove everything else by using REMOVE_UNLESS_PREVIOUSLY_MATCHED action. &#10;&#10;This wastes CPU as actual highlighting is done from scratch much later. &#10;&#10;Alternatively you can copy highlighters here, set Action: NO_ACTION, Continue: TRUE."/>
+                                </properties>
+                              </component>
+                              <component id="dab6c" class="javax.swing.JButton" binding="addNewInputFilterGroup">
+                                <constraints>
+                                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Add new group"/>
+                                </properties>
+                              </component>
+                              <component id="99e19" class="javax.swing.JCheckBox" binding="multilineInputFilter">
+                                <constraints>
+                                  <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Filter out not matched lines if the previous one was filtered out"/>
+                                  <toolTipText value=""/>
+                                </properties>
+                              </component>
+                              <component id="ea3" class="javax.swing.JButton" binding="extensionButton" default-binding="true">
+                                <constraints>
+                                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Extension..."/>
+                                </properties>
+                              </component>
+                              <component id="e8905" class="javax.swing.JButton" binding="addNewInputFilterItem">
+                                <constraints>
+                                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
+                                </constraints>
+                                <properties>
+                                  <text value="Add new item"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                      <grid id="c72d6" binding="highlightersPanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                        <margin top="0" left="0" bottom="0" right="0"/>
+                        <constraints>
+                          <splitpane position="right"/>
+                        </constraints>
+                        <properties>
+                          <minimumSize width="778" height="0"/>
+                        </properties>
+                        <border type="none" title="Highlighting &amp; Folding"/>
+                        <children>
+                          <scrollpane id="44bf4">
+                            <constraints>
+                              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                                <minimum-size width="-1" height="100"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                            <border type="empty"/>
+                            <children>
+                              <component id="1e8d0" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="grepTable" custom-create="true" default-binding="true">
+                                <constraints/>
+                                <properties>
+                                  <autoResizeMode value="2"/>
+                                  <intercellSpacing width="1" height="1"/>
+                                  <preferredScrollableViewportSize width="-1" height="100"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </scrollpane>
+                          <grid id="441f9" layout-manager="FlowLayout" hgap="5" vgap="0" flow-align="0">
+                            <constraints>
+                              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                                <minimum-size width="-1" height="0"/>
+                              </grid>
+                            </constraints>
+                            <properties/>
+                            <border type="none"/>
+                            <children>
+                              <component id="a3358" class="javax.swing.JButton" binding="addNewItem" default-binding="true">
+                                <constraints/>
+                                <properties>
+                                  <text value="Add new item"/>
+                                </properties>
+                              </component>
+                              <component id="dd534" class="javax.swing.JButton" binding="addNewGroup">
+                                <constraints/>
+                                <properties>
+                                  <text value="Add new group"/>
+                                </properties>
+                              </component>
+                              <component id="ee95" class="javax.swing.JButton" binding="resetHighlighters">
+                                <constraints/>
+                                <properties>
+                                  <horizontalTextPosition value="0"/>
+                                  <text value="Reset to default"/>
+                                </properties>
+                              </component>
+                              <component id="ba71" class="javax.swing.JButton" binding="rehighlightAll">
+                                <constraints/>
+                                <properties>
+                                  <text value="Rehighlight all consoles"/>
+                                  <toolTipText value="Reapply highlighting to all consoles. OK/Apply applies settings to all, but reprocesses a previous output only in the current one."/>
+                                </properties>
+                              </component>
+                              <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
+                                <constraints/>
+                                <properties>
+                                  <text value="Use a previous highlight if a line is not matched"/>
+                                  <toolTipText value="The style is applied for all following lines until another match occurs"/>
+                                </properties>
+                              </component>
+                            </children>
+                          </grid>
+                        </children>
+                      </grid>
+                    </children>
+                  </splitpane>
                 </children>
               </grid>
             </children>

@@ -88,6 +88,7 @@ public class MainSettingsForm {
 	private JButton profiles;
 	private JButton donate;
 	private JButton paypal;
+	private JPanel splitterParent;
 	// private JCheckBox synchronous;
 	public Profile currentProfile;
 	private SettingsContext settingsContext;
@@ -98,12 +99,14 @@ public class MainSettingsForm {
 		this.settingsContext = settingsContext;
 		this.originallySelectedProfileId = originallySelectedProfileId;
 		String value = PropertiesComponent.getInstance().getValue(DIVIDER);
+
 		if (value != null) {
 			try {
 				splitPane.setDividerLocation(Integer.parseInt(value));
 			} catch (NumberFormatException e) {
 			}
 		}
+
 		fileTailSettings.addActionListener(new FileTailSettingsActionListener());
 		streamBufferSettingsButton.addActionListener(new StreamBufferSettingsActionListener());
 		profiles.addActionListener(new ProfilesSettingsActionListener());
@@ -116,6 +119,9 @@ public class MainSettingsForm {
 					}
 				}
 		);
+//		GuiUtils.replaceJSplitPaneWithIDEASplitter(splitPane, false);
+//		JBSplitter component = (JBSplitter) splitterParent.getComponent(0);
+//		component.setAndLoadSplitterProportionKey(DIVIDER);
 
 		profileComboBox.addItemListener(e -> {
 			if (updatingModel) {
@@ -459,6 +465,8 @@ public class MainSettingsForm {
 	}
 
 	private void createUIComponents() {
+		splitPane = new JSplitPane();
+
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
