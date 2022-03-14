@@ -1,5 +1,6 @@
 package krasa.grepconsole.gui;
 
+import com.intellij.ide.BrowserUtil;
 import com.intellij.ide.DataManager;
 import com.intellij.ide.actions.CopyAction;
 import com.intellij.ide.actions.CutAction;
@@ -225,7 +226,12 @@ public class MainSettingsForm {
 					}));
 				}
 				popup.add(newMenuItem("Create 'LivePlugin' example", new LivePluginExampleAction(myConfigurable.getProject())));
-//				popup.add(newMenuItem("Create plugin project example", new CreatePluginProjectExample()));
+				popup.add(newMenuItem("Open plugin project example", new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						BrowserUtil.browse("https://github.com/krasa/GrepConsole-Extension-Example");
+					}
+				}));
 				popup.show(extensionButton, 0, extensionButton.getHeight());
 			}
 		});
