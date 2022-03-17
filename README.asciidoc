@@ -30,13 +30,15 @@ More]
 image::screenshotColors.png[]
 image::screenshotGrepSubConsole.png[]
 
+---
+
 === Extensions
 
-=== using https://plugins.jetbrains.com/plugin/7282-liveplugin[LivePlugin]: (https://github.com/krasa/GrepConsole/blob/master/extension.avi?raw=true[avi])
+- using https://plugins.jetbrains.com/plugin/7282-liveplugin[LivePlugin]: (https://github.com/krasa/GrepConsole/blob/master/extension.avi?raw=true[avi])
 
 image::extension.gif[]
 
-=== plugin example: https://github.com/krasa/GrepConsole-Extension-Example
+- plugin example: https://github.com/krasa/GrepConsole-Extension-Example
 
 ---
 
