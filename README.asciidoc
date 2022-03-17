@@ -42,15 +42,15 @@ image::extension.gif[]
 
 ---
 
-Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
-Used http://plugins.jetbrains.com/plugin/6027?pr=idea[Remote call plugin] implementation for http integration.
-
 == Development notes
 
 - configure `Build and run using` for faster Hot Swap:
 
 image::gradleSetup.png[]
 
+
+Inspired by http://marian.schedenig.name/projects/grep-console/[Grep Console plugin for Eclipse].
+Used http://plugins.jetbrains.com/plugin/6027?pr=idea[Remote call plugin] implementation for http integration.
 
 ---
 
