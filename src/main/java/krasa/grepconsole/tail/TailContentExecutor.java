@@ -6,8 +6,9 @@ import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.configurations.RunProfileState;
 import com.intellij.execution.filters.Filter;
-import com.intellij.execution.filters.TextConsoleBuilder;
 import com.intellij.execution.filters.TextConsoleBuilderFactory;
+import com.intellij.execution.filters.TextConsoleBuilderImpl;
+import com.intellij.execution.impl.ConsoleViewUtil;
 import com.intellij.execution.process.ProcessAdapter;
 import com.intellij.execution.process.ProcessEvent;
 import com.intellij.execution.process.ProcessHandler;
@@ -30,6 +31,7 @@ import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindowManager;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.utils.Notifier;
@@ -109,9 +111,16 @@ public class TailContentExecutor implements Disposable {
 	}
 
 	public static ConsoleView createConsole(@NotNull Project project, @NotNull ProcessHandler processHandler, List<Filter> myFilterList) {
-		TextConsoleBuilder consoleBuilder = TextConsoleBuilderFactory.getInstance().createBuilder(project);
+		TextConsoleBuilderImpl consoleBuilder = (TextConsoleBuilderImpl) TextConsoleBuilderFactory.getInstance().createBuilder(project);
+		consoleBuilder.setUsePredefinedMessageFilter(false);
 		consoleBuilder.filters(myFilterList);
 		ConsoleView console = consoleBuilder.getConsole();
+
+		List<Filter> filters = ConsoleViewUtil.computeConsoleFilters(project, console, GlobalSearchScope.allScope(project));
+		for (Filter filter : filters) {
+			console.addMessageFilter(filter);
+		}
+
 		console.attachToProcess(processHandler);
 		return console;
 	}
