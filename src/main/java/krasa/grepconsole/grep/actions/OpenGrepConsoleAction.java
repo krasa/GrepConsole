@@ -252,7 +252,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			originalConsole.getEditor().getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void documentChanged(@NotNull DocumentEvent event) {
-					if (event.getNewLength() == 0) {
+					if (event.getNewLength() == 0 && event.getDocument().getTextLength() == 0) {
 						if (PluginState.getInstance().isAutoClearChildConsoles()) {
 							newConsole.clear();
 						}

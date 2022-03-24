@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "GrepConsole"
-version = "12.11.211.6693.0"
+version = "12.12.211.6693.0"
 
 tasks {
     patchPluginXml {
@@ -12,7 +12,7 @@ tasks {
         untilBuild.set("")
         changeNotes.set(
             buildString {
-                append("- Fixes #221 Too many non-blocking read actions submitted at once <br>")
+                append("- Fixed: Auto Clear<br>")
             }
         )
     }
