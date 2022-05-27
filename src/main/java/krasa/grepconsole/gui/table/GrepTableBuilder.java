@@ -61,10 +61,10 @@ public class GrepTableBuilder {
 				return "________________";
 			}
 
-			@Override
-			public int getWidth(JTable table) {
-				return 64;
-			}
+//			@Override
+//			public int getWidth(JTable table) {
+//				return 64;
+//			}
 		});
 
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "GrepConsole"
-version = "12.12.211.6693.0"
+version = "12.13.211.6693.0"
 
 tasks {
     patchPluginXml {
@@ -12,7 +12,7 @@ tasks {
         untilBuild.set("")
         changeNotes.set(
             buildString {
-                append("- Fixed: Auto Clear<br>")
+                append("- Allow resizing of the first table column at settings<br>")
             }
         )
     }
