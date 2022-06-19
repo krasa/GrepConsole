@@ -55,7 +55,7 @@ intellij {
 dependencies {
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
     implementation("org.apache.commons:commons-collections4:4.4")
-    implementation("org.jctools:jctools-core:3.3.0")
+    implementation("org.jctools:jctools-core:3.3.1-ea")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("uk.com.robust-it:cloning:1.9.12")
     implementation(project(":http-client"))
