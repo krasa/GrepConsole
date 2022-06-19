@@ -2,27 +2,43 @@ package krasa.grepconsole.model;
 
 import com.intellij.openapi.diagnostic.Logger;
 
-import javax.media.Manager;
-import javax.media.Player;
-import javax.media.StopEvent;
+import javax.sound.sampled.*;
 import java.io.File;
+import java.io.IOException;
 
 public class PlayerUtil {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(PlayerUtil.class);
 
 	public static void play(String path, Sound sound) throws Exception {
-		Player player = Manager.createPlayer(new File(path).toURI().toURL());
-		player.addControllerListener(controllerEvent -> {
-			if (controllerEvent instanceof StopEvent) {
-				sound.playing = false;
-				try {
-					player.close();
-					player.deallocate();
-				} catch (Exception e) {
-					LOG.error(e);
+		new Thread(() -> {
+			try (AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File(path));
+				 Clip clip = AudioSystem.getClip();
+			) {
+				clip.open(audioInputStream);
+				clip.addLineListener(new LineListener() {
+					@Override
+					public void update(LineEvent event) {
+						LineEvent.Type type = event.getType();
+						if (type == LineEvent.Type.STOP) {
+							sound.playing = false;
+
+							synchronized (sound) {
+								sound.notifyAll();
+							}
+						}
+					}
+				});
+				clip.start();
+
+				synchronized (sound) {
+					sound.wait();
 				}
+			} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+				sound.playing = false;
+				LOG.warn(e);
+			} catch (Throwable e) {
+				throw new RuntimeException(e);
 			}
-		});
-		player.start();
+		}, "GrepConsole player").start();
 	}
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "GrepConsole"
-version = "12.13.211.6693.0"
+version = "12.14.211.6693.0"
 
 tasks {
     patchPluginXml {
@@ -12,7 +12,7 @@ tasks {
         untilBuild.set("")
         changeNotes.set(
             buildString {
-                append("- Allow resizing of the first table column at settings<br>")
+                append("- Sound fix<br>")
             }
         )
     }
@@ -57,7 +57,6 @@ dependencies {
     implementation("org.apache.commons:commons-collections4:4.4")
     implementation("org.jctools:jctools-core:3.3.0")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
-    implementation("javax.media:jmf:2.1.1e")
     implementation("uk.com.robust-it:cloning:1.9.12")
     implementation(project(":http-client"))
 }

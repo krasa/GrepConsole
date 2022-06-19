@@ -18,15 +18,14 @@ public class SoundColumn extends IconColumnInfo {
 	public static final Icon SOUND_OFF = IconLoader.getIcon("/krasa/grepconsole/icons/soundOff.png");
 	public static final Icon SOUND_ON = IconLoader.getIcon("/krasa/grepconsole/icons/soundOn.png");
 	private final MainSettingsForm mainSettingsForm;
-	protected SoundSettingsForm soundSettingsForm;
 
 	public SoundColumn(String sound, MainSettingsForm mainSettingsForm) {
 		super(sound);
 		this.mainSettingsForm = mainSettingsForm;
-		soundSettingsForm = new SoundSettingsForm();
 	}
 
 	private boolean showDialog(GrepExpressionItem item) {
+		SoundSettingsForm soundSettingsForm = new SoundSettingsForm();
 		DialogBuilder builder = new DialogBuilder(mainSettingsForm.getRootComponent());
 		builder.setCenterPanel(soundSettingsForm.getRoot());
 		builder.setDimensionServiceKey("GrepConsoleSound");

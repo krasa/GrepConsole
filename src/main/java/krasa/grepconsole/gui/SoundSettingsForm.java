@@ -1,14 +1,16 @@
 package krasa.grepconsole.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-
 import krasa.grepconsole.model.Sound;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @author Vojtech Krasa
@@ -18,6 +20,7 @@ public class SoundSettingsForm {
 	private TextFieldWithBrowseButton path;
 	private JPanel root;
 	private JButton test;
+	private JLabel supported;
 
 	public SoundSettingsForm() {
 		path.addBrowseFolderListener("Select file", "", null,
@@ -31,6 +34,7 @@ public class SoundSettingsForm {
 				data.play();
 			}
 		});
+		supported.setText("Supported formats: " + Arrays.stream(AudioSystem.getAudioFileTypes()).map(AudioFileFormat.Type::getExtension).collect(Collectors.joining(", ")));
 	}
 
 	public JPanel getRoot() {
