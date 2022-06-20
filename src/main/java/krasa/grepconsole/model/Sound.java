@@ -4,6 +4,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.filter.support.SoundMode;
 
 import java.io.File;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * @author Vojtech Krasa
@@ -28,6 +29,10 @@ public class Sound extends DomainObject {
 			try {
 				playing = true;
 				PlayerUtil.play(path, this);
+			} catch (RejectedExecutionException ex) {
+				playing = false;
+				log.warn("Playing of sound failed. Sound file path=" + path + ", exists:" + new File(path).exists()
+						+ ".", ex);
 			} catch (Throwable ex) {
 				playing = false;
 				log.error("Playing of sound failed. Sound file path=" + path + ", exists:" + new File(path).exists()
