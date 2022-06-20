@@ -28,8 +28,6 @@ public class PlayerUtil {
 					public void update(LineEvent event) {
 						LineEvent.Type type = event.getType();
 						if (type == LineEvent.Type.STOP) {
-							sound.playing = false;
-
 							synchronized (sound) {
 								sound.notifyAll();
 							}
@@ -42,10 +40,11 @@ public class PlayerUtil {
 					sound.wait();
 				}
 			} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
-				sound.playing = false;
 				LOG.warn(e);
 			} catch (Throwable e) {
 				throw new RuntimeException(e);
+			} finally {
+				sound.playing = false;
 			}
 		});
 	}
