@@ -50,39 +50,6 @@
       ]]></description>
 
     <change-notes><![CDATA[
-        <br>12.10
-		<br>- Grep panel optimization
-        <br>12.9
-		<br>- Tail Quick Switch - added delete action, small fixes
-		<br>- Added: Tools menu group
-		<br>- Changed ID of some actions - shortcuts break
-        <br>12.8
-		<br>- Added: Ctrl + Alt + Shift + E - Tail Quick Switch
-		<br>- Fixed: Cannot create class krasa.grepconsole.integration.LookAndFeelListener on IDE start
-		<br>- Less polluted Grep history
-        <br>12.7
-		<br>- NPE fix
-		<br>- Fixed icon
-        <br>12.6
-		<br>- Grep: added Auto Clear option
-        <br>12.5
-		<br>- Grep: added Before/After option
-		<br>- Grep: added Auto Reload/Apply on expression change option - Ctrl/Alt + Click on the button to toggle
-		<br>- Grep: usability - double click to add expression field, middle click to remove expression field
-        <br>12.4
-		<br>- More reliable Tail - ignoring "The process cannot access the file because another process has locked a portion of the file" IOException.
-        <br>12.3
-		<br>- Grep Excluding improved - all is matched when there is no include
-        <br>12.2
-		<br>- Themable default colors
-        <br>12.1
-		<br>- Fixed sound playing
-        <br>12.0
-		<br>- Highlighting theme support
-		<br>- Tail - better GUI, by folder, wildcard and last modified
-		<br>- Grep - better GUI, multiple expressions, source console tooltips
-        <br>0.1 (2012-11-13)
-        <br>- Initial release
 			]]>
     </change-notes>
 
