@@ -30,6 +30,7 @@ public class Profile extends DomainObject implements Cloneable {
 	 * for highlighting and folding
 	 */
 	private List<GrepExpressionGroup> grepExpressionGroups = new ArrayList<>();
+	private List<GrepExpressionGroup> foldingGroups = new ArrayList<>();
 	private List<GrepExpressionGroup> inputFilterGroups = new ArrayList<>();
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
@@ -143,6 +144,14 @@ public class Profile extends DomainObject implements Cloneable {
 		return items;
 	}
 
+	public List<GrepExpressionItem> getAllFoldingExpressionItems() {
+		List<GrepExpressionItem> items = new ArrayList<>();
+		for (GrepExpressionGroup group : foldingGroups) {
+			items.addAll(group.getGrepExpressionItems());
+		}
+		return items;
+	}
+
 
 	public List<GrepExpressionGroup> getGrepExpressionGroups() {
 		if (grepExpressionGroups.isEmpty()) {
@@ -166,6 +175,18 @@ public class Profile extends DomainObject implements Cloneable {
 
 	public void setInputFilterGroups(List<GrepExpressionGroup> inputFilterGroups) {
 		this.inputFilterGroups = inputFilterGroups;
+	}
+
+	public List<GrepExpressionGroup> getFoldingGroups() {
+		if (foldingGroups.isEmpty()) {
+			GrepExpressionGroup expressionGroup = new GrepExpressionGroup("default");
+			foldingGroups.add(expressionGroup);
+		}
+		return foldingGroups;
+	}
+
+	public void setFoldingGroups(List<GrepExpressionGroup> foldingGroups) {
+		this.foldingGroups = foldingGroups;
 	}
 
 	public boolean isEnabledHighlighting() {
@@ -383,6 +404,22 @@ public class Profile extends DomainObject implements Cloneable {
 		}
 		GrepExpressionGroup grepExpressionGroup = new GrepExpressionGroup(name);
 		inputFilterGroups.add(grepExpressionGroup);
+		return grepExpressionGroup;
+	}
+
+	@Transient
+	public GrepExpressionGroup getOrCreateFoldingGroup(String name) {
+		List<GrepExpressionGroup> groups = getFoldingGroups();
+		for (GrepExpressionGroup group : groups) {
+			if (group == null) {
+				continue;
+			}
+			if (Objects.equals(name, group.getName())) {
+				return group;
+			}
+		}
+		GrepExpressionGroup grepExpressionGroup = new GrepExpressionGroup(name);
+		groups.add(grepExpressionGroup);
 		return grepExpressionGroup;
 	}
 

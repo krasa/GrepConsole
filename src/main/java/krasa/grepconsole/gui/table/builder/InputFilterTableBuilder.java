@@ -1,4 +1,4 @@
-package krasa.grepconsole.gui.table;
+package krasa.grepconsole.gui.table.builder;
 
 import com.intellij.ide.DefaultTreeExpander;
 import com.intellij.ui.CheckboxTree;
@@ -13,6 +13,7 @@ import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.gui.MainSettingsForm;
+import krasa.grepconsole.gui.table.TableRowTransferHandler;
 import krasa.grepconsole.gui.table.column.*;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -32,9 +33,9 @@ import java.util.List;
 /**
  * @author Vojtech Krasa
  */
-public class TransformerTableBuilder extends GrepTableBuilder {
+public class InputFilterTableBuilder extends GrepTableBuilder {
 
-	public TransformerTableBuilder(final MainSettingsForm mainSettingsForm) {
+	public InputFilterTableBuilder(final MainSettingsForm mainSettingsForm) {
 		List<ColumnInfo> columns = new ArrayList<>();
 		columns.add(new TreeColumnInfo("") {
 			@Nullable
@@ -49,11 +50,11 @@ public class TransformerTableBuilder extends GrepTableBuilder {
 //			}
 		});
 		columns.add(new GroupNameAdapter(new JavaBeanColumnInfo<GrepExpressionItem, String>("Expression",
-				"grepExpression").preferedStringValue("___________________________________")));
+				"grepExpression").preferedStringValue("___________________________")));
 
 		JavaBeanColumnInfo<GrepExpressionItem, String> unless = new JavaBeanColumnInfo<>(
 				"Unless expression", "unlessGrepExpression");
-		columns.add(new FolderColumnInfoWrapper(unless.preferedStringValue("______________")));
+		columns.add(new FolderColumnInfoWrapper(unless.preferedStringValue("___________")));
 		unless.addListener(new ValueChangedListener<GrepExpressionItem, String>() {
 			@Override
 			public void onValueChanged(GrepExpressionItem grepExpressionItem, String newValue) {

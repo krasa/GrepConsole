@@ -64,11 +64,11 @@ public class GrepConsoleApplicationComponent
 			cachedMaxLengthToMatch = Integer.MAX_VALUE;
 		}
 
-		List<GrepExpressionItem> grepExpressionItems = profile.getAllGrepExpressionItems();
+		List<GrepExpressionItem> grepExpressionItems = profile.getAllFoldingExpressionItems();
 		for (GrepExpressionItem grepExpressionItem : grepExpressionItems) {
 			boolean enableFoldings = profile.isEnableFoldings();
 			boolean enabled = grepExpressionItem.isEnabled();
-			boolean fold = grepExpressionItem.isFold();
+			boolean fold = grepExpressionItem.isFold() || grepExpressionItem.isStartFolding() || grepExpressionItem.isStopFolding();
 			if (enableFoldings && enabled && fold) {
 				list.add(grepExpressionItem);
 			}
@@ -109,6 +109,7 @@ public class GrepConsoleApplicationComponent
 	@Override
 	public void loadState(PluginState state) {
 		this.settings = state;
+		foldingsCache = null;
 
 		migrate();
 	}
@@ -139,6 +140,30 @@ public class GrepConsoleApplicationComponent
 
 			}
 			settings.setVersion(1);
+		}
+
+
+		if (settings.getVersion() < 2) {
+			Profile profile = settings.getDefaultProfile();
+			for (GrepExpressionGroup grepExpressionGroup : profile.getGrepExpressionGroups()) {
+				for (Iterator<GrepExpressionItem> iterator = grepExpressionGroup.getGrepExpressionItems().iterator(); iterator.hasNext(); ) {
+					GrepExpressionItem grepExpressionItem = iterator.next();
+					if (grepExpressionItem.isFold()) {
+						GrepExpressionItem newItem = Cloner.deepClone(grepExpressionItem);
+
+						String name = grepExpressionGroup.getName();
+						if (StringUtils.isBlank(name)) {
+							name = "default";
+						}
+						GrepExpressionGroup group = profile.getOrCreateFoldingGroup(name);
+						group.add(newItem);
+
+						grepExpressionItem.setEnabled(false);
+					}
+				}
+
+			}
+			settings.setVersion(2);
 		}
 	}
 

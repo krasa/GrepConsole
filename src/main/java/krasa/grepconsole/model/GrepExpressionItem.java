@@ -40,6 +40,9 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	@Deprecated
 	private boolean inputFilter = false;
 	private boolean fold = false;
+	private boolean startFolding = false;
+	private boolean stopFolding = false;
+	private String foldPlaceholderTextPrefix = "";
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
@@ -88,8 +91,33 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		return fold;
 	}
 
+	public String getFoldPlaceholderTextPrefix() {
+		return foldPlaceholderTextPrefix;
+	}
+
+	public void setFoldPlaceholderTextPrefix(String foldPlaceholderTextPrefix) {
+		this.foldPlaceholderTextPrefix = foldPlaceholderTextPrefix;
+	}
+
+
+	public boolean isStopFolding() {
+		return stopFolding;
+	}
+
+	public void setStopFolding(boolean stopFolding) {
+		this.stopFolding = stopFolding;
+	}
+
 	public void setFold(boolean fold) {
 		this.fold = fold;
+	}
+
+	public boolean isStartFolding() {
+		return startFolding;
+	}
+
+	public void setStartFolding(boolean startFolding) {
+		this.startFolding = startFolding;
 	}
 
 	public void setSound(Sound sound) {

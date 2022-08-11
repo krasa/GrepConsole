@@ -4,16 +4,16 @@ plugins {
 }
 
 group = "GrepConsole"
-version = "12.14.211.6693.0"
+version = "12.15.211.6693.0"
 
 tasks {
     patchPluginXml {
         sinceBuild.set("211.6693.3")
         untilBuild.set("")
         changeNotes.set(
-            buildString {
-                append("- Sound fix<br>")
-            }
+                buildString {
+                    append("- Folding improvements<br>")
+                }
         )
     }
 

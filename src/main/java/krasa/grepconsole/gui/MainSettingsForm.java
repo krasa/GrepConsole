@@ -21,7 +21,13 @@ import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.tree.TreeUtil;
-import krasa.grepconsole.gui.table.*;
+import krasa.grepconsole.gui.table.CheckboxTreeTable;
+import krasa.grepconsole.gui.table.GrepExpressionGroupTreeNode;
+import krasa.grepconsole.gui.table.GrepExpressionItemTreeNode;
+import krasa.grepconsole.gui.table.TableUtils;
+import krasa.grepconsole.gui.table.builder.FoldingTableBuilder;
+import krasa.grepconsole.gui.table.builder.GrepTableBuilder;
+import krasa.grepconsole.gui.table.builder.InputFilterTableBuilder;
 import krasa.grepconsole.model.*;
 import krasa.grepconsole.plugin.*;
 import krasa.grepconsole.tail.TailIntegrationForm;
@@ -45,11 +51,13 @@ import static krasa.grepconsole.Cloner.deepClone;
 
 public class MainSettingsForm {
 	private static final String DIVIDER = "GrepConsole.ProfileDetail";
+	private static final String DIVIDER2 = "GrepConsole.ProfileDetail.divider2";
 
 	private static final Logger log = Logger.getInstance(MainSettingsForm.class);
 	private JPanel rootComponent;
 	private CheckboxTreeTable grepTable;
 	private JButton addNewItem;
+	private JButton addNewFoldingItem;
 	private JButton resetToDefaultButton;
 	private JCheckBox enableHighlightingCheckBox;
 	private JFormattedTextField maxLengthToMatch;
@@ -59,6 +67,7 @@ public class MainSettingsForm {
 	private JCheckBox showStatsInConsole;
 	private JCheckBox showStatsInStatusBar;
 	private JButton addNewGroup;
+	private JButton addNewFoldingGroup;
 	private JLabel contextSpecificText;
 	private JCheckBox enableFoldings;
 	private JFormattedTextField maxProcessingTime;
@@ -89,6 +98,9 @@ public class MainSettingsForm {
 	private JButton donate;
 	private JButton paypal;
 	private JPanel splitterParent;
+	private JPanel foldingPanel;
+	private CheckboxTreeTable foldingTable;
+	private JSplitPane splitPane2;
 	// private JCheckBox synchronous;
 	public Profile currentProfile;
 	private SettingsContext settingsContext;
@@ -98,11 +110,18 @@ public class MainSettingsForm {
 	public MainSettingsForm(MyConfigurable myConfigurable, SettingsContext settingsContext, long originallySelectedProfileId) {
 		this.settingsContext = settingsContext;
 		this.originallySelectedProfileId = originallySelectedProfileId;
-		String value = PropertiesComponent.getInstance().getValue(DIVIDER);
 
+		String value = PropertiesComponent.getInstance().getValue(DIVIDER);
 		if (value != null) {
 			try {
 				splitPane.setDividerLocation(Integer.parseInt(value));
+			} catch (NumberFormatException e) {
+			}
+		}
+		String value2 = PropertiesComponent.getInstance().getValue(DIVIDER2);
+		if (value2 != null) {
+			try {
+				splitPane2.setDividerLocation(Integer.parseInt(value2));
 			} catch (NumberFormatException e) {
 			}
 		}
@@ -116,6 +135,16 @@ public class MainSettingsForm {
 					public void propertyChange(PropertyChangeEvent pce) {
 						Object newValue = pce.getNewValue();
 						PropertiesComponent.getInstance().setValue(DIVIDER, String.valueOf(newValue));
+					}
+				}
+		);
+
+		splitPane2.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY,
+				new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent pce) {
+						Object newValue = pce.getNewValue();
+						PropertiesComponent.getInstance().setValue(DIVIDER2, String.valueOf(newValue));
 					}
 				}
 		);
@@ -153,17 +182,22 @@ public class MainSettingsForm {
 		});
 		resetToDefaultButton.addActionListener(new ResetAllToDefaultAction());
 
-		addNewItem.addActionListener(new AddNewItemAction(grepTable, false));
-		addNewInputFilterItem.addActionListener(new AddNewItemAction(inputTable, true));
+		addNewItem.addActionListener(new AddNewItemAction(grepTable, false, false));
+		addNewInputFilterItem.addActionListener(new AddNewItemAction(inputTable, true, false));
+		addNewFoldingItem.addActionListener(new AddNewItemAction(foldingTable, false, true));
 
 		addNewGroup.addActionListener(new AddNewGroupAction(grepTable));
 		addNewInputFilterGroup.addActionListener(new AddNewGroupAction(inputTable));
+		addNewFoldingGroup.addActionListener(new AddNewGroupAction(foldingTable));
 
-		grepTable.addMouseListener(rightClickMenu(grepTable, false));
+		grepTable.addMouseListener(rightClickMenu(grepTable, false, false));
 		grepTable.addKeyListener(new DeleteListener(grepTable));
 
-		inputTable.addMouseListener(rightClickMenu(inputTable, true));
+		inputTable.addMouseListener(rightClickMenu(inputTable, true, false));
 		inputTable.addKeyListener(new DeleteListener(inputTable));
+
+		foldingTable.addMouseListener(rightClickMenu(foldingTable, false, true));
+		foldingTable.addKeyListener(new DeleteListener(foldingTable));
 
 		if (settingsContext == SettingsContext.CONSOLE_BAR) {
 			contextSpecificText.setText("Select items for which statistics should be displayed ('"
@@ -192,6 +226,7 @@ public class MainSettingsForm {
 			@Override
 			public void focusGained(FocusEvent e) {
 				inputTable.clearSelection();
+				foldingTable.clearSelection();
 			}
 
 			@Override
@@ -203,6 +238,20 @@ public class MainSettingsForm {
 			@Override
 			public void focusGained(FocusEvent e) {
 				grepTable.clearSelection();
+				foldingTable.clearSelection();
+			}
+
+			@Override
+			public void focusLost(FocusEvent e) {
+
+			}
+		});
+
+		foldingTable.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				grepTable.clearSelection();
+				inputTable.clearSelection();
 			}
 
 			@Override
@@ -244,7 +293,7 @@ public class MainSettingsForm {
 
 	}
 
-	public MouseAdapter rightClickMenu(CheckboxTreeTable table, boolean input) {
+	public MouseAdapter rightClickMenu(CheckboxTreeTable table, boolean input, final boolean fold) {
 		return new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -261,7 +310,7 @@ public class MainSettingsForm {
 						}
 						popup.add(new JPopupMenu.Separator());
 					}
-					popup.add(newMenuItem("Add New Item", new AddNewItemAction(table, input)));
+					popup.add(newMenuItem("Add New Item", new AddNewItemAction(table, input, fold)));
 					if (somethingSelected) {
 						popup.add(newMenuItem("Duplicate", new DuplicateAction(table)));
 					}
@@ -445,12 +494,13 @@ public class MainSettingsForm {
 
 
 	public void resetTreeModel(boolean foldingsEnabled) {
-		((GrepTableBuilder.MyCheckboxTreeTable) grepTable).foldingsEnabled(foldingsEnabled);
 		resetTable(grepTable, this.currentProfile.getGrepExpressionGroups());
 
 		enableFoldings.setEnabled(foldingsEnabled);
 
 		resetTable(inputTable, this.currentProfile.getInputFilterGroups());
+
+		resetTable(foldingTable, this.currentProfile.getFoldingGroups());
 	}
 
 	protected void resetTable(CheckboxTreeTable grepTable, List<GrepExpressionGroup> grepExpressionGroups) {
@@ -466,6 +516,7 @@ public class MainSettingsForm {
 
 	private void createUIComponents() {
 		splitPane = new JSplitPane();
+		splitPane2 = new JSplitPane();
 
 		NumberFormatter numberFormatter = new NumberFormatter();
 		numberFormatter.setMinimum(0);
@@ -473,7 +524,8 @@ public class MainSettingsForm {
 		maxLengthToGrep = new JFormattedTextField(numberFormatter);
 		maxProcessingTime = new JFormattedTextField(numberFormatter);
 		grepTable = new GrepTableBuilder(this).getTable();
-		inputTable = new TransformerTableBuilder(this).getTable();
+		inputTable = new InputFilterTableBuilder(this).getTable();
+		foldingTable = new FoldingTableBuilder(this).getTable();
 	}
 
 
@@ -486,6 +538,10 @@ public class MainSettingsForm {
 		List<GrepExpressionGroup> inputFilterGroups = currentProfile.getInputFilterGroups();
 		inputFilterGroups.clear();
 		fillProfileFromTable(inputFilterGroups, inputTable);
+
+		List<GrepExpressionGroup> foldingGroups = currentProfile.getFoldingGroups();
+		foldingGroups.clear();
+		fillProfileFromTable(foldingGroups, foldingTable);
 	}
 
 	protected void fillProfileFromTable(List<GrepExpressionGroup> grepExpressionGroups, CheckboxTreeTable table) {
@@ -537,6 +593,7 @@ public class MainSettingsForm {
 		inputFilterBlankLineCheckBox.setSelected(data.isInputFilterBlankLineWorkaround());
 		bufferStreams.setSelected(data.isBufferStreams());
 	}
+
 	@Deprecated
 	public void getData(Profile data) {
 		data.setTestHighlightersInInputFilter(testHighlightersFirst.isSelected());
@@ -637,10 +694,12 @@ public class MainSettingsForm {
 	private class AddNewItemAction implements ActionListener {
 		private CheckboxTreeTable myTable;
 		private final boolean input;
+		private final boolean fold;
 
-		public AddNewItemAction(CheckboxTreeTable table, boolean input) {
+		public AddNewItemAction(CheckboxTreeTable table, boolean input, boolean fold) {
 			myTable = table;
 			this.input = input;
+			this.fold = fold;
 		}
 
 		@Override
@@ -653,6 +712,12 @@ public class MainSettingsForm {
 				item.action(GrepExpressionItem.ACTION_REMOVE);
 				item.setGrepExpression(".*unwanted line.*");
 				item.setEnabled(true);
+				userObject = item;
+			} else if (fold) {
+				GrepExpressionItem item = new GrepExpressionItem();
+				item.setGrepExpression("foo");
+				item.setEnabled(true);
+				item.setFold(true);
 				userObject = item;
 			} else {
 				GrepExpressionItem item = new GrepExpressionItem();
@@ -722,7 +787,7 @@ public class MainSettingsForm {
 			Profile profile = MainSettingsForm.this.currentProfile;
 			MainSettingsForm.this.currentProfile = null;
 
-  			profile.resetToDefault();
+			profile.resetToDefault();
 			importFrom(profile);
 		}
 	}

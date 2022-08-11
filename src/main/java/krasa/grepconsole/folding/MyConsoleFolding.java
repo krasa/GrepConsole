@@ -22,12 +22,10 @@ public class MyConsoleFolding extends ConsoleFolding {
 		this.grepConsoleApplicationComponent = GrepConsoleApplicationComponent.getInstance();
 	}
 
-	public boolean shouldFoldLine(@NotNull Project project, @NotNull String line) {
-		return shouldFoldLine(line);
-	}
+	boolean startFolding = false;
+	String placeholderTextPrefix = "";
 
-	@Deprecated
-	public boolean shouldFoldLine(String line) {
+	public boolean shouldFoldLine(@NotNull Project project, @NotNull String line) {
 		try {
 			List<GrepExpressionItem> foldings = grepConsoleApplicationComponent.getCachedFoldingItems();
 			int cachedMaxLengthToMatch = grepConsoleApplicationComponent.getCachedMaxLengthToMatch();
@@ -38,29 +36,40 @@ public class MyConsoleFolding extends ConsoleFolding {
 
 			for (int i = 0; i < foldings.size(); i++) {
 				GrepExpressionItem grepExpressionItem = foldings.get(i);
+				boolean wholeLine = !grepExpressionItem.isHighlightOnlyMatchingText();
 				Pattern unlessPattern = grepExpressionItem.getUnlessPattern();
 				if (unlessPattern != null && unlessPattern.matcher(input).matches()) {
 					continue;
 				}
 				Pattern pattern = grepExpressionItem.getPattern();
-				if (pattern != null && pattern.matcher(input).matches()) {
-					return true;
+				if (pattern != null && ((wholeLine && pattern.matcher(input).matches()) || (!wholeLine && pattern.matcher(input).find()))) {
+					placeholderTextPrefix = grepExpressionItem.getFoldPlaceholderTextPrefix();
+
+					if (grepExpressionItem.isStartFolding()) {
+						startFolding = true;
+					} else if (grepExpressionItem.isStopFolding()) {
+						startFolding = false;
+					}
+
+					return grepExpressionItem.isFold();
+
+
 				}
 			}
 		} catch (ProcessCanceledException e) {
 		}
+		return startFolding;
+	}
+
+	@Override
+	public boolean shouldBeAttachedToThePreviousLine() {
 		return false;
 	}
 
 	@Nullable
 	public String getPlaceholderText(@NotNull Project project, @NotNull List<String> lines) {
-		return getPlaceholderText(lines);
+		String s = lines.size() > 1 ? "s" : "";
+		return " " + placeholderTextPrefix + " <" + lines.size() + " folded line" + s + ">";
 	}
 
-	@Deprecated
-	@Nullable
-	public String getPlaceholderText(List<String> lines) {
-		String s = lines.size() > 1 ? "s" : "";
-		return " <" + lines.size() + " folded line" + s + ">";
-	}
 }
