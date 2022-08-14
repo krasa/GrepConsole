@@ -13,6 +13,7 @@ tasks {
         changeNotes.set(
                 buildString {
                     append("- Folding improvements<br>")
+                    append("- Changed multiline input filter checkbox to a column<br>")
                 }
         )
     }

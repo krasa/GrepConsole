@@ -38,7 +38,6 @@ public class Profile extends DomainObject implements Cloneable {
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
-	private boolean multilineInputFilter;
 
 	private boolean showStatsInConsoleByDefault;
 	private boolean showStatsInStatusBarByDefault;
@@ -262,14 +261,6 @@ public class Profile extends DomainObject implements Cloneable {
 
 	public void setMultiLineOutput(boolean multiLineOutput) {
 		this.multiLineOutput = multiLineOutput;
-	}
-
-	public boolean isMultilineInputFilter() {
-		return multilineInputFilter;
-	}
-
-	public void setMultilineInputFilter(boolean multilineInputFilter) {
-		this.multilineInputFilter = multilineInputFilter;
 	}
 
 	public boolean isShowStatsInStatusBarByDefault() {

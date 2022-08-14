@@ -14,7 +14,6 @@ class FakeQueue implements Queue<Pair<String, Key>> {
 	public boolean add(Pair<String, Key> stringKeyPair) {
 		return false;
 	}
-
 	@Override
 	public boolean offer(Pair<String, Key> stringKeyPair) {
 		return false;

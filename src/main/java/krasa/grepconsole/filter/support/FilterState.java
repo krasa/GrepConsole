@@ -29,6 +29,7 @@ public class FilterState {
 	private CharSequence charSequence;
 	private boolean clearConsole;
 	private boolean textChanged;
+	private boolean multilineInputFilter;
 
 	public FilterState(int offset, String text, Profile profile, CharSequence charSequence) {
 		this.offset = offset;
@@ -115,6 +116,7 @@ public class FilterState {
 	public void executeAction(GrepExpressionItem grepExpressionItem) {
 		setNextOperation(grepExpressionItem.getOperationOnMatch());
 		setClearConsole(grepExpressionItem.isClearConsole());
+		setMultilineInputFilter(grepExpressionItem.isMultiline());
 
 		String action = grepExpressionItem.getAction();
 		if (GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
@@ -192,5 +194,13 @@ public class FilterState {
 
 	public boolean getTextChanged() {
 		return textChanged;
+	}
+
+	public boolean isMultilineInputFilter() {
+		return multilineInputFilter;
+	}
+
+	public void setMultilineInputFilter(boolean multilineInputFilter) {
+		this.multilineInputFilter = multilineInputFilter;
 	}
 }

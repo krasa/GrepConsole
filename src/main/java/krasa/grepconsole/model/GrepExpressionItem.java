@@ -42,6 +42,8 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private boolean fold = false;
 	private boolean startFolding = false;
 	private boolean stopFolding = false;
+
+	private boolean multiline = false;
 	private String foldPlaceholderTextPrefix = "";
 	private String grepExpression;
 	private String unlessGrepExpression;
@@ -61,6 +63,13 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private boolean showCountInConsole = false;
 	private boolean showCountInStatusBar = false;
 
+	public boolean isMultiline() {
+		return multiline;
+	}
+
+	public void setMultiline(boolean multiline) {
+		this.multiline = multiline;
+	}
 
 	public String getAction() {
 		return action;

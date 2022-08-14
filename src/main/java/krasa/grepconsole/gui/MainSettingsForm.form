@@ -385,14 +385,14 @@
                                   <component id="f9910" class="krasa.grepconsole.gui.table.CheckboxTreeTable" binding="inputTable" custom-create="true">
                                     <constraints/>
                                     <properties>
-                                      <autoResizeMode value="0"/>
+                                      <autoResizeMode value="2"/>
                                       <intercellSpacing width="1" height="1"/>
-                                      <preferredScrollableViewportSize width="300" height="40"/>
+                                      <preferredScrollableViewportSize width="150" height="40"/>
                                     </properties>
                                   </component>
                                 </children>
                               </scrollpane>
-                              <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="5" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                              <grid id="bcc60" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                                 <margin top="0" left="0" bottom="0" right="0"/>
                                 <constraints>
                                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="1" anchor="8" fill="2" indent="0" use-parent-layout="false"/>
@@ -415,15 +415,6 @@
                                     </constraints>
                                     <properties>
                                       <text value="Add new group"/>
-                                    </properties>
-                                  </component>
-                                  <component id="99e19" class="javax.swing.JCheckBox" binding="multilineInputFilter">
-                                    <constraints>
-                                      <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                                    </constraints>
-                                    <properties>
-                                      <text value="Filter out not matched lines if the previous one was filtered out"/>
-                                      <toolTipText value=""/>
                                     </properties>
                                   </component>
                                   <component id="ea3" class="javax.swing.JButton" binding="extensionButton" default-binding="true">
