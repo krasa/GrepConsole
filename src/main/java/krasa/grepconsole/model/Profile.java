@@ -37,8 +37,6 @@ public class Profile extends DomainObject implements Cloneable {
 	private boolean enableMaxLengthLimit = true;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
-	private boolean multiLineOutput;
-
 	private boolean showStatsInConsoleByDefault;
 	private boolean showStatsInStatusBarByDefault;
 	private boolean enableFoldings;
@@ -255,13 +253,6 @@ public class Profile extends DomainObject implements Cloneable {
 		this.enabledInputFiltering = enabledInputFiltering;
 	}
 
-	public boolean isMultiLineOutput() {
-		return multiLineOutput;
-	}
-
-	public void setMultiLineOutput(boolean multiLineOutput) {
-		this.multiLineOutput = multiLineOutput;
-	}
 
 	public boolean isShowStatsInStatusBarByDefault() {
 		return showStatsInStatusBarByDefault;

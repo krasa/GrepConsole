@@ -63,7 +63,6 @@ public class MainSettingsForm {
 	private JFormattedTextField maxLengthToMatch;
 	private JCheckBox enableMaxLength;
 	protected JCheckBox enableFiltering;
-	private JCheckBox multilineOutput;
 	private JCheckBox showStatsInConsole;
 	private JCheckBox showStatsInStatusBar;
 	private JButton addNewGroup;
@@ -574,7 +573,6 @@ public class MainSettingsForm {
 	@Deprecated
 	public void setData(Profile data) {
 		testHighlightersFirst.setSelected(data.isTestHighlightersInInputFilter());
-		multilineOutput.setSelected(data.isMultiLineOutput());
 		enableMaxLength.setSelected(data.isEnableMaxLengthLimit());
 		maxProcessingTime.setText(data.getMaxProcessingTime());
 		enableMaxLengthGrep.setSelected(data.isEnableMaxLengthGrepLimit());
@@ -594,7 +592,6 @@ public class MainSettingsForm {
 	@Deprecated
 	public void getData(Profile data) {
 		data.setTestHighlightersInInputFilter(testHighlightersFirst.isSelected());
-		data.setMultiLineOutput(multilineOutput.isSelected());
 		data.setEnableMaxLengthLimit(enableMaxLength.isSelected());
 		data.setMaxProcessingTime(maxProcessingTime.getText());
 		data.setEnableMaxLengthGrepLimit(enableMaxLengthGrep.isSelected());
@@ -617,7 +614,6 @@ public class MainSettingsForm {
 	@Deprecated
 	public boolean isModified(Profile data) {
 		if (testHighlightersFirst.isSelected() != data.isTestHighlightersInInputFilter()) return true;
-		if (multilineOutput.isSelected() != data.isMultiLineOutput()) return true;
 		if (enableMaxLength.isSelected() != data.isEnableMaxLengthLimit()) return true;
 		if (maxProcessingTime.getText() != null ? !maxProcessingTime.getText().equals(data.getMaxProcessingTime()) : data.getMaxProcessingTime() != null)
 			return true;

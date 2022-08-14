@@ -91,6 +91,13 @@ public class GrepTableBuilder {
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple highlights")));
 		columns.add(new FolderColumnInfoWrapper(
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Multiline", "multiline") {
+					@Override
+					public boolean isCellEditable(GrepExpressionItem grepExpressionItem) {
+						return grepExpressionItem.isWholeLine();
+					}
+				}.tooltipText("The style is applied for all following lines until another match occurs")));
+		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Bold", "style.bold")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Italic",
 				"style.italic")));

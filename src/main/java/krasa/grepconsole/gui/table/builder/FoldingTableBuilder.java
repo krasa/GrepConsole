@@ -72,24 +72,26 @@ public class FoldingTableBuilder extends GrepTableBuilder {
 		})));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
 				"Start", "startFolding", (grepExpressionItem, newValue) -> {
-			if (newValue) {
-				grepExpressionItem.setFold(true);
-				grepExpressionItem.setStopFolding(false);
-				treeTableAtomicReference.get().repaint();
-			}
-		})));
-		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
-				"Stop", "stopFolding", (grepExpressionItem, newValue) -> {
 			if (newValue && !mainSettingsForm.currentProfile.isEnableFoldings()) {
 				mainSettingsForm.currentProfile.setEnableFoldings(true);
 				mainSettingsForm.setData(mainSettingsForm.currentProfile);
 			}
 
 			if (newValue) {
+				grepExpressionItem.setFold(true);
+				grepExpressionItem.setStopFolding(false);
+				treeTableAtomicReference.get().repaint();
+			}
+		}).tooltipText("Start folding")));
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(
+				"Stop", "stopFolding", (grepExpressionItem, newValue) -> {
+
+
+			if (newValue) {
 				grepExpressionItem.setStartFolding(false);
 				treeTableAtomicReference.get().repaint();
 			}
-		})));
+		}).tooltipText("Stop folding")));
 
 
 		JavaBeanColumnInfo<GrepExpressionItem, String> foldPlaceholderTextPrefix = new JavaBeanColumnInfo<>(

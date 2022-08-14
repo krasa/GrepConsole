@@ -44,7 +44,7 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 	private final boolean filterBeforeGrepping;
 
 	private StreamBuffer streamBuffer;
-	private volatile boolean multilineEnabled = false;
+	private volatile boolean multiline = false;
 
 
 	public MainInputFilter(Project project, Profile profile, boolean filterBeforeGrepping, GrepFilter grepFilter) {
@@ -201,10 +201,10 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 			if (state.isExclude()) {
 				result.add(REMOVE_OUTPUT_PAIR);
 				lastLineFiltered = true;
-				multilineEnabled = state.isMultilineInputFilter();
+				multiline = state.isMultiline();
 				removeNextNewLine = blankLineWorkaround && state.notTerminatedWithNewline();
 				return result;
-			} else if (multilineEnabled && !state.isMatchesSomething() && previousLineFiltered) {
+			} else if (multiline && !state.isMatchesSomething() && previousLineFiltered) {
 				result.add(REMOVE_OUTPUT_PAIR);
 				lastLineFiltered = true;
 				removeNextNewLine = blankLineWorkaround && state.notTerminatedWithNewline();

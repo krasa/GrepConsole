@@ -503,13 +503,6 @@
                                   <toolTipText value="Reapply highlighting to all consoles. OK/Apply applies settings to all, but reprocesses a previous output only in the current one."/>
                                 </properties>
                               </component>
-                              <component id="1c28e" class="javax.swing.JCheckBox" binding="multilineOutput">
-                                <constraints/>
-                                <properties>
-                                  <text value="Use a previous highlight if a line is not matched"/>
-                                  <toolTipText value="The style is applied for all following lines until another match occurs"/>
-                                </properties>
-                              </component>
                             </children>
                           </grid>
                         </children>

@@ -156,7 +156,12 @@ public class InputFilterTableBuilder extends GrepTableBuilder {
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against the next configured items to apply multiple actions")));
 		columns.add(new FolderColumnInfoWrapper(
-				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Multiline", "multiline").tooltipText("Remove also next lines until there is a match by any other input filter")));
+				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Multiline", "multiline") {
+					@Override
+					public boolean isCellEditable(GrepExpressionItem grepExpressionItem) {
+						return GrepExpressionItem.ACTION_REMOVE.equals(grepExpressionItem.getAction()) || GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(grepExpressionItem.getAction());
+					}
+				}.tooltipText("Remove also next lines until there is a match by any other input filter")));
 
 		columns.add(new FolderColumnInfoWrapper(new ClearColumn("Clear Console")));
 

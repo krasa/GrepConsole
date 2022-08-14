@@ -17,6 +17,7 @@ import java.util.List;
 public class HighlightingFilter extends AbstractMatchingFilter implements Filter {
 
 	protected ConsoleViewContentType lastTextAttributes = null;
+	private volatile boolean multiline = false;
 
 	public HighlightingFilter(Project project, Profile profile) {
 		super(project, profile);
@@ -56,6 +57,10 @@ public class HighlightingFilter extends AbstractMatchingFilter implements Filter
 	protected List<MyResultItem> adjustWholeLineMatch(int entireLength, FilterState state) {
 		ConsoleViewContentType textAttributes = state.getConsoleViewContentType();
 		List<MyResultItem> resultItemList = state.getResultItemList();
+		if (state.isMatchesSomething()) {
+			multiline = state.isMultiline();
+		}
+
 		if (textAttributes != null) {
 			lastTextAttributes = textAttributes;
 			if (resultItemList == null) {
@@ -63,7 +68,7 @@ public class HighlightingFilter extends AbstractMatchingFilter implements Filter
 			} else {
 				resultItemList.add(getResultItem(entireLength, state, textAttributes));
 			}
-		} else if (lastTextAttributes != null && profile.isMultiLineOutput()) {
+		} else if (lastTextAttributes != null && multiline) {
 			if (resultItemList == null) {
 				resultItemList = Collections.singletonList(getResultItem(entireLength, state, lastTextAttributes));
 			} else {
