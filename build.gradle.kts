@@ -1,10 +1,10 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.13.1"
+    id("org.jetbrains.intellij") version "1.13.3"
 }
 
 group = "GrepConsole"
-version = "12.15.211.6693.0"
+version = "12.16.211.6693.0"
 
 tasks {
     patchPluginXml {
@@ -12,8 +12,8 @@ tasks {
         untilBuild.set("")
         changeNotes.set(
                 buildString {
-                    append("- Folding improvements<br>")
-                    append("- Changed multiline checkbox to a column checkbox<br>")
+                    append("- Fixed console clear button")
+                    append("- Supporting regex groups for highlighting")
                 }
         )
     }
@@ -56,7 +56,7 @@ intellij {
 dependencies {
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
     implementation("org.apache.commons:commons-collections4:4.4")
-    implementation("org.jctools:jctools-core:3.3.0")
+    implementation("org.jctools:jctools-core:4.0.1")
     implementation("commons-beanutils:commons-beanutils:1.9.4")
     implementation("uk.com.robust-it:cloning:1.9.12")
     implementation(project(":http-client"))
