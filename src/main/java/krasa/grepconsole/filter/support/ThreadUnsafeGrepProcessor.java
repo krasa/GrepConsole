@@ -53,13 +53,25 @@ public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 				if (patternMatcher != null) {
 					patternMatcher.reset(input);
 					while (patternMatcher.find()) {
-						matches++;
-						final int start = patternMatcher.start();
-						final int end = patternMatcher.end();
-						MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
-								null, grepExpressionItem.getConsoleViewContentType(null));
-						state.add(resultItem);
-						state.executeAction(grepExpressionItem);
+						if (patternMatcher.groupCount() > 0){
+							matches += patternMatcher.groupCount();
+							for (int i = 1; i <= patternMatcher.groupCount(); i++) {
+								final int start = patternMatcher.start(i);
+								final int end = patternMatcher.end(i);
+								MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
+																		   null, grepExpressionItem.getConsoleViewContentType(null));
+								state.add(resultItem);
+								state.executeAction(grepExpressionItem);
+							}
+						}else {
+							matches++;
+							final int start = patternMatcher.start();
+							final int end = patternMatcher.end();
+							MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
+																	   null, grepExpressionItem.getConsoleViewContentType(null));
+							state.add(resultItem);
+							state.executeAction(grepExpressionItem);
+						}
 					}
 				}
 			} else if (matches(input) && !matchesUnless(input)) {
