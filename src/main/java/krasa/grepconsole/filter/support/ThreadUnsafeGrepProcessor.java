@@ -59,10 +59,10 @@ public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 								final int start = patternMatcher.start(i);
 								final int end = patternMatcher.end(i);
 								MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
-																		   null, grepExpressionItem.getConsoleViewContentType(null));
+										null, grepExpressionItem.getConsoleViewContentType(null));
 								state.add(resultItem);
-								state.executeAction(grepExpressionItem);
 							}
+							state.executeAction(grepExpressionItem);
 						}else {
 							matches++;
 							final int start = patternMatcher.start();
