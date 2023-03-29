@@ -1,13 +1,10 @@
 package krasa.grepconsole.integration;
 
-import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.ide.ui.customization.CustomActionsSchema;
 import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Separator;
 import krasa.grepconsole.action.MoveErrorStreamToTheBottomAction;
 import krasa.grepconsole.action.NextHighlightAction;
@@ -49,7 +46,6 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 			}
 		}
 		anActions.addAll(Arrays.asList(actions));
-		replaceClearAction(anActions);
 		return anActions.toArray(new AnAction[anActions.size()]);
 	}
 
@@ -69,34 +65,8 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 		anActions.add(new OpenConsoleSettingsAction(console));
 		anActions.add(new Separator());
 		anActions.addAll(Arrays.asList(super.postProcessPopupActions(console, actions)));
-		replaceClearAction(anActions);
 		return anActions.toArray(new AnAction[anActions.size()]);
 	}
 
-	private void replaceClearAction(ArrayList<AnAction> anActions) {
-		for (int i = 0; i < anActions.size(); i++) {
-			AnAction anAction = anActions.get(i);
-			if (anAction instanceof ClearConsoleAction) {
-				anActions.set(i, clearAction());
-			}
-		}
-	}
-
-	private ClearConsoleAction clearAction() {
-		return new ClearConsoleAction() {
-			@Override
-			public void actionPerformed(AnActionEvent e) {
-				super.actionPerformed(e);
-				final ConsoleView consoleView = e.getData(LangDataKeys.CONSOLE_VIEW);
-				if (consoleView != null) {
-					try {
-						StatisticsManager.clearCount(consoleView);
-					} catch (Exception e1) {
-						// tough luck
-					}
-				}
-			}
-		};
-	}
 
 }
