@@ -54,8 +54,10 @@ public abstract class AbstractMatchingFilter extends AbstractFilter {
 						Notifier.notify_InputAndHighlight(project, message);
 					} else {
 						log.warn(message);
-					} 
+					}
 					break;
+				} catch (Exception e) {
+					throw new RuntimeException(grepProcessor.getGrepExpressionItem().toString(), e);
 				}
 			}
 

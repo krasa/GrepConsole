@@ -35,6 +35,10 @@ public class HighlightingFilter extends AbstractMatchingFilter implements Filter
 		if (s != null) {
 			offset = entireLength - s.length();
 		}
+		if (offset < 0) { //Maybe fix for #264 IllegalArgumentException: Invalid range specified: (-1, -1);
+			return null;
+		}
+
 		FilterState state = super.filter(s, offset);
 
 		Result result = null;

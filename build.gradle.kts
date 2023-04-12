@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "GrepConsole"
-version = "12.16.211.6693.0"
+version = "12.17.211.6693.0"
 
 tasks {
     patchPluginXml {
@@ -12,8 +12,7 @@ tasks {
         untilBuild.set("")
         changeNotes.set(
                 buildString {
-                    append("- Fixed console clear button")
-                    append("- Supporting regex groups for highlighting")
+                    append("- Bugfix").append("<br>")
                 }
         )
     }

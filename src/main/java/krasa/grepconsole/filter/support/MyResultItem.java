@@ -4,6 +4,7 @@ import com.intellij.execution.filters.Filter;
 import com.intellij.execution.filters.HyperlinkInfo;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.util.TextRange;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ public class MyResultItem {
 	public final HyperlinkInfo hyperlinkInfo;
 
 	public MyResultItem(int highlightStartOffset, int highlightEndOffset, @Nullable HyperlinkInfo hyperlinkInfo,
-			@Nullable ConsoleViewContentType consoleViewContentType) {
+						@Nullable ConsoleViewContentType consoleViewContentType) {
+		TextRange.assertProperRange(highlightStartOffset, highlightEndOffset, "");
 		this.highlightStartOffset = highlightStartOffset;
 		this.highlightEndOffset = highlightEndOffset;
 		this.hyperlinkInfo = hyperlinkInfo;
