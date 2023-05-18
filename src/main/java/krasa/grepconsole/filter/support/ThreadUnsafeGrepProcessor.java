@@ -58,6 +58,9 @@ public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 							for (int i = 1; i <= patternMatcher.groupCount(); i++) {
 								final int start = patternMatcher.start(i);
 								final int end = patternMatcher.end(i);
+								if (start == -1 && end == -1) { // -1 if the match was successful but the group itself did not match anything
+									continue;
+								}
 								MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
 										null, grepExpressionItem.getConsoleViewContentType(null));
 								state.add(resultItem);

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "GrepConsole"
-version = "12.17.211.6693.0"
+version = "12.18.211.6693.0"
 
 tasks {
     patchPluginXml {
@@ -12,7 +12,7 @@ tasks {
         untilBuild.set("")
         changeNotes.set(
                 buildString {
-                    append("- Bugfix").append("<br>")
+                    append("- Bugfix - Invalid range specified: (-1, -1)").append("<br>")
                 }
         )
     }

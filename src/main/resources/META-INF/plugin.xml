@@ -5,7 +5,7 @@
     <vendor url="https://github.com/krasa/GrepConsole" email="vojta.krasa@gmail.com">Vojtech Krasa</vendor>
 
     <description><![CDATA[
-		  Grep, tail, filter, highlight... everything you need for a console (JS/NPM/GoLand/... Terminals are not supported - <a href="https://youtrack.jetbrains.com/issue/IDEA-216442">IDEA-216442<a/>). Also can highlight the editor...
+		  Grep, tail, filter, highlight... everything you need for a console (<a href="https://github.com/krasa/GrepConsole/issues/267">New Logcat<a/> and <a href="https://youtrack.jetbrains.com/issue/IDEA-216442">JS/NPM/GoLand/... Terminals are not supported<a/>). Also can highlight the editor...
 	         <br>
 	         <br>
 			 Sponsored by:<br> 
