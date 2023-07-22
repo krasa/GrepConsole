@@ -34,6 +34,10 @@ public class MyConsoleFolding extends ConsoleFolding {
 			line = line.substring(0, Math.min(line.length(), cachedMaxLengthToMatch));
 			CharSequence input = StringUtil.newBombedCharSequence(line, maxProcessingTimeAsInt);
 
+			if (foldings.isEmpty()) {
+				startFolding = false;
+			}
+
 			for (int i = 0; i < foldings.size(); i++) {
 				GrepExpressionItem grepExpressionItem = foldings.get(i);
 				boolean wholeLine = !grepExpressionItem.isHighlightOnlyMatchingText();
