@@ -132,7 +132,7 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 				}
 
 
-				FilterState state = super.filter(s, -1);
+				FilterState state = super.filter(s, 0);
 
 				clearConsole(state, result, consoleViewContentType);
 
