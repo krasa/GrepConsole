@@ -201,13 +201,13 @@
             />
             <action id="GrepConsole.ApplyAction"
                     class="krasa.grepconsole.grep.actions.ApplyAction"
-                    text="Apply"
+                    text="Apply for New Lines [Ctrl/Alt + Enter]; pCtrl+Click] to Toggle On Change Trigger"
                     description="Ctrl/Alt + Click to Toggle"
                     icon="/krasa/grepconsole/icons/commitGray.svg"
             />
             <action id="GrepConsole.ReloadAction"
                     class="krasa.grepconsole.grep.actions.ReloadAction"
-                    text="Reload"
+                    text="Reload [Enter]; [Ctrl+Click] to Toggle On Change Trigger"
                     description="Ctrl/Alt + Click to Toggle"
                     icon="/krasa/grepconsole/icons/buildLoadChangesGray.svg"
             />

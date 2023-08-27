@@ -25,7 +25,7 @@ public class ApplyAction extends DumbAwareAction {
 
 		GrepPanel grepPanel = getGrepPanel(e);
 		if (grepPanel != null) {
-			grepPanel.apply(false);
+			grepPanel.apply();
 		}
 	}
 

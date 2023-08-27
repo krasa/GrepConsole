@@ -31,7 +31,7 @@ public class PluginState extends DomainObject implements Cloneable {
 	private List<GrepCompositeModel> grepHistory = new ArrayList<>();
 	private boolean autoReloadGrepModel = false;
 	private boolean autoClearChildConsoles = false;
-	private boolean autoApplyGrepModel = true;
+	private boolean autoApplyGrepModel = false;
 
 	public static PluginState getInstance() {
 		return GrepConsoleApplicationComponent.getInstance().getState();

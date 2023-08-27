@@ -95,11 +95,11 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 			public void keyPressed(KeyEvent e) {
 				final int keyCode = e.getKeyCode();
 				if (keyCode == KeyEvent.VK_ENTER && e.isAltDown()) {
-					reload(false);
+					apply();
 				} else if (keyCode == KeyEvent.VK_ENTER && e.isControlDown()) {
-					reload(false);
+					apply();
 				} else if (keyCode == KeyEvent.VK_ENTER) {
-					apply(false);
+					reload();
 				}
 			}
 		});
@@ -177,7 +177,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	public void addExpression(String expression) {
 		expressions.add(new MyGrepSearchTextArea(this, new GrepModel(expression)));
 		if (!expression.isEmpty()) {
-			reload(false);
+			reload();
 		} else {
 			expressions.revalidate();
 			expressions.repaint();
@@ -185,8 +185,8 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	}
 
 
-	public void reload(boolean replaceHistory) {
-		apply(replaceHistory);
+	public void reload() {
+		apply();
 		expressions.revalidate();
 		expressions.repaint();
 		newConsole.clear();
@@ -220,13 +220,10 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		}
 	}
 
-	public void apply(boolean replaceHistory) {
+	public void apply() {
 		if (applyCallback != null) {
 			try {
 				PluginState instance = PluginState.getInstance();
-				if (replaceHistory) {
-					instance.removeFromHistory(currentModel);
-				}
 
 				currentModel = createModel();
 				applyCallback.apply(newConsole, currentModel);
@@ -295,17 +292,17 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	public void setBeforeAfterModel(@NotNull GrepBeforeAfterModel beforeAfterModel) {
 		this.beforeAfterModel = beforeAfterModel;
-		reload(false);
+		reload();
 	}
 
-	public void textExpressionChanged(boolean replaceHistory) {
+	public void textExpressionChanged() {
 		PluginState instance = PluginState.getInstance();
 		if (instance.isAutoReloadGrepModel() || instance.isAutoApplyGrepModel()) {
 
 			if (instance.isAutoReloadGrepModel()) {
-				reload(replaceHistory);
+				reload();
 			} else if (instance.isAutoApplyGrepModel()) {
-				apply(replaceHistory);
+				apply();
 			}
 		}
 	}

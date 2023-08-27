@@ -21,7 +21,7 @@ public class ReloadAction extends DumbAwareAction {
 		}
 		GrepPanel grepPanel = ApplyAction.getGrepPanel(e);
 		if (grepPanel != null) {
-			grepPanel.reload(false);
+			grepPanel.reload();
 		}
 	}
 
