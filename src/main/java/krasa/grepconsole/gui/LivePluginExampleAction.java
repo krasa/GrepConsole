@@ -44,6 +44,7 @@ class LivePluginExampleAction implements ActionListener {
 				try {
 
 					String livePluginsPath = FileUtilRt.toSystemIndependentName(getPluginsPath() + "/live-plugins");
+					VfsUtil.createDirectoryIfMissing(livePluginsPath);
 					String name = uniqueName(livePluginsPath);
 					VirtualFile parentFolder = VfsUtil.createDirectoryIfMissing(livePluginsPath + "/" + name);
 					if (parentFolder == null) {
@@ -87,6 +88,9 @@ class LivePluginExampleAction implements ActionListener {
 	@NotNull
 	protected String uniqueName(String path) {
 		VirtualFile parentFolder = LocalFileSystem.getInstance().findFileByPath(path);
+		if (parentFolder == null) {
+			throw new RuntimeException(path + " not found");
+		}
 		String name = "GrepConsole";
 
 		if (parentFolder.findChild("GrepConsole") != null) {

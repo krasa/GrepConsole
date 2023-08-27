@@ -10,7 +10,9 @@ import static example.support.registerFunction
 /**
  https://github.com/dkandalov/live-plugin/blob/master/src/plugin-util-groovy/liveplugin/PluginUtil.groovy
  */
-//REMOVE_COMMENT import static liveplugin.PluginUtil.*
+
+//UNCOMMNET THIS:
+//import static liveplugin.PluginUtil.*
 
 registerFunction("myScript", new Function<String, String>() {
     Pattern pattern = Pattern.compile(".*ugly slow regexp.*");
