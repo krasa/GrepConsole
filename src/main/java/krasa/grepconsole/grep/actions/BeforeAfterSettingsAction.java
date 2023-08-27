@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ui.JBUI;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.grep.GrepBeforeAfterModel;
 import krasa.grepconsole.grep.gui.GrepBeforeAfterSettingsDialog;
@@ -15,8 +16,9 @@ import krasa.grepconsole.grep.gui.GrepPanel;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -62,28 +64,38 @@ public class BeforeAfterSettingsAction extends DumbAwareAction implements Custom
 
 	@NotNull
 	public JComponent createCustomComponent(@NotNull Presentation presentation, @NotNull String place) {
-		JLabel comp1 = new JLabel(presentation.getText());
-		final JPanel comp = new JPanel();
+		JButton jButton = new JButton(presentation.getText());
+		jButton.setFont(JBUI.Fonts.toolbarFont());
+		jButton.putClientProperty("ActionToolbar.smallVariant", true);
+		jButton.setPreferredSize(new Dimension(50, jButton.getPreferredSize().height));
+		final JPanel panel = new JPanel();
 		presentation.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getPropertyName() == Presentation.PROP_TEXT) {
-					comp1.setText((String) evt.getNewValue());
-					comp1.repaint();
+				if (Presentation.PROP_TEXT.equals(evt.getPropertyName())) {
+					jButton.setText((String) evt.getNewValue());
+					jButton.repaint();
 				}
 			}
 		});
-		comp.add(comp1);
-		comp.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				actionPerformed(AnActionEvent.createFromInputEvent(e,
-						"GrepConsole-BeforeAfterSettingsAction-" + place,
-						presentation, ActionToolbar.getDataContextFor(e.getComponent())));
-			}
+		panel.add(jButton);
+		jButton.addActionListener((ActionEvent e) -> {
+			KeyEvent event = new KeyEvent(jButton, KeyEvent.VK_ENTER, System.currentTimeMillis(), 0, 0, KeyEvent.CHAR_UNDEFINED);
+			actionPerformed(AnActionEvent.createFromInputEvent(event,
+					"GrepConsole-BeforeAfterSettingsAction-" + place,
+					presentation, ActionToolbar.getDataContextFor(jButton)));
 		});
-		comp.setToolTipText(presentation.getDescription());
-		return comp;
+//		comp.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				actionPerformed(AnActionEvent.createFromInputEvent(e,
+//						"GrepConsole-BeforeAfterSettingsAction-" + place,
+//						presentation, ActionToolbar.getDataContextFor(e.getComponent())));
+//			}
+//		});
+		panel.setToolTipText(presentation.getDescription());
+		jButton.setToolTipText(presentation.getDescription());
+		return panel;
 	}
 
 }
