@@ -412,13 +412,19 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
   }
 
   protected void removeFromGrepPanel() {
-    myTextArea.putClientProperty(JUST_CLEARED_KEY, !myTextArea.getText().isEmpty());
+    boolean empty = myTextArea.getText().isEmpty();
+    myTextArea.putClientProperty(JUST_CLEARED_KEY, !empty);
     myTextArea.setText("");
     MySearchTextArea mySearchTextArea = MySearchTextArea.this;
     if (mySearchTextArea.getParent().getComponentCount() > 1) {
-      MySearchTextArea.this.getParent().remove(mySearchTextArea);
+      Container parent = MySearchTextArea.this.getParent();
+      parent.remove(mySearchTextArea);
+      parent.revalidate();
+      parent.repaint();
     }
-    reloadGrepPanel();
+    if (!empty) {
+      reloadGrepPanel();
+    }
   }
 
   protected abstract void loadGrepCompositeModelFromHistory(GrepCompositeModel selectedValue);
