@@ -175,13 +175,15 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 
 	public void addExpression(String expression) {
-		expressions.add(new MyGrepSearchTextArea(this, new GrepModel(expression)));
+		MyGrepSearchTextArea comp = new MyGrepSearchTextArea(this, new GrepModel(expression));
+		expressions.add(comp);
 		if (!expression.isEmpty()) {
 			reload();
 		} else {
 			expressions.revalidate();
 			expressions.repaint();
 		}
+		comp.getTextArea().requestFocus();
 	}
 
 
