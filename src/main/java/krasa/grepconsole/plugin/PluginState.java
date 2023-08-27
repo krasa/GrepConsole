@@ -178,7 +178,7 @@ public class PluginState extends DomainObject implements Cloneable {
 				"} " + super.toString();
 	}
 
-	private static final int MAX_RECENT_SIZE = 30;
+	private static final int MAX_RECENT_SIZE = 50;
 
 	public List<GrepCompositeModel> getGrepHistory() {
 		return grepHistory;
