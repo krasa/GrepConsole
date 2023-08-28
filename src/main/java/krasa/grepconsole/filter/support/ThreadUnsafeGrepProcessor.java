@@ -65,7 +65,7 @@ public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 										null, grepExpressionItem.getConsoleViewContentType(null));
 								state.add(resultItem);
 							}
-							state.executeAction(grepExpressionItem);
+							state.executeAction(grepExpressionItem, patternMatcher);
 						}else {
 							matches++;
 							final int start = patternMatcher.start();
@@ -73,14 +73,14 @@ public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 							MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
 																	   null, grepExpressionItem.getConsoleViewContentType(null));
 							state.add(resultItem);
-							state.executeAction(grepExpressionItem);
+							state.executeAction(grepExpressionItem, patternMatcher);
 						}
 					}
 				}
 			} else if (matches(input) && !matchesUnless(input)) {
 				matches++;
 				state.setConsoleViewContentType(grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
-				state.executeAction(grepExpressionItem);
+				state.executeAction(grepExpressionItem, patternMatcher);
 			}
 		}
 		return state;

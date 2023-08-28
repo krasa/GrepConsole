@@ -45,18 +45,27 @@ public class GrepProcessorImpl extends GrepProcessor {
 						matches++;
 						final int start = matcher.start();
 						final int end = matcher.end();
-						state.executeAction(grepExpressionItem);
+						state.executeAction(grepExpressionItem, matcher);
 						MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
 								null, grepExpressionItem.getConsoleViewContentType(null));
 
 						state.add(resultItem);
 					}
 				}
-			} else if (matches(input) && !matchesUnless(input)) {//whole line
-				matches++;
-				state.setConsoleViewContentType(
-						grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
-				state.executeAction(grepExpressionItem);
+			} else {//whole line
+				Pattern pattern = grepExpressionItem.getPattern();
+				boolean isMatching = false;
+				Matcher matcher = null;
+				if (pattern != null) {
+					matcher = pattern.matcher(input);
+					isMatching = matcher.matches();
+				}
+				if (isMatching && !matchesUnless(input)) {
+					matches++;
+					state.setConsoleViewContentType(
+							grepExpressionItem.getConsoleViewContentType(state.getConsoleViewContentType()));
+					state.executeAction(grepExpressionItem, matcher);
+				}
 			}
 		}
 		return state;

@@ -36,7 +36,7 @@ public class GrepProcessorImplTest {
 		FilterState process = grepProcessor.process(getInput(LINE));
 		checkCache(grepExpressionItem, process);
 
-		process = grepProcessor.process(new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(LINE, 1000)));
+		process = grepProcessor.process(new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(LINE, 1000), null));
 		checkCache(grepExpressionItem, process);
 	}
 
@@ -72,7 +72,7 @@ public class GrepProcessorImplTest {
 		GrepExpressionItem grepExpressionItem = getGrepExpressionItem();
 
 		GrepProcessorImpl grepProcessor = new GrepProcessorImpl(grepExpressionItem);
-		FilterState process = grepProcessor.process(new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(LINE_FOO, 1000)));
+		FilterState process = grepProcessor.process(new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(LINE_FOO, 1000), null));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -84,7 +84,7 @@ public class GrepProcessorImplTest {
 	public void testNoGrepExpression() throws Exception {
 
 		GrepProcessorImpl grepProcessor = new GrepProcessorImpl(new GrepExpressionItem());
-		FilterState process = grepProcessor.process(new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(LINE_FOO, 1000)));
+		FilterState process = grepProcessor.process(new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(LINE_FOO, 1000), null));
 		// unless matched = no match
 		assertEquals(Operation.CONTINUE_MATCHING, process.getNextOperation());
 		assertEquals(null, process.getConsoleViewContentType());
@@ -105,7 +105,7 @@ public class GrepProcessorImplTest {
 	}
 
 	private FilterState getInput(String line) {
-		return new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(line, 1000));
+		return new FilterState(-1, "foo", null, StringUtil.newBombedCharSequence(line, 1000), null);
 	}
 
 	private void checkCache(GrepExpressionItem grepExpressionItem, FilterState process) {

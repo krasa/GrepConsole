@@ -8,7 +8,9 @@ import com.intellij.psi.search.GlobalSearchScope;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
 import krasa.grepconsole.filter.MainInputFilter;
+import krasa.grepconsole.grep.PinnedGrepsReopener;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.ServiceManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +27,8 @@ public class MyConsoleInputFilterProvider extends ConsoleDependentInputFilterPro
 		GrepFilter grepFilter = serviceManager.createGrepFilter(project, profile, consoleView);
 		MainInputFilter inputFilter = serviceManager.createInputFilter(project, profile, grepFilter, consoleView);
 
+		reopenPinnedGreps(consoleView, project);
+
 		if (inputFilter != null) {
 			return List.of(new LockingInputFilterWrapper(inputFilter));
 		} else {
@@ -32,5 +36,13 @@ public class MyConsoleInputFilterProvider extends ConsoleDependentInputFilterPro
 		}
 	}
 
+	public static void reopenPinnedGreps(@NotNull ConsoleView consoleView, @NotNull Project project) {
+		GrepProjectComponent projectComponent = GrepProjectComponent.getInstance(project);
+		if (projectComponent != null && projectComponent.pinReopenerEnabled) {
+			if (PinnedGrepsReopener.shouldProcess(consoleView)) {
+				new PinnedGrepsReopener(project, consoleView);
+			}
+		}
+	}
 
 }

@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
-import static com.intellij.openapi.application.PathManager.getPluginsPath;
+import static com.intellij.openapi.application.PathManager.getScratchPath;
 
 @Deprecated
 class LivePluginExampleAction implements ActionListener {
@@ -43,7 +43,7 @@ class LivePluginExampleAction implements ActionListener {
 			public Boolean compute() {
 				try {
 
-					String livePluginsPath = FileUtilRt.toSystemIndependentName(getPluginsPath() + "/live-plugins");
+					String livePluginsPath = FileUtilRt.toSystemIndependentName(getScratchPath() + "/live-plugins");
 					VfsUtil.createDirectoryIfMissing(livePluginsPath);
 					String name = uniqueName(livePluginsPath);
 					VirtualFile parentFolder = VfsUtil.createDirectoryIfMissing(livePluginsPath + "/" + name);
@@ -52,7 +52,6 @@ class LivePluginExampleAction implements ActionListener {
 					}
 
 					VirtualFile copy = copy(parentFolder, "/example/plugin.groovy", "plugin.groovy");
-					copy(parentFolder, "/example/support.groovy", "support.groovy");
 
 					//does not work properly in IJ 2016
 					Project currentProject = project;
@@ -79,7 +78,7 @@ class LivePluginExampleAction implements ActionListener {
 	protected VirtualFile copy(VirtualFile parentFolder, String source, String destination) throws IOException {
 		InputStream resourceAsStream = LivePluginExampleAction.class.getResourceAsStream(source);
 		String text = FileUtil.loadTextAndClose(resourceAsStream);
-		text = text.replace("//REMOVE_COMMENT ", "");
+		text = text.replace("//UNCOMMENT_THIS ", "");
 		VirtualFile childData = parentFolder.createChildData("GrepConsole", destination);
 		VfsUtil.saveText(childData, text);
 		return childData;
@@ -104,6 +103,8 @@ class LivePluginExampleAction implements ActionListener {
 	}
 
 	private static class RefreshToolWindow implements Runnable {
+		private static final com.intellij.openapi.diagnostic.Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(RefreshToolWindow.class);
+
 		@Override
 		public void run() {
 			try {
@@ -117,7 +118,7 @@ class LivePluginExampleAction implements ActionListener {
 				actionPerformed.setAccessible(true);
 				actionPerformed.invoke(clazz.newInstance(), new Object[]{null});
 			} catch (Exception e1) {
-				throw new RuntimeException(e1);
+				LOG.warn(e1);
 			}
 		}
 	}

@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Fixed: Pinned Greps reopening for Flutter and other consoles
+- Fixed: Grep and Input filters did not work properly while indexing
+- Improved extension support
+
 ## [12.20.1-IJ2021.1] - 2023-08-27
 - Grep - improved usability
 

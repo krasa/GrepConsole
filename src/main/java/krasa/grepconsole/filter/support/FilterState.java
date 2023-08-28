@@ -3,17 +3,21 @@ package krasa.grepconsole.filter.support;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.markup.TextAttributes;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Operation;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.ExtensionManager;
+import krasa.grepconsole.utils.Notifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 
 public class FilterState {
 	private static final Logger LOG = Logger.getInstance(FilterState.class);
@@ -27,15 +31,17 @@ public class FilterState {
 	private String text;
 	private final Profile profile;
 	private CharSequence charSequence;
+	private final Project project;
 	private boolean clearConsole;
 	private boolean textChanged;
 	private boolean multiline;
 
-	public FilterState(int offset, String text, Profile profile, CharSequence charSequence) {
+	public FilterState(int offset, String text, Profile profile, CharSequence charSequence, Project project) {
 		this.offset = offset;
 		this.text = text;
 		this.profile = profile;
 		this.charSequence = charSequence;
+		this.project = project;
 	}
 
 	@NotNull
@@ -113,7 +119,7 @@ public class FilterState {
 		return charSequence.charAt(charSequence.length() - 1) != '\n';
 	}
 
-	public void executeAction(GrepExpressionItem grepExpressionItem) {
+	public void executeAction(GrepExpressionItem grepExpressionItem, Matcher matcher) {
 		setNextOperation(grepExpressionItem.getOperationOnMatch());
 		setClearConsole(grepExpressionItem.isClearConsole());
 		setMultiline(grepExpressionItem.isMultiline());
@@ -131,7 +137,7 @@ public class FilterState {
 				setExclude(true);
 			}
 		} else if (action != null && !StringUtil.isEmpty(text)) {
-			executeFunction(action);
+			executeFunction(action, matcher);
 		}
 
 		setMatchesSomething(true);
@@ -141,16 +147,24 @@ public class FilterState {
 		}
 	}
 
-	protected void executeFunction(String action) {
-		Function<String, String> stringStringFunction = ExtensionManager.getFunction(action);
-		if (stringStringFunction != null) {
+	@SuppressWarnings("unchecked")
+	protected void executeFunction(String action, Matcher matcher) {
+		Object function = ExtensionManager.getFunction(action);
+
+		if (function != null) {
 			long t0 = System.currentTimeMillis();
 
 			String originalText = text;
 			try {
-				text = stringStringFunction.apply(originalText);
+				if (function instanceof Function) {
+					text = ((Function<String, String>) function).apply(originalText);
+				} else if (function instanceof BiFunction) {
+					text = ((BiFunction<String, Matcher, String>) function).apply(originalText, matcher);
+				} else {
+					Notifier.notify_BrokenExtension(action, project);
+				}
 			} catch (Throwable e) {
-				LOG.error("Script '" + action + "' error", e);
+				LOG.error("Script '" + action + "' error for text: '" + originalText + "'", e);
 				return;
 			}
 
@@ -161,6 +175,8 @@ public class FilterState {
 			}
 
 			update(originalText);
+		} else {
+			Notifier.notify_MissingExtension(action, project);
 		}
 	}
 

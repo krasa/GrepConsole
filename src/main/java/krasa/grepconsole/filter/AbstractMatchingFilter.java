@@ -39,7 +39,7 @@ public abstract class AbstractMatchingFilter extends AbstractFilter {
 			String substring = profile.limitInputLength_andCutNewLine(text);
 			CharSequence charSequence = profile.limitProcessingTime(substring);
 
-			FilterState state = new FilterState(offset, text, profile, charSequence);
+			FilterState state = new FilterState(offset, text, profile, charSequence, project);
 			for (GrepProcessor grepProcessor : grepProcessors) {
 				try {
 					state = grepProcessor.process(state);

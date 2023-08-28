@@ -12,11 +12,9 @@ import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.StreamBufferSettings;
-import krasa.grepconsole.plugin.ExtensionManager;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.utils.Notifier;
 import krasa.grepconsole.utils.Utils;
-import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.ref.WeakReference;
@@ -244,7 +242,7 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 				}
 				GrepProcessor processor = createProcessor(grepExpressionItem);
 
-				validate(processor);
+//				validate(processor);
 
 				grepProcessors.add(processor);
 				inputFilterExists = true;
@@ -255,18 +253,18 @@ public class MainInputFilter extends AbstractMatchingFilter implements InputFilt
 		}
 	}
 
-	private void validate(GrepProcessor processor) {
-		String action = processor.getGrepExpressionItem().getAction();
-		if (StringUtils.isNotBlank(action) //blank == no action
-				&& !GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)
-				&& !GrepExpressionItem.ACTION_BUFFER_UNTIL_NEWLINE.equals(action)
-				&& !GrepExpressionItem.ACTION_REMOVE.equals(action)
-				&& !GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
-			if (ExtensionManager.getFunction(action) == null) {
-				Notifier.notify_MissingExtension(action, project);
-			}
-		}
-	}
+//	private void validate(GrepProcessor processor) {
+//		String action = processor.getGrepExpressionItem().getAction();
+//		if (StringUtils.isNotBlank(action) //blank == no action
+//				&& !GrepExpressionItem.ACTION_REMOVE_UNLESS_MATCHED.equals(action)
+//				&& !GrepExpressionItem.ACTION_BUFFER_UNTIL_NEWLINE.equals(action)
+//				&& !GrepExpressionItem.ACTION_REMOVE.equals(action)
+//				&& !GrepExpressionItem.ACTION_NO_ACTION.equals(action)) {
+//			if (ExtensionManager.getFunction(action) == null) {
+//				Notifier.notify_MissingExtension(action, project);
+//			}
+//		}
+//	}
 
 	@Override
 	protected boolean shouldAdd(GrepExpressionItem item) {

@@ -1,18 +1,18 @@
 package krasa.grepconsole.filter;
 
-import java.util.List;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.intellij.execution.filters.InputFilter;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.util.Pair;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class LockingInputFilterWrapper implements InputFilter {
+import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+public class LockingInputFilterWrapper implements InputFilter, DumbAware {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(LockingInputFilterWrapper.class);
 	protected final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	protected InputFilter inputFilter;
