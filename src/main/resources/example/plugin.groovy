@@ -2,13 +2,14 @@ package example
 
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl
 import com.intellij.ide.plugins.PluginManager
-
-//UNCOMMENT_THIS import static liveplugin.PluginUtil.*
-
 import com.intellij.openapi.extensions.PluginId
 
 import java.util.function.BiFunction
 import java.util.regex.Matcher
+
+//UNCOMMENT_THIS import static liveplugin.PluginUtil.*
+
+import java.util.regex.Pattern
 
 import static com.intellij.openapi.util.text.StringUtil.newBombedCharSequence
 
@@ -18,6 +19,7 @@ import static com.intellij.openapi.util.text.StringUtil.newBombedCharSequence
 
 
 registerFunction("myScript", new BiFunction<String, Matcher, String>() {
+    Pattern pattern = Pattern.compile(".*ugly slow regexp.*");
 
     /** - The text will never be empty, it may or may not end with a newline - \n
      *  - It is possible that the stream will flush prematurely and the text will be incomplete: IDEA-70016
@@ -27,14 +29,18 @@ registerFunction("myScript", new BiFunction<String, Matcher, String>() {
     @Override
     String apply(String text, Matcher matcher) {
         try {
-            CharSequence textForMatching = limitAndCutNewline(text, 150, 1000)
 
-            if (textForMatching.contains("remove this line")) {
+            if (text.contains("remove this line")) {
                 return null
             }
-            if (textForMatching.contains("notify me")) {
+            if (text.contains("notify me")) {
                 show("Alert: " + text)
                 return text
+            }
+
+            CharSequence textForMatching = limitAndCutNewline(text, 150, 1000)
+            if (pattern.matcher(textForMatching).matches()) {
+                return text.toUpperCase()
             }
 
             if (matcher.hasGroup()) {
