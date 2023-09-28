@@ -8,7 +8,7 @@ import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepProjectComponent;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

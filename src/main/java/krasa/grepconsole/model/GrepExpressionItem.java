@@ -7,7 +7,7 @@ import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.filter.support.ThreadUnsafeGrepProcessor;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;

@@ -2,7 +2,7 @@ package krasa.grepconsole.filter.support;
 
 import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.model.GrepExpressionItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

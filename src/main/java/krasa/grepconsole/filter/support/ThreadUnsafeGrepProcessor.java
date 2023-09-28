@@ -2,7 +2,7 @@ package krasa.grepconsole.filter.support;
 
 import com.intellij.openapi.diagnostic.Logger;
 import krasa.grepconsole.model.GrepExpressionItem;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -53,7 +53,7 @@ public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 				if (patternMatcher != null) {
 					patternMatcher.reset(input);
 					while (patternMatcher.find()) {
-						if (patternMatcher.groupCount() > 0){
+						if (patternMatcher.groupCount() > 0) {
 							matches += patternMatcher.groupCount();
 							for (int i = 1; i <= patternMatcher.groupCount(); i++) {
 								final int start = patternMatcher.start(i);
@@ -66,12 +66,12 @@ public class ThreadUnsafeGrepProcessor extends GrepProcessor {
 								state.add(resultItem);
 							}
 							state.executeAction(grepExpressionItem, patternMatcher);
-						}else {
+						} else {
 							matches++;
 							final int start = patternMatcher.start();
 							final int end = patternMatcher.end();
 							MyResultItem resultItem = new MyResultItem(state.getOffset() + start, state.getOffset() + end,
-																	   null, grepExpressionItem.getConsoleViewContentType(null));
+									null, grepExpressionItem.getConsoleViewContentType(null));
 							state.add(resultItem);
 							state.executeAction(grepExpressionItem, patternMatcher);
 						}

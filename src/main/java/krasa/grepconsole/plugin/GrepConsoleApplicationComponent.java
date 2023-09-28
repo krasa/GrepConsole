@@ -11,7 +11,7 @@ import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.TailSettings;
 import krasa.grepconsole.tail.remotecall.RemoteCallService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

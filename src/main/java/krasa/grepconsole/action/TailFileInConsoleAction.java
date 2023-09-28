@@ -25,7 +25,7 @@ import krasa.grepconsole.tail.TailContentExecutor;
 import krasa.grepconsole.tail.runConfiguration.TailRunConfigurationSettings;
 import krasa.grepconsole.tail.runConfiguration.TailSettingsEditor;
 import krasa.grepconsole.tail.runConfiguration.TailUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.mozilla.universalchardet.UniversalDetector;
@@ -33,7 +33,6 @@ import org.mozilla.universalchardet.UniversalDetector;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -179,6 +178,7 @@ public class TailFileInConsoleAction extends DumbAwareAction {
 		}
 		return Charset.forName(encoding);
 	}
+
 	@Nullable
 	public static String detectEncoding(File file) {
 		String encoding = null;

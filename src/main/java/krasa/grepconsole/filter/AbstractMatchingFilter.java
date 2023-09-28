@@ -10,7 +10,7 @@ import krasa.grepconsole.model.Operation;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.utils.Notifier;
 import krasa.grepconsole.utils.Utils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ import java.util.List;
 
 public abstract class AbstractMatchingFilter extends AbstractFilter {
 	private static final Logger log = Logger.getInstance(AbstractMatchingFilter.class);
-	                                
+
 	protected volatile List<GrepProcessor> grepProcessors;
 	protected boolean showLimitNotification = true;
 
