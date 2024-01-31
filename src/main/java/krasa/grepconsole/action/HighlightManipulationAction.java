@@ -1,12 +1,11 @@
 package krasa.grepconsole.action;
 
 import com.intellij.execution.filters.Filter;
-import com.intellij.openapi.project.DumbAwareAction;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public abstract class HighlightManipulationAction extends DumbAwareAction {
+public abstract class HighlightManipulationAction extends MyDumbAwareAction {
 
 	public static final Filter FILTER = new Filter() {
 		@Nullable

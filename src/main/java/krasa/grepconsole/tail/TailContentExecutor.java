@@ -23,7 +23,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComponentWithActions;
 import com.intellij.openapi.ui.MessageType;
@@ -33,6 +32,8 @@ import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.ui.content.Content;
+import krasa.grepconsole.action.MyDumbAwareAction;
+import krasa.grepconsole.action.MyToggleAction;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.utils.Notifier;
 import org.jetbrains.annotations.NotNull;
@@ -264,7 +265,7 @@ public class TailContentExecutor implements Disposable {
 		this.file = file;
 	}
 
-	private class RerunAction extends AnAction implements DumbAware {
+	private class RerunAction extends MyDumbAwareAction {
 
 		public RerunAction(JComponent consolePanel) {
 			super("Rerun", "Rerun", AllIcons.Actions.Restart);
@@ -287,7 +288,7 @@ public class TailContentExecutor implements Disposable {
 		}
 	}
 
-	private class StopAction extends AnAction implements DumbAware {
+	private class StopAction extends MyDumbAwareAction {
 		public StopAction() {
 			super("Stop", "Stop", AllIcons.Actions.Suspend);
 		}
@@ -304,7 +305,7 @@ public class TailContentExecutor implements Disposable {
 		}
 	}
 
-	private class CloseAll extends AnAction implements DumbAware {
+	private class CloseAll extends MyDumbAwareAction {
 		public CloseAll() {
 			super("Close All", "Close All", AllIcons.Actions.Exit);
 		}
@@ -316,7 +317,7 @@ public class TailContentExecutor implements Disposable {
 
 	}
 
-	public class PinAction extends ToggleAction implements DumbAware {
+	public class PinAction extends MyToggleAction {
 		private boolean pinned;
 
 		public PinAction(ProcessHandler processHandler) {

@@ -3,7 +3,7 @@ package krasa.grepconsole.stats.action;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
@@ -18,7 +18,7 @@ import javax.swing.*;
 /**
  * @author Vojtech Krasa
  */
-public class ShowHideStatisticsConsolePanelAction extends DumbAwareAction {
+public class ShowHideStatisticsConsolePanelAction extends MyDumbAwareAction {
 	private final ConsoleView console;
 
 	public ShowHideStatisticsConsolePanelAction(ConsoleView console) {

@@ -2,7 +2,7 @@ package krasa.grepconsole.model;
 
 import com.intellij.ide.ui.LafManager;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.ui.JBColor;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import com.intellij.util.xmlb.annotations.Transient;
 import krasa.grepconsole.Cloner;
@@ -114,16 +114,16 @@ public class Profile extends DomainObject implements Cloneable {
 		for (GrepExpressionGroup group : grepExpressionGroups) {
 			String name = group.getName();
 			if (DARK.equals(group.getName())) {
-				if (UIUtil.isUnderDarcula()) {
+				if (!JBColor.isBright()) {
 					items.addAll(group.getGrepExpressionItems());
 				}
 			} else if (LIGHT.equals(group.getName())) {
-				if (!UIUtil.isUnderDarcula()) {
+				if (JBColor.isBright()) {
 					items.addAll(group.getGrepExpressionItems());
 				}
 			} else if (name.startsWith("@") && name.endsWith("@")) {
 				String themeName = LafManager.getInstance().getCurrentLookAndFeel().getName();
-				if (themeName.equalsIgnoreCase(name.substring(1, name.length() - 1))) {
+				if (themeName != null && themeName.equalsIgnoreCase(name.substring(1, name.length() - 1))) {
 					items.addAll(group.getGrepExpressionItems());
 				}
 			} else {

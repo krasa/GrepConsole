@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.impl.DocumentImpl;
 import com.intellij.openapi.editor.impl.DocumentMarkupModel;
 import com.intellij.openapi.editor.markup.*;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.util.CommonProcessors;
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MoveErrorStreamToTheBottomAction extends DumbAwareAction {
+public class MoveErrorStreamToTheBottomAction extends MyDumbAwareAction {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(MoveErrorStreamToTheBottomAction.class);
 	private final ConsoleViewImpl console;
 

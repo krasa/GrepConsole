@@ -7,12 +7,12 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
+import com.intellij.ui.JBColor;
 import com.intellij.ui.PopupHandler;
 import com.intellij.ui.SeparatorComponent;
-import com.intellij.util.ui.UIUtil;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.model.GrepColor;
@@ -85,7 +85,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	@NotNull
 	public static Color[] getColors() {
 		Color[] bgs;
-		if (UIUtil.isUnderDarcula()) {
+		if (!JBColor.isBright()) {
 			bgs = new Color[]{
 					new Color(114, 120, 125),
 					new Color(255, 255, 255),
@@ -110,7 +110,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	}
 
 	public static Color darkerDarkulaBrighterIJ(Color orange) {
-		if (UIUtil.isUnderDarcula()) {
+		if (!JBColor.isBright()) {
 			return orange.darker().darker();
 		} else {
 			return brighter(orange, 1);
@@ -118,7 +118,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	}
 
 	public static Color brighterDarkulaDarkerIJ(Color orange) {
-		if (UIUtil.isUnderDarcula()) {
+		if (!JBColor.isBright()) {
 			return brighter(orange, 1);
 		} else {
 			return orange.darker().darker();
@@ -269,7 +269,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 
 	protected abstract void hideStatusBar();
 
-	private class ResetAction extends DumbAwareAction {
+	private class ResetAction extends MyDumbAwareAction {
 		public ResetAction() {
 			super("Reset");
 		}
@@ -281,7 +281,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 		}
 	}
 
-	private class HideAction extends DumbAwareAction {
+	private class HideAction extends MyDumbAwareAction {
 		public HideAction() {
 			super("Hide");
 		}

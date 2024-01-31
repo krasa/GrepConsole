@@ -1,11 +1,14 @@
 package krasa.grepconsole.plugin;
 
+import com.intellij.ide.ui.LafManagerListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.intellij.util.messages.MessageBusConnection;
 import krasa.grepconsole.Cloner;
+import krasa.grepconsole.integration.LookAndFeelListener;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
@@ -29,6 +32,8 @@ public class GrepConsoleApplicationComponent
 	private Integer maxProcessingTimeAsInt;
 
 	public GrepConsoleApplicationComponent() {
+		MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect();
+		connection.subscribe(LafManagerListener.TOPIC, new LookAndFeelListener());
 	}
 
 	public static GrepConsoleApplicationComponent getInstance() {

@@ -179,7 +179,7 @@ public class InputFilterTableBuilder extends GrepTableBuilder {
 					CheckedTreeNode checkedTreeNode = (CheckedTreeNode) value;
 					Object userObject = checkedTreeNode.getUserObject();
 					if (userObject instanceof GrepExpressionGroup) {
-						Icon icon = PlatformIcons.DIRECTORY_CLOSED_ICON;
+						Icon icon = PlatformIcons.FOLDER_ICON;
 						final ColoredTreeCellRenderer textRenderer = getTextRenderer();
 						textRenderer.setIcon(icon);
 					}

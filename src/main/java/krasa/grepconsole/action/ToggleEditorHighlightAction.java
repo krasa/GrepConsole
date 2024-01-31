@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.ex.MarkupModelEx;
 import com.intellij.openapi.editor.ex.RangeHighlighterEx;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.ui.ColorPicker;
 import com.intellij.util.CommonProcessors;
@@ -27,7 +26,7 @@ import java.util.Collection;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("UseJBColor")
-public class ToggleEditorHighlightAction extends DumbAwareAction {
+public class ToggleEditorHighlightAction extends MyDumbAwareAction {
 	//HighlighterLayer.CONSOLE_FILTER not in IJ 2016
 	int CONSOLE_FILTER = 5800;
 	

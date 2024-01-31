@@ -32,8 +32,8 @@ import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.JBInsets;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.plugin.PluginState;
 import org.jetbrains.annotations.NotNull;
@@ -158,7 +158,7 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
         if (SystemInfo.isMac) {
           return new JBInsets(3, 0, 2, 0);
         } else {
-          int bottom = (StringUtil.getLineBreakCount(myTextArea.getText()) > 0) ? 2 : StartupUiUtil.isUnderDarcula() ? 1 : 0;
+          int bottom = (StringUtil.getLineBreakCount(myTextArea.getText()) > 0) ? 2 : !JBColor.isBright() ? 1 : 0;
           int top = myTextArea.getFontMetrics(myTextArea.getFont()).getHeight() <= 16 ? 2 : 1;
           if (JBUIScale.isUsrHiDPI()) {
             bottom = 0;
@@ -333,7 +333,7 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
 
   protected abstract void apply();
 
-  private class ShowHistoryAction extends DumbAwareAction {
+  private class ShowHistoryAction extends MyDumbAwareAction {
     private final PopupState<JBPopup> myPopupState = PopupState.forPopup();
 
     ShowHistoryAction() {
@@ -397,7 +397,7 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
     }
   }
 
-  private class ClearAction extends DumbAwareAction {
+  private class ClearAction extends MyDumbAwareAction {
 
     ClearAction() {
       super(AllIcons.Actions.Close);

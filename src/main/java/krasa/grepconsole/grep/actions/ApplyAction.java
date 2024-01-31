@@ -3,16 +3,16 @@ package krasa.grepconsole.grep.actions;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.MyConsoleViewImpl;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.plugin.PluginState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ApplyAction extends DumbAwareAction {
+public class ApplyAction extends MyDumbAwareAction {
 	public static final Icon COMMIT_GRAY = IconLoader.getIcon("/krasa/grepconsole/icons/commitGray.svg", ApplyAction.class);
 	public static final Icon COMMIT_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/commitBlue.svg", ApplyAction.class);
 

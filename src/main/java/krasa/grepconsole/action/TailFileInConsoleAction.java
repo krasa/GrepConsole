@@ -8,7 +8,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDialog;
 import com.intellij.openapi.fileChooser.FileChooserFactory;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -38,7 +37,7 @@ import java.util.List;
 /**
  * @author Vojtech Krasa
  */
-public class TailFileInConsoleAction extends DumbAwareAction {
+public class TailFileInConsoleAction extends MyDumbAwareAction {
 	private static final Logger LOG = Logger.getInstance(TailFileInConsoleAction.class);
 	public static final String TAIL_FILE_IN_CONSOLE_ACTION_LAST_FILE = "TailFileInConsoleAction.lastFile";
 	private VirtualFile lastVirtualFile;

@@ -3,9 +3,9 @@ package krasa.grepconsole.stats.action;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.WindowManager;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.filter.support.GrepProcessor;
@@ -15,7 +15,7 @@ import krasa.grepconsole.stats.ConsoleStatusBarWidget;
 import krasa.grepconsole.stats.StatisticsManager;
 import org.jetbrains.annotations.NotNull;
 
-public class ShowHideStatisticsStatusBarPanelAction extends DumbAwareAction {
+public class ShowHideStatisticsStatusBarPanelAction extends MyDumbAwareAction {
 	private final ConsoleView console;
 
 	public ShowHideStatisticsStatusBarPanelAction(ConsoleView console) {

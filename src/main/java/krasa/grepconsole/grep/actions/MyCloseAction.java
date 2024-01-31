@@ -4,12 +4,12 @@ import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import org.jetbrains.annotations.NotNull;
 
-public class MyCloseAction extends DumbAwareAction {
+public class MyCloseAction extends MyDumbAwareAction {
 	private Content tab;
 	private ContentManager contentManager;
 	private RunnerLayoutUi runnerLayoutUi;

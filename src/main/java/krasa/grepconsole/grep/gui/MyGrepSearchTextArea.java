@@ -3,6 +3,7 @@ package krasa.grepconsole.grep.gui;
 
 import com.intellij.find.FindBundle;
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.actionSystem.ActionUpdateThread;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ShortcutSet;
 import com.intellij.openapi.actionSystem.Toggleable;
@@ -193,6 +194,11 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 				setShortcutSet(shortcut);
 				registerCustomShortcutSet(shortcut, MyGrepSearchTextArea.this);
 			}
+		}
+
+		@Override
+		public @NotNull ActionUpdateThread getActionUpdateThread() {
+			return ActionUpdateThread.EDT;
 		}
 
 		@Override

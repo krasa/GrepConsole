@@ -1,15 +1,15 @@
 package krasa.grepconsole.grep.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.util.IconLoader;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.plugin.PluginState;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ReloadAction extends DumbAwareAction {
+public class ReloadAction extends MyDumbAwareAction {
 	public static final Icon RELOAD_GRAY = IconLoader.getIcon("/krasa/grepconsole/icons/buildLoadChangesGray.svg", ReloadAction.class);
 	public static final Icon RELOAD_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/buildLoadChanges.svg", ReloadAction.class);
 

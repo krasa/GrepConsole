@@ -1,17 +1,23 @@
 package krasa.grepconsole.action;
 
-import com.intellij.execution.impl.*;
-import com.intellij.execution.ui.*;
-import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.*;
-import com.intellij.openapi.editor.*;
-import com.intellij.openapi.editor.ex.*;
-import com.intellij.openapi.editor.markup.*;
-import com.intellij.openapi.project.*;
-import com.intellij.openapi.wm.*;
-import org.jetbrains.annotations.*;
+import com.intellij.execution.impl.ConsoleViewImpl;
+import com.intellij.execution.ui.ConsoleView;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ScrollType;
+import com.intellij.openapi.editor.ex.MarkupIterator;
+import com.intellij.openapi.editor.ex.MarkupModelEx;
+import com.intellij.openapi.editor.ex.RangeHighlighterEx;
+import com.intellij.openapi.editor.markup.HighlighterLayer;
+import com.intellij.openapi.editor.markup.RangeHighlighter;
+import com.intellij.openapi.wm.IdeFocusManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PreviousHighlightAction extends DumbAwareAction {
+public class PreviousHighlightAction extends MyDumbAwareAction {
 	private ConsoleView consoleView;
 
 	public PreviousHighlightAction() {

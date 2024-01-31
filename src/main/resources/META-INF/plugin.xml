@@ -7,11 +7,6 @@
     <description><![CDATA[
 		  Grep, tail, filter, highlight... everything you need for a console (<a href="https://github.com/krasa/GrepConsole/issues/267">New Logcat<a/> and <a href="https://youtrack.jetbrains.com/issue/IDEA-216442">JS/NPM/GoLand/... Terminals are not supported<a/>). Also can highlight the editor...
 	         <br>
-	         <br>
-			 Sponsored by:<br> 
-			<p><a title="Try CodeStream" href="https://sponsorlink.codestream.com/?utm_source=jbmarket&amp;utm_campaign=vojta_grepconsole&amp;utm_medium=banner"><img src="https://alt-images.codestream.com/codestream_logo_vojta_grepconsole.png"></a><br>
-			Manage pull requests and conduct code reviews in your IDE with full source-tree context. Comment on any line, not just the diffs. Use jump-to-definition, your favorite keybindings, and code intelligence with more of your workflow.<br>
-			<a title="Try CodeStream" href="https://sponsorlink.codestream.com/?utm_source=jbmarket&amp;utm_campaign=vojta_grepconsole&amp;utm_medium=banner">Learn More</a></p>
 			 <br>
 		  Features:
 		  <ul>
@@ -242,17 +237,11 @@
 
     </actions>
 
-    <applicationListeners>
-        <listener class="krasa.grepconsole.integration.LookAndFeelListener"
-                  topic="com.intellij.ide.ui.LafManagerListener"/>
-    </applicationListeners>
-
     <extensions defaultExtensionNs="com.intellij">
         <notificationGroup id="Grep Console - Extensions" displayType="BALLOON" isLogByDefault="false"/>
         <notificationGroup id="Grep Console error" displayType="BALLOON" isLogByDefault="false"/>
         <notificationGroup id="Grep Console" displayType="BALLOON" isLogByDefault="true"/>
 
-        <postStartupActivity implementation="krasa.grepconsole.grep.PinnedGrepsReopenerEnabler" order="last"/>
         <applicationService serviceImplementation="krasa.grepconsole.tail.remotecall.RemoteCallService"/>
         <executor implementation="krasa.grepconsole.tail.TailRunExecutor" id="GrepConsoleTail"/>
 

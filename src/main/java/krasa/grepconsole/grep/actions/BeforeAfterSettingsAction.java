@@ -6,10 +6,10 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.ui.JBUI;
 import krasa.grepconsole.MyConsoleViewImpl;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.grep.GrepBeforeAfterModel;
 import krasa.grepconsole.grep.gui.GrepBeforeAfterSettingsDialog;
 import krasa.grepconsole.grep.gui.GrepPanel;
@@ -22,7 +22,7 @@ import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-public class BeforeAfterSettingsAction extends DumbAwareAction implements CustomComponentAction {
+public class BeforeAfterSettingsAction extends MyDumbAwareAction implements CustomComponentAction {
 	@Override
 	public void actionPerformed(@NotNull AnActionEvent e) {
 		GrepPanel grepPanel = getGrepPanel(e);

@@ -5,11 +5,11 @@ import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import krasa.grepconsole.MyConsoleViewImpl;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.gui.GrepPanel;
@@ -23,7 +23,7 @@ import java.util.List;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
 
-public class AddGrepConsoleAction extends DumbAwareAction {
+public class AddGrepConsoleAction extends MyDumbAwareAction {
 
 	private static final Logger LOG = Logger.getInstance(AddGrepConsoleAction.class);
 

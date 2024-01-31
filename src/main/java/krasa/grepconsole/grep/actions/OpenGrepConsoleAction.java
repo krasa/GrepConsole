@@ -19,7 +19,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
@@ -32,6 +31,8 @@ import com.intellij.util.SmartList;
 import com.intellij.xdebugger.XDebugSession;
 import com.intellij.xdebugger.XDebuggerManager;
 import krasa.grepconsole.MyConsoleViewImpl;
+import krasa.grepconsole.action.MyDumbAwareAction;
+import krasa.grepconsole.action.MyToggleAction;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.PinnedGrepConsolesState;
@@ -61,7 +62,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
 
-public class OpenGrepConsoleAction extends DumbAwareAction {
+public class OpenGrepConsoleAction extends MyDumbAwareAction {
 
 	private static final Logger LOG = Logger.getInstance(OpenGrepConsoleAction.class);
 	public static final int MAX_TITLE_LENGTH = 40;
@@ -186,7 +187,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			}
 			actions.add(new MyCloseAction(tab, runnerLayoutUi));
 		} else {
-			tab = ContentFactory.SERVICE.getInstance().createContent(consolePanel, title, true);
+			tab = ContentFactory.getInstance().createContent(consolePanel, title, true);
 			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title);
 			tab.setDisposer(contentDescriptor);
 			ContentManager contentManager = toolWindow.getContentManager();
@@ -463,10 +464,9 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 			ref.set(result);
 		};
 
-		if (ApplicationManager.getApplication().isDispatchThread()) {
+		if (ApplicationManager.getApplication().isDispatchThread() || ApplicationManager.getApplication().isReadAccessAllowed()) {
 			computeDescriptors.run();
 		} else {
-			LOG.assertTrue(!ApplicationManager.getApplication().isReadAccessAllowed());
 			ApplicationManager.getApplication().invokeAndWait(computeDescriptors);
 		}
 
@@ -661,7 +661,7 @@ public class OpenGrepConsoleAction extends DumbAwareAction {
 		}
 	}
 
-	public static class PinAction extends ToggleAction implements DumbAware {
+	public static class PinAction extends MyToggleAction implements DumbAware {
 		private boolean pinned;
 		private final GrepPanel quickFilterPanel;
 		private final String parentConsoleUUID;

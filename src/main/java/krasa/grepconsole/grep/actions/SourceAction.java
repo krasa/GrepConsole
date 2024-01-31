@@ -3,12 +3,12 @@ package krasa.grepconsole.grep.actions;
 import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
-import com.intellij.openapi.project.DumbAwareAction;
 import krasa.grepconsole.MyConsoleViewImpl;
+import krasa.grepconsole.action.MyDumbAwareAction;
 import krasa.grepconsole.grep.gui.GrepPanel;
 import org.jetbrains.annotations.NotNull;
 
-public class SourceAction extends DumbAwareAction {
+public class SourceAction extends MyDumbAwareAction {
 	@Override
 	public void actionPerformed(@NotNull AnActionEvent e) {
 		GrepPanel grepPanel = ApplyAction.getGrepPanel(e);

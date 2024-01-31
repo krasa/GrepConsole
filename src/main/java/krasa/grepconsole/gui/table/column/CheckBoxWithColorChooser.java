@@ -17,7 +17,7 @@ package krasa.grepconsole.gui.table.column;
 
 import com.intellij.openapi.editor.colors.EditorColorsUtil;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.ui.ColorChooser;
+import com.intellij.ui.ColorChooserService;
 import com.intellij.util.ui.ImageUtil;
 import krasa.grepconsole.integration.ThemeColors;
 import krasa.grepconsole.model.GrepColor;
@@ -115,7 +115,7 @@ public class CheckBoxWithColorChooser extends JPanel {
 			mouseAdapter = new MouseAdapter() {
 				@Override
 				public void mousePressed(MouseEvent e) {
-					final Color color = ColorChooser.chooseColor(myCheckbox, "Chose color",
+					final Color color = ColorChooserService.getInstance().showDialog(myCheckbox, "Chose color",
 							CheckBoxWithColorChooser.this.myColor);
 					if (color != null) {
 						if (!myCheckbox.isSelected()) {

@@ -92,7 +92,7 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 			if (tailItem.isNewestMatching()) {
 				text += " (newest)";
 			}
-			defaultActionGroup.add(new MyDumbAwareAction(text, state, tailItem, file, project));
+			defaultActionGroup.add(new MyDumbAwareAction2(text, state, tailItem, file, project));
 		}
 	}
 
@@ -101,7 +101,7 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 		List<RunConfiguration> configurations =
 				RunManager.getInstance(project).getConfigurationsList(ConfigurationTypeUtil.findConfigurationType(TailRunConfigurationType.class));
 		for (RunConfiguration configuration : configurations) {
-			DumbAwareAction action = new DumbAwareAction(configuration.getName(), null, configuration.getIcon()) {
+			DumbAwareAction action = new MyDumbAwareAction(configuration.getName(), null, configuration.getIcon()) {
 				@Override
 				public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
 					Executor runExecutorInstance = TailRunExecutor.getRunExecutorInstance();
@@ -153,8 +153,8 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 				int selectedIndex = list.getSelectedIndex();
 				ListPopupModel model = (ListPopupModel) list.getModel();
 				PopupFactoryImpl.ActionItem selectedItem = (PopupFactoryImpl.ActionItem) model.get(selectedIndex);
-				if (selectedItem != null && selectedItem.getAction() instanceof MyDumbAwareAction) {
-					MyDumbAwareAction action = (MyDumbAwareAction) selectedItem.getAction();
+				if (selectedItem != null && selectedItem.getAction() instanceof MyDumbAwareAction2) {
+					MyDumbAwareAction2 action = (MyDumbAwareAction2) selectedItem.getAction();
 					TailItem tailItem = action.getTailItem();
 					model.deleteItem(selectedItem);
 					TailHistory.getState(project).removeFromHistory(tailItem);
@@ -168,13 +168,13 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 		});
 	}
 
-	private class MyDumbAwareAction extends DumbAwareAction {
+	private class MyDumbAwareAction2 extends MyDumbAwareAction {
 		private final TailHistory state;
 		private final TailItem tailItem;
 		private final File file;
 		private final Project project;
 
-		public MyDumbAwareAction(String text, TailHistory state, TailItem tailItem, File file, Project project) {
+		public MyDumbAwareAction2(String text, TailHistory state, TailItem tailItem, File file, Project project) {
 			super(FileUtil.toSystemIndependentName(text));
 			this.state = state;
 			this.tailItem = tailItem;
