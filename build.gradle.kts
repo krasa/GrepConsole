@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    implementation("org.apache.commons:commons-lang3:3.13.0")
+    implementation("org.apache.commons:commons-lang3:3.14.0")
 
     implementation("com.github.albfernandez:juniversalchardet:2.4.0")
     implementation("org.apache.commons:commons-collections4:4.4")
