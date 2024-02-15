@@ -46,7 +46,8 @@ public abstract class MyBaseDataReader {
       myFinishedFuture = executeOnPooledThread(() -> {
         if (StringUtilRt.isEmptyOrSpaces(presentableName)) {
           doRun();
-        } else {
+        }
+        else {
           ConcurrencyUtil.runUnderThreadName("MyBaseDataReader: " + presentableName, this::doRun);
         }
       });
@@ -157,10 +158,12 @@ public abstract class MyBaseDataReader {
         boolean read = false;
         try {
           read = readAvailable();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           if ("The process cannot access the file because another process has locked a portion of the file".equals(e.getMessage())) {
             LOG.debug("TAIL IGNORING", e);
-          } else {
+          }
+          else {
             throw e;
           }
         }
@@ -179,19 +182,23 @@ public abstract class MyBaseDataReader {
           }
         }
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       if (LOG.isDebugEnabled()) {
         LOG.debug(e);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       if (!(e instanceof ControlFlowException)) {
         LOG.error(e);
       }
-    } finally {
+    }
+    finally {
       flush();
       try {
         close();
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Can't close stream", e);
       }
     }
@@ -215,7 +222,8 @@ public abstract class MyBaseDataReader {
   public void waitFor() throws InterruptedException {
     try {
       myFinishedFuture.get();
-    } catch (ExecutionException e) {
+    }
+    catch (ExecutionException e) {
       LOG.error(e);
     }
   }
@@ -223,7 +231,8 @@ public abstract class MyBaseDataReader {
   public void waitFor(long timeout, TimeUnit unit) throws InterruptedException, TimeoutException {
     try {
       myFinishedFuture.get(timeout, unit);
-    } catch (ExecutionException e) {
+    }
+    catch (ExecutionException e) {
       LOG.error(e);
     }
   }

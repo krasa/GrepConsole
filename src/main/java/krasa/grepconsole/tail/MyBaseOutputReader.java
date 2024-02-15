@@ -3,6 +3,7 @@ package krasa.grepconsole.tail;
 
 import com.intellij.util.SystemProperties;
 import com.intellij.util.io.BaseInputStreamReader;
+import krasa.grepconsole.action.TailFileInConsoleAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,8 +13,9 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 
 public abstract class MyBaseOutputReader extends MyBaseDataReader {
+
   /**
-   * See {@link #MyBaseOutputReader(Reader, Options)}, {@link #readAvailable}, {@link SleepingPolicy}
+   * See {@link #MyBaseOutputReader(TailFileInConsoleAction.MyProcess, Reader, Options)}, {@link #readAvailable}, {@link SleepingPolicy}
    * and {@link #processInput} for reference.
    */
   public static class Options {
@@ -53,7 +55,7 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
 
     public static Options forMostlySilentProcess() {
       if (SystemProperties.getBooleanProperty("output.reader.blocking.mode.for.mostly.silent.processes", true) ||
-              Boolean.getBoolean("output.reader.blocking.mode")) {
+          Boolean.getBoolean("output.reader.blocking.mode")) {
         return BLOCKING;
       }
       return NON_BLOCKING;
@@ -61,31 +63,34 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
   }
 
   protected final Reader myReader;
+  protected TailFileInConsoleAction.MyProcess myProcess;
 
   private final Options myOptions;
   private final char[] myInputBuffer = new char[8192];
   private final StringBuilder myLineBuffer = new StringBuilder();
   private boolean myCarry;
+  private long lastSize;
 
-  public MyBaseOutputReader(@NotNull InputStream inputStream, @Nullable Charset charset) {
-    this(createInputStreamReader(inputStream, charset));
-  }
+  //  public MyBaseOutputReader(@NotNull InputStream inputStream, @Nullable Charset charset) {
+  //    this(createInputStreamReader(inputStream, charset));
+  //  }
+  //
+  //  public MyBaseOutputReader(@NotNull InputStream inputStream, @Nullable Charset charset, @NotNull Options options) {
+  //    this(myProcess, createInputStreamReader(inputStream, charset), options);
+  //  }
+  //
+  //  public MyBaseOutputReader(@NotNull Reader reader) {
+  //    this(myProcess, reader, new Options());
+  //  }
 
-  public MyBaseOutputReader(@NotNull InputStream inputStream, @Nullable Charset charset, @NotNull Options options) {
-    this(createInputStreamReader(inputStream, charset), options);
-  }
-
-  public MyBaseOutputReader(@NotNull Reader reader) {
-    this(reader, new Options());
-  }
-
-  public MyBaseOutputReader(@NotNull Reader reader, @NotNull Options options) {
+  public MyBaseOutputReader(TailFileInConsoleAction.MyProcess process, @NotNull Reader reader, @NotNull Options options) {
     super(options.policy());
 
     if (options.policy() == SleepingPolicy.BLOCKING && !(reader instanceof BaseInputStreamReader)) {
       throw new IllegalArgumentException("Blocking policy can be used only with BaseInputStreamReader, that doesn't lock on close");
     }
 
+    this.myProcess = process;
     myReader = reader;
     myOptions = options;
   }
@@ -105,6 +110,7 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
   @Override
   protected final boolean readAvailableNonBlocking() throws IOException {
     boolean read = false;
+    long size = myProcess.getFileSize();
 
     try {
       int n;
@@ -114,7 +120,8 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
           processInput(myInputBuffer, myLineBuffer, n);
         }
       }
-    } finally {
+    }
+    finally {
       if (myCarry) {
         myLineBuffer.append('\r');
         myCarry = false;
@@ -124,8 +131,16 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
       }
     }
 
+    if (size != 0) { //ignoring bullshit
+      if (size < lastSize) { //truncated
+        myProcess.reset();
+      }
+      lastSize = size;
+    }
+
     return read;
   }
+
 
   /**
    * Reads data with blocking.
@@ -148,7 +163,8 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
           processInput(myInputBuffer, myLineBuffer, n);
         }
       }
-    } finally {
+    }
+    finally {
       if (myCarry) {
         myLineBuffer.append('\r');
         myCarry = false;
@@ -177,7 +193,8 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
           c = '\r';
           i--;
           myCarry = false;
-        } else {
+        }
+        else {
           c = buffer[i];
         }
 
@@ -185,7 +202,8 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
           if (i + 1 == n) {
             myCarry = true;
             continue;
-          } else if (buffer[i + 1] == '\n') {
+          }
+          else if (buffer[i + 1] == '\n') {
             continue;
           }
         }
@@ -202,7 +220,8 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
       if (line.length() > 0 && myOptions.sendIncompleteLines()) {
         sendText(line);
       }
-    } else {
+    }
+    else {
       onTextAvailable(new String(buffer, 0, n));
     }
   }

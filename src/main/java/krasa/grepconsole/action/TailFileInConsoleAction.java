@@ -30,8 +30,10 @@ import org.jetbrains.annotations.Nullable;
 import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.*;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -109,7 +111,7 @@ public class TailFileInConsoleAction extends MyDumbAwareAction {
 			return;
 		}
 
-		final Process process = new MyProcess(file);
+		final MyProcess process = new MyProcess(file);
 
 		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), charset) {
 			@Override
@@ -194,12 +196,15 @@ public class TailFileInConsoleAction extends MyDumbAwareAction {
 	}
 
 	public static class MyProcess extends Process {
+		private final Path filePath;
+		private FileChannel channel;
 		protected volatile boolean running = true;
 		protected InputStream inputStream;
 		private File file;
 
 		public MyProcess(final File file) {
 			this.file = file;
+			this.filePath = file.toPath();
 			try {
 				if (!file.exists()) {
 					String s = "File not found '" + file.getAbsolutePath() + "'";
@@ -208,7 +213,8 @@ public class TailFileInConsoleAction extends MyDumbAwareAction {
 				} else {
 					FileInputStream inputStream = new FileInputStream(file);
 					if (file.isFile()) {// Illegal seek for a named pipe on Linux #135
-						long size = inputStream.getChannel().size();
+						channel = inputStream.getChannel();
+						long size = channel.size();
 						// close enough, it does not work for binary files very well, but i hope it does at least for text
 						inputStream.getChannel().position(Math.max(size - ConsoleBuffer.getCycleBufferSize(), 0));
 					}
@@ -222,6 +228,14 @@ public class TailFileInConsoleAction extends MyDumbAwareAction {
 
 		public File getFile() {
 			return file;
+		}
+
+		public long getFileSize() throws IOException {
+			return channel != null ? channel.size() : -1;
+		}
+
+		public Path getFilePath() {
+			return filePath;
 		}
 
 		public void setFile(File file) {
@@ -246,12 +260,13 @@ public class TailFileInConsoleAction extends MyDumbAwareAction {
 
 		@Override
 		public InputStream getErrorStream() {
-			return new InputStream() {
-				@Override
-				public int read() throws IOException {
-					return 0;
-				}
-			};
+			throw new RuntimeException("do not use, or split #reset");
+			//			return new InputStream() {
+			//				@Override
+			//				public int read() throws IOException {
+			//					return 0;
+			//				}
+			//			};
 		}
 
 		@Override
@@ -275,6 +290,13 @@ public class TailFileInConsoleAction extends MyDumbAwareAction {
 				// who cares
 			} finally {
 				running = false;
+			}
+		}
+
+
+		public void reset() throws IOException {
+			if (channel != null) {
+				channel.position(0);
 			}
 		}
 	}

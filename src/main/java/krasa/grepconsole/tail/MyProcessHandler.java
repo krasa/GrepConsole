@@ -23,6 +23,7 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.io.BaseInputStreamReader;
+import krasa.grepconsole.action.TailFileInConsoleAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 	private static final Logger LOG = Logger.getInstance(MyProcessHandler.class);
 
-	protected final Process myProcess;
+	protected final TailFileInConsoleAction.MyProcess myProcess;
 	protected final Charset myCharset;
 	protected final String myPresentableName;
 	protected final ProcessWaitFor myWaitFor;
@@ -48,7 +49,9 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 	/**
 	 * {@code commandLine} must not be not empty (for correct thread attribution in the stacktrace)
 	 */
-	public MyProcessHandler(@NotNull Process process, /*@NotNull*/ String commandLine, @Nullable Charset charset) {
+	public MyProcessHandler(@NotNull TailFileInConsoleAction.MyProcess process, /*@NotNull*/
+				String commandLine,
+				@Nullable Charset charset) {
 		myProcess = process;
 		myCharset = charset;
 		myPresentableName = commandLine;
@@ -90,7 +93,7 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 	}
 
 	protected boolean processHasSeparateErrorStream() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -141,12 +144,14 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 
 	@NotNull
 	protected MyBaseDataReader createErrorDataReader(@NotNull MyBaseDataReader.SleepingPolicy sleepingPolicy) {
-		return new SimpleOutputReader(createProcessErrReader(), ProcessOutputTypes.STDERR, sleepingPolicy, "error stream of " + myPresentableName);
+		return new SimpleOutputReader(myProcess, createProcessErrReader(), ProcessOutputTypes.STDERR, sleepingPolicy,
+					      "error stream of " + myPresentableName);
 	}
 
 	@NotNull
 	protected MyBaseDataReader createOutputDataReader(@NotNull MyBaseDataReader.SleepingPolicy sleepingPolicy) {
-		return new SimpleOutputReader(createProcessOutReader(), ProcessOutputTypes.STDOUT, sleepingPolicy, "output stream of " + myPresentableName);
+		return new SimpleOutputReader(myProcess, createProcessOutReader(), ProcessOutputTypes.STDOUT, sleepingPolicy,
+					      "output stream of " + myPresentableName);
 	}
 
 	protected void onOSProcessTerminated(final int exitCode) {
@@ -252,8 +257,12 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 	private class SimpleOutputReader extends MyBaseOutputReader {
 		private final Key myProcessOutputType;
 
-		private SimpleOutputReader(@NotNull Reader reader, @NotNull Key processOutputType, SleepingPolicy sleepingPolicy, @NotNull String presentableName) {
-			super(reader, MyBaseOutputReader.Options.withPolicy(sleepingPolicy));
+		private SimpleOutputReader(TailFileInConsoleAction.MyProcess myProcess,
+					   @NotNull Reader reader,
+					   @NotNull Key processOutputType,
+					   SleepingPolicy sleepingPolicy,
+					   @NotNull String presentableName) {
+			super(myProcess, reader, MyBaseOutputReader.Options.withPolicy(sleepingPolicy));
 			myProcessOutputType = processOutputType;
 			start(presentableName);
 		}
