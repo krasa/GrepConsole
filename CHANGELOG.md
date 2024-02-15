@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [12.24.0-IJ2023.3] - 2024-02-15
+
+- Tail - reset when file truncated
+
 ## [12.23.0-IJ2023.3] - 2024-01-31
 - 2024.1 EAP compatibility
 
@@ -16,8 +20,9 @@
 ## [12.20.1-IJ2021.1] - 2023-08-27
 - Grep - improved usability
 
-[Unreleased]: https://github.com/krasa/GrepConsole/compare/v12.23.0-IJ2023.3...HEAD
+[Unreleased]: https://github.com/krasa/GrepConsole/compare/v12.24.0-IJ2023.3...HEAD
 
+[12.24.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.23.0-IJ2023.3...v12.24.0-IJ2023.3
 [12.23.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.22.1-IJ2021.1...v12.23.0-IJ2023.3
 [12.22.1-IJ2021.1]: https://github.com/krasa/GrepConsole/compare/v12.21.0-IJ2021.1...v12.22.1-IJ2021.1
 [12.21.0-IJ2021.1]: https://github.com/krasa/GrepConsole/compare/v12.20.1-IJ2021.1...v12.21.0-IJ2021.1
