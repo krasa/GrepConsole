@@ -59,7 +59,7 @@ public class TailContentExecutor implements Disposable {
 	Key<PinAction> PIN_ACTION = Key.create("PinAction");
 
 	private final Project myProject;
-	private final ProcessHandler myProcess;
+	private final MyProcessHandler myProcess;
 	private final List<Filter> myFilterList = new ArrayList<>();
 	private Runnable myRerunAction;
 	private Runnable myStopAction;
@@ -70,7 +70,7 @@ public class TailContentExecutor implements Disposable {
 	private boolean myActivateToolWindow = true;
 	private File file;
 
-	public TailContentExecutor(@NotNull Project project, @NotNull ProcessHandler process) {
+	public TailContentExecutor(@NotNull Project project, @NotNull MyProcessHandler process) {
 		myProject = project;
 		myProcess = process;
 	}
@@ -111,7 +111,9 @@ public class TailContentExecutor implements Disposable {
 		return this;
 	}
 
-	public static ConsoleView createConsole(@NotNull Project project, @NotNull ProcessHandler processHandler, List<Filter> myFilterList) {
+	public static ConsoleView createConsole(@NotNull Project project,
+						@NotNull MyProcessHandler processHandler,
+						List<Filter> myFilterList) {
 		TextConsoleBuilderImpl consoleBuilder = (TextConsoleBuilderImpl) TextConsoleBuilderFactory.getInstance().createBuilder(project);
 		consoleBuilder.setUsePredefinedMessageFilter(false);
 		consoleBuilder.filters(myFilterList);
@@ -123,6 +125,7 @@ public class TailContentExecutor implements Disposable {
 		}
 
 		console.attachToProcess(processHandler);
+		processHandler.setConsoleListener(console);
 		return console;
 	}
 

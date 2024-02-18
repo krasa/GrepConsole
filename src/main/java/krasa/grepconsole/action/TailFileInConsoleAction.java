@@ -1,7 +1,6 @@
 package krasa.grepconsole.action;
 
 import com.intellij.execution.impl.ConsoleBuffer;
-import com.intellij.execution.process.ProcessHandler;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
@@ -113,7 +112,7 @@ public class TailFileInConsoleAction extends MyDumbAwareAction {
 
 		final MyProcess process = new MyProcess(file);
 
-		final ProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), charset) {
+		final MyProcessHandler osProcessHandler = new MyProcessHandler(process, file.getName(), charset) {
 			@Override
 			public boolean isSilentlyDestroyOnClose() {
 				return true;

@@ -134,12 +134,15 @@ public abstract class MyBaseOutputReader extends MyBaseDataReader {
     if (size != 0) { //ignoring bullshit
       if (size < lastSize) { //truncated
         myProcess.reset();
+        onReset();
       }
       lastSize = size;
     }
 
     return read;
   }
+
+  protected abstract void onReset();
 
 
   /**

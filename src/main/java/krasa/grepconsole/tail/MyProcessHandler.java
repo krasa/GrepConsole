@@ -17,6 +17,7 @@ package krasa.grepconsole.tail;
 
 import com.intellij.execution.TaskExecutor;
 import com.intellij.execution.process.*;
+import com.intellij.execution.ui.ConsoleView;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
@@ -45,6 +46,7 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 	protected final Charset myCharset;
 	protected final String myPresentableName;
 	protected final ProcessWaitFor myWaitFor;
+	private ConsoleView myConsole;
 
 	/**
 	 * {@code commandLine} must not be not empty (for correct thread attribution in the stacktrace)
@@ -235,6 +237,16 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 		return myCharset;
 	}
 
+	void setConsoleListener(ConsoleView console) {
+		myConsole = console;
+	}
+
+	@Override
+	public void destroyProcess() {
+		super.destroyProcess();
+		myConsole = null;
+	}
+
 	public static class ExecutorServiceHolder {
 		private static final ThreadPoolExecutor ourThreadExecutorsService =
 				new ThreadPoolExecutor(0, Integer.MAX_VALUE, 1, TimeUnit.SECONDS, new SynchronousQueue<>(),
@@ -276,6 +288,14 @@ public class MyProcessHandler extends ProcessHandler implements TaskExecutor {
 		@Override
 		protected void onTextAvailable(@NotNull String text) {
 			notifyTextAvailable(text, myProcessOutputType);
+		}
+
+		@Override
+		protected void onReset() {
+			ConsoleView console = myConsole;
+			if (console != null) {
+				console.clear();
+			}
 		}
 
 	}
