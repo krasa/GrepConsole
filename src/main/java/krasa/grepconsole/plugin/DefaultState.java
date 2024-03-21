@@ -58,12 +58,14 @@ public class DefaultState {
 
 	private static List<GrepExpressionItem> createDefaultItems() {
 		List<GrepExpressionItem> items = new ArrayList<>();
-		items.add(newItem(".*FATAL.*", style(FATAL_BACKGROUND, FATAL_FOREGROUND).bold(true)));
-		items.add(newItem(".*ERROR.*", style(ERROR_BACKGROUND, ERROR_FOREGROUND)));
-		items.add(newItem(".*WARN.*", style(WARN_BACKGROUND, WARN_FOREGROUND)));
-		items.add(newItem(".*INFO.*", style(INFO_BACKGROUND, INFO_FOREGROUND)));
-		items.add(newItem(".*DEBUG.*", style(DEBUG_BACKGROUND, DEBUG_FOREGROUND)));
-		items.add(newItem(".*TRACE.*", style(TRACE_BACKGROUND, TRACE_FOREGROUND)));
+		// Some langauges use 'CRITICAL' instead, e.g Python
+		items.add(newItem(".*\\b(FATAL|CRITICAL)\\b.*", style(FATAL_BACKGROUND, FATAL_FOREGROUND).bold(true)));
+		items.add(newItem(".*\\bERROR\\b.*", style(ERROR_BACKGROUND, ERROR_FOREGROUND)));
+		// Some languages spell out the full word, e.g. Python
+		items.add(newItem(".*\\bWARN(ING)?\\b.*", style(WARN_BACKGROUND, WARN_FOREGROUND)));
+		items.add(newItem(".*\\bINFO\\b.*", style(INFO_BACKGROUND, INFO_FOREGROUND)));
+		items.add(newItem(".*\\bDEBUG\\b.*", style(DEBUG_BACKGROUND, DEBUG_FOREGROUND)));
+		items.add(newItem(".*\\bTRACE\\b.*", style(TRACE_BACKGROUND, TRACE_FOREGROUND)));
 		return items;
 	}
 
