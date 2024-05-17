@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 
+## [12.26.0-IJ2023.3] - 2024-05-17
 - Grep fix
 
 ## [12.25.0-IJ2023.3] - 2024-02-18
@@ -24,8 +25,9 @@
 ## [12.20.1-IJ2021.1] - 2023-08-27
 - Grep - improved usability
 
-[Unreleased]: https://github.com/krasa/GrepConsole/compare/v12.25.0-IJ2023.3...HEAD
+[Unreleased]: https://github.com/krasa/GrepConsole/compare/v12.26.0-IJ2023.3...HEAD
 
+[12.26.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.25.0-IJ2023.3...v12.26.0-IJ2023.3
 [12.25.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.24.0-IJ2023.3...v12.25.0-IJ2023.3
 [12.24.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.23.0-IJ2023.3...v12.24.0-IJ2023.3
 [12.23.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.22.1-IJ2021.1...v12.23.0-IJ2023.3
