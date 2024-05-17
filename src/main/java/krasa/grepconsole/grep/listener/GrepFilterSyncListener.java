@@ -30,9 +30,11 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	private GrepCompositeModel grepModel;
 
 	private final ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
-	private final ThreadLocal<Long> previousTimestamp = new ThreadLocal<>();
 
-	public GrepFilterSyncListener(MyConsoleViewImpl newConsole, OpenGrepConsoleAction.LightProcessHandler myProcessHandler, Project project, Profile profile) {
+	public GrepFilterSyncListener(MyConsoleViewImpl newConsole,
+								  OpenGrepConsoleAction.LightProcessHandler myProcessHandler,
+								  Project project,
+								  Profile profile) {
 		this.newConsole = newConsole;
 		this.myProcessHandler = myProcessHandler;
 		this.project = project;
@@ -58,24 +60,23 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 		for (int i = 0; i < split.size(); i++) {
 			String s = split.get(i);
 
+			if (StringUtils.isEmpty(s)) {
+				continue;
+			}
+
+			//print only complete lines
 			if (!s.endsWith("\n")) {
-				Long lastTimestamp = previousTimestamp.get();
-				if (lastTimestamp == null || System.currentTimeMillis() - lastTimestamp < 1000) {
-					if (previousIncompleteToken.get() != null) {
-						previousIncompleteToken.set(previousIncompleteToken.get() + s);
-						previousTimestamp.set(System.currentTimeMillis());
-					} else {
-						previousIncompleteToken.set(s);
-						previousTimestamp.set(System.currentTimeMillis());
-					}
-					continue;
+				if (previousIncompleteToken.get() != null) {
+					previousIncompleteToken.set(previousIncompleteToken.get() + s);
+				} else {
+					previousIncompleteToken.set(s);
 				}
+				continue;
 			}
 
 			if (previousIncompleteToken.get() != null) {
 				s = previousIncompleteToken.get() + s;
 				previousIncompleteToken.set(null);
-				previousTimestamp.set(null);
 			}
 
 			Key stdout = ProcessOutputTypes.STDOUT;
@@ -105,8 +106,14 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 				}
 			} catch (ProcessCanceledException e) {
 				String message = "Grep to a subconsole took too long, aborting to prevent input freezing.\n"
-						+ "Consider changing following settings: 'Match only first N characters on each line' or 'Max processing time for a line'\n"
-						+ "Matcher: " + grepModel + "\n" + "Line: " + Utils.toNiceLineForLog(substring);
+						+
+						"Consider changing following settings: 'Match only first N characters on each line' or 'Max processing time for a line'\n"
+						+
+						"Matcher: " +
+						grepModel +
+						"\n" +
+						"Line: " +
+						Utils.toNiceLineForLog(substring);
 				if (showLimitNotification) {
 					showLimitNotification = false;
 					Notifier.notify_GrepFilter(project, message);
@@ -114,14 +121,11 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 					log.warn(message);
 				}
 			}
-
 		}
-
 	}
 
 	@Override
 	public void clear() {
-		previousTimestamp.remove();
 		previousIncompleteToken.remove();
 		GrepBeforeAfterModel beforeAfterModel = grepModel.getBeforeAfterModel();
 		beforeAfterModel.clear();
