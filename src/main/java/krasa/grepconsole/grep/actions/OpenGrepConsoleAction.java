@@ -556,6 +556,20 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 					broken = true;
 				}
 			}
+		} else if (searchComponentTree(consoleView, actionsContextComponent)) {
+			return true;
+		}
+		return false;
+	}
+
+	private static boolean searchComponentTree(ExecutionConsole consoleView, Component comp) {
+		if (comp instanceof JPanel) {
+			Component[] components = ((JPanel) comp).getComponents();
+			for (Component component : components) {
+				if (component == consoleView) {
+					return true;
+				} else if (searchComponentTree(consoleView, component)) return true;
+			}
 		}
 		return false;
 	}
