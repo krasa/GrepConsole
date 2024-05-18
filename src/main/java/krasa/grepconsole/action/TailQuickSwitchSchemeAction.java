@@ -28,7 +28,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.ui.popup.list.ListPopupModel;
-import com.intellij.vcsUtil.VcsFileUtil;
 import krasa.grepconsole.plugin.TailHistory;
 import krasa.grepconsole.plugin.TailItem;
 import krasa.grepconsole.tail.TailRunExecutor;
@@ -36,6 +35,7 @@ import krasa.grepconsole.tail.runConfiguration.TailProgramRunner;
 import krasa.grepconsole.tail.runConfiguration.TailRunConfigurationType;
 import krasa.grepconsole.tail.runConfiguration.TailRunProfileState;
 import krasa.grepconsole.tail.runConfiguration.TailUtils;
+import krasa.grepconsole.utils.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -84,7 +84,7 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 			String text = tailItem.getPath();
 			if (root != null) {
 				try {
-					text = VcsFileUtil.relativePath(root, file);
+					text = Utils.relativePath(root, file);
 				} catch (Exception e) {
 					//ok
 				}
@@ -95,7 +95,6 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 			defaultActionGroup.add(new MyDumbAwareAction2(text, state, tailItem, file, project));
 		}
 	}
-
 	@NotNull
 	private List<RunConfiguration> addRunConfigurations(Project project, @NotNull DefaultActionGroup defaultActionGroup) {
 		List<RunConfiguration> configurations =
@@ -193,4 +192,5 @@ public class TailQuickSwitchSchemeAction extends QuickSwitchSchemeAction impleme
 			return tailItem;
 		}
 	}
+
 }

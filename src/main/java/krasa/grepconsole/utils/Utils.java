@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.ide.CopyPasteManager;
+import com.intellij.openapi.util.io.FileUtil;
 import krasa.grepconsole.model.Profile;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -317,5 +319,21 @@ public class Utils {
 
 	public static long toNano(String ms, String def) {
 		return toPositiveInt(ms, def) * 1_000_000L;
+	}
+
+	/**
+	 * Get relative path
+	 *
+	 * @param root a root path
+	 * @param path a path to file (possibly deleted file)
+	 * @return a relative path
+	 * @throws IllegalArgumentException if path is not under root.
+	 */
+	public static String relativePath(final File root, File path) {
+		String rc = FileUtil.getRelativePath(root, path);
+		if (rc == null) {
+			throw new IllegalArgumentException("The file " + path + " cannot be made relative to " + root);
+		}
+		return rc.replace(File.separatorChar, '/');
 	}
 }

@@ -3,7 +3,8 @@
 ## [Unreleased]
 
 ## [12.26.0-IJ2023.3] - 2024-05-17
-- Grep fix
+
+- Change: Grep will now wait for line breaks
 
 ## [12.25.0-IJ2023.3] - 2024-02-18
 - Tail - console reset when file truncated
