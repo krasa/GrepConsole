@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [13.0.1-IJ2023.3] - 2024-05-18
+
+- Feature: Grep with ANSI coloring
+- Fix: Grep to a proper subtab for Spring Boot
+- Change: Grep will now wait for line breaks
+
 ## [13.0.0-IJ2023.3] - 2024-05-18
 - Feature: Grep with ANSI coloring
 - Fix: Grep to a proper subtab for Spring Boot
@@ -30,10 +36,10 @@
 ## [12.20.1-IJ2021.1] - 2023-08-27
 - Grep - improved usability
 
-[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.0.0-IJ2023.3...HEAD
+[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.0.1-IJ2023.3...HEAD
 
+[13.0.1-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.0.0-IJ2023.3...v13.0.1-IJ2023.3
 [13.0.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.26.0-IJ2023.3...v13.0.0-IJ2023.3
-
 [12.26.1-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.26.0-IJ2023.3...v12.26.1-IJ2023.3
 [12.26.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.25.0-IJ2023.3...v12.26.0-IJ2023.3
 [12.25.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v12.24.0-IJ2023.3...v12.25.0-IJ2023.3
