@@ -1,11 +1,10 @@
 package krasa.grepconsole.grep.listener;
 
-import com.intellij.execution.process.ProcessOutputTypes;
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Key;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import krasa.grepconsole.MyConsoleViewImpl;
 import krasa.grepconsole.grep.GrepBeforeAfterModel;
@@ -17,6 +16,7 @@ import krasa.grepconsole.utils.Utils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GrepFilterSyncListener implements GrepFilterListener {
@@ -29,7 +29,7 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 	private volatile boolean showLimitNotification = true;
 	private GrepCompositeModel grepModel;
 
-	private final ThreadLocal<String> previousIncompleteToken = new ThreadLocal<>();
+	private final ThreadLocal<List<Pair<String, ConsoleViewContentType>>> incompleteLine = ThreadLocal.withInitial(ArrayList::new);
 
 	public GrepFilterSyncListener(MyConsoleViewImpl newConsole,
 								  OpenGrepConsoleAction.LightProcessHandler myProcessHandler,
@@ -58,52 +58,43 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 		}
 		List<String> split = StringUtil.split(text, "\n", false, false);
 		for (int i = 0; i < split.size(); i++) {
-			String s = split.get(i);
+			String token = split.get(i);
 
-			if (StringUtils.isEmpty(s)) {
+			if (StringUtils.isEmpty(token)) {
 				continue;
 			}
+
+			List<Pair<String, ConsoleViewContentType>> oldTokens = incompleteLine.get();
+			oldTokens.add(Pair.pair(token, type));
 
 			//print only complete lines
-			if (!s.endsWith("\n")) {
-				if (previousIncompleteToken.get() != null) {
-					previousIncompleteToken.set(previousIncompleteToken.get() + s);
-				} else {
-					previousIncompleteToken.set(s);
-				}
+			if (!token.endsWith("\n")) {
 				continue;
 			}
 
-			if (previousIncompleteToken.get() != null) {
-				s = previousIncompleteToken.get() + s;
-				previousIncompleteToken.set(null);
-			}
 
-			Key stdout = ProcessOutputTypes.STDOUT;
-			if (type == ConsoleViewContentType.ERROR_OUTPUT) {
-				stdout = ProcessOutputTypes.STDERR;
-			} else if (type == ConsoleViewContentType.SYSTEM_OUTPUT) {
-				stdout = ProcessOutputTypes.SYSTEM;
+			StringBuilder sb = new StringBuilder();
+			for (Pair<String, ConsoleViewContentType> t : oldTokens) {
+				sb.append(t.first);
 			}
-
-			String substring = profile.limitInputGrepLength_andCutNewLine(s);
+			String substring = profile.limitInputGrepLength_andCutNewLine(sb.toString());
 			CharSequence charSequence = profile.limitProcessingTime(substring);
-			try {
 
+			try {
 				GrepBeforeAfterModel beforeAfterModel = grepModel.getBeforeAfterModel();
 				if (grepModel.matches(charSequence)) {
-					if (!s.endsWith("\n")) {
-						s = s + "\n";
+					beforeAfterModel.flushBeforeMatched(newConsole);
+
+					for (Pair<String, ConsoleViewContentType> t : oldTokens) {
+						newConsole.print(t.first, t.second);
 					}
-
-					beforeAfterModel.flushBeforeMatched(myProcessHandler);
-
-					myProcessHandler.notifyTextAvailable(s, stdout);
 
 					beforeAfterModel.matched();
 				} else {
-					beforeAfterModel.buffer(myProcessHandler, s, stdout);
+					beforeAfterModel.buffer(newConsole, new GrepBeforeAfterModel.Line(new ArrayList<>(oldTokens)));
 				}
+
+				oldTokens.clear();
 			} catch (ProcessCanceledException e) {
 				String message = "Grep to a subconsole took too long, aborting to prevent input freezing.\n"
 						+
@@ -126,14 +117,14 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 
 	@Override
 	public void clear() {
-		previousIncompleteToken.remove();
+		incompleteLine.get().clear();
 		GrepBeforeAfterModel beforeAfterModel = grepModel.getBeforeAfterModel();
 		beforeAfterModel.clear();
 	}
 
 	@Override
 	public void dispose() {
-		previousIncompleteToken.set(null);
+		incompleteLine.set(null);
 		newConsole = null;
 	}
 

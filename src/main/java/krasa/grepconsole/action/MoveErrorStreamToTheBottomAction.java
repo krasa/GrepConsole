@@ -34,7 +34,7 @@ public class MoveErrorStreamToTheBottomAction extends MyDumbAwareAction {
 		EditorEx myEditor = (EditorEx) console.getEditor();
 		DocumentImpl document = (DocumentImpl) myEditor.getDocument();
 
-		Key<ConsoleViewContentType> contentTypeKey = getConsoleViewContentTypeKey();
+		Key<ConsoleViewContentType> contentTypeKey = findConsoleViewContentTypeKey();
 
 		try {
 			document.setInBulkUpdate(true);
@@ -75,7 +75,10 @@ public class MoveErrorStreamToTheBottomAction extends MyDumbAwareAction {
 		}
 	}
 
-	public static Key<ConsoleViewContentType> getConsoleViewContentTypeKey() {
+	/**
+	 * hacks
+	 */
+	public static Key<ConsoleViewContentType> findConsoleViewContentTypeKey() {
 		Key<ConsoleViewContentType> contentTypeKey = null;
 		try {
 			Field content_type = ConsoleViewImpl.class.getDeclaredField("CONTENT_TYPE");
@@ -84,24 +87,37 @@ public class MoveErrorStreamToTheBottomAction extends MyDumbAwareAction {
 
 
 		} catch (Throwable ex) {
+			//api change
+		}
+
+		try {
+			Class<?> aClass = Class.forName("com.intellij.execution.impl.ConsoleTokenUtil");
+			Field content_type = aClass.getDeclaredField("CONTENT_TYPE");
+			content_type.setAccessible(true);
+			contentTypeKey = (Key<ConsoleViewContentType>) content_type.get(null);
+		} catch (Throwable e) {
+			//api change
+		}
+
+		try {
 			//obfuscated class?
 			Field[] declaredFields = ConsoleViewImpl.class.getDeclaredFields();
 			for (Field declaredField : declaredFields) {
 				Class<?> type = declaredField.getType();
 				if (type == Key.class) {
 					declaredField.setAccessible(true);
-					try {
-						Key key = (Key) declaredField.get(null);
-						String x = key.toString();
-						if (x.equals("ConsoleViewContentType")) {
-							return key;
-						}
-					} catch (Throwable e) {
+					Key key = (Key) declaredField.get(null);
+					String x = key.toString();
+					if (x.equals("ConsoleViewContentType")) {
+						return key;
 					}
+
 				}
 			}
-			throw new RuntimeException(ex);
+		} catch (Throwable e) {
+			//api change
 		}
+
 		return contentTypeKey;
 	}
 

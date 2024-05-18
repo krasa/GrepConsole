@@ -1,7 +1,5 @@
 package krasa.grepconsole.grep;
 
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -9,33 +7,33 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Queue;
 
-class FakeQueue implements Queue<Pair<String, Key>> {
+class FakeQueue implements Queue<GrepBeforeAfterModel.Line> {
 	@Override
-	public boolean add(Pair<String, Key> stringKeyPair) {
+	public boolean add(GrepBeforeAfterModel.Line stringKeyPair) {
 		return false;
 	}
 	@Override
-	public boolean offer(Pair<String, Key> stringKeyPair) {
+	public boolean offer(GrepBeforeAfterModel.Line stringKeyPair) {
 		return false;
 	}
 
 	@Override
-	public Pair<String, Key> remove() {
+	public GrepBeforeAfterModel.Line remove() {
 		return null;
 	}
 
 	@Override
-	public Pair<String, Key> poll() {
+	public GrepBeforeAfterModel.Line poll() {
 		return null;
 	}
 
 	@Override
-	public Pair<String, Key> element() {
+	public GrepBeforeAfterModel.Line element() {
 		return null;
 	}
 
 	@Override
-	public Pair<String, Key> peek() {
+	public GrepBeforeAfterModel.Line peek() {
 		return null;
 	}
 
@@ -56,7 +54,7 @@ class FakeQueue implements Queue<Pair<String, Key>> {
 
 	@NotNull
 	@Override
-	public Iterator<Pair<String, Key>> iterator() {
+	public Iterator<GrepBeforeAfterModel.Line> iterator() {
 		return Collections.emptyIterator();
 	}
 
@@ -83,7 +81,7 @@ class FakeQueue implements Queue<Pair<String, Key>> {
 	}
 
 	@Override
-	public boolean addAll(@NotNull Collection<? extends Pair<String, Key>> c) {
+	public boolean addAll(@NotNull Collection<? extends GrepBeforeAfterModel.Line> c) {
 		return false;
 	}
 

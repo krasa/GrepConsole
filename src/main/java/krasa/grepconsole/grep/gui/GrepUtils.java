@@ -6,6 +6,12 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.ex.MarkupIterator;
+import com.intellij.openapi.editor.ex.MarkupModelEx;
+import com.intellij.openapi.editor.ex.RangeHighlighterEx;
+import com.intellij.openapi.editor.impl.DocumentMarkupModel;
+import com.intellij.openapi.util.Key;
+import krasa.grepconsole.action.MoveErrorStreamToTheBottomAction;
 import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.filter.LockingInputFilterWrapper;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
@@ -77,9 +83,40 @@ public class GrepUtils {
 		Editor editor = originalConsole.getEditor();
 		if (editor != null) {
 			Document document = editor.getDocument();
-			String text = document.getText();
-			for (String s : text.split("\n")) {
-				grepListener.process(s + "\n", ConsoleViewContentType.NORMAL_OUTPUT);
+
+			Key<ConsoleViewContentType> contentTypeKey = MoveErrorStreamToTheBottomAction.findConsoleViewContentTypeKey();
+			if (contentTypeKey != null) {
+				MarkupModelEx model = (MarkupModelEx) DocumentMarkupModel.forDocument(editor.getDocument(), originalConsole.getProject(), false);
+				MarkupIterator<RangeHighlighterEx> iterator = model.overlappingIterator(0, document.getTextLength());
+				int last = 0;
+				ConsoleViewContentType lastType = ConsoleViewContentType.NORMAL_OUTPUT;
+				String text = document.getText();
+
+				try {
+					while (iterator.hasNext()) {
+						RangeHighlighterEx next = iterator.next();
+						if (!next.isValid()) {
+							continue;
+						}
+
+						ConsoleViewContentType contentType = next.getUserData(contentTypeKey);
+						int startOffset = next.getStartOffset();
+						int endOffset = next.getEndOffset();
+
+						if (last < startOffset) {
+							grepListener.process(text.substring(last, startOffset), lastType);
+						}
+						grepListener.process(text.substring(startOffset, endOffset), contentType);
+
+						last = endOffset;
+						lastType = contentType;
+					}
+				} finally {
+					iterator.dispose();
+				}
+				grepListener.process(text.substring(last), lastType);
+			} else {
+				grepListener.process(document.getText(), ConsoleViewContentType.NORMAL_OUTPUT);
 			}
 		}
 	}

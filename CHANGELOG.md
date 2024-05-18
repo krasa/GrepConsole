@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+- Feature: Grep with ANSI coloring
+- Fix: Grep to a proper subtab for Spring Boot
+- Change: Grep will now wait for line breaks
+
 ## [12.26.0-IJ2023.3] - 2024-05-17
 
 - Change: Grep will now wait for line breaks

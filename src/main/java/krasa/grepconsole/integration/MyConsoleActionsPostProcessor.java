@@ -38,7 +38,7 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 		if (console instanceof ConsoleViewImpl) {
 			try {
 				//API check}
-				if (MoveErrorStreamToTheBottomAction.getConsoleViewContentTypeKey() != null) {
+				if (MoveErrorStreamToTheBottomAction.findConsoleViewContentTypeKey() != null) {
 					anActions.add(new MoveErrorStreamToTheBottomAction((ConsoleViewImpl) console));
 				}
 			} catch (Throwable e) {
