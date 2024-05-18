@@ -56,15 +56,14 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 		if (grepModel == null || StringUtils.isEmpty(text)) {
 			return;
 		}
-		List<String> split = StringUtil.split(text, "\n", false, false);
+		List<String> split = StringUtil.split(text, "\n", false, true);
 		for (int i = 0; i < split.size(); i++) {
 			String token = split.get(i);
 
-			if (StringUtils.isEmpty(token)) {
-				continue;
-			}
-
 			List<Pair<String, ConsoleViewContentType>> oldTokens = incompleteLine.get();
+			if (oldTokens == null) { //just to be sure, disposed.
+				return;
+			}
 			oldTokens.add(Pair.pair(token, type));
 
 			//print only complete lines
