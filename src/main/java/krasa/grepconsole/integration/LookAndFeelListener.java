@@ -16,19 +16,26 @@ import java.awt.*;
 public class LookAndFeelListener implements LafManagerListener {
 
 	public static final Key GREP_BEFORE_AFTER = new Key("grepBeforeAfter");
-	public static TextAttributesKey TEXT_ATTRIBUTES_KEY;
 	public static ConsoleViewContentType CONTENT_TYPE;
+	public static TextAttributesKey TEXT_ATTRIBUTES_KEY;
 
 	public LookAndFeelListener() {
 		lookAndFeelChanged();
 	}
 
+
 	public static void lookAndFeelChanged() {
-		TextAttributes defaultAttributes = ConsoleViewContentType.getConsoleViewType(ProcessOutputTypes.STDOUT).getAttributes().clone();
-		defaultAttributes.setFontType(Font.ITALIC);
-		TEXT_ATTRIBUTES_KEY = TextAttributesKey.createTextAttributesKey("Grep Console - Before/After", defaultAttributes);
-		CONTENT_TYPE = new ConsoleViewContentType(GREP_BEFORE_AFTER.toString(), TEXT_ATTRIBUTES_KEY);
-		ConsoleViewContentType.registerNewConsoleViewType(GREP_BEFORE_AFTER, CONTENT_TYPE);
+		if (TEXT_ATTRIBUTES_KEY == null) {
+			TextAttributes defaultAttributes = ConsoleViewContentType.getConsoleViewType(ProcessOutputTypes.STDOUT).getAttributes().clone();
+			defaultAttributes.setFontType(Font.ITALIC);
+			TEXT_ATTRIBUTES_KEY = TextAttributesKey.createTextAttributesKey("Grep Console - Before/After", defaultAttributes);
+			CONTENT_TYPE = new ConsoleViewContentType(GREP_BEFORE_AFTER.toString(), TEXT_ATTRIBUTES_KEY);
+			ConsoleViewContentType.registerNewConsoleViewType(GREP_BEFORE_AFTER, CONTENT_TYPE);
+		} else {
+			TextAttributes defaultAttributes = TEXT_ATTRIBUTES_KEY.getDefaultAttributes();
+			defaultAttributes.copyFrom(ConsoleViewContentType.getConsoleViewType(ProcessOutputTypes.STDOUT).getAttributes());
+			defaultAttributes.setFontType(Font.ITALIC);
+		}
 	}
 
 	@Override
