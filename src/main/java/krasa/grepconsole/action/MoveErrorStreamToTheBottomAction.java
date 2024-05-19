@@ -79,12 +79,10 @@ public class MoveErrorStreamToTheBottomAction extends MyDumbAwareAction {
 	 * hacks
 	 */
 	public static Key<ConsoleViewContentType> findConsoleViewContentTypeKey() {
-		Key<ConsoleViewContentType> contentTypeKey = null;
 		try {
 			Field content_type = ConsoleViewImpl.class.getDeclaredField("CONTENT_TYPE");
 			content_type.setAccessible(true);
-			contentTypeKey = (Key<ConsoleViewContentType>) content_type.get(null);
-
+			return (Key<ConsoleViewContentType>) content_type.get(null);
 
 		} catch (Throwable ex) {
 			//api change
@@ -94,7 +92,7 @@ public class MoveErrorStreamToTheBottomAction extends MyDumbAwareAction {
 			Class<?> aClass = Class.forName("com.intellij.execution.impl.ConsoleTokenUtil");
 			Field content_type = aClass.getDeclaredField("CONTENT_TYPE");
 			content_type.setAccessible(true);
-			contentTypeKey = (Key<ConsoleViewContentType>) content_type.get(null);
+			return (Key<ConsoleViewContentType>) content_type.get(null);
 		} catch (Throwable e) {
 			//api change
 		}
@@ -117,8 +115,8 @@ public class MoveErrorStreamToTheBottomAction extends MyDumbAwareAction {
 		} catch (Throwable e) {
 			//api change
 		}
+		return null;
 
-		return contentTypeKey;
 	}
 
 	@NotNull
