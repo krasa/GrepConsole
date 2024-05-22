@@ -9,6 +9,8 @@ import krasa.grepconsole.Cloner;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Objects;
 import static krasa.grepconsole.plugin.DefaultState.getDefaultProfile;
 
 public class Profile extends DomainObject implements Cloneable {
+	private static final Logger log = LoggerFactory.getLogger(Profile.class);
+
 	public static final String DEFAULT = "200";
 	public static final String DEFAULT_GREP = "1000";
 	private static final String MAX_PROCESSING_TIME_DEFAULT = "1000";
@@ -122,7 +126,7 @@ public class Profile extends DomainObject implements Cloneable {
 					items.addAll(group.getGrepExpressionItems());
 				}
 			} else if (name.startsWith("@") && name.endsWith("@")) {
-				String themeName = LafManager.getInstance().getCurrentLookAndFeel().getName();
+				String themeName = getThemeName();
 				if (themeName != null && themeName.equalsIgnoreCase(name.substring(1, name.length() - 1))) {
 					items.addAll(group.getGrepExpressionItems());
 				}
@@ -131,6 +135,19 @@ public class Profile extends DomainObject implements Cloneable {
 			}
 		}
 		return items;
+	}
+
+	private static String getThemeName() {
+		try {
+			return LafManager.getInstance().getCurrentUIThemeLookAndFeel().getName();
+		} catch (Throwable e) {//api change
+		}
+		try {
+			return LafManager.getInstance().getCurrentLookAndFeel().getName();
+		} catch (Throwable e) {//api change
+		}
+		log.error("Unable to load theme name. API change?");
+		return null;
 	}
 
 	public List<GrepExpressionItem> getAllInputFilterExpressionItems() {

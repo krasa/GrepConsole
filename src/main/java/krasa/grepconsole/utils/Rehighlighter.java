@@ -1,6 +1,5 @@
 package krasa.grepconsole.utils;
 
-import com.intellij.execution.filters.Filter;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.impl.EditorHyperlinkSupport;
 import com.intellij.execution.testframework.ui.BaseTestsOutputConsoleView;
@@ -11,8 +10,6 @@ import krasa.grepconsole.filter.HighlightingFilter;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.stats.StatisticsManager;
-
-import java.lang.reflect.Method;
 
 public class Rehighlighter {
 
@@ -29,8 +26,7 @@ public class Rehighlighter {
 	private void reset(ConsoleViewImpl consoleViewImpl) {
 		Editor editor = consoleViewImpl.getEditor();
 		if (editor != null) {//disposed are null - may be bug
-			removeAllHighlighters(editor);
-			highlightAll(consoleViewImpl, editor);
+			consoleViewImpl.rehighlightHyperlinksAndFoldings();
 			StatisticsManager.resetStatisticsPanels(consoleViewImpl);
 		}
 	}
@@ -40,21 +36,6 @@ public class Rehighlighter {
 			editor.getMarkupModel().removeAllHighlighters();
 		}
 	}
-
-	private void highlightAll(ConsoleViewImpl consoleViewImpl, Editor editor) {
-		try {
-			int lineCount = editor.getDocument().getLineCount();
-			if (lineCount > 0) {
-				Method createCompositeFilter = ConsoleViewImpl.class.getDeclaredMethod("createCompositeFilter");
-				createCompositeFilter.setAccessible(true);
-				Object createCompositeFilter1 = createCompositeFilter.invoke(consoleViewImpl);
-				consoleViewImpl.getHyperlinks().highlightHyperlinks((Filter) createCompositeFilter1, 0, lineCount - 1);
-			}
-		} catch (Throwable e1) {
-			throw new RuntimeException("IJ API was probably changed, update the plugin or report it", e1);
-		}
-	}
-
 
 	public void highlight(Editor editor, Project project, Profile selectedProfile) {
 		EditorHyperlinkSupport myHyperlinks = new EditorHyperlinkSupport(editor, project);
