@@ -15,14 +15,12 @@ import java.awt.*;
 
 public class LookAndFeelListener implements LafManagerListener {
 
-	public static final Key GREP_BEFORE_AFTER = new Key("grepBeforeAfter");
-	public static ConsoleViewContentType CONTENT_TYPE;
-	public static TextAttributesKey TEXT_ATTRIBUTES_KEY;
+	private static final Key GREP_BEFORE_AFTER = new Key("grepBeforeAfter");
+	private static ConsoleViewContentType CONTENT_TYPE;
+	private static TextAttributesKey TEXT_ATTRIBUTES_KEY;
 
 	public LookAndFeelListener() {
-		lookAndFeelChanged();
 	}
-
 
 	public static void lookAndFeelChanged() {
 		if (TEXT_ATTRIBUTES_KEY == null) {
@@ -36,6 +34,13 @@ public class LookAndFeelListener implements LafManagerListener {
 			defaultAttributes.copyFrom(ConsoleViewContentType.getConsoleViewType(ProcessOutputTypes.STDOUT).getAttributes());
 			defaultAttributes.setFontType(Font.ITALIC);
 		}
+	}
+
+	public static ConsoleViewContentType getContentType() {
+		if (CONTENT_TYPE == null) {
+			lookAndFeelChanged();
+		}
+		return CONTENT_TYPE;
 	}
 
 	@Override

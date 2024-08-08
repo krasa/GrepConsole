@@ -57,7 +57,7 @@ public class GrepBeforeAfterModel {
 		for (Pair<String, ConsoleViewContentType> next : line.tokens) {
 			ConsoleViewContentType type = next.second;
 			if (type == ConsoleViewContentType.NORMAL_OUTPUT) {
-				type = LookAndFeelListener.CONTENT_TYPE;
+				type = LookAndFeelListener.getContentType();
 			}
 			consoleView.print(next.first, type);
 		}
