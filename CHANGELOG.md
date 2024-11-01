@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [13.2.0-IJ2023.3] - 2024-11-01
+- Editor: Toggle Highlight of All Occurrences - made case insensitive
+
 ## [13.1.0-IJ2023.3] - 2024-08-08
 - Fix: IJ 2024.2 startup fix - LookAndFeelListener
 
@@ -43,8 +46,8 @@
 ## [12.20.1-IJ2021.1] - 2023-08-27
 - Grep - improved usability
 
-[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.1.0-IJ2023.3...HEAD
-
+[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.2.0-IJ2023.3...HEAD
+[13.2.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.1.0-IJ2023.3...v13.2.0-IJ2023.3
 [13.1.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.0.2-IJ2023.3...v13.1.0-IJ2023.3
 [13.0.2-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.0.1-IJ2023.3...v13.0.2-IJ2023.3
 [13.0.1-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.0.0-IJ2023.3...v13.0.1-IJ2023.3

@@ -116,11 +116,12 @@ public class ToggleEditorHighlightAction extends MyDumbAwareAction {
 		GrepStyle style = new GrepStyle();
 		style.setForegroundColor(new GrepColor(Color.BLACK));
 		style.setBackgroundColor(new GrepColor(color));
+		GrepExpressionItem item = new GrepExpressionItem().grepExpression(string).caseInsensitive(true).style(style).highlightOnlyMatchingText(
+				true).operationOnMatch(Operation.CONTINUE_MATCHING);
+
 		java.util.List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 		GrepExpressionGroup group = grepExpressionGroups.get(0);
-		group.getGrepExpressionItems().add(0,
-				new GrepExpressionItem().grepExpression(string).style(style).highlightOnlyMatchingText(
-						true).operationOnMatch(Operation.CONTINUE_MATCHING));
+		group.getGrepExpressionItems().add(0, item);
 	}
 
 
