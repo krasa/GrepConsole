@@ -90,13 +90,22 @@
             <!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
         </action>
 
-        <action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
+        <action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightCSAction"
                 text="Toggle Highlight of All Occurrences"
                 icon="/krasa/grepconsole/icons/highlight.svg"
-                description="Toggle highlight of all occurrences of the selected text in the editor - with predefined colors">
+                description="Toggle highlight of all occurrences (case sensitive) of the selected text in the editor - with predefined colors">
             <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
+        </action>
+
+        <action id="QuickToggleEditorHighlightCS" class="krasa.grepconsole.action.QuickToggleEditorHighlightAction"
+                text="Toggle Highlight of All Occurrences (Case Insensitive)"
+                icon="/krasa/grepconsole/icons/highlight.svg"
+                description="Toggle highlight of all occurrences (case insensitive) of the selected text in the editor - with predefined colors">
+            <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
+            <!--<add-to-group group-id="EditorPopupMenu" anchor="first"/>-->
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F4"/>
         </action>
 
         <action id="GrepConsole.Highlight" class="krasa.grepconsole.action.EditorHighlightAction"

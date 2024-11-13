@@ -29,8 +29,14 @@ import java.util.regex.Pattern;
 public class ToggleEditorHighlightAction extends MyDumbAwareAction {
 	//HighlighterLayer.CONSOLE_FILTER not in IJ 2016
 	int CONSOLE_FILTER = 5800;
+
+    boolean caseSensitive = false;
 	
 	public ToggleEditorHighlightAction() {
+	}
+
+	public ToggleEditorHighlightAction(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
 	}
 
 
@@ -116,8 +122,12 @@ public class ToggleEditorHighlightAction extends MyDumbAwareAction {
 		GrepStyle style = new GrepStyle();
 		style.setForegroundColor(new GrepColor(Color.BLACK));
 		style.setBackgroundColor(new GrepColor(color));
-		GrepExpressionItem item = new GrepExpressionItem().grepExpression(string).caseInsensitive(true).style(style).highlightOnlyMatchingText(
-				true).operationOnMatch(Operation.CONTINUE_MATCHING);
+        GrepExpressionItem item = new GrepExpressionItem()
+                .grepExpression(string)
+                .caseInsensitive(!caseSensitive)
+                .style(style)
+                .highlightOnlyMatchingText(true)
+                .operationOnMatch(Operation.CONTINUE_MATCHING);
 
 		java.util.List<GrepExpressionGroup> grepExpressionGroups = profile.getGrepExpressionGroups();
 		GrepExpressionGroup group = grepExpressionGroups.get(0);

@@ -6,11 +6,11 @@ import krasa.grepconsole.utils.Utils;
 
 import java.awt.*;
 
-public class QuickToggleEditorHighlightAction extends ToggleEditorHighlightAction {
-	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(QuickToggleEditorHighlightAction.class);
+public class QuickToggleEditorHighlightCSAction extends ToggleEditorHighlightAction {
+	private static final Logger LOG = Logger.getInstance(QuickToggleEditorHighlightCSAction.class);
 
-    public QuickToggleEditorHighlightAction() {
-        super(false);
+    public QuickToggleEditorHighlightCSAction() {
+        super(true);
     }
 
     @Override

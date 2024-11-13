@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [13.3.0-IJ2023.3] - 2024-11-13
+- Editor: Toggle Highlight of All Occurrences (Case sensitive) - made case sensitive
+- Editor: Toggle Highlight of All Occurrences (Case insensitive) - made case insensitive
+
 ## [13.2.0-IJ2023.3] - 2024-11-01
 - Editor: Toggle Highlight of All Occurrences - made case insensitive
 
