@@ -1,5 +1,6 @@
 package krasa.grepconsole.integration;
 
+import com.intellij.execution.actions.ClearConsoleAction;
 import com.intellij.execution.actions.ConsoleActionsPostProcessor;
 import com.intellij.execution.impl.ConsoleViewImpl;
 import com.intellij.execution.ui.ConsoleView;
@@ -46,7 +47,20 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 			}
 		}
 		anActions.addAll(Arrays.asList(actions));
-		return anActions.toArray(new AnAction[anActions.size()]);
+
+		moveClearToTop(anActions);
+
+		return anActions.toArray(new AnAction[0]);
+	}
+
+	public static void moveClearToTop(ArrayList<AnAction> anActions) {
+		for (int i = 0; i < anActions.size(); i++) {
+			if (anActions.get(i) instanceof ClearConsoleAction) {
+				AnAction clearAction = anActions.remove(i); // Remove the ClearAction
+				anActions.add(0, clearAction); // Add it at the first position
+				break; // Exit loop after moving the first ClearAction found
+			}
+		}
 	}
 
 	/**
@@ -65,7 +79,7 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 		anActions.add(new OpenConsoleSettingsAction(console));
 		anActions.add(new Separator());
 		anActions.addAll(Arrays.asList(super.postProcessPopupActions(console, actions)));
-		return anActions.toArray(new AnAction[anActions.size()]);
+		return anActions.toArray(new AnAction[0]);
 	}
 
 

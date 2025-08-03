@@ -40,6 +40,7 @@ import krasa.grepconsole.grep.gui.GrepPanel;
 import krasa.grepconsole.grep.gui.GrepUtils;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
 import krasa.grepconsole.grep.listener.GrepFilterSyncListener;
+import krasa.grepconsole.integration.MyConsoleActionsPostProcessor;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.GrepProjectComponent;
 import krasa.grepconsole.plugin.PluginState;
@@ -54,10 +55,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 //import krasa.grepconsole.grep.listener.GrepFilterAsyncListener;
@@ -157,6 +156,7 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 		newConsole.setGrepPanel(quickFilterPanel);
 		ServiceManager.getInstance().registerChildGrepConsole(parentConsoleView, newConsole);
 
+		ArrayList<AnAction> actionList = new ArrayList<>();
 		DefaultActionGroup actions = new DefaultActionGroup();
 		String parentConsoleUUID = getConsoleUUID(parentConsoleView_JComponent);
 
@@ -165,13 +165,15 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 		if (key != null) {
 			pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key, contentType);
 			runConfigurationRef = pinAction.getRunConfigurationRef();
-			actions.add(pinAction);
+			actionList.add(pinAction);
 		}
 
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
-		for (AnAction action : newConsole.createConsoleActions()) {
-			actions.add(action);
-		}
+
+		actionList.addAll(Arrays.asList(newConsole.createConsoleActions()));
+		MyConsoleActionsPostProcessor.moveClearToTop(actionList);
+		actions.addAll(actionList);
+
 
 		final Content tab;
 		if (runnerLayoutUi != null) {
