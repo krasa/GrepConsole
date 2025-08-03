@@ -28,6 +28,7 @@ import com.intellij.openapi.ui.ComponentWithActions;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.psi.search.GlobalSearchScope;
@@ -160,7 +161,7 @@ public class TailContentExecutor implements Disposable {
 			@Nullable
 			@Override
 			public Icon getIcon() {
-				return TailRunExecutor.disabledRun;
+				return IconLoader.getIcon(TailRunExecutor.DISABLED_RUN_SVG, this.getClass());
 			}
 		}, new DefaultExecutionResult(consoleView, myProcess), layoutUi);
 		descriptor.setExecutionId(System.nanoTime());

@@ -9,15 +9,12 @@ import krasa.grepconsole.gui.SettingsContext;
 import krasa.grepconsole.plugin.MyConfigurable;
 import krasa.grepconsole.utils.Rehighlighter;
 
-import javax.swing.*;
-
 public class OpenConsoleSettingsAction extends HighlightManipulationAction {
-	public static final Icon ICON = IconLoader.getIcon("/krasa/grepconsole/icons/highlight.svg");
 	private ConsoleView console;
 
 
 	public OpenConsoleSettingsAction(ConsoleView console) {
-		super("Open Grep Console settings", null, ICON);
+		super("Open Grep Console settings", null, IconLoader.getIcon("/krasa/grepconsole/icons/highlight.svg", OpenConsoleSettingsAction.class));
 		this.console = console;
 	}
 

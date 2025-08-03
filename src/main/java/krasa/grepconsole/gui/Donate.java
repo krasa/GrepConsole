@@ -3,7 +3,6 @@ package krasa.grepconsole.gui;
 import com.intellij.ide.BrowserUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.IconLoader;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -11,9 +10,7 @@ import java.awt.event.ActionListener;
 
 public class Donate {
 	private static final Logger LOG = com.intellij.openapi.diagnostic.Logger.getInstance(Donate.class);
-
-	public static final @NotNull
-	Icon ICON = IconLoader.getIcon("/krasa/grepconsole/icons/coins_in_hand.png", Donate.class);
+	public static final String COINS_IN_HAND_PNG = "/krasa/grepconsole/icons/coins_in_hand.png";
 
 	public static JButton newDonateButton() {
 		JButton donate = new JButton();
@@ -24,7 +21,7 @@ public class Donate {
 	public static void initDonateButton(JButton donate) {
 		donate.setText("GitHub");
 		donate.setToolTipText("GitHub Sponsors");
-		donate.setIcon(ICON);
+		donate.setIcon(IconLoader.getIcon(COINS_IN_HAND_PNG, Donate.class));
 		donate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -35,7 +32,7 @@ public class Donate {
 
 	public static void initDonateButton2(JButton donate) {
 		donate.setText("PayPal");
-		donate.setIcon(ICON);
+		donate.setIcon(IconLoader.getIcon(COINS_IN_HAND_PNG, Donate.class));
 		donate.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

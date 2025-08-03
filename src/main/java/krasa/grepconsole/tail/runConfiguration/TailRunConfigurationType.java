@@ -2,6 +2,7 @@ package krasa.grepconsole.tail.runConfiguration;
 
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.tail.TailRunExecutor;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +23,7 @@ public class TailRunConfigurationType implements ConfigurationType {
 
 	@Override
 	public Icon getIcon() {
-		return TailRunExecutor.ToolWindowRun;
+		return IconLoader.getIcon(TailRunExecutor.TAIL_SVG, this.getClass());
 	}
 
 	@NotNull

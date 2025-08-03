@@ -10,8 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class ReloadAction extends MyDumbAwareAction {
-	public static final Icon RELOAD_GRAY = IconLoader.getIcon("/krasa/grepconsole/icons/buildLoadChangesGray.svg", ReloadAction.class);
-	public static final Icon RELOAD_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/buildLoadChanges.svg", ReloadAction.class);
+	public final Icon RELOAD_GRAY = IconLoader.getIcon("/krasa/grepconsole/icons/buildLoadChangesGray.svg", ReloadAction.class);
+	public final Icon RELOAD_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/buildLoadChanges.svg", ReloadAction.class);
 
 	@Override
 	public void actionPerformed(@NotNull AnActionEvent e) {

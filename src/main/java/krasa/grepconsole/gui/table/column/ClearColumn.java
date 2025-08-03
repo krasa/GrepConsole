@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class ClearColumn extends IconColumnInfo {
-	public static final Icon DISABLED = IconLoader.getIcon("/krasa/grepconsole/icons/gc.png");
-	public static final Icon ENABLED = IconLoader.getIcon("/krasa/grepconsole/icons/clearEnabled.png");
+	public final Icon DISABLED = IconLoader.getIcon("/krasa/grepconsole/icons/gc.png", ClearColumn.class);
+	public final Icon ENABLED = IconLoader.getIcon("/krasa/grepconsole/icons/clearEnabled.png", ClearColumn.class);
 
 	public ClearColumn(String title) {
 		super(title);

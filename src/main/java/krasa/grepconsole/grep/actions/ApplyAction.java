@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class ApplyAction extends MyDumbAwareAction {
-	public static final Icon COMMIT_GRAY = IconLoader.getIcon("/krasa/grepconsole/icons/commitGray.svg", ApplyAction.class);
-	public static final Icon COMMIT_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/commitBlue.svg", ApplyAction.class);
+	public final Icon COMMIT_GRAY = IconLoader.getIcon("/krasa/grepconsole/icons/commitGray.svg", ApplyAction.class);
+	public final Icon COMMIT_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/commitBlue.svg", ApplyAction.class);
 
 	@Override
 	public void actionPerformed(@NotNull AnActionEvent e) {

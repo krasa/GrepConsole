@@ -35,9 +35,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
 public class MyGrepSearchTextArea extends MySearchTextArea {
-	public static final Icon EXCLUDE = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark.svg", MyGrepSearchTextArea.class);
-	public static final Icon EXCLUDE_HOVER = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark_hover.svg", MyGrepSearchTextArea.class);
-	public static final Icon EXCLUDE_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark_selected.svg", MyGrepSearchTextArea.class);
+	public final Icon EXCLUDE = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark.svg", MyGrepSearchTextArea.class);
+	public final Icon EXCLUDE_HOVER = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark_hover.svg", MyGrepSearchTextArea.class);
+	public final Icon EXCLUDE_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark_selected.svg", MyGrepSearchTextArea.class);
 
 	private final AtomicBoolean caseSensitive;
 	private final AtomicBoolean wholeWords;

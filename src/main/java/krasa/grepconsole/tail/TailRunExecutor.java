@@ -13,8 +13,8 @@ import javax.swing.*;
  * @author Vojtech Krasa
  */
 public class TailRunExecutor extends Executor {
-	public static final Icon ToolWindowRun = IconLoader.getIcon("/krasa/grepconsole/icons/tail.svg"); // 13x13
-	public static final Icon disabledRun = IconLoader.getIcon("/krasa/grepconsole/icons/disabledRun.svg"); // 13x13
+	public static final String TAIL_SVG = "/krasa/grepconsole/icons/tail.svg";
+	public static final String DISABLED_RUN_SVG = "/krasa/grepconsole/icons/disabledRun.svg";
 
 	public static final String TOOLWINDOWS_ID = "Tail";
 	@NonNls
@@ -33,7 +33,7 @@ public class TailRunExecutor extends Executor {
 
 	@Override
 	public Icon getToolWindowIcon() {
-		return ToolWindowRun;
+		return IconLoader.getIcon(TAIL_SVG, this.getClass());
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class TailRunExecutor extends Executor {
 
 	@Override
 	public Icon getDisabledIcon() {
-		return disabledRun;
+		return IconLoader.getIcon(DISABLED_RUN_SVG, this.getClass());
 	}
 
 	@Override
