@@ -29,7 +29,7 @@ public class PluginState extends DomainObject implements Cloneable {
 	private boolean allowRunConfigurationChanges = true;
 	private int version;
 	private List<GrepCompositeModel> grepHistory = new ArrayList<>();
-	private boolean autoReloadGrepModel = false;
+	private boolean autoReloadGrepModel = true;
 	private boolean autoClearChildConsoles = false;
 	private boolean autoApplyGrepModel = false;
 

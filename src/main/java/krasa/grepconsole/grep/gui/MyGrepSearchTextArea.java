@@ -30,7 +30,6 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -45,7 +44,6 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 	private final AtomicBoolean wholeLine;
 	private final AtomicBoolean exclude;
 	private GrepPanel grepPanel;
-	private String previousExpression;
 
 	public MyGrepSearchTextArea(GrepPanel grepPanel, GrepModel model) {
 		super(createJbTextArea(), true);
@@ -111,10 +109,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 				}
 			}
 			getTextArea().setForeground(UIUtil.getTextFieldForeground());
-			String newExpression = MyGrepSearchTextArea.this.getTextArea().getText();
-			if (!Objects.equals(previousExpression, newExpression)) {
-				grepPanel.textExpressionChanged();
-			}
+			grepPanel.textExpressionChanged();
 		});
 
 	}
@@ -141,8 +136,6 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 	}
 
 	public void load(GrepModel grepModel) {
-		previousExpression = grepModel.getExpression();
-
 		caseSensitive.set(grepModel.isCaseSensitive());
 		regex.set(grepModel.isRegex());
 		wholeWords.set(grepModel.isCaseSensitive());
