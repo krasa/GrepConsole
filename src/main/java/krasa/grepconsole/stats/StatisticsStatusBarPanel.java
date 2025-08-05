@@ -130,7 +130,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 			@NotNull
 			@Override
 			public AnAction[] getChildren(@Nullable AnActionEvent e) {
-				return new AnAction[]{new ResetAction(), new HideAction()};
+				return new AnAction[]{new ShowConsoleAction(), new ResetAction(), new HideAction()};
 			}
 		};
 		ActionManager.getInstance().createActionPopupMenu("", actionGroup).getComponent().show(comp, x, y);
@@ -180,12 +180,10 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 	}
 
 	private void mouse(MouseEvent e) {
-		if (SwingUtilities.isRightMouseButton(e)) {
-			showPopup(e.getComponent(), e.getX(), e.getY());
-		} else if (SwingUtilities.isMiddleMouseButton(e)) {
+		if (SwingUtilities.isMiddleMouseButton(e)) {
 			StatisticsStatusBarPanel.this.hideStatusBar();
 		} else {
-			showToolWindow();
+			showPopup(e.getComponent(), e.getX(), e.getY());
 		}
 	}
 
@@ -220,6 +218,7 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 				add(grepProcessor, mouseInputAdapter);
 			}
 		}
+		revalidate();
 	}
 
 	public void add(GrepProcessor processor, final MouseInputAdapter mouseInputAdapter) {
@@ -292,4 +291,14 @@ public abstract class StatisticsStatusBarPanel extends JPanel {
 		}
 	}
 
+	private class ShowConsoleAction extends MyDumbAwareAction {
+		public ShowConsoleAction() {
+			super("Show Console");
+		}
+
+		@Override
+		public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
+			showToolWindow();
+		}
+	}
 }
