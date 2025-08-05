@@ -3,10 +3,8 @@ package krasa.grepconsole.grep.gui;
 
 import com.intellij.find.FindBundle;
 import com.intellij.icons.AllIcons;
-import com.intellij.openapi.actionSystem.ActionUpdateThread;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.ShortcutSet;
-import com.intellij.openapi.actionSystem.Toggleable;
+import com.intellij.ide.DataManager;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.ex.TooltipDescriptionProvider;
 import com.intellij.openapi.actionSystem.ex.TooltipLinkProvider;
@@ -29,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -42,11 +41,9 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 	private final AtomicBoolean regex;
 	private final AtomicBoolean wholeLine;
 	private final AtomicBoolean exclude;
-	private GrepPanel grepPanel;
 
 	public MyGrepSearchTextArea(GrepPanel grepPanel, GrepModel model) {
-		super(createJbTextArea(), true);
-		this.grepPanel = grepPanel;
+		super(createJbTextArea(), true, grepPanel);
 		getTextArea().addKeyListener(myRedispatcher);
 		getTextArea().addFocusListener(new FocusAdapter() {
 			@Override
@@ -89,7 +86,7 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 			@Override
 			public boolean onClick(@NotNull MouseEvent mouseEvent, int i) {
 				if (mouseEvent.getButton() == 2) {
-					removeFromGrepPanel();
+					removeFromGrepPanel(AnActionEvent.createFromInputEvent(mouseEvent, "GREP_CONSOLE_PANEL", new Presentation(), DataManager.getInstance().getDataContext(grepPanel)));
 					return true;
 				}
 				return false;
@@ -139,8 +136,12 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 					EditorActionUtil.moveCaretRelativelyAndScroll(grepPanel.getConsole().getEditor(), 0, 1, false);
 					e.consume();
 				} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					grepPanel.saveLastFocusLocation(getTextArea());
-					grepPanel.getConsole().getEditor().getContentComponent().requestFocusInWindow();
+					if (Objects.equals(getTextArea().getText(), "")) {
+						removeFromGrepPanel(AnActionEvent.createFromInputEvent(e, "GREP_CONSOLE_PANEL", new Presentation(), DataManager.getInstance().getDataContext(grepPanel)));
+					} else {
+						grepPanel.saveLastFocusLocation(getTextArea());
+						grepPanel.getConsole().getEditor().getContentComponent().requestFocusInWindow();
+					}
 					e.consume();
 				}
 			}

@@ -22,6 +22,7 @@ import krasa.grepconsole.filter.GrepFilter;
 import krasa.grepconsole.grep.GrepBeforeAfterModel;
 import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.GrepModel;
+import krasa.grepconsole.grep.actions.MyCloseAction;
 import krasa.grepconsole.grep.actions.OpenGrepConsoleAction;
 import krasa.grepconsole.grep.listener.GrepFilterListener;
 import krasa.grepconsole.plugin.PluginState;
@@ -60,6 +61,8 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	private GrepBeforeAfterModel beforeAfterModel = new GrepBeforeAfterModel();
 	private GrepCompositeModel currentModel;
 	private JTextArea lastFocusComponent;
+	private MyCloseAction close;
+	private boolean disposed;
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -190,6 +193,10 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 
 	public void reload() {
+		if (disposed) {
+			return;
+		}
+
 		apply();
 		expressions.revalidate();
 		expressions.repaint();
@@ -225,6 +232,10 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	}
 
 	public void apply() {
+		if (disposed) {
+			return;
+		}
+
 		if (applyCallback != null) {
 			try {
 				PluginState instance = PluginState.getInstance();
@@ -249,8 +260,11 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	@Override
 	public void dispose() {
+		disposed = true;
 		ServiceManager.getInstance().unregisterGrepPanel(this);
 		originalConsole = null;
+		this.close = null;
+		lastFocusComponent = null;
 //		applyButton.setEnabled(false);
 //		reloadButton.setEnabled(false);
 //		sourceButton.setEnabled(false);
@@ -327,6 +341,16 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 
 	public void saveLastFocusLocation(@NotNull JTextArea keyAdapter) {
 		this.lastFocusComponent = keyAdapter;
+	}
+
+	public void setClose(MyCloseAction close) {
+		this.close = close;
+	}
+
+	public void close(@NotNull AnActionEvent e) {
+		if (close != null) {
+			this.close.actionPerformed(e);
+		}
 	}
 
 	public static class SelectSourceActionListener implements ActionListener {

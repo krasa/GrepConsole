@@ -5,7 +5,7 @@
 - Improved usability
 - 'Clear All' action moved to the top
 - Grep - 'reload on change' enabled by default
-- Grep - added shortcuts to the grep textfield: page up/down, arrow up/down, escape
+- Grep - added shortcuts to the grep textfield: page up/down, arrow up/down, escape (jumps to console or closes tab)
 - Grep - added shortcuts to the grep console: escape
 
 - Toggle Highlight of All Occurrences - made case sensitive again

@@ -116,9 +116,12 @@ public class GrepFilterSyncListener implements GrepFilterListener {
 
 	@Override
 	public void clear() {
-		incompleteLine.get().clear();
-		GrepBeforeAfterModel beforeAfterModel = grepModel.getBeforeAfterModel();
-		beforeAfterModel.clear();
+		List<Pair<String, ConsoleViewContentType>> pairs = incompleteLine.get();
+		if (pairs != null) {
+			pairs.clear();
+			GrepBeforeAfterModel beforeAfterModel = grepModel.getBeforeAfterModel();
+			beforeAfterModel.clear();
+		}
 	}
 
 	@Override

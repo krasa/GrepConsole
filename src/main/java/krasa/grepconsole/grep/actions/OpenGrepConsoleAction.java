@@ -53,6 +53,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusEvent;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -151,9 +152,9 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 
 		GrepPanel.SelectSourceActionListener selectSourceActionListener = new GrepPanel.SelectSourceActionListener(parentConsoleView, runnerLayoutUi,
 				toolWindow);
-		final GrepPanel quickFilterPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression,
+		final GrepPanel grepPanel = new GrepPanel(parentConsoleView, newConsole, grepFilter, grepListener, grepModel, expression,
 				selectSourceActionListener);
-		newConsole.setGrepPanel(quickFilterPanel);
+		newConsole.setGrepPanel(grepPanel);
 		ServiceManager.getInstance().registerChildGrepConsole(parentConsoleView, newConsole);
 
 		ArrayList<AnAction> actionList = new ArrayList<>();
@@ -163,12 +164,12 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 		PinnedGrepConsolesState.RunConfigurationRef runConfigurationRef = null;
 		PinAction pinAction = null;
 		if (key != null) {
-			pinAction = new PinAction(project, quickFilterPanel, parentConsoleUUID, consoleUUID, profile, key, contentType);
+			pinAction = new PinAction(project, grepPanel, parentConsoleUUID, consoleUUID, profile, key, contentType);
 			runConfigurationRef = pinAction.getRunConfigurationRef();
 			actionList.add(pinAction);
 		}
 
-		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, quickFilterPanel, consoleUUID);
+		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, grepPanel, consoleUUID);
 
 		actionList.addAll(Arrays.asList(newConsole.createConsoleActions()));
 		MyConsoleActionsPostProcessor.moveClearToTop(actionList);
@@ -179,7 +180,7 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 		if (runnerLayoutUi != null) {
 			tab = runnerLayoutUi.createContent(contentType, consolePanel, title, AllIcons.General.Filter, consolePanel);
 			runnerLayoutUi.addContent(tab);
-			runnerLayoutUi.addListener(new MyContentManagerListener(tab, quickFilterPanel), tab);
+			runnerLayoutUi.addListener(new MyContentManagerListener(tab, grepPanel), tab);
 			try {
 				if (focusTab) {
 					runnerLayoutUi.selectAndFocus(tab, true, true);
@@ -187,7 +188,9 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 			} catch (Exception ex) {
 				LOG.warn(ex);
 			}
-			actions.add(new MyCloseAction(tab, runnerLayoutUi));
+			MyCloseAction closeAction = new MyCloseAction(tab, runnerLayoutUi.getContentManager());
+			grepPanel.setClose(closeAction);
+			actions.add(closeAction);
 		} else {
 			tab = ContentFactory.getInstance().createContent(consolePanel, title, true);
 			RunContentDescriptor contentDescriptor = new RunContentDescriptor(newConsole, myProcessHandler, consolePanel, title);
@@ -197,19 +200,20 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 			if (selectedContent != null && StringUtils.isBlank(selectedContent.getDisplayName())) {
 				selectedContent.setDisplayName("Main");
 			}
-			MyContentManagerListener contentManagerListener = new MyContentManagerListener(tab, quickFilterPanel);
+			MyContentManagerListener contentManagerListener = new MyContentManagerListener(tab, grepPanel);
 			contentManager.addContentManagerListener(contentManagerListener);
 			Disposer.register(tab, () -> contentManager.removeContentManagerListener(contentManagerListener));
 			contentManager.addContent(tab);
 			if (focusTab) {
 				contentManager.setSelectedContent(tab);
 			}
-			actions.add(new MyCloseAction(tab, contentManager));
+			MyCloseAction closeAction = new MyCloseAction(tab, contentManager);
+			grepPanel.setClose(closeAction);
+			actions.add(closeAction);
 		}
-
 		String finalContentType = contentType;
 		PinnedGrepConsolesState.RunConfigurationRef finalRunConfigurationRef = runConfigurationRef;
-		quickFilterPanel.setApplyCallback(new Callback() {
+		grepPanel.setApplyCallback(new Callback() {
 			@Override
 			public void apply(MyConsoleViewImpl current, GrepCompositeModel grepModel) {
 				if (LOG.isDebugEnabled()) {
@@ -248,7 +252,7 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 			}
 
 		});
-		quickFilterPanel.apply();
+		grepPanel.apply();
 
 		if (parentConsoleView instanceof ConsoleViewImpl) {
 			ConsoleViewImpl originalConsole = (ConsoleViewImpl) parentConsoleView;
@@ -298,7 +302,7 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 
 		Disposer.register(consolePanel, newConsole);
 		Disposer.register(consolePanel, grepListener);
-		Disposer.register(consolePanel, quickFilterPanel);
+		Disposer.register(consolePanel, grepPanel);
 		Disposer.register(consolePanel, new Disposable() {
 			@Override
 			public void dispose() {
@@ -318,7 +322,7 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 			@Override
 			public void dispose() {
 				// dispose chained grep consoles
-				Disposer.dispose(quickFilterPanel);
+				Disposer.dispose(grepPanel);
 				tab.setDisplayName(title(tab.getDisplayName()) + " (Inactive)");
 			}
 		});
@@ -600,7 +604,7 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 	}
 
 	private static MyJPanel createConsolePanel(RunnerLayoutUi runnerLayoutUi, ConsoleView view, ActionGroup actions, GrepPanel comp, String consoleUUID) {
-		MyJPanel panel = new MyJPanel(runnerLayoutUi, consoleUUID);
+		MyJPanel panel = new MyJPanel(runnerLayoutUi, consoleUUID, comp);
 		panel.setLayout(new BorderLayout());
 		panel.add(comp.getRootComponent(), BorderLayout.NORTH);
 		panel.add(view.getComponent(), BorderLayout.CENTER);
@@ -657,10 +661,12 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 	static class MyJPanel extends JPanel implements Disposable {
 		private RunnerLayoutUi runnerLayoutUi;
 		private final String consoleUUID;
+		private GrepPanel grepPanel;
 
-		public MyJPanel(@Nullable RunnerLayoutUi runnerLayoutUi, String consoleUUID) {
+		public MyJPanel(@Nullable RunnerLayoutUi runnerLayoutUi, String consoleUUID, GrepPanel grepPanel) {
 			this.runnerLayoutUi = runnerLayoutUi;
 			this.consoleUUID = consoleUUID;
+			this.grepPanel = grepPanel;
 		}
 
 		public String getConsoleUUID() {
@@ -670,10 +676,18 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 		@Override
 		public void dispose() {
 			runnerLayoutUi = null;
+			grepPanel = null;
 			// TODO leak when closing tail by Close button
 			// myPreferredFocusableComponent com.intellij.ui.tabs.TabInfo
 
 			removeAll();
+		}
+
+		@Override
+		protected void processFocusEvent(FocusEvent e) {
+			if (grepPanel != null) {
+				grepPanel.requestFocusToLastTextArea();
+			}
 		}
 	}
 

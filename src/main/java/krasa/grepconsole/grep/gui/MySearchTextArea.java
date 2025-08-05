@@ -98,8 +98,10 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
   private final JBScrollPane myScrollPane;
   protected final ActionButton myHistoryPopupButton;
   private boolean myMultilineEnabled = true;
+	protected GrepPanel grepPanel;
 
-  public MySearchTextArea(@NotNull JTextArea textArea, boolean searchMode) {
+	public MySearchTextArea(@NotNull JTextArea textArea, boolean searchMode, GrepPanel grepPanel) {
+		this.grepPanel = grepPanel;
     myTextArea = textArea;
     mySearchMode = searchMode;
     updateFont();
@@ -407,26 +409,32 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      removeFromGrepPanel();
+		removeFromGrepPanel(e);
     }
 
   }
 
-  protected void removeFromGrepPanel() {
-    boolean empty = myTextArea.getText().isEmpty();
-    myTextArea.putClientProperty(JUST_CLEARED_KEY, !empty);
-    myTextArea.setText("");
-    MySearchTextArea mySearchTextArea = MySearchTextArea.this;
-    if (mySearchTextArea.getParent().getComponentCount() > 1) {
-      Container parent = MySearchTextArea.this.getParent();
-      parent.remove(mySearchTextArea);
-      parent.revalidate();
-      parent.repaint();
-    }
-    if (!empty) {
-      reloadGrepPanel();
-    }
-  }
+	protected void removeFromGrepPanel(@NotNull AnActionEvent e) {
+		boolean empty = myTextArea.getText().isEmpty();
+		myTextArea.putClientProperty(JUST_CLEARED_KEY, !empty);
+		myTextArea.setText("");
+		MySearchTextArea mySearchTextArea = MySearchTextArea.this;
+		Container parent = MySearchTextArea.this.getParent();
+
+		if (parent.getComponentCount() == 1) {
+			grepPanel.close(e);
+			// last one, must not remove from parent, it will break focus - console will not get focus
+			return;
+		}
+
+		parent.remove(mySearchTextArea);
+		parent.revalidate();
+		parent.repaint();
+
+		if (!empty) {
+			reloadGrepPanel();
+		}
+	}
 
   protected abstract void loadGrepCompositeModelFromHistory(GrepCompositeModel selectedValue);
 
