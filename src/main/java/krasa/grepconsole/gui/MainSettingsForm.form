@@ -367,7 +367,7 @@
                             <properties>
                               <minimumSize width="0" height="0"/>
                             </properties>
-                            <border type="none" title="Filtering">
+                            <border type="none" title="Filtering (change does not apply to already printed text)">
                               <color color="-4473925"/>
                             </border>
                             <children>
