@@ -75,7 +75,7 @@ public class StatisticsManager {
 			final StatusBar statusBar = WindowManager.getInstance().getIdeFrame(project).getStatusBar();
 			final ConsoleStatusBarWidget statusBarWidget = new ConsoleStatusBarWidget(consoleView, highlightingFilter);
 			statusBar.getComponent().revalidate();
-			Disposer.register(consoleView, statusBarWidget);
+			Disposer.register(consoleView, () -> Disposer.dispose(statusBarWidget));
 			statusBar.addWidget(statusBarWidget);
 		} catch (Throwable e) {
 			log.warn("status bar stats not supported for now", e);
