@@ -1,9 +1,11 @@
 package krasa.grepconsole.grep.actions;
 
+import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.ui.RunnerLayoutUi;
 import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import krasa.grepconsole.action.MyDumbAwareAction;
@@ -28,8 +30,9 @@ public class MyCloseAction extends MyDumbAwareAction {
 
 	public void init() {
 		final Presentation templatePresentation = getTemplatePresentation();
+		ActionUtil.copyFrom(this, "CloseContent"); // for shortcut in text
 		templatePresentation.setIcon(AllIcons.Actions.Cancel);
-		templatePresentation.setText("Close");
+		templatePresentation.setText(ExecutionBundle.messagePointer("close.tab.action.name", new Object[0]));
 		templatePresentation.setDescription(Presentation.NULL_STRING);
 	}
 
