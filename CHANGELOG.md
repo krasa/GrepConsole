@@ -2,8 +2,11 @@
 
 ## [Unreleased]
 
-- Moving 'Clear All' console action to the top for better usability
-- Grep - reload on change enabled by default
+- Improved usability
+- 'Clear All' action moved to the top
+- Grep - 'reload on change' enabled by default
+- Grep - added shortcuts to the grep textfield: page up/down, arrow up/down, escape
+- Grep - added shortcuts to the grep console: escape
 
 ## [13.3.0-IJ2023.3] - 2024-11-13
 - Editor: Toggle Highlight of All Occurrences (Case sensitive) - made case sensitive

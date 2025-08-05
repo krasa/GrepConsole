@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.actionSystem.ex.TooltipDescriptionProvider;
 import com.intellij.openapi.actionSystem.ex.TooltipLinkProvider;
 import com.intellij.openapi.actionSystem.impl.ActionButton;
+import com.intellij.openapi.editor.actions.EditorActionUtil;
 import com.intellij.openapi.project.DumbAwareToggleAction;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.ClickListener;
@@ -27,9 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -48,8 +47,13 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 	public MyGrepSearchTextArea(GrepPanel grepPanel, GrepModel model) {
 		super(createJbTextArea(), true);
 		this.grepPanel = grepPanel;
-		getTextArea().addKeyListener(myEnterRedispatcher);
-
+		getTextArea().addKeyListener(myRedispatcher);
+		getTextArea().addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				grepPanel.saveLastFocusLocation(getTextArea());
+			}
+		});
 
 		caseSensitive = new AtomicBoolean();
 		MySwitchStateToggleAction myCaseSensitiveAction =
@@ -114,14 +118,35 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 
 	}
 
-	private final KeyAdapter myEnterRedispatcher = new KeyAdapter() {
+	private final KeyAdapter myRedispatcher = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (e.getKeyCode() == KeyEvent.VK_ENTER && grepPanel != null) {
-				grepPanel.dispatchEvent(e);
+			if (grepPanel != null) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					grepPanel.dispatchEvent(e);
+				}
+
+				if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+					EditorActionUtil.moveCaretPageUp(grepPanel.getConsole().getEditor(), false);
+					e.consume();
+				} else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+					EditorActionUtil.moveCaretPageDown(grepPanel.getConsole().getEditor(), false);
+					e.consume();
+				} else if (e.getKeyCode() == KeyEvent.VK_UP) {
+					EditorActionUtil.moveCaretRelativelyAndScroll(grepPanel.getConsole().getEditor(), 0, -1, false);
+					e.consume();
+				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+					EditorActionUtil.moveCaretRelativelyAndScroll(grepPanel.getConsole().getEditor(), 0, 1, false);
+					e.consume();
+				} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					grepPanel.saveLastFocusLocation(getTextArea());
+					grepPanel.getConsole().getEditor().getContentComponent().requestFocusInWindow();
+					e.consume();
+				}
 			}
 		}
 	};
+
 
 	private static JBTextArea createJbTextArea() {
 		JBTextArea innerTextComponent = new JBTextArea();
@@ -156,9 +181,10 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 //
 //	protected void updateGrepOptions(GrepOptionsItem selectedItem) {
 //		if (selectedItem != null) {
-////			wholeLine.setSelected(selectedItem.isWholeLine());
-////			regex.setSelected(selectedItem.isRegex());
-////			matchCase.setSelected(selectedItem.isCaseSensitive());
+
+	/// /			wholeLine.setSelected(selectedItem.isWholeLine());
+	/// /			regex.setSelected(selectedItem.isRegex());
+	/// /			matchCase.setSelected(selectedItem.isCaseSensitive());
 //		}
 //	}
 	private final class MySwitchStateToggleAction extends DumbAwareToggleAction implements TooltipLinkProvider, TooltipDescriptionProvider {

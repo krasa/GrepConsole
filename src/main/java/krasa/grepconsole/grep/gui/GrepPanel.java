@@ -11,6 +11,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.impl.ActionToolbarImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.content.Content;
@@ -58,6 +59,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 	private String cachedFullTitle;
 	private GrepBeforeAfterModel beforeAfterModel = new GrepBeforeAfterModel();
 	private GrepCompositeModel currentModel;
+	private JTextArea lastFocusComponent;
 
 	public JPanel getRootComponent() {
 		return rootComponent;
@@ -307,6 +309,24 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 				apply();
 			}
 		}
+	}
+
+	public void requestFocusToLastTextArea() {
+		JTextArea jTextArea = lastFocusComponent;
+		if (jTextArea != null && jTextArea.isValid()) {
+			IdeFocusManager.getGlobalInstance().requestFocus(jTextArea, false);
+		} else {
+			Component[] components = expressions.getComponents();
+			if (components.length > 0) {
+				MyGrepSearchTextArea component = (MyGrepSearchTextArea) components[0];
+				JTextArea textArea = component.getTextArea();
+				IdeFocusManager.getGlobalInstance().requestFocus(textArea, false);
+			}
+		}
+	}
+
+	public void saveLastFocusLocation(@NotNull JTextArea keyAdapter) {
+		this.lastFocusComponent = keyAdapter;
 	}
 
 	public static class SelectSourceActionListener implements ActionListener {

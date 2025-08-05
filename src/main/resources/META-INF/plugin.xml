@@ -182,6 +182,13 @@
                     description="As OR regex to an existing grep console"
                     icon="/krasa/grepconsole/icons/filter.svg"
             />
+            <action id="GrepConsole.EditCurrentGrepAction"
+                    class="krasa.grepconsole.grep.actions.EditCurrentGrepAction"
+                    text="Edit Current Grep"
+                    description="Focus current Grep"
+            >
+                <keyboard-shortcut keymap="$default" first-keystroke="ESCAPE"/>
+            </action>
             <separator/>
             <action id="GrepConsole.AddHighlightAction"
                     class="krasa.grepconsole.action.AddHighlightAction"
