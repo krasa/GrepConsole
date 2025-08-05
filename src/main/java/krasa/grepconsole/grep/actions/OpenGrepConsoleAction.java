@@ -651,6 +651,11 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 		presentation.setEnabled(enabled || e.getData(PlatformDataKeys.TOOL_WINDOW) != null);
 	}
 
+	@Override
+	public @NotNull ActionUpdateThread getActionUpdateThread() {
+		return ActionUpdateThread.EDT;
+	}
+
 	public static ConsoleView getTopParentConsoleView(ConsoleView data) {
 		if (data instanceof MyConsoleViewImpl) {
 			data = getTopParentConsoleView(((MyConsoleViewImpl) data).getParentConsoleView());
