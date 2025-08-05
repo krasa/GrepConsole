@@ -78,14 +78,14 @@
 
         <action id="GrepConsole.ClearHighlight" class="krasa.grepconsole.action.EditorClearHighlightAction"
                 text="Clear Grep Highlights in Editor"
-                description="Clear Highlights in Editor">
+                description="Clear highlights in editor">
             <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
         </action>
 
         <action id="ToggleEditorHighlight" class="krasa.grepconsole.action.ToggleEditorHighlightAction"
-                text="Toggle Highlight of All Occurrences (custom color)"
+                text="Toggle Highlight of All Occurrences (Custom Color, Case Insensitive)"
                 icon="/krasa/grepconsole/icons/highlight.svg"
-                description="Toggle highlight of all occurrences of the selected text in the editor. Opens a dialog to choose a color.">
+                description="Toggle highlight of all occurrences (case insensitive) of the selected text in the editor. Opens a dialog to choose a color.">
             <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
             <!--<add-to-group group-id="EditorPopupMenu"  anchor="first"  />-->
         </action>
@@ -93,7 +93,7 @@
         <action id="QuickToggleEditorHighlight" class="krasa.grepconsole.action.QuickToggleEditorHighlightCSAction"
                 text="Toggle Highlight of All Occurrences"
                 icon="/krasa/grepconsole/icons/highlight.svg"
-                description="Toggle highlight of all occurrences (case sensitive) of the selected text in the editor - with predefined colors">
+                description="Toggle highlight of all occurrences (CASE SENSITIVE) of the selected text in the editor - with predefined colors">
             <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt F3"/>
@@ -109,14 +109,14 @@
         </action>
 
         <action id="GrepConsole.Highlight" class="krasa.grepconsole.action.EditorHighlightAction"
-                text="Highlight Editor according to Grep Console settings"
+                text="Highlight Editor According to Grep Console Settings"
                 icon="/krasa/grepconsole/icons/highlight.svg"
-                description="Highlight Editor according to Grep Console settings">
+                description="Highlight editor according to grep console settings">
             <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
         </action>
         <action id="GrepConsole.OpenFileInConsole" class="krasa.grepconsole.action.TailFileInConsoleAction"
                 text="Tail File in Console..."
-                description="Tail File in Console..."
+                description="Tail file in console..."
                 icon="/krasa/grepconsole/icons/tail.svg"
         >
             <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>
@@ -132,7 +132,7 @@
         <action id="GrepConsole.OpenCurrentFileInConsole"
                 class="krasa.grepconsole.action.TailCurrentFileInConsoleAction"
                 text="Tail Current File in Console"
-                description="Tail Current Editor File in Console"
+                description="Tail current editor file in console"
                 icon="/krasa/grepconsole/icons/tail.svg"
         >
             <add-to-group group-id="GrepConsole.ToolsMenu" anchor="last"/>

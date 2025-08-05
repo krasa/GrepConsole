@@ -8,9 +8,8 @@
 - Grep - added shortcuts to the grep textfield: page up/down, arrow up/down, escape
 - Grep - added shortcuts to the grep console: escape
 
-## [13.3.0-IJ2023.3] - 2024-11-13
-- Editor: Toggle Highlight of All Occurrences (Case sensitive) - made case sensitive
-- Editor: Toggle Highlight of All Occurrences (Case insensitive) - made case insensitive
+- Toggle Highlight of All Occurrences - made case sensitive again
+- Added: Toggle Highlight of All Occurrences (Case Insensitive)
 
 ## [13.2.0-IJ2023.3] - 2024-11-01
 - Editor: Toggle Highlight of All Occurrences - made case insensitive
