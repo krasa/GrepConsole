@@ -2,7 +2,7 @@ package krasa.grepconsole.grep.actions;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import krasa.grepconsole.action.MyDumbAwareAction;
-import krasa.grepconsole.grep.gui.GrepPanel;
+import krasa.grepconsole.grep.gui.MyGrepSearchTextArea;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -14,15 +14,14 @@ public class EditCurrentGrepAction extends MyDumbAwareAction {
 
 	@Override
 	public void actionPerformed(@NotNull AnActionEvent e) {
-		GrepPanel grepPanel = ApplyAction.getGrepPanel(e);
-		if (grepPanel != null) {
-			grepPanel.requestFocusToLastTextArea();
-		}
+		ApplyAction.getGrepPanel(e).requestFocusToLastTextArea();
 	}
 
 
 	@Override
 	public void update(@NotNull AnActionEvent e) {
-		e.getPresentation().setEnabledAndVisible(ApplyAction.getGrepPanel(e) != null);
+		e.getPresentation().setEnabledAndVisible(ApplyAction.getGrepPanel(e) != null
+				&& MyGrepSearchTextArea.GREP_PANEL_TEXT_AREA.getData(e.getDataContext()) == null //not focused
+		);
 	}
 }

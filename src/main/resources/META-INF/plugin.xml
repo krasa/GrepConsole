@@ -175,7 +175,10 @@
                     text="Grep"
                     description="Open a new filter/grep console"
                     icon="/krasa/grepconsole/icons/filter.svg"
-            />
+            >
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt shift ADD"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="control alt shift EQUALS"/>
+            </action>
             <action id="GrepConsole.AddGrepConsoleAction"
                     class="krasa.grepconsole.grep.actions.AddGrepConsoleAction"
                     text="Add Grep"
@@ -220,6 +223,12 @@
             >
                 <keyboard-shortcut keymap="$default" first-keystroke="control MINUS"/>
                 <keyboard-shortcut keymap="$default" first-keystroke="control SUBTRACT"/>
+            </action>
+            <action id="GrepConsole.JumpToConsoleOrRemoveExpressionAction"
+                    class="krasa.grepconsole.grep.actions.JumpToConsoleOrRemoveExpressionAction"
+                    text="Jump to Console or Remove Grep Expression If Empty"
+            >
+                <keyboard-shortcut keymap="$default" first-keystroke="ESCAPE"/>
             </action>
 
             <action id="GrepConsole.ApplyAction"

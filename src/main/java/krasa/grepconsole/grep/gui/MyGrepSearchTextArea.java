@@ -28,7 +28,6 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -138,14 +137,9 @@ public class MyGrepSearchTextArea extends MySearchTextArea implements com.intell
 				} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 					EditorActionUtil.moveCaretRelativelyAndScroll(grepPanel.getConsole().getEditor(), 0, 1, false);
 					e.consume();
-				} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-					if (Objects.equals(getTextArea().getText(), "")) {
-						removeFromGrepPanel(AnActionEvent.createFromInputEvent(e, "GREP_CONSOLE_PANEL", new Presentation(), DataManager.getInstance().getDataContext(grepPanel)));
-					} else {
-						grepPanel.saveLastFocusLocation(getTextArea());
-						grepPanel.getConsole().getEditor().getContentComponent().requestFocusInWindow();
-					}
-					e.consume();
+//				} else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+//					escapeAction(AnActionEvent.createFromInputEvent(e, "GREP_CONSOLE_PANEL", new Presentation(), DataManager.getInstance().getDataContext(MyGrepSearchTextArea.this.grepPanel)));
+//					e.consume();
 				}
 			}
 		}
