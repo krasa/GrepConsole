@@ -172,7 +172,7 @@ public class OpenGrepConsoleAction extends MyDumbAwareAction {
 		final MyJPanel consolePanel = createConsolePanel(runnerLayoutUi, newConsole, actions, grepPanel, consoleUUID);
 
 		actionList.addAll(Arrays.asList(newConsole.createConsoleActions()));
-		MyConsoleActionsPostProcessor.moveClearToTop(actionList);
+        MyConsoleActionsPostProcessor.moveClearToTop(profile, actionList);
 		actions.addAll(actionList);
 
 

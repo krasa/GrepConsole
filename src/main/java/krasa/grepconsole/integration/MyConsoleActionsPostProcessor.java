@@ -11,6 +11,7 @@ import krasa.grepconsole.action.MoveErrorStreamToTheBottomAction;
 import krasa.grepconsole.action.NextHighlightAction;
 import krasa.grepconsole.action.OpenConsoleSettingsAction;
 import krasa.grepconsole.action.PreviousHighlightAction;
+import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.plugin.ServiceManager;
 import krasa.grepconsole.stats.StatisticsManager;
 import krasa.grepconsole.stats.action.ShowHideStatisticsConsolePanelAction;
@@ -48,17 +49,20 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 		}
 		anActions.addAll(Arrays.asList(actions));
 
-		moveClearToTop(anActions);
+        Profile profile = ServiceManager.getInstance().getProfile(console);
+        moveClearToTop(profile, anActions);
 
 		return anActions.toArray(new AnAction[0]);
 	}
 
-	public static void moveClearToTop(ArrayList<AnAction> anActions) {
-		for (int i = 0; i < anActions.size(); i++) {
-			if (anActions.get(i) instanceof ClearConsoleAction) {
-				AnAction clearAction = anActions.remove(i); // Remove the ClearAction
-				anActions.add(0, clearAction); // Add it at the first position
-				break; // Exit loop after moving the first ClearAction found
+    public static void moveClearToTop(Profile profile, ArrayList<AnAction> anActions) {
+        if (profile.isMoveClearAll()) {
+            for (int i = 0; i < anActions.size(); i++) {
+                if (anActions.get(i) instanceof ClearConsoleAction) {
+                    AnAction clearAction = anActions.remove(i); // Remove the ClearAction
+                    anActions.add(0, clearAction); // Add it at the first position
+                    break; // Exit loop after moving the first ClearAction found
+                }
 			}
 		}
 	}

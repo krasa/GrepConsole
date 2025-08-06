@@ -49,6 +49,7 @@ public class Profile extends DomainObject implements Cloneable {
 	private transient Integer maxProcessingTimeAsInt;
 	private boolean filterOutBeforeGrep;
 	private boolean alwaysPinGrepConsoles = true;
+    private boolean moveClearAll = true;
 	private String maxLengthToGrep = DEFAULT_GREP;
 	@Transient
 	private transient Integer maxLengthToGrepAsInt;
@@ -321,6 +322,14 @@ public class Profile extends DomainObject implements Cloneable {
 	public boolean isAlwaysPinGrepConsoles() {
 		return alwaysPinGrepConsoles;
 	}
+
+    public boolean isMoveClearAll() {
+        return moveClearAll;
+    }
+
+    public void setMoveClearAll(boolean moveClearAll) {
+        this.moveClearAll = moveClearAll;
+    }
 
 	public void setAlwaysPinGrepConsoles(final boolean alwaysPinGrepConsoles) {
 		this.alwaysPinGrepConsoles = alwaysPinGrepConsoles;

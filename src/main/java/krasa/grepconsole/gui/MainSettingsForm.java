@@ -98,6 +98,7 @@ public class MainSettingsForm {
 	private JPanel foldingPanel;
 	private CheckboxTreeTable foldingTable;
 	private JSplitPane splitPane2;
+    private JCheckBox moveClearAll;
 	// private JCheckBox synchronous;
 	public Profile currentProfile;
 	private SettingsContext settingsContext;
@@ -585,6 +586,7 @@ public class MainSettingsForm {
 		showStatsInStatusBar.setSelected(data.isShowStatsInStatusBarByDefault());
 		showStatsInConsole.setSelected(data.isShowStatsInConsoleByDefault());
 		alwaysPinGrepConsoles.setSelected(data.isAlwaysPinGrepConsoles());
+        moveClearAll.setSelected(data.isMoveClearAll());
 		inputFilterBlankLineCheckBox.setSelected(data.isInputFilterBlankLineWorkaround());
 		bufferStreams.setSelected(data.isBufferStreams());
 	}
@@ -604,6 +606,7 @@ public class MainSettingsForm {
 		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
 		data.setShowStatsInConsoleByDefault(showStatsInConsole.isSelected());
 		data.setAlwaysPinGrepConsoles(alwaysPinGrepConsoles.isSelected());
+        data.setMoveClearAll(moveClearAll.isSelected());
 		data.setInputFilterBlankLineWorkaround(inputFilterBlankLineCheckBox.isSelected());
 		data.setBufferStreams(bufferStreams.isSelected());
 	}
@@ -629,6 +632,7 @@ public class MainSettingsForm {
 		if (showStatsInStatusBar.isSelected() != data.isShowStatsInStatusBarByDefault()) return true;
 		if (showStatsInConsole.isSelected() != data.isShowStatsInConsoleByDefault()) return true;
 		if (alwaysPinGrepConsoles.isSelected() != data.isAlwaysPinGrepConsoles()) return true;
+        if (moveClearAll.isSelected() != data.isMoveClearAll()) return true;
 		if (inputFilterBlankLineCheckBox.isSelected() != data.isInputFilterBlankLineWorkaround()) return true;
 		if (bufferStreams.isSelected() != data.isBufferStreams()) return true;
 		return false;

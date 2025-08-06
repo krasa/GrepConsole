@@ -153,6 +153,13 @@
                           <toolTipText value="Uncheck if you want to remove output from the main console but still grep it into a sub-console."/>
                         </properties>
                       </component>
+                      <component id="e281b" class="javax.swing.JCheckBox" binding="moveClearAll">
+                        <constraints/>
+                        <properties>
+                          <text value="Move Clear All"/>
+                          <toolTipText value="Move Clear All button to the top"/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                   <hspacer id="8d9d0">

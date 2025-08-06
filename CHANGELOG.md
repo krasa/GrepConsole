@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 - Improved usability
-- 'Clear All' action moved to the top
+- 'Clear All' action moved to the top - configurable
 - Grep - 'reload on change' enabled by default
 - Grep - added shortcuts to the grep textfield: page up/down, arrow up/down, escape (jumps to console or closes tab)
 - Grep - added shortcuts to the grep console: escape
