@@ -2,12 +2,12 @@
 
 ## [Unreleased]
 
+## [13.3.0-IJ2023.3] - 2025-08-06
 - Improved usability
 - 'Clear All' action moved to the top - configurable
 - Grep - 'reload on change' enabled by default
 - Grep - added shortcuts to the grep textfield: Ctrl+Plus, Ctrl+Minus, Page Up/Down, Arrow Up/Down, Escape (jumps to console or closes tab)
-- Grep - added shortcuts to the grep console: escape
-
+- Grep - added shortcuts to the grep console: Escape, Ctrl+Alt+Shift+Plus
 - Toggle Highlight of All Occurrences - made case sensitive again
 - Added: Toggle Highlight of All Occurrences (Case Insensitive)
 
@@ -55,7 +55,9 @@
 ## [12.20.1-IJ2021.1] - 2023-08-27
 - Grep - improved usability
 
-[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.2.0-IJ2023.3...HEAD
+[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.3.0-IJ2023.3...HEAD
+
+[13.3.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.2.0-IJ2023.3...v13.3.0-IJ2023.3
 [13.2.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.1.0-IJ2023.3...v13.2.0-IJ2023.3
 [13.1.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.0.2-IJ2023.3...v13.1.0-IJ2023.3
 [13.0.2-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.0.1-IJ2023.3...v13.0.2-IJ2023.3
