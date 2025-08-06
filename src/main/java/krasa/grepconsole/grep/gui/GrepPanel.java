@@ -332,7 +332,7 @@ public class GrepPanel extends JPanel implements Disposable, DataProvider {
 		} else {
 			Component[] components = expressions.getComponents();
 			if (components.length > 0) {
-				MyGrepSearchTextArea component = (MyGrepSearchTextArea) components[0];
+				MyGrepSearchTextArea component = (MyGrepSearchTextArea) components[components.length - 1];
 				JTextArea textArea = component.getTextArea();
 				IdeFocusManager.getGlobalInstance().requestFocus(textArea, false);
 			}
