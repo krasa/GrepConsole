@@ -209,7 +209,19 @@
                     class="krasa.grepconsole.grep.actions.AddExpressionAction"
                     text="Add Expression (or double click on the panel)"
                     icon="/krasa/grepconsole/icons/add.svg"
-            />
+            >
+                <keyboard-shortcut keymap="$default" first-keystroke="control ADD"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="control shift EQUALS"/>
+            </action>
+
+            <action id="GrepConsole.RemoveExpressionAction"
+                    class="krasa.grepconsole.grep.actions.RemoveExpressionAction"
+                    text="Remove Expression (or close grep panel)"
+            >
+                <keyboard-shortcut keymap="$default" first-keystroke="control MINUS"/>
+                <keyboard-shortcut keymap="$default" first-keystroke="control SUBTRACT"/>
+            </action>
+
             <action id="GrepConsole.ApplyAction"
                     class="krasa.grepconsole.grep.actions.ApplyAction"
                     text="Apply for New Lines [Ctrl/Alt + Enter]; Toggle On Change Trigger [Ctrl+Click]"

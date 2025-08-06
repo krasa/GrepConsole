@@ -399,22 +399,29 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
     }
   }
 
-  private class ClearAction extends MyDumbAwareAction {
+	private class ClearAction extends MyDumbAwareAction {
 
-    ClearAction() {
-      super(AllIcons.Actions.Close);
-      getTemplatePresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
-      getTemplatePresentation().setDescription("Remove Expression (use the middle mouse button)");
-    }
+		ClearAction() {
+			super(AllIcons.Actions.Close);
+			getTemplatePresentation().setHoveredIcon(AllIcons.Actions.CloseHovered);
+			getTemplatePresentation().setDescription("Remove Expression (use the middle mouse button)");
+			getTemplatePresentation().setText("Remove Expression");
 
-    @Override
-    public void actionPerformed(@NotNull AnActionEvent e) {
-		removeFromGrepPanel(e);
-    }
+			ShortcutSet shortcut = KeymapUtil.getActiveKeymapShortcuts("GrepConsole.RemoveExpressionAction");
+			if (shortcut != null) {
+//				setShortcutSet(shortcut);
+				registerCustomShortcutSet(shortcut, myTextArea);
+			}
+		}
 
-  }
+		@Override
+		public void actionPerformed(@NotNull AnActionEvent e) {
+			removeFromGrepPanel(e);
+		}
 
-	protected void removeFromGrepPanel(@NotNull AnActionEvent e) {
+	}
+
+	public void removeFromGrepPanel(@NotNull AnActionEvent e) {
 		boolean empty = myTextArea.getText().isEmpty();
 		myTextArea.putClientProperty(JUST_CLEARED_KEY, !empty);
 		myTextArea.setText("");
@@ -430,6 +437,7 @@ public abstract class MySearchTextArea extends JPanel implements PropertyChangeL
 		parent.remove(mySearchTextArea);
 		parent.revalidate();
 		parent.repaint();
+		grepPanel.requestFocusToLastTextArea();
 
 		if (!empty) {
 			reloadGrepPanel();

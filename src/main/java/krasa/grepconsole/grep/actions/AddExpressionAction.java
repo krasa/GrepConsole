@@ -29,4 +29,9 @@ public class AddExpressionAction extends MyDumbAwareAction {
 		}
 		return grepPanel;
 	}
+
+	@Override
+	public void update(@NotNull AnActionEvent e) {
+		e.getPresentation().setEnabledAndVisible(getGrepPanel(e) != null);
+	}
 }

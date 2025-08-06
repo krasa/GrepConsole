@@ -21,6 +21,7 @@ import krasa.grepconsole.grep.GrepCompositeModel;
 import krasa.grepconsole.grep.GrepModel;
 import krasa.grepconsole.utils.UiUtils;
 import org.jetbrains.annotations.Nls;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,7 +32,9 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-public class MyGrepSearchTextArea extends MySearchTextArea {
+public class MyGrepSearchTextArea extends MySearchTextArea implements com.intellij.openapi.actionSystem.DataProvider {
+	public static final DataKey<MyGrepSearchTextArea> GREP_PANEL_TEXT_AREA = DataKey.create("GrepPanelTextArea");
+
 	public final Icon EXCLUDE = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark.svg", MyGrepSearchTextArea.class);
 	public final Icon EXCLUDE_HOVER = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark_hover.svg", MyGrepSearchTextArea.class);
 	public final Icon EXCLUDE_SELECTED = IconLoader.getIcon("/krasa/grepconsole/icons/exclMark_selected.svg", MyGrepSearchTextArea.class);
@@ -167,6 +170,17 @@ public class MyGrepSearchTextArea extends MySearchTextArea {
 		wholeWords.set(grepModel.isCaseSensitive());
 		exclude.set(grepModel.isExclude());
 		getTextArea().setText(grepModel.getExpression());
+	}
+
+	@Override
+	public @Nullable Object getData(@NotNull @NonNls String s) {
+		if (GrepPanel.GREP_PANEL.is(s)) {
+			return grepPanel;
+		}
+		if (GREP_PANEL_TEXT_AREA.is(s)) {
+			return this;
+		}
+		return null;
 	}
 
 	//
