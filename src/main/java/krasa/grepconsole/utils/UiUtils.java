@@ -1,5 +1,7 @@
 package krasa.grepconsole.utils;
 
+import com.intellij.openapi.application.ApplicationManager;
+
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -48,7 +50,7 @@ public class UiUtils {
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				lastChange++;
-				SwingUtilities.invokeLater(() -> {
+				ApplicationManager.getApplication().invokeLater(() -> {
 					if (lastNotifiedChange != lastChange) {
 						lastNotifiedChange = lastChange;
 
