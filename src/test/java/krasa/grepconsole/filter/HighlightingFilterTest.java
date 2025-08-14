@@ -4,7 +4,7 @@ import com.intellij.execution.filters.Filter;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.model.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.ArrayList;

@@ -26,6 +26,12 @@ repositories {
 }
 
 dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.9.1"))
+    testImplementation("org.junit.jupiter:junit-jupiter")
+// https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core
+    testImplementation("org.hamcrest:hamcrest-core:3.0")
+
+
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     implementation("org.apache.commons:commons-lang3:3.14.0")
 
@@ -113,10 +119,8 @@ tasks {
         changeNotes = properties("pluginVersion").map { pluginVersion ->
             with(changelog) {
                 renderItem(
-                        (getOrNull(pluginVersion) ?: getUnreleased())
-                                .withHeader(false)
-                                .withEmptySections(false),
-                        Changelog.OutputType.HTML,
+                    (getOrNull(pluginVersion) ?: getUnreleased()).withHeader(false).withEmptySections(false),
+                    Changelog.OutputType.HTML,
                 )
             }
         }
