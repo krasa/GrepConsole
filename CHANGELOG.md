@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [13.4.0-IJ2023.3] - 2025-08-14
+
+- Fixed doubled statistic counts
+
 ## [13.3.0-IJ2023.3] - 2025-08-06
 - Improved usability
 - 'Clear All' action moved to the top - configurable
@@ -55,8 +59,9 @@
 ## [12.20.1-IJ2021.1] - 2023-08-27
 - Grep - improved usability
 
-[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.3.0-IJ2023.3...HEAD
+[Unreleased]: https://github.com/krasa/GrepConsole/compare/v13.4.0-IJ2023.3...HEAD
 
+[13.4.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.3.0-IJ2023.3...v13.4.0-IJ2023.3
 [13.3.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.2.0-IJ2023.3...v13.3.0-IJ2023.3
 [13.2.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.1.0-IJ2023.3...v13.2.0-IJ2023.3
 [13.1.0-IJ2023.3]: https://github.com/krasa/GrepConsole/compare/v13.0.2-IJ2023.3...v13.1.0-IJ2023.3

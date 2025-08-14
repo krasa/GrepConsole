@@ -26,9 +26,6 @@ public class MyConsoleActionsPostProcessor extends ConsoleActionsPostProcessor {
 	@NotNull
 	@Override
 	public AnAction[] postProcess(@NotNull ConsoleView console, @NotNull AnAction[] actions) {
-		ServiceManager serviceManager = ServiceManager.getInstance();
-		serviceManager.createHighlightFilterIfMissing(console);
-
 		if (console instanceof ConsoleViewImpl) {
 			StatisticsManager.createStatisticsPanels((com.intellij.execution.impl.ConsoleViewImpl) console);
 		}
